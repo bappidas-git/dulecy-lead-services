@@ -85,7 +85,7 @@ const DeveloperGuide = ({ styles }) => {
 │   ├── animations/           # GSAP hooks — see section 5
 │   ├── components/
 │   │   └── common/           # Header, Footer, MobileMenu, LeadModal,
-│   │                         # LeadFormDrawer, UnifiedLeadForm, SEO/SEOHead
+│   │                         # UnifiedLeadForm, SEO/SEOHead
 │   ├── config/               # seo.js
 │   ├── context/              # ModalContext (enquiry modal), ThemeContext
 │   ├── data/                 # === CONTENT LAYER — edit here, not in JSX ===
@@ -141,10 +141,6 @@ const DeveloperGuide = ({ styles }) => {
             <tr>
               <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>industriesData.js</code></td>
               <td className={styles.guideTableCell}>The Who We Serve page</td>
-            </tr>
-            <tr>
-              <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>aboutData.js</code>, <code className={styles.guideInlineCode}>statsData.js</code>, <code className={styles.guideInlineCode}>featuresData.js</code>, <code className={styles.guideInlineCode}>faqData.js</code></td>
-              <td className={styles.guideTableCell}>About page, metrics, value props, FAQ (and the FAQ schema)</td>
             </tr>
             <tr>
               <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>navigation.js</code></td>
