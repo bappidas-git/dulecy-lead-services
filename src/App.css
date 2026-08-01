@@ -501,12 +501,3 @@ html {
   outline: 1px solid red;
 }
 */
-
-/* ===========================================
-   Floating action buttons — REMOVED (Prompt 02)
-   -------------------------------------------
-   The Dulecy mockup has no back-to-top button, WhatsApp FAB,
-   scroll-progress bar or bottom mobile nav: the burger →
-   full-screen overlay menu is the only floating UI. The styles
-   that backed those widgets are gone with them.
-   =========================================== */

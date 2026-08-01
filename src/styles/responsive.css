@@ -295,11 +295,6 @@
   }
 }
 
-/* ========== Mobile Navigation — REMOVED (Prompt 02) ==========
-   The Nilachal bottom nav is gone (the Dulecy mockup uses a burger →
-   full-screen overlay), so the body padding that reserved room for it
-   is gone too — it left a 64px white band under the footer. */
-
 /* ========== Touch Device Optimizations ========== */
 @media (hover: none) and (pointer: coarse) {
   /* Increase tap targets */

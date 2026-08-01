@@ -29,9 +29,9 @@ const OUT = path.resolve(__dirname, "..", "public", "og-image.png");
 const W = 1200;
 const H = 630;
 const WHITE = "#FFFFFF";
-const INK = "#0B0B0C"; // --color-ink
-const RED = "#D5192E"; // --color-accent (Dulecy red)
-const SLATE = "#4A4A4F"; // --color-slate
+const INK = "#0B0B0C"; // --ink
+const RED = "#D5192E"; // --red (Dulecy red)
+const SLATE = "#4A4A4F"; // --grey-2
 const FONT = "Liberation Sans, DejaVu Sans, Arial, Helvetica, sans-serif";
 
 async function fetchLogo() {
