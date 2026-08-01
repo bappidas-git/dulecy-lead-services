@@ -1,7 +1,7 @@
 {
-  "short_name": "Nilachal",
-  "name": "Nilachal Infracon",
-  "description": "Nilachal Infracon Private Limited — premium building materials (North East Buildmart) and construction services across Nagaon, Assam and Northeast India.",
+  "short_name": "Dulecy",
+  "name": "Dulecy Lead Services",
+  "description": "Dulecy Lead Services — beyond business support: business solutions, people & organization, corporate services, and leadership & capability building.",
   "icons": [
     {
       "src": "favicon.ico",
@@ -24,9 +24,9 @@
   "start_url": ".",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "theme_color": "#16324F",
+  "theme_color": "#0B0B0C",
   "background_color": "#FFFFFF",
-  "categories": ["business", "shopping"],
+  "categories": ["business", "productivity"],
   "lang": "en",
   "dir": "ltr",
   "scope": "/",

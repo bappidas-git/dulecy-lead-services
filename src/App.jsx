@@ -1,5 +1,5 @@
 /* ============================================
-   App Component — Nilachal Infracon
+   App Component — Dulecy Lead Services
    Main application component with providers,
    lazy loading, and performance optimizations
    ============================================ */
@@ -91,7 +91,7 @@ class ErrorBoundary extends React.Component {
             <button
               onClick={() => this.setState({ hasError: false })}
               style={{
-                backgroundColor: '#16324F',
+                backgroundColor: '#0B0B0C',
                 color: '#FFFFFF',
                 border: 'none',
                 padding: '10px 20px',
@@ -136,7 +136,7 @@ const SectionLoader = memo(({ height = 300, variant = 'default' }) => {
             size={40}
             thickness={3}
             sx={{
-              color: '#16324F',
+              color: '#0B0B0C',
             }}
           />
         </motion.div>
@@ -148,13 +148,13 @@ const SectionLoader = memo(({ height = 300, variant = 'default' }) => {
           variant="text"
           width="30%"
           height={40}
-          sx={{ margin: '0 auto 20px', bgcolor: 'rgba(22, 50, 79, 0.1)' }}
+          sx={{ margin: '0 auto 20px', bgcolor: 'rgba(11, 11, 12, 0.1)' }}
         />
         <Skeleton
           variant="text"
           width="60%"
           height={60}
-          sx={{ margin: '0 auto 30px', bgcolor: 'rgba(22, 50, 79, 0.1)' }}
+          sx={{ margin: '0 auto 30px', bgcolor: 'rgba(11, 11, 12, 0.1)' }}
         />
         <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
           {[1, 2, 3, 4].map((i) => (
@@ -163,7 +163,7 @@ const SectionLoader = memo(({ height = 300, variant = 'default' }) => {
               variant="rounded"
               width={250}
               height={180}
-              sx={{ bgcolor: 'rgba(22, 50, 79, 0.05)' }}
+              sx={{ bgcolor: 'rgba(11, 11, 12, 0.05)' }}
             />
           ))}
         </Box>
@@ -184,7 +184,7 @@ const SectionLoader = memo(({ height = 300, variant = 'default' }) => {
             width: 8,
             height: 8,
             borderRadius: '50%',
-            backgroundColor: '#16324F',
+            backgroundColor: '#0B0B0C',
             animation: 'pulse 1s ease-in-out infinite',
           }}
         />
@@ -223,7 +223,7 @@ const ScrollProgressIndicator = memo(() => {
         left: 0,
         width: `${scrollProgress}%`,
         height: '3px',
-        background: 'linear-gradient(90deg, #16324F 0%, #274B6E 100%)',
+        background: 'linear-gradient(90deg, #0B0B0C 0%, #2A2A2E 100%)',
         zIndex: 9999,
         transition: 'width 0.1s ease-out',
       }}

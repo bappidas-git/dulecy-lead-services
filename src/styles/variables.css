@@ -1,128 +1,145 @@
 /* ============================================
-   CSS Variables — Nilachal Design System
-   Nilachal Infracon Private Limited
-   "Building Tomorrow, Together."
+   CSS Variables — Dulecy Design System
+   Dulecy Lead Services
+   "Beyond Business Support"
    ============================================ */
 
 :root {
-  /* ========== Nilachal Brand Tokens (master palette) ==========
-     Source of truth — use these names in new code. */
-  --color-primary: #16324F;        /* Deep steel navy — headings, header, footer */
-  --color-primary-dark: #0F2438;   /* Darkest navy — footer bg, hero scrim */
-  --color-primary-light: #274B6E;  /* Lighter navy */
-  --color-secondary: #1E7B45;      /* Nilachal green — accents, labels, badges */
-  --color-accent: #1E7B45;         /* Nilachal green — CTAs, highlights, links */
-  --color-accent-dark: #176437;    /* CTA hover */
-  --color-accent-tint: #E8F5EE;    /* Light green wash for chips/backgrounds */
+  /* ========== Dulecy Brand Tokens (master palette) ==========
+     Mirrors mockup/styles.css `:root` — the design system's source of
+     truth. Use these names in new code. */
+  --ink: #0B0B0C;
+  --grey-1: #2A2A2E;
+  --grey-2: #4A4A4F;
+  --grey-3: #6B6B70;
+  --grey-4: #8B8B92;
+  --line: #E7E7EA;
+  --bg-grey: #F5F5F6;
+  --red: #D5192E;
+  --red-hi: #F0293E;
+  --grad: linear-gradient(135deg, #E8293E 0%, #A80E1E 100%);
+  --grad-text: linear-gradient(120deg, #E8293E, #A80E1E);
+
+  /* ========== Semantic aliases (legacy names → Dulecy values) ==========
+     Existing `.module.css` files reference these names; they now resolve to
+     the Dulecy palette so nothing renders navy/green. */
+  --color-primary: #0B0B0C;        /* Ink — headings, header, footer */
+  --color-primary-dark: #0B0B0C;   /* Ink — footer bg, hero scrim */
+  --color-primary-light: #2A2A2E;  /* Lighter ink */
+  --color-secondary: #D5192E;      /* Dulecy red — accents, labels, badges */
+  --color-accent: #D5192E;         /* Dulecy red — CTAs, highlights, links */
+  --color-accent-dark: #A80E1E;    /* CTA hover */
+  --color-accent-tint: #FDECEE;    /* Light red wash for chips/backgrounds */
   --color-success: #1E8E5A;        /* Positive highlights */
-  --color-ink: #101C29;            /* Body headings text */
-  --color-slate: #4A5A6A;          /* Secondary text */
+  --color-ink: #0B0B0C;            /* Body headings text */
+  --color-slate: #4A4A4F;          /* Secondary text */
   --color-bg: #FFFFFF;             /* Page background */
-  --color-bg-subtle: #F5F7FA;      /* Alternating section background */
-  --color-border: #E5EAF0;         /* Thin 1px borders */
-  --color-tint: #F5F7FA;           /* Light card/section backgrounds */
-  --color-text: #101C29;           /* Body text on light */
+  --color-bg-subtle: #F5F5F6;      /* Alternating section background */
+  --color-border: #E7E7EA;         /* Thin 1px borders */
+  --color-tint: #F5F5F6;           /* Light card/section backgrounds */
+  --color-text: #0B0B0C;           /* Body text on light */
   --color-white: #FFFFFF;
 
-  /* ========== Primary Colors (legacy names → Nilachal navy) ========== */
-  --primary-dark: #16324F;
-  --primary-dark-alt: #0F2438;
-  --primary-dark-light: #274B6E;
-  --primary-dark-lighter: #6E86A0;
+  /* ========== Primary Colors (legacy names → Dulecy ink) ========== */
+  --primary-dark: #0B0B0C;
+  --primary-dark-alt: #0B0B0C;
+  --primary-dark-light: #2A2A2E;
+  --primary-dark-lighter: #6B6B70;
 
-  /* ========== Accent (legacy `--accent-gold*`) — remapped to navy ==========
+  /* ========== Accent (legacy `--accent-gold*`) — remapped to ink ==========
      Older stylesheets used `--accent-gold` for structural accents.
-     We map them all to Nilachal navy so existing CSS references stay valid
-     and the page reads as steel navy. */
-  --accent-gold: #16324F;
-  --accent-gold-light: #274B6E;
-  --accent-gold-dark: #0F2438;
-  --accent-gold-hover: #274B6E;
-  --accent-gold-gradient: linear-gradient(135deg, #16324F 0%, #274B6E 100%);
-  --accent-gold-gradient-reverse: linear-gradient(135deg, #274B6E 0%, #16324F 100%);
-  --accent-gold-gradient-horizontal: linear-gradient(90deg, #16324F 0%, #274B6E 50%, #16324F 100%);
+     We map them all to Dulecy ink so existing CSS references stay valid
+     and the page reads as near-black. */
+  --accent-gold: #0B0B0C;
+  --accent-gold-light: #2A2A2E;
+  --accent-gold-dark: #0B0B0C;
+  --accent-gold-hover: #2A2A2E;
+  --accent-gold-gradient: linear-gradient(135deg, #0B0B0C 0%, #2A2A2E 100%);
+  --accent-gold-gradient-reverse: linear-gradient(135deg, #2A2A2E 0%, #0B0B0C 100%);
+  --accent-gold-gradient-horizontal: linear-gradient(90deg, #0B0B0C 0%, #2A2A2E 50%, #0B0B0C 100%);
 
-  /* ========== Accent Green — CTAs Only (legacy `--accent-orange`) ========== */
-  --accent-orange: #1E7B45;
-  --accent-orange-light: #2E9A5C;
-  --accent-orange-dark: #176437;
-  --accent-orange-gradient: linear-gradient(135deg, #1E7B45 0%, #2E9A5C 100%);
-  --accent-orange-gradient-reverse: linear-gradient(135deg, #2E9A5C 0%, #1E7B45 100%);
+  /* ========== Accent Red — CTAs Only (legacy `--accent-orange`) ========== */
+  --accent-orange: #D5192E;
+  --accent-orange-light: #F0293E;
+  --accent-orange-dark: #A80E1E;
+  --accent-orange-gradient: linear-gradient(135deg, #E8293E 0%, #A80E1E 100%);
+  --accent-orange-gradient-reverse: linear-gradient(135deg, #A80E1E 0%, #E8293E 100%);
 
-  /* Nilachal green CTA aliases (preferred for new code) */
-  --accent-amber: #1E7B45;
-  --accent-amber-light: #2E9A5C;
-  --accent-amber-dark: #176437;
-  --accent-amber-gradient: linear-gradient(135deg, #1E7B45 0%, #2E9A5C 100%);
+  /* Dulecy red CTA aliases (preferred for new code) */
+  --accent-amber: #D5192E;
+  --accent-amber-light: #F0293E;
+  --accent-amber-dark: #A80E1E;
+  --accent-amber-gradient: linear-gradient(135deg, #E8293E 0%, #A80E1E 100%);
 
-  /* ========== Secondary Green (legacy `--accent-red`) ========== */
-  --accent-red: #1E7B45;
-  --accent-red-light: #2E9A5C;
-  --accent-red-dark: #176437;
+  /* ========== Secondary Red (legacy `--accent-red`) ========== */
+  --accent-red: #D5192E;
+  --accent-red-light: #F0293E;
+  --accent-red-dark: #A80E1E;
 
   /* ========== Neutral Colors ========== */
   --white: #FFFFFF;
-  --off-white: #FAFBFC;
-  --light-gray: #F5F7FA;
-  --medium-gray: #E5EAF0;
-  --border-gray: #E5EAF0;
-  --text-gray: #4A5A6A;
-  --text-dark-gray: #101C29;
-  --dark-gray: #22344A;
+  --off-white: #FAFAFB;
+  --light-gray: #F5F5F6;
+  --medium-gray: #E7E7EA;
+  --border-gray: #E7E7EA;
+  --text-gray: #4A4A4F;
+  --text-dark-gray: #0B0B0C;
+  --dark-gray: #2A2A2E;
 
   /* ========== Icon Background Colors ========== */
-  --icon-gold: #16324F;
-  --icon-gold-bg: rgba(22, 50, 79, 0.12);
+  --icon-gold: #0B0B0C;
+  --icon-gold-bg: rgba(11, 11, 12, 0.08);
   --icon-green: #1E8E5A;
   --icon-green-bg: rgba(30, 142, 90, 0.15);
   --icon-purple: #6B3FA0;
   --icon-purple-bg: rgba(107, 63, 160, 0.15);
-  --icon-orange: #1E7B45;
-  --icon-orange-bg: rgba(30, 123, 69, 0.15);
-  --icon-pink: #1E7B45;
-  --icon-pink-bg: rgba(30, 123, 69, 0.12);
-  --icon-red: #1E7B45;
-  --icon-red-bg: rgba(30, 123, 69, 0.12);
-  --icon-teal: #16324F;
-  --icon-teal-bg: rgba(22, 50, 79, 0.12);
-  --icon-blue: #16324F;
-  --icon-blue-bg: rgba(22, 50, 79, 0.12);
+  --icon-orange: #D5192E;
+  --icon-orange-bg: rgba(213, 25, 46, 0.12);
+  --icon-pink: #D5192E;
+  --icon-pink-bg: rgba(213, 25, 46, 0.10);
+  --icon-red: #D5192E;
+  --icon-red-bg: rgba(213, 25, 46, 0.12);
+  --icon-teal: #0B0B0C;
+  --icon-teal-bg: rgba(11, 11, 12, 0.08);
+  --icon-blue: #0B0B0C;
+  --icon-blue-bg: rgba(11, 11, 12, 0.08);
 
   /* ========== Card Backgrounds ========== */
-  --card-yellow: #E8F5EE;
-  --card-green: #E5F5EC;
-  --card-pink: #FCE4E8;
-  --card-purple: #EFE7F7;
-  --card-orange: #E8F5EE;
-  --card-blue: #EAEEF3;
-  --card-gold-gradient: linear-gradient(135deg, #16324F 0%, #0F2438 100%);
-  --card-dark-gradient: linear-gradient(135deg, #16324F 0%, #274B6E 100%);
+  --card-yellow: #FDECEE;
+  --card-green: #F5F5F6;
+  --card-pink: #FDECEE;
+  --card-purple: #F5F5F6;
+  --card-orange: #FDECEE;
+  --card-blue: #F5F5F6;
+  --card-gold-gradient: linear-gradient(135deg, #0B0B0C 0%, #2A2A2E 100%);
+  --card-dark-gradient: linear-gradient(135deg, #0B0B0C 0%, #2A2A2E 100%);
 
   /* ========== Semantic Colors ========== */
   --success: #1E8E5A;
   --success-light: #4FB07F;
   --warning: #E0A100;
   --warning-light: #F0C24A;
-  --error: #DC2626;
-  --error-light: #EF5350;
-  --info: #16324F;
-  --info-light: #274B6E;
+  --error: #D5192E;
+  --error-light: #F0293E;
+  --info: #0B0B0C;
+  --info-light: #2A2A2E;
 
   /* ========== Shadow Colors ========== */
   --shadow-light: rgba(0, 0, 0, 0.05);
   --shadow-medium: rgba(0, 0, 0, 0.1);
   --shadow-dark: rgba(0, 0, 0, 0.15);
-  --shadow-gold: rgba(22, 50, 79, 0.3);
-  --shadow-soft: 0 8px 30px rgba(16, 28, 41, 0.06);      /* elevated-card token */
-  --shadow-card: 0 2px 12px rgba(16, 28, 41, 0.06);
-  --shadow-card-hover: 0 8px 30px rgba(16, 28, 41, 0.10);
-  --shadow-button: 0 4px 14px rgba(30, 123, 69, 0.30);
-  --shadow-button-hover: 0 6px 20px rgba(30, 123, 69, 0.40);
+  --shadow-gold: rgba(11, 11, 12, 0.3);
+  --shadow-soft: 0 8px 30px rgba(11, 11, 12, 0.06);      /* elevated-card token */
+  --shadow-card: 0 2px 12px rgba(11, 11, 12, 0.06);
+  --shadow-card-hover: 0 8px 30px rgba(11, 11, 12, 0.10);
+  --shadow-button: 0 10px 26px rgba(213, 25, 46, 0.35);
+  --shadow-button-hover: 0 14px 34px rgba(213, 25, 46, 0.38);
 
   /* ========== Typography ========== */
-  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-  --font-heading: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-primary: 'Archivo', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-heading: 'Archivo', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Archivo', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-serif: 'Instrument Serif', serif;
   --font-mono: 'SF Mono', 'Fira Code', 'Consolas', monospace;
 
   /* Font Weights */
@@ -247,10 +264,10 @@
 
   /* ========== Overlays ========== */
   --overlay-light: rgba(255, 255, 255, 0.8);
-  --overlay-dark: rgba(15, 36, 56, 0.7);
-  --overlay-darker: rgba(15, 36, 56, 0.85);
-  --overlay-gradient: linear-gradient(180deg, rgba(15, 36, 56, 0.9) 0%, rgba(15, 36, 56, 0.4) 100%);
-  --overlay-gradient-reverse: linear-gradient(0deg, rgba(15, 36, 56, 0.9) 0%, rgba(15, 36, 56, 0.2) 100%);
+  --overlay-dark: rgba(11, 11, 12, 0.7);
+  --overlay-darker: rgba(11, 11, 12, 0.85);
+  --overlay-gradient: linear-gradient(180deg, rgba(11, 11, 12, 0.9) 0%, rgba(11, 11, 12, 0.4) 100%);
+  --overlay-gradient-reverse: linear-gradient(0deg, rgba(11, 11, 12, 0.9) 0%, rgba(11, 11, 12, 0.2) 100%);
 
   /* ========== Aspect Ratios ========== */
   --aspect-square: 1 / 1;
@@ -275,35 +292,35 @@
 }
 
 /* ========== Admin Panel Colors ==========
-   The admin panel shares the Nilachal design system: deep steel navy
-   (--admin-primary), Nilachal green (--admin-accent), an off-white app
-   background, white cards with thin 1px borders, and the single soft
-   elevation token. Green is used sparingly (primary CTAs + key highlights). */
+   The admin panel shares the Dulecy design system: ink (--admin-primary),
+   Dulecy red (--admin-accent), an off-white app background, white cards with
+   thin 1px borders, and the single soft elevation token. Red is used
+   sparingly (primary CTAs + key highlights). */
 :root {
-  --admin-primary: #16324F;
-  --admin-primary-light: #274B6E;
-  --admin-primary-dark: #0F2438;
-  --admin-accent: #1E7B45;
-  --admin-accent-light: #2E9A5C;
-  --admin-accent-dark: #176437;
-  --admin-accent-tint: #E8F5EE;
-  --admin-magenta: #1E7B45;
-  --admin-magenta-light: #2E9A5C;
-  --admin-cyan: #274B6E;
-  --admin-cyan-light: #3A6389;
-  --admin-gradient: linear-gradient(135deg, #16324F 0%, #274B6E 100%);
-  --admin-gradient-accent: linear-gradient(135deg, #16324F 0%, #1E7B45 100%);
-  --admin-bg: #F5F7FA;
+  --admin-primary: #0B0B0C;
+  --admin-primary-light: #2A2A2E;
+  --admin-primary-dark: #0B0B0C;
+  --admin-accent: #D5192E;
+  --admin-accent-light: #F0293E;
+  --admin-accent-dark: #A80E1E;
+  --admin-accent-tint: #FDECEE;
+  --admin-magenta: #D5192E;
+  --admin-magenta-light: #F0293E;
+  --admin-cyan: #2A2A2E;
+  --admin-cyan-light: #4A4A4F;
+  --admin-gradient: linear-gradient(135deg, #0B0B0C 0%, #2A2A2E 100%);
+  --admin-gradient-accent: linear-gradient(135deg, #E8293E 0%, #A80E1E 100%);
+  --admin-bg: #F5F5F6;
   --admin-card-bg: #FFFFFF;
-  --admin-border: #E5EAF0;
-  --admin-shadow: 0 8px 30px rgba(16, 28, 41, 0.06);
-  --admin-text-primary: #101C29;
-  --admin-text-secondary: #4A5A6A;
-  --admin-text-muted: #8E9BAD;
+  --admin-border: #E7E7EA;
+  --admin-shadow: 0 8px 30px rgba(11, 11, 12, 0.06);
+  --admin-text-primary: #0B0B0C;
+  --admin-text-secondary: #4A4A4F;
+  --admin-text-muted: #8B8B92;
   --admin-success: #1E8E5A;
   --admin-warning: #E0A100;
-  --admin-error: #DC2626;
-  --admin-info: #16324F;
+  --admin-error: #D5192E;
+  --admin-info: #0B0B0C;
 }
 
 /* ========== Dark Mode Variables (for potential future use) ========== */

@@ -11,7 +11,7 @@
 .faqSection {
   position: relative;
   padding: 6rem 0;
-  background-color: var(--color-bg-subtle, #f5f7fa);
+  background-color: var(--color-bg-subtle, #F5F5F6);
 }
 
 .container {
@@ -39,14 +39,14 @@
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--color-accent, #1e7b45);
+  color: var(--color-accent, #D5192E);
 }
 
 .eyebrowBar {
   width: 28px;
   height: 2px;
   border-radius: 2px;
-  background: var(--color-accent, #1e7b45);
+  background: var(--color-accent, #D5192E);
   flex-shrink: 0;
 }
 
@@ -57,17 +57,17 @@
   font-size: clamp(1.75rem, 3.5vw, 2.5rem);
   line-height: 1.14;
   letter-spacing: -0.02em;
-  color: var(--color-ink, #101c29);
+  color: var(--color-ink, #0B0B0C);
   text-wrap: balance;
 }
 
 /* ========== Accordion ========== */
 .list {
-  border-top: 1px solid var(--color-border, #e5eaf0);
+  border-top: 1px solid var(--color-border, #E7E7EA);
 }
 
 .item {
-  border-bottom: 1px solid var(--color-border, #e5eaf0);
+  border-bottom: 1px solid var(--color-border, #E7E7EA);
 }
 
 /* Question (button reset + row) */
@@ -93,7 +93,7 @@
   font-weight: 500;
   line-height: 1.4;
   letter-spacing: -0.01em;
-  color: var(--color-ink, #101c29);
+  color: var(--color-ink, #0B0B0C);
   transition: color 0.25s ease;
 }
 
@@ -105,19 +105,19 @@
   width: 32px;
   height: 32px;
   font-size: 22px;
-  color: var(--color-accent, #1e7b45);
+  color: var(--color-accent, #D5192E);
   /* GSAP rotates this to 45° when the row opens */
   will-change: transform;
 }
 
 @media (hover: hover) {
   .question:hover .questionText {
-    color: var(--color-accent-dark, #176437);
+    color: var(--color-accent-dark, #A80E1E);
   }
 }
 
 .question:focus-visible {
-  outline: 2px solid var(--color-accent, #1e7b45);
+  outline: 2px solid var(--color-accent, #D5192E);
   outline-offset: -2px;
   border-radius: 8px;
 }
@@ -133,7 +133,7 @@
   font-family: "Inter", sans-serif;
   font-size: 1rem;
   line-height: 1.7;
-  color: var(--color-slate, #4a5a6a);
+  color: var(--color-slate, #4A4A4F);
 }
 
 /* ========== Responsive ========== */

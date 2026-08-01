@@ -1,6 +1,6 @@
 /* ============================================
-   App-specific Styles — Nilachal Infracon
-   Franchise Landing Page
+   App-specific Styles — Dulecy Lead Services
+   Official Website
 
    Performance optimized with:
    - GPU acceleration
@@ -132,7 +132,7 @@ section[id] {
   position: absolute;
   top: -50px;
   left: 0;
-  background: var(--color-primary, #16324F);
+  background: var(--color-primary, #0B0B0C);
   color: var(--white, #FFFFFF);
   padding: 12px 24px;
   z-index: 10000;
@@ -150,19 +150,19 @@ section[id] {
 
 /* Custom focus outlines */
 *:focus-visible {
-  outline: 2px solid var(--color-primary, #16324F);
+  outline: 2px solid var(--ink, #0B0B0C);
   outline-offset: 2px;
 }
 
 /* Selection highlight */
 ::selection {
-  background-color: var(--color-primary, #16324F);
-  color: var(--white, #FFFFFF);
+  background-color: var(--red, #D5192E);
+  color: #fff;
 }
 
 ::-moz-selection {
-  background-color: var(--color-primary, #16324F);
-  color: var(--white, #FFFFFF);
+  background-color: var(--red, #D5192E);
+  color: #fff;
 }
 
 /* ===========================================
@@ -259,9 +259,9 @@ html {
 .skeleton {
   background: linear-gradient(
     90deg,
-    rgba(22, 50, 79, 0.05) 25%,
-    rgba(22, 50, 79, 0.1) 50%,
-    rgba(22, 50, 79, 0.05) 75%
+    rgba(11, 11, 12, 0.05) 25%,
+    rgba(11, 11, 12, 0.1) 50%,
+    rgba(11, 11, 12, 0.05) 75%
   );
   background-size: 200% 100%;
   animation: skeleton-loading 1.5s ease-in-out infinite;
@@ -508,10 +508,10 @@ html {
 
 /* ===========================================
    Floating action buttons (Back-to-top + WhatsApp)
-   Restyled to Nilachal design tokens (prompt 11).
+   Restyled to the Dulecy design tokens.
    =========================================== */
 
-/* Back to top — token-based navy pill (framer handles entrance/scale) */
+/* Back to top — token-based ink pill (framer handles entrance/scale) */
 .back-to-top {
   position: fixed;
   bottom: 100px;
@@ -550,7 +550,7 @@ html {
   justify-content: center;
   font-size: 30px;
   text-decoration: none;
-  box-shadow: 0 8px 24px rgba(30, 123, 69, 0.35);
+  box-shadow: 0 8px 24px rgba(213, 25, 46, 0.35);
   z-index: 1000;
   transition: background-color 0.2s ease, transform 0.2s ease;
 }

@@ -10,13 +10,13 @@ import { Icon } from "@iconify/react";
 import { telHref, waHref } from "../../../data/siteConfig";
 import styles from "./MobileNavigation.module.css";
 
-// Navigation items configuration — Nilachal quick actions
+// Navigation items configuration — Dulecy quick actions
 const navItems = [
   {
     id: "call",
     label: "Call",
     icon: "mdi:phone",
-    color: "#16324F",
+    color: "#0B0B0C",
     action: "call",
     href: telHref,
   },
@@ -32,7 +32,7 @@ const navItems = [
     id: "enquiry",
     label: "Enquire",
     icon: "mdi:file-document-edit-outline",
-    color: "#1E7B45",
+    color: "#D5192E",
     action: "enquiry",
     badge: true,
     primary: true,
@@ -41,7 +41,7 @@ const navItems = [
     id: "menu",
     label: "Menu",
     icon: "mdi:menu",
-    color: "#16324F",
+    color: "#0B0B0C",
     action: "menu",
   },
 ];

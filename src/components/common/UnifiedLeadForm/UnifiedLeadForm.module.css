@@ -100,12 +100,12 @@
 }
 
 .variantHero .textField :global(.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline) {
-  border-color: rgba(22, 50, 79, 0.4);
+  border-color: rgba(11, 11, 12, 0.4);
 }
 
 .variantHero .textField :global(.MuiOutlinedInput-root.Mui-focused) {
   background: #FFFFFF;
-  box-shadow: 0 0 0 3px rgba(22, 50, 79, 0.12);
+  box-shadow: 0 0 0 3px rgba(11, 11, 12, 0.12);
 }
 
 .variantHero .textField :global(.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline) {
@@ -191,7 +191,7 @@
    VARIANT: Dark (Dark background)
    ============================================ */
 .variantDark {
-  background: linear-gradient(180deg, #16324F 0%, #0F2438 100%);
+  background: linear-gradient(180deg, #0B0B0C 0%, #0B0B0C 100%);
   padding: 32px;
   border-radius: var(--radius-2xl);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
@@ -214,7 +214,7 @@
 }
 
 .variantDark .textField :global(.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline) {
-  border-color: rgba(22, 50, 79, 0.5);
+  border-color: rgba(11, 11, 12, 0.5);
 }
 
 .variantDark .textField :global(.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline) {
@@ -373,7 +373,7 @@
   padding: 14px 28px !important;
   font-size: 1rem !important;
   border-radius: 12px !important;
-  box-shadow: 0 8px 22px rgba(30, 123, 69, 0.4) !important;
+  box-shadow: 0 8px 22px rgba(213, 25, 46, 0.4) !important;
 }
 
 .variantDrawer .messageField :global(.MuiInputBase-input) {
@@ -434,7 +434,7 @@
 
 /* Green focus ring — accent used sparingly on the active field only. */
 .textField :global(.MuiOutlinedInput-root.Mui-focused) {
-  box-shadow: 0 0 0 3px rgba(30, 123, 69, 0.12);
+  box-shadow: 0 0 0 3px rgba(213, 25, 46, 0.12);
 }
 
 .textField :global(.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline) {
@@ -514,7 +514,7 @@
   text-transform: none !important;
   background: var(--color-accent) !important;
   color: #FFFFFF !important;
-  box-shadow: 0 6px 18px rgba(30, 123, 69, 0.28) !important;
+  box-shadow: 0 6px 18px rgba(213, 25, 46, 0.28) !important;
   transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease !important;
   display: flex !important;
   align-items: center !important;
@@ -529,7 +529,7 @@
 
 .submitButton:hover {
   background: var(--color-accent-dark) !important;
-  box-shadow: 0 8px 22px rgba(30, 123, 69, 0.36) !important;
+  box-shadow: 0 8px 22px rgba(213, 25, 46, 0.36) !important;
   transform: translateY(-1px);
 }
 
@@ -641,13 +641,13 @@
   font-weight: 600;
   text-decoration: none;
   padding: 10px 20px;
-  background: rgba(30, 123, 69, 0.12);
+  background: rgba(213, 25, 46, 0.12);
   border-radius: 10px;
   transition: all 0.2s ease;
 }
 
 .phoneLink:hover {
-  background: rgba(30, 123, 69, 0.2);
+  background: rgba(213, 25, 46, 0.2);
   transform: translateY(-2px);
 }
 

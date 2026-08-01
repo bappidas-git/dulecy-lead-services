@@ -1,5 +1,5 @@
 /* ============================================
-   Button Component Styles — Nilachal Infracon
+   Button Component Styles — Dulecy Lead Services
    ============================================ */
 
 /* Button Base */
@@ -67,12 +67,12 @@
 .secondary {
   background: var(--primary-dark);
   color: var(--white);
-  box-shadow: 0 4px 15px rgba(39, 75, 110, 0.3);
+  box-shadow: 0 4px 15px rgba(42, 42, 46, 0.3);
 }
 
 .secondary:hover {
   background: var(--primary-dark-alt);
-  box-shadow: 0 6px 20px rgba(39, 75, 110, 0.4);
+  box-shadow: 0 6px 20px rgba(42, 42, 46, 0.4);
   transform: translateY(-2px);
 }
 

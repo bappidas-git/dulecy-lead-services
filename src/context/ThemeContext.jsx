@@ -1,5 +1,5 @@
 /* ============================================
-   Theme Context — Nilachal Infracon
+   Theme Context — Dulecy Lead Services
    Handles theme preferences (light/dark mode)
    ============================================ */
 
@@ -50,7 +50,7 @@ export const ThemeProvider = ({ children }) => {
     if (metaThemeColor) {
       metaThemeColor.setAttribute(
         'content',
-        resolvedTheme === THEMES.DARK ? '#16324F' : '#FFFFFF'
+        resolvedTheme === THEMES.DARK ? '#0B0B0C' : '#FFFFFF'
       );
     }
 

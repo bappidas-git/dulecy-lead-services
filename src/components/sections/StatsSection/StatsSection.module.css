@@ -1,5 +1,5 @@
 /* ============================================
-   StatsSection Styles — Nilachal metrics band
+   StatsSection Styles — Dulecy metrics band
    A full-width deep-navy band: five big white counters in
    one row with slate-on-dark labels, divided by thin
    vertical hairlines. Wraps to a centered 2×2 + 1 grid on
@@ -8,7 +8,7 @@
 
 /* ========== Band ========== */
 .statsBand {
-  background-color: var(--color-primary-dark, #0f2438);
+  background-color: var(--color-primary-dark, #0B0B0C);
   padding: 4.5rem 0;
 }
 

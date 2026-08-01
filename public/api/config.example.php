@@ -1,6 +1,6 @@
 <?php
 /* ============================================
-   API Configuration
+   API Configuration — Dulecy Lead Services
    Copy this file to config.php and fill in
    your values.
    ============================================ */

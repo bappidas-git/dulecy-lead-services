@@ -74,11 +74,11 @@
 }
 
 .navButton:hover {
-  background: rgba(22, 50, 79, 0.08);
+  background: rgba(11, 11, 12, 0.08);
 }
 
 .navButton:active {
-  background: rgba(22, 50, 79, 0.15);
+  background: rgba(11, 11, 12, 0.15);
 }
 
 /* Navigation Icon */
@@ -134,10 +134,10 @@
   opacity: 0.6;
 }
 
-/* Primary CTA Item (Enquire) — Nilachal green */
+/* Primary CTA Item (Enquire) — Dulecy red */
 .primaryItem .navButton {
-  background: linear-gradient(135deg, #1E7B45 0%, #2E9A5C 100%);
-  box-shadow: 0 4px 12px rgba(30, 123, 69, 0.4);
+  background: linear-gradient(135deg, #D5192E 0%, #F0293E 100%);
+  box-shadow: 0 4px 12px rgba(213, 25, 46, 0.4);
   width: 52px;
   height: 52px;
   margin-top: -6px;
@@ -148,17 +148,17 @@
 }
 
 .primaryItem .navLabel {
-  color: #176437 !important;
+  color: #A80E1E !important;
   font-weight: 700 !important;
 }
 
 .primaryItem .navButton:hover {
-  background: linear-gradient(135deg, #176437 0%, #1E7B45 100%);
-  box-shadow: 0 6px 16px rgba(30, 123, 69, 0.5);
+  background: linear-gradient(135deg, #A80E1E 0%, #D5192E 100%);
+  box-shadow: 0 6px 16px rgba(213, 25, 46, 0.5);
 }
 
 .primaryItem .navButton:active {
-  background: linear-gradient(135deg, #124E2B 0%, #176437 100%);
+  background: linear-gradient(135deg, #870A17 0%, #A80E1E 100%);
 }
 
 /* WhatsApp Button Special Styling */
@@ -183,15 +183,15 @@
 /* Dark Mode Support */
 @media (prefers-color-scheme: dark) {
   .mobileNav {
-    background: rgba(15, 36, 56, 0.95);
+    background: rgba(11, 11, 12, 0.95);
   }
 
   .safeAreaBackground {
-    background: rgba(15, 36, 56, 0.95);
+    background: rgba(11, 11, 12, 0.95);
   }
 
   .navButton:hover {
-    background: rgba(22, 50, 79, 0.15);
+    background: rgba(11, 11, 12, 0.15);
   }
 }
 
@@ -248,7 +248,7 @@
   left: 50%;
   width: 0;
   height: 0;
-  background: radial-gradient(circle, rgba(22, 50, 79, 0.3) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(11, 11, 12, 0.3) 0%, transparent 70%);
   border-radius: 50%;
   transform: translate(-50%, -50%);
   transition: width 0.3s ease, height 0.3s ease;
@@ -278,7 +278,7 @@
   }
 
   .navButton:active {
-    background: rgba(22, 50, 79, 0.15);
+    background: rgba(11, 11, 12, 0.15);
   }
 }
 

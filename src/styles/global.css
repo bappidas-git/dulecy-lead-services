@@ -1,10 +1,10 @@
 /* ============================================
-   Global Styles — Nilachal Infracon
+   Global Styles — Dulecy Lead Services
    Official Website
    ============================================ */
 
 /* ========== CSS Reset & Base Styles ========== */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap');
 
 *,
 *::before,
@@ -29,7 +29,7 @@ body {
   font-size: var(--fs-base);
   font-weight: var(--fw-regular);
   line-height: var(--lh-normal);
-  color: var(--text-dark-gray);
+  color: var(--ink);
   background-color: var(--white);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -177,13 +177,13 @@ table {
 
 /* ========== Selection ========== */
 ::selection {
-  background-color: var(--color-primary);
-  color: var(--white);
+  background-color: var(--red);
+  color: #fff;
 }
 
 ::-moz-selection {
-  background-color: var(--color-primary);
-  color: var(--white);
+  background-color: var(--red);
+  color: #fff;
 }
 
 /* ========== Scrollbar Styling ========== */
@@ -759,12 +759,12 @@ table {
 }
 
 .icon-circle-red {
-  background: rgba(30, 123, 69, 0.1);
+  background: rgba(213, 25, 46, 0.1);
   color: var(--icon-red);
 }
 
 .icon-circle-teal {
-  background: rgba(22, 50, 79, 0.1);
+  background: rgba(11, 11, 12, 0.1);
   color: var(--icon-teal);
 }
 
@@ -913,7 +913,7 @@ table {
 /* ========== High Contrast Mode ========== */
 @media (prefers-contrast: high) {
   :root {
-    --accent-gold: #16324F;
+    --accent-gold: #0B0B0C;
     --primary-dark: #000000;
     --border-gray: #000000;
   }
