@@ -1,0 +1,144 @@
+/* ============================================
+   Who We Serve / Sector grid — values ported verbatim from
+   `mockup/styles.css` (.sectors, .sector*) plus the section's
+   bottom padding from `mockup/industries.html`.
+
+   The red card is a <button> here (it opens the enquiry drawer
+   rather than navigating), so it also resets the UA button
+   chrome the mockup's <a> never had.
+   ============================================ */
+
+.section {
+  padding-bottom: clamp(80px, 10vw, 130px);
+}
+
+.sectors {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(290px, 100%), 1fr));
+  gap: 16px;
+}
+
+/* ========== Sector card ========== */
+.sector {
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: clamp(26px, 3vw, 34px);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 230px;
+  background: #fff;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.sector:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 44px rgba(11, 11, 12, 0.09);
+  border-color: var(--red);
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background-color: rgba(232, 41, 62, 0.07);
+  background-size: 30px 30px;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: block;
+}
+
+.num {
+  font-size: 12px;
+  font-weight: 700;
+  color: #dedee2;
+  letter-spacing: 0.1em;
+}
+
+.name {
+  font-size: clamp(18px, 2vw, 21px);
+  font-weight: 750;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+}
+
+.desc {
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--grey-3);
+  text-wrap: pretty;
+}
+
+/* ========== Closing red card (opens the enquiry drawer) ========== */
+.sectorRed {
+  border: none;
+  border-radius: 22px;
+  padding: clamp(26px, 3vw, 34px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 230px;
+  background: var(--grad);
+  color: #fff;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.sectorRed:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 44px rgba(213, 25, 46, 0.35);
+  color: #fff;
+}
+
+.nameRed {
+  font-size: clamp(19px, 2.2vw, 23px);
+  line-height: 1.3;
+  text-wrap: balance;
+}
+
+.go {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.go i {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-style: normal;
+  flex-shrink: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sector,
+  .sectorRed {
+    transition: none;
+  }
+
+  .sector:hover,
+  .sectorRed:hover {
+    transform: none;
+  }
+}

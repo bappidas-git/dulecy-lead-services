@@ -1,17 +1,235 @@
-/* Stub hero — mirrors the mockup's `.container.hero__inner` spacing. */
+/* ============================================
+   ContactPage — values ported verbatim from
+   `mockup/styles.css` (.hero__inner, .hero__badge, .pulse-dot,
+   .contact-card, .form-panel) plus the per-instance inline styles
+   in `mockup/contact.html` (the two-column flex row, headline
+   size/leading, lede size + max-width, the card column, the
+   pull-quote rule, and the panel's heading + sub).
+   ============================================ */
 
-.hero {
-  max-width: 1280px;
-  margin: 0 auto;
-  width: 100%;
-  padding-left: clamp(20px, 4vw, 44px);
-  padding-right: clamp(20px, 4vw, 44px);
+/* The mockup styles nothing at page level — restore the inherited
+   values our global reset overrides (see the other page shells). */
+.page {
+  font-size: 16px;
+  line-height: normal;
+}
+
+.inner {
+  position: relative;
   padding-top: clamp(140px, 18vh, 190px);
   padding-bottom: clamp(70px, 9vw, 110px);
 }
 
-.hero h1 {
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 56px clamp(48px, 7vw, 110px);
+}
+
+/* ========== Intro column ========== */
+.intro {
+  flex: 1 1 340px;
+  min-width: 280px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #3d3d42;
+  background: #fff;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--red);
+  animation: pulseDot 2.2s ease-in-out infinite;
+}
+
+@keyframes pulseDot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.4;
+    transform: scale(0.8);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dot {
+    animation: none;
+  }
+}
+
+.head {
   margin-top: 24px;
   font-size: clamp(34px, 6.4vw, 76px);
   line-height: 1.05;
+}
+
+.lede {
+  max-width: 480px;
+  font-size: clamp(16px, 1.9vw, 18.5px);
+  margin-top: 26px;
+}
+
+/* ========== Contact cards ========== */
+.cards {
+  margin-top: 38px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 420px;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 18px 20px;
+  text-decoration: none;
+  color: var(--ink);
+  transition:
+    border-color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.card:hover {
+  border-color: var(--red);
+  transform: translateY(-2px);
+  color: var(--ink);
+}
+
+.card i {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: linear-gradient(
+    135deg,
+    rgba(232, 41, 62, 0.1),
+    rgba(168, 14, 30, 0.05)
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-style: normal;
+}
+
+.card i img {
+  width: 20px;
+  height: 20px;
+}
+
+/* The email card's text column may shrink below its content width so the
+   long address can wrap instead of stretching the card. */
+.cardText {
+  min-width: 0;
+}
+
+.cardKey {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--grey-4);
+  display: block;
+}
+
+.cardValue {
+  font-size: 16.5px;
+  font-weight: 700;
+}
+
+.valuePhone {
+  white-space: nowrap;
+}
+
+.valueMail {
+  font-size: 15.5px;
+  word-break: break-all;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    transition: none;
+  }
+
+  .card:hover {
+    transform: none;
+  }
+}
+
+/* ========== Pull quote ========== */
+.quote {
+  margin-top: 40px;
+  padding-left: 20px;
+  border-left: 2px solid var(--red);
+}
+
+.quoteText {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.7;
+  color: var(--grey-3);
+}
+
+/* ========== Form panel ========== */
+.formPanel {
+  flex: 1.1 1 380px;
+  min-width: 300px;
+  background: #f7f7f8;
+  border: 1px solid #ececef;
+  border-radius: 28px;
+  padding: clamp(26px, 3.6vw, 44px);
+  align-self: flex-start;
+}
+
+.formHead {
+  margin: 0 0 6px;
+  font-size: clamp(20px, 2.4vw, 26px);
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.formSub {
+  margin: 0 0 26px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--grey-3);
+}
+
+/* Strip the UnifiedLeadForm default-variant card so the panel is the only
+   surface (mirrors the drawer/embed override pattern). The form's own field
+   styling is rebuilt in Prompt 07. */
+.formInner {
+  padding: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+/* Below the flex-wrap break the panel is full-width under the intro column;
+   trim its inner gutter so the fields keep the container's rhythm. */
+@media (max-width: 560px) {
+  .formPanel {
+    min-width: 0;
+    width: 100%;
+  }
 }

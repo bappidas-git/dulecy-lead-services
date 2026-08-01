@@ -1,22 +1,25 @@
 /* ============================================
-   IndustriesPage — stub  (nav label "Who We Serve")
+   IndustriesPage — `/industries`  (nav label "Who We Serve")
    --------------------------------------------
-   Placeholder carrying only the mockup's hero headline
-   (`mockup/industries.html`). The full page lands in Prompt 06.
+   The three blocks of `mockup/industries.html`, in order: the
+   parallaxed hero, the seven-sector grid closed by the red enquiry
+   card, and the grey "One partner. Many dimensions." sign-off. The
+   shared header, footer and enquiry drawer come from `PublicLayout` /
+   `App`.
    ============================================ */
 
 import React from 'react';
+import HeroSection from './sections/HeroSection';
+import SectorsSection from './sections/SectorsSection';
+import CtaSection from './sections/CtaSection';
 import styles from './IndustriesPage.module.css';
 
 const IndustriesPage = () => (
-  <section className={styles.hero}>
-    <p className="eyebrow">Who we serve</p>
-    <h1 className="display display--md">
-      Our expertise.
-      <br />
-      <em className="serif grad-text">Your industry.</em>
-    </h1>
-  </section>
+  <div className={styles.page}>
+    <HeroSection />
+    <SectorsSection />
+    <CtaSection />
+  </div>
 );
 
 export default IndustriesPage;

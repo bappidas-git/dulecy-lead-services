@@ -1,0 +1,156 @@
+/* ============================================
+   Who We Serve / CTA split — values ported verbatim from
+   `mockup/styles.css` (.cta-split*, .action*) plus the
+   per-instance inline styles in `mockup/industries.html`
+   (head size/leading, body margin + max-width, the
+   nowrap phone title).
+   ============================================ */
+
+.split {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 36px clamp(40px, 6vw, 90px);
+}
+
+.text {
+  flex: 1.3 1 320px;
+  min-width: 280px;
+}
+
+.head {
+  font-size: clamp(28px, 4.4vw, 50px);
+  line-height: 1.12;
+}
+
+.body {
+  margin: 22px 0 0;
+  max-width: 480px;
+}
+
+/* ========== Stacked action cards ========== */
+.actions {
+  flex: 1 1 300px;
+  min-width: 270px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.action {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border-radius: 18px;
+  padding: 20px 22px;
+  text-align: left;
+  text-decoration: none;
+  font-family: inherit;
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.actionBody {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.actionTitle {
+  font-size: 16.5px;
+  font-weight: 700;
+}
+
+.actionSub {
+  font-size: 13px;
+}
+
+.titlePhone {
+  white-space: nowrap;
+}
+
+.actionRed {
+  background: var(--grad);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.actionRed:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 36px rgba(213, 25, 46, 0.35);
+  color: #fff;
+}
+
+.actionRed .actionSub {
+  opacity: 0.85;
+}
+
+.actionRed i {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+  font-style: normal;
+}
+
+.actionWhite {
+  background: #fff;
+  border: 1px solid var(--line);
+  color: var(--ink);
+}
+
+.actionWhite:hover {
+  transform: translateY(-3px);
+  border-color: var(--red);
+  box-shadow: 0 14px 30px rgba(11, 11, 12, 0.08);
+  color: var(--ink);
+}
+
+.actionWhite .actionSub {
+  color: var(--grey-4);
+}
+
+.actionWhite i {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(
+    135deg,
+    rgba(232, 41, 62, 0.1),
+    rgba(168, 14, 30, 0.05)
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-style: normal;
+  font-size: 16px;
+  color: var(--red);
+}
+
+.actionWhite i img {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .action {
+    transition: none;
+  }
+
+  .actionRed:hover,
+  .actionWhite:hover {
+    transform: none;
+  }
+}
