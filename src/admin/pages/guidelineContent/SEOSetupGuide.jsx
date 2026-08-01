@@ -70,8 +70,8 @@ const SEOSetupGuide = ({ styles }) => {
           generated from <code className={styles.guideInlineCode}>src/data/siteConfig.js</code>{' '}
           (company, phone, email, logos),{' '}
           <code className={styles.guideInlineCode}>src/data/expertiseData.js</code> (the ten
-          service areas), <code className={styles.guideInlineCode}>src/data/industriesData.js</code>{' '}
-          (who we serve) and <code className={styles.guideInlineCode}>src/data/faqData.js</code>.
+          service areas) and{' '}
+          <code className={styles.guideInlineCode}>src/data/industriesData.js</code> (who we serve).
           Edit the data file and both layers follow.
         </div>
       </div>
@@ -166,11 +166,6 @@ const SEOSetupGuide = ({ styles }) => {
               <td className={styles.guideTableCell}>The ten expertise areas, injected on the Expertise page</td>
             </tr>
             <tr>
-              <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>FAQPage</code></td>
-              <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>faqData.js</code></td>
-              <td className={styles.guideTableCell}>Can produce FAQ rich results</td>
-            </tr>
-            <tr>
               <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>BreadcrumbList</code> + <code className={styles.guideInlineCode}>WebPage</code></td>
               <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>seo.js</code></td>
               <td className={styles.guideTableCell}>Page hierarchy in the search snippet</td>
@@ -178,12 +173,11 @@ const SEOSetupGuide = ({ styles }) => {
           </tbody>
         </table>
         <div className={styles.guideNoteWarning}>
-          <strong>Google guideline:</strong> the FAQ schema must match the FAQ questions and
-          answers <em>visible on the page</em>, word for word. Both read{' '}
-          <code className={styles.guideInlineCode}>faqData.js</code> — so edit that one file, then
-          mirror it into the static <code className={styles.guideInlineCode}>#schema-faq</code>{' '}
-          block in <code className={styles.guideInlineCode}>public/index.html</code>. A schema that
-          promises answers the page doesn't show can get the rich result revoked.
+          <strong>Google guideline:</strong> only claim what the page actually shows. The site has
+          no visible FAQ section, so it publishes no{' '}
+          <code className={styles.guideInlineCode}>FAQPage</code> schema — and it claims no postal
+          address, opening hours or ratings. A schema that promises content the page doesn't show
+          can get the rich result revoked.
         </div>
         <p className={styles.guideParagraph}>
           Validate any change at{' '}
@@ -288,8 +282,8 @@ npm run generate:icons   # writes the favicon / PWA icon set from the logo`}
               <td className={styles.guideTableCell}>☐</td>
             </tr>
             <tr>
-              <td className={styles.guideTableCell}>FAQ schema matches the visible FAQ exactly</td>
-              <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>src/data/faqData.js</code></td>
+              <td className={styles.guideTableCell}>Schemas claim nothing the page doesn't show</td>
+              <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>src/utils/seo.js</code></td>
               <td className={styles.guideTableCell}>☐</td>
             </tr>
             <tr>

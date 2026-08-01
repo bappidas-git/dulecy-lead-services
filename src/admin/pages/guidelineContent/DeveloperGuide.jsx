@@ -85,7 +85,7 @@ const DeveloperGuide = ({ styles }) => {
 │   ├── animations/           # GSAP hooks — see section 5
 │   ├── components/
 │   │   └── common/           # Header, Footer, MobileMenu, LeadModal,
-│   │                         # LeadFormDrawer, UnifiedLeadForm, SEO/SEOHead
+│   │                         # UnifiedLeadForm, SEO/SEOHead
 │   ├── config/               # seo.js
 │   ├── context/              # ModalContext (enquiry modal), ThemeContext
 │   ├── data/                 # === CONTENT LAYER — edit here, not in JSX ===
@@ -143,10 +143,6 @@ const DeveloperGuide = ({ styles }) => {
               <td className={styles.guideTableCell}>The Who We Serve page</td>
             </tr>
             <tr>
-              <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>aboutData.js</code>, <code className={styles.guideInlineCode}>statsData.js</code>, <code className={styles.guideInlineCode}>featuresData.js</code>, <code className={styles.guideInlineCode}>faqData.js</code></td>
-              <td className={styles.guideTableCell}>About page, metrics, value props, FAQ (and the FAQ schema)</td>
-            </tr>
-            <tr>
               <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>navigation.js</code></td>
               <td className={styles.guideTableCell}>
                 The nav list, used by the desktop header, the mobile menu and the footer — add a
@@ -176,32 +172,32 @@ const DeveloperGuide = ({ styles }) => {
           </thead>
           <tbody>
             <tr>
-              <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>--color-primary</code></td>
-              <td className={styles.guideTableCell}>#0B0B0C — ink</td>
-              <td className={styles.guideTableCell}>Headings, header, footer</td>
+              <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>--ink</code></td>
+              <td className={styles.guideTableCell}>#0B0B0C</td>
+              <td className={styles.guideTableCell}>Headings, header, footer — the site's near-black</td>
             </tr>
             <tr>
-              <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>--color-accent</code></td>
+              <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>--red</code></td>
               <td className={styles.guideTableCell}>#D5192E — Dulecy red</td>
               <td className={styles.guideTableCell}>Primary CTAs and key highlights only — used sparingly</td>
             </tr>
             <tr>
-              <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>--color-accent-tint</code></td>
-              <td className={styles.guideTableCell}>#FDECEE</td>
-              <td className={styles.guideTableCell}>Light red wash for chips and selected rows</td>
+              <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>--grad</code></td>
+              <td className={styles.guideTableCell}>#E8293E → #A80E1E</td>
+              <td className={styles.guideTableCell}>The red CTA gradient (and <code className={styles.guideInlineCode}>--grad-text</code> for gradient headlines)</td>
             </tr>
             <tr>
-              <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>--color-slate</code></td>
-              <td className={styles.guideTableCell}>#4A4A4F</td>
-              <td className={styles.guideTableCell}>Secondary text</td>
+              <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>--grey-2</code> / <code className={styles.guideInlineCode}>--grey-3</code></td>
+              <td className={styles.guideTableCell}>#4A4A4F / #6B6B70</td>
+              <td className={styles.guideTableCell}>Secondary and muted text</td>
             </tr>
             <tr>
-              <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>--color-bg-subtle</code></td>
+              <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>--bg-grey</code></td>
               <td className={styles.guideTableCell}>#F5F5F6</td>
               <td className={styles.guideTableCell}>Alternating section background</td>
             </tr>
             <tr>
-              <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>--color-border</code></td>
+              <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>--line</code></td>
               <td className={styles.guideTableCell}>#E7E7EA</td>
               <td className={styles.guideTableCell}>Thin 1px borders — used instead of heavy shadows</td>
             </tr>
@@ -250,10 +246,6 @@ const DeveloperGuide = ({ styles }) => {
             <tr>
               <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>useHeroIntro</code></td>
               <td className={styles.guideTableCell}>The hero's entrance timeline</td>
-            </tr>
-            <tr>
-              <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>useCountUp</code></td>
-              <td className={styles.guideTableCell}>Scroll-triggered number counters</td>
             </tr>
             <tr>
               <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>useParallax</code></td>

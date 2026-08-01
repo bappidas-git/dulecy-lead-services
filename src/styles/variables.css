@@ -21,60 +21,27 @@
   --grad-text: linear-gradient(120deg, #E8293E, #A80E1E);
 
   /* ========== Semantic aliases (legacy names → Dulecy values) ==========
-     Existing `.module.css` files reference these names; they now resolve to
-     the Dulecy palette so nothing renders navy/green. */
+     `global.css` still references these names; they resolve to the Dulecy
+     palette above. Prefer the master tokens in new code. */
   --color-primary: #0B0B0C;        /* Ink — headings, header, footer */
   --color-primary-dark: #0B0B0C;   /* Ink — footer bg, hero scrim */
-  --color-primary-light: #2A2A2E;  /* Lighter ink */
-  --color-secondary: #D5192E;      /* Dulecy red — accents, labels, badges */
   --color-accent: #D5192E;         /* Dulecy red — CTAs, highlights, links */
   --color-accent-dark: #A80E1E;    /* CTA hover */
-  --color-accent-tint: #FDECEE;    /* Light red wash for chips/backgrounds */
-  --color-success: #1E8E5A;        /* Positive highlights */
-  --color-ink: #0B0B0C;            /* Body headings text */
-  --color-slate: #4A4A4F;          /* Secondary text */
-  --color-bg: #FFFFFF;             /* Page background */
-  --color-bg-subtle: #F5F5F6;      /* Alternating section background */
-  --color-border: #E7E7EA;         /* Thin 1px borders */
-  --color-tint: #F5F5F6;           /* Light card/section backgrounds */
   --color-text: #0B0B0C;           /* Body text on light */
-  --color-white: #FFFFFF;
 
   /* ========== Primary Colors (legacy names → Dulecy ink) ========== */
   --primary-dark: #0B0B0C;
   --primary-dark-alt: #0B0B0C;
-  --primary-dark-light: #2A2A2E;
-  --primary-dark-lighter: #6B6B70;
 
   /* ========== Accent (legacy `--accent-gold*`) — remapped to ink ==========
      Older stylesheets used `--accent-gold` for structural accents.
-     We map them all to Dulecy ink so existing CSS references stay valid
+     We map them to Dulecy ink so existing CSS references stay valid
      and the page reads as near-black. */
   --accent-gold: #0B0B0C;
-  --accent-gold-light: #2A2A2E;
-  --accent-gold-dark: #0B0B0C;
-  --accent-gold-hover: #2A2A2E;
   --accent-gold-gradient: linear-gradient(135deg, #0B0B0C 0%, #2A2A2E 100%);
-  --accent-gold-gradient-reverse: linear-gradient(135deg, #2A2A2E 0%, #0B0B0C 100%);
-  --accent-gold-gradient-horizontal: linear-gradient(90deg, #0B0B0C 0%, #2A2A2E 50%, #0B0B0C 100%);
 
-  /* ========== Accent Red — CTAs Only (legacy `--accent-orange`) ========== */
-  --accent-orange: #D5192E;
-  --accent-orange-light: #F0293E;
-  --accent-orange-dark: #A80E1E;
-  --accent-orange-gradient: linear-gradient(135deg, #E8293E 0%, #A80E1E 100%);
-  --accent-orange-gradient-reverse: linear-gradient(135deg, #A80E1E 0%, #E8293E 100%);
-
-  /* Dulecy red CTA aliases (preferred for new code) */
-  --accent-amber: #D5192E;
-  --accent-amber-light: #F0293E;
-  --accent-amber-dark: #A80E1E;
+  /* Dulecy red CTA gradient (legacy `--accent-amber*` name). */
   --accent-amber-gradient: linear-gradient(135deg, #E8293E 0%, #A80E1E 100%);
-
-  /* ========== Secondary Red (legacy `--accent-red`) ========== */
-  --accent-red: #D5192E;
-  --accent-red-light: #F0293E;
-  --accent-red-dark: #A80E1E;
 
   /* ========== Neutral Colors ========== */
   --white: #FFFFFF;
@@ -84,25 +51,15 @@
   --border-gray: #E7E7EA;
   --text-gray: #4A4A4F;
   --text-dark-gray: #0B0B0C;
-  --dark-gray: #2A2A2E;
 
-  /* ========== Icon Background Colors ========== */
+  /* ========== Icon Colors (global.css `.icon-circle-*` swatches) ========== */
   --icon-gold: #0B0B0C;
-  --icon-gold-bg: rgba(11, 11, 12, 0.08);
   --icon-green: #1E8E5A;
-  --icon-green-bg: rgba(30, 142, 90, 0.15);
   --icon-purple: #6B3FA0;
-  --icon-purple-bg: rgba(107, 63, 160, 0.15);
   --icon-orange: #D5192E;
-  --icon-orange-bg: rgba(213, 25, 46, 0.12);
   --icon-pink: #D5192E;
-  --icon-pink-bg: rgba(213, 25, 46, 0.10);
   --icon-red: #D5192E;
-  --icon-red-bg: rgba(213, 25, 46, 0.12);
   --icon-teal: #0B0B0C;
-  --icon-teal-bg: rgba(11, 11, 12, 0.08);
-  --icon-blue: #0B0B0C;
-  --icon-blue-bg: rgba(11, 11, 12, 0.08);
 
   /* ========== Card Backgrounds ========== */
   --card-yellow: #FDECEE;
@@ -110,9 +67,6 @@
   --card-pink: #FDECEE;
   --card-purple: #F5F5F6;
   --card-orange: #FDECEE;
-  --card-blue: #F5F5F6;
-  --card-gold-gradient: linear-gradient(135deg, #0B0B0C 0%, #2A2A2E 100%);
-  --card-dark-gradient: linear-gradient(135deg, #0B0B0C 0%, #2A2A2E 100%);
 
   /* ========== Semantic Colors ========== */
   --success: #1E8E5A;
@@ -214,8 +168,6 @@
   /* ========== Borders ========== */
   --border-thin: 1px solid var(--border-gray);
   --border-medium: 2px solid var(--border-gray);
-  --border-gold: 2px solid var(--accent-gold);
-  --border-gold-thin: 1px solid var(--accent-gold);
 
   /* ========== Transitions ========== */
   --transition-fast: 150ms ease;
@@ -260,7 +212,6 @@
   /* ========== Header/Navigation ========== */
   --header-height: 80px;
   --header-height-scrolled: 70px;
-  --mobile-nav-height: 64px;
 
   /* ========== Overlays ========== */
   --overlay-light: rgba(255, 255, 255, 0.8);

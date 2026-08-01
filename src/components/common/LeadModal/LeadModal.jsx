@@ -1,7 +1,7 @@
 /* ============================================
    LeadModal — the global enquiry modal
    --------------------------------------------
-   Replaces the Nilachal-era side drawer. Ported from the `.modal`
+   The site's single enquiry surface. Ported from the `.modal`
    block that every `mockup/*.html` page carries: a blurred overlay, a
    centered white box with the ✕ close button, the fixed heading block,
    and the shared `UnifiedLeadForm`.

@@ -1,14 +1,11 @@
 /* ============================================
-   Validators — Nilachal Infracon
-   Form validation utilities
+   Validators — Dulecy Lead Services
+   --------------------------------------------
+   Field-level validation for the single enquiry form
+   (`UnifiedLeadForm`), which is the only consumer. Each helper returns
+   an error STRING (empty string = valid) so the form can render it
+   directly under the field.
    ============================================ */
-
-/**
- * Indian Mobile Number Validation
- * Valid Indian mobile numbers start with 6, 7, 8, or 9 followed by 9 digits
- * Total 10 digits
- */
-export const INDIAN_MOBILE_REGEX = /^[6-9]\d{9}$/;
 
 /**
  * Email Validation Regex
@@ -17,63 +14,12 @@ export const INDIAN_MOBILE_REGEX = /^[6-9]\d{9}$/;
 export const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 /**
- * Name Validation Regex
- * Allows letters, spaces, and common name characters
- * Minimum 2 characters
- */
-export const NAME_REGEX = /^[a-zA-Z\s.'-]{2,50}$/;
-
-/**
- * Validate Indian Mobile Number
- * @param {string} mobile - Mobile number to validate
- * @returns {boolean} - True if valid
- */
-export const validateIndianMobile = (mobile) => {
-  if (!mobile) return false;
-  // Remove any spaces or dashes
-  const cleanedMobile = mobile.replace(/[\s-]/g, '');
-  return INDIAN_MOBILE_REGEX.test(cleanedMobile);
-};
-
-/**
- * Validate Email Address
- * @param {string} email - Email to validate
- * @returns {boolean} - True if valid
- */
-export const validateEmail = (email) => {
-  if (!email) return false;
-  return EMAIL_REGEX.test(email.trim());
-};
-
-/**
- * Validate Name
- * @param {string} name - Name to validate
- * @returns {boolean} - True if valid
- */
-export const validateName = (name) => {
-  if (!name) return false;
-  return NAME_REGEX.test(name.trim());
-};
-
-/**
- * Validate Message
- * @param {string} message - Message to validate
- * @param {number} minLength - Minimum length (default: 1)
- * @param {number} maxLength - Maximum length (default: 500)
- * @returns {boolean} - True if valid
- */
-export const validateMessage = (message, minLength = 1, maxLength = 500) => {
-  if (!message) return false;
-  const trimmedMessage = message.trim();
-  return trimmedMessage.length >= minLength && trimmedMessage.length <= maxLength;
-};
-
-/**
- * Get validation error message for mobile number
+ * Get validation error message for a REQUIRED mobile number.
+ * Module-local — the form only ever asks for the optional variant below.
  * @param {string} mobile - Mobile number
  * @returns {string} - Error message or empty string
  */
-export const getMobileErrorMessage = (mobile) => {
+const getMobileErrorMessage = (mobile) => {
   if (!mobile) return 'Mobile number is required';
 
   const cleanedMobile = mobile.replace(/[\s-]/g, '');
@@ -155,99 +101,3 @@ export const getNameErrorMessage = (name) => {
 
   return '';
 };
-
-/**
- * Get validation error message for message
- * @param {string} message - Message content
- * @returns {string} - Error message or empty string
- */
-export const getMessageErrorMessage = (message) => {
-  if (!message) return 'Message is required';
-
-  const trimmedMessage = message.trim();
-
-  if (trimmedMessage.length < 1) {
-    return 'Please enter a message';
-  }
-
-  if (trimmedMessage.length > 500) {
-    return 'Message cannot exceed 500 characters';
-  }
-
-  return '';
-};
-
-/**
- * Validate entire lead form
- * @param {Object} formData - Form data object
- * @returns {Object} - Validation result with isValid and errors
- */
-export const validateLeadForm = (formData) => {
-  const errors = {};
-
-  const nameError = getNameErrorMessage(formData.name);
-  if (nameError) errors.name = nameError;
-
-  const mobileError = getMobileErrorMessage(formData.mobile);
-  if (mobileError) errors.mobile = mobileError;
-
-  const emailError = getEmailErrorMessage(formData.email);
-  if (emailError) errors.email = emailError;
-
-  const messageError = getMessageErrorMessage(formData.message);
-  if (messageError) errors.message = messageError;
-
-  return {
-    isValid: Object.keys(errors).length === 0,
-    errors,
-  };
-};
-
-/**
- * Format phone number for display
- * @param {string} phone - Phone number
- * @returns {string} - Formatted phone number
- */
-export const formatPhoneNumber = (phone) => {
-  if (!phone) return '';
-
-  const cleaned = phone.replace(/\D/g, '');
-
-  if (cleaned.length <= 3) return cleaned;
-  if (cleaned.length <= 6) return `${cleaned.slice(0, 3)} ${cleaned.slice(3)}`;
-  return `${cleaned.slice(0, 3)} ${cleaned.slice(3, 6)} ${cleaned.slice(6, 10)}`;
-};
-
-/**
- * Sanitize input to prevent XSS
- * @param {string} input - User input
- * @returns {string} - Sanitized input
- */
-export const sanitizeInput = (input) => {
-  if (!input) return '';
-  return input
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-};
-
-const validators = {
-  INDIAN_MOBILE_REGEX,
-  EMAIL_REGEX,
-  NAME_REGEX,
-  validateIndianMobile,
-  validateEmail,
-  validateName,
-  validateMessage,
-  getMobileErrorMessage,
-  getOptionalMobileErrorMessage,
-  getEmailErrorMessage,
-  getNameErrorMessage,
-  getMessageErrorMessage,
-  validateLeadForm,
-  formatPhoneNumber,
-  sanitizeInput,
-};
-
-export default validators;

@@ -27,10 +27,9 @@ export const EASE = 'power3.out';
 export const EASE_IN_OUT = 'power3.inOut';
 
 // Duration tokens (seconds). `hero` / `slow` / `stagger` / `line` carry the
-// mockup's four tween durations; `fast` / `base` predate the Dulecy port and
-// stay for the non-mockup surfaces (ThankYou, admin) that still use them.
+// mockup's four tween durations; `base` is the fallback default for hooks
+// called without a preset.
 export const DURATION = {
-  fast: 0.4,
   base: 0.6,
   stagger: 0.8, // data-stagger children
   slow: 0.9, // data-reveal

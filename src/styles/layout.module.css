@@ -5,8 +5,9 @@
    .container, .section, .section--grey, .section--dark, .split*).
 
    They live in a *module* rather than in global CSS because the legacy
-   Nilachal stylesheets already own global `.container` / `.section` with
-   different padding (and `responsive.css` overrides them per breakpoint).
+   stylesheets (`global.css`) already own global `.container` / `.section`
+   with different padding (and `responsive.css` overrides them per
+   breakpoint).
    Importing this module keeps the mockup's exact spacing without
    depending on stylesheet order:
 

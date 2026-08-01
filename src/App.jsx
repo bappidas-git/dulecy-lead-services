@@ -6,16 +6,13 @@
    routes and a branded `*` catch-all. `/thank-you` was retired in
    Prompt 07 — the enquiry form now confirms inline.
 
-   The Nilachal-era floating UI (bottom mobile nav, swipe drawer,
-   WhatsApp FAB, scroll-progress bar, back-to-top) is no longer
-   mounted — the Dulecy mockup has none of it. Those files are
-   deleted in Prompt 11.
+   The only floating UI is the burger → full-screen overlay menu
+   (`MobileMenu`) and the global enquiry modal (`LeadModal`).
    ============================================ */
 
 import React, { Suspense, lazy, useEffect, memo } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { CircularProgress, Skeleton, Box } from '@mui/material';
-import { motion } from 'framer-motion';
 
 // App Styles
 import './App.css';
@@ -108,6 +105,8 @@ class ErrorBoundary extends React.Component {
 
 // ===========================================
 // Section Loader Component
+// Two variants are in use: `skeleton` for public route chunks and
+// `default` for the admin shell.
 // ===========================================
 const SectionLoader = memo(({ height = 300, variant = 'default' }) => {
   const variants = {
@@ -122,19 +121,14 @@ const SectionLoader = memo(({ height = 300, variant = 'default' }) => {
           background: 'linear-gradient(180deg, #F5F5F6 0%, #FFFFFF 100%)',
         }}
       >
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}
-        >
-          <CircularProgress
-            size={40}
-            thickness={3}
-            sx={{
-              color: '#0B0B0C',
-            }}
-          />
-        </motion.div>
+        <CircularProgress
+          size={40}
+          thickness={3}
+          sx={{
+            color: '#0B0B0C',
+            animation: 'fadeIn 0.3s ease',
+          }}
+        />
       </Box>
     ),
     skeleton: (
@@ -162,27 +156,6 @@ const SectionLoader = memo(({ height = 300, variant = 'default' }) => {
             />
           ))}
         </Box>
-      </Box>
-    ),
-    minimal: (
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          minHeight: height,
-          width: '100%',
-        }}
-      >
-        <Box
-          sx={{
-            width: 8,
-            height: 8,
-            borderRadius: '50%',
-            backgroundColor: '#0B0B0C',
-            animation: 'pulse 1s ease-in-out infinite',
-          }}
-        />
       </Box>
     ),
   };
