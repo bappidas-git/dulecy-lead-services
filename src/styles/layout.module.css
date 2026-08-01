@@ -41,6 +41,15 @@
   overflow: hidden;
 }
 
+/* Accessibility (Prompt 12): the 11px bold `.eyebrow` is `--red` (#D5192E),
+   which reaches only 3.75:1 on ink — below the 4.5:1 AA threshold for
+   body-size text. On dark sections it switches to the brighter brand red
+   `--red-hi` (#F0293E, 4.77:1), the same token the footer icons already use
+   on this background. Light-background eyebrows keep `--red` unchanged. */
+.sectionDark :global(.eyebrow) {
+  color: var(--red-hi);
+}
+
 /* ========== Two-column split (aside + main) ========== */
 .split {
   display: flex;

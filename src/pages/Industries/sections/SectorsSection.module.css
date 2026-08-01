@@ -61,7 +61,10 @@
 .num {
   font-size: 12px;
   font-weight: 700;
-  color: #dedee2;
+  /* Was #DEDEE2 — a 1.34:1 ghost ordinal, effectively invisible and far
+     under AA for 12px text. `--grey-3` (#6B6B70) reaches 5.30:1. The number
+     stays the same size and position; it is simply legible now (Prompt 12). */
+  color: var(--grey-3);
   letter-spacing: 0.1em;
 }
 

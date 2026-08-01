@@ -22,7 +22,8 @@
   display: flex;
 }
 
-.menu nav {
+/* The panel itself is now the `nav` landmark; this is the links group. */
+.links {
   display: flex;
   flex-direction: column;
   gap: 6px;

@@ -108,7 +108,10 @@
   margin: 0;
   font-size: 12.5px;
   line-height: normal;
-  color: var(--grey-4);
+  /* Was `--grey-4` (#8B8B92) — 3.38:1 against the modal's white panel,
+     under AA for 12.5px text. `--grey-3` (#6B6B70) reaches 5.30:1, and
+     4.95:1 on the Contact page's #F5F5F6 panel (Prompt 12). */
+  color: var(--grey-3);
   text-align: center;
 }
 

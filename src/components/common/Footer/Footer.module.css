@@ -130,13 +130,17 @@
   min-width: 220px;
 }
 
-.col h4 {
+/* `h3` since Prompt 12 — the footer heading used to be an `h4` under the
+   CTA's `h2`, which skipped a level. Styling is unchanged. */
+.col h3 {
   margin: 0 0 18px;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: #5c5c63;
+  /* Was #5C5C63 — only 2.96:1 on ink, below AA for 11px text. `--grey-4`
+     (#8B8B92) reaches 5.81:1 and is already the footer's body-text grey. */
+  color: var(--grey-4);
 }
 
 /* ========== Explore nav ========== */
@@ -257,7 +261,8 @@
   gap: 10px 24px;
   justify-content: space-between;
   font-size: 12.5px;
-  color: #5c5c63;
+  /* Was #5C5C63 — 2.96:1 on ink. `--grey-4` reaches 5.81:1. */
+  color: var(--grey-4);
 }
 
 .legal .serif {

@@ -65,7 +65,10 @@
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.14em;
-  color: #3d3d42;
+  /* Was #3D3D42 — 1.74:1 on this dark band, far under AA for 11px text.
+     `--grey-4` (#8B8B92) reaches 5.57:1 here. Same size and position, just
+     legible (Prompt 12). */
+  color: var(--grey-4);
 }
 
 .name {
