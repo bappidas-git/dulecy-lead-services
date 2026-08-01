@@ -1,0 +1,170 @@
+/* ============================================
+   About / Intersection band — values ported verbatim
+   from `mockup/styles.css` (.stack-words, .numlist) plus
+   the per-instance inline styles in `mockup/about.html`
+   (backdrop crop + opacity, scrim gradients, glow
+   placement, column flex, kicker).
+   ============================================ */
+
+.bg {
+  position: absolute;
+  top: -18%;
+  left: 0;
+  width: 100%;
+  height: 136%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0.38;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(11, 11, 12, 0.96) 0%,
+      rgba(11, 11, 12, 0.82) 45%,
+      rgba(11, 11, 12, 0.55) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(11, 11, 12, 0.7) 0%,
+      transparent 30%,
+      transparent 70%,
+      rgba(11, 11, 12, 0.8) 100%
+    );
+}
+
+.glow {
+  left: -160px;
+  bottom: -180px;
+  width: 520px;
+  height: 520px;
+  background: radial-gradient(
+    circle at 60% 40%,
+    rgba(232, 41, 62, 0.3),
+    transparent 65%
+  );
+}
+
+/* ========== Columns ========== */
+.inner {
+  position: relative;
+  padding-top: clamp(70px, 10vw, 120px);
+  padding-bottom: clamp(70px, 10vw, 120px);
+}
+
+.cols {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 40px clamp(40px, 6vw, 90px);
+}
+
+.colWords {
+  flex: 1.4 1 340px;
+  min-width: 280px;
+}
+
+.colList {
+  flex: 1 1 280px;
+  min-width: 260px;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-bottom: 10px;
+}
+
+/* ========== Kicker ========== */
+.kicker {
+  margin: 0 0 30px;
+  font-size: 13px;
+  font-weight: 600;
+  /* The mockup leaves this inherited; our reset gives <p> 1.625, which
+     would push the stacked words down by ~8px. */
+  line-height: normal;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #a6a6ad;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dash {
+  width: 26px;
+  height: 1.5px;
+  background: var(--red);
+}
+
+/* ========== Stacked display words ========== */
+.stackWords {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stackWords > span {
+  font-size: clamp(32px, 7vw, 88px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
+/* Stroke-only words. The -webkit- prefix is the working implementation
+   in Chromium, WebKit and Firefox alike — there is no unprefixed form. */
+.stackWords > span.outline {
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.8);
+}
+
+/* Trailing punctuation stays solid red, never stroked. */
+.stackWords i {
+  color: var(--red);
+  font-style: normal;
+  -webkit-text-stroke: 0;
+}
+
+/* ========== Right column ========== */
+.intro {
+  margin: 0;
+  font-size: clamp(16px, 1.9vw, 19px);
+  line-height: 1.7;
+  color: #e7e7ea;
+  text-wrap: pretty;
+}
+
+.numlist {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.numlist > div {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.numlist > div:last-child {
+  border-bottom: none;
+}
+
+.numlist b {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--red-hi);
+  min-width: 24px;
+}
+
+.numlist span {
+  font-size: 14.5px;
+  color: #c9c9ce;
+}

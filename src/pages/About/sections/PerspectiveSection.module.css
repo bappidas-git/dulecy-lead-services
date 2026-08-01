@@ -1,0 +1,48 @@
+/* ============================================
+   About / A distinctive perspective — the per-instance
+   values the mockup set inline on this section
+   (`mockup/about.html`); the split, rule and body
+   typography come from the shared layout module +
+   `dulecy.css`.
+   ============================================ */
+
+.head {
+  font-size: clamp(28px, 4vw, 46px);
+  line-height: 1.08;
+}
+
+/* One step down from the shared `.body-lg` scale. */
+.lead {
+  font-size: clamp(16px, 1.8vw, 19px);
+}
+
+/* ========== Qualifier tiles ========== */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+  gap: 14px;
+  margin-top: 6px;
+}
+
+.tile {
+  background: var(--bg-grey);
+  border-radius: 18px;
+  padding: 24px;
+}
+
+/* Scoped through `.tile` so it outranks the layout module's
+   `.splitMain p { margin: 0 }`, exactly as the mockup's inline style did. */
+.tile .tileTitle {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+  /* The mockup leaves this inherited; our reset gives <p> 1.625. */
+  line-height: normal;
+}
+
+.tile .tileDesc {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--grey-3);
+}

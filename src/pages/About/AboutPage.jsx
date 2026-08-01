@@ -1,22 +1,29 @@
 /* ============================================
-   AboutPage — stub
+   AboutPage — `/about`
    --------------------------------------------
-   Placeholder carrying only the mockup's hero headline
-   (`mockup/about.html`). The full page lands in Prompt 04.
+   The six sections of `mockup/about.html`, in order. Each is its own
+   component + module; the shared header, footer and enquiry drawer come
+   from `PublicLayout` / `App`.
    ============================================ */
 
 import React from 'react';
+import HeroSection from './sections/HeroSection';
+import IntersectionSection from './sections/IntersectionSection';
+import PerspectiveSection from './sections/PerspectiveSection';
+import DifferenceSection from './sections/DifferenceSection';
+import PrinciplesSection from './sections/PrinciplesSection';
+import CommitmentSection from './sections/CommitmentSection';
 import styles from './AboutPage.module.css';
 
 const AboutPage = () => (
-  <section className={styles.hero}>
-    <p className="eyebrow">About us</p>
-    <h1 className="display display--md">
-      Built on experience.
-      <br />
-      <em className="serif grad-text">Defined by trust.</em>
-    </h1>
-  </section>
+  <div className={styles.page}>
+    <HeroSection />
+    <IntersectionSection />
+    <PerspectiveSection />
+    <DifferenceSection />
+    <PrinciplesSection />
+    <CommitmentSection />
+  </div>
 );
 
 export default AboutPage;

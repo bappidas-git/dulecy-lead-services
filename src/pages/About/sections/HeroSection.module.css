@@ -1,0 +1,38 @@
+/* ============================================
+   About / Hero — values ported verbatim from
+   `mockup/styles.css` (.hero, .hero__inner) plus the
+   per-instance inline styles in `mockup/about.html`
+   (reduced bottom padding, headline margin / max-width,
+   lede max-width, closing statement).
+   ============================================ */
+
+.hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.inner {
+  position: relative;
+  padding-top: clamp(140px, 18vh, 190px);
+  /* The About hero sits closer to the band below it than the Home one. */
+  padding-bottom: clamp(60px, 8vw, 90px);
+}
+
+.head {
+  margin-top: 20px;
+  max-width: 1000px;
+}
+
+.lede {
+  max-width: 680px;
+}
+
+.closing {
+  margin: 22px 0 0;
+  font-size: clamp(19px, 2.2vw, 24px);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  /* The mockup leaves this inherited; our reset gives <p> 1.625, which
+     would open this bold two-line statement up by ~10px. */
+  line-height: normal;
+}
