@@ -15,6 +15,7 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import UnifiedLeadForm from '../UnifiedLeadForm/UnifiedLeadForm';
+import { scheduleRefresh } from '../../../animations';
 import styles from './LeadModal.module.css';
 
 const FOCUSABLE =
@@ -66,6 +67,13 @@ const LeadModal = ({ isOpen, onClose, source = 'general', serviceInterest = '' }
 
   // Body scroll lock — fix the body at the current offset so the page
   // doesn't jump, and restore both the styles and the scroll position.
+  //
+  // `position: fixed` collapses the document to viewport height, which
+  // invalidates every ScrollTrigger start/end behind the overlay. Refresh on
+  // both edges (the mockup never had to — its modal did not lock the body),
+  // so a reveal or parallax below the fold is not left measuring a page that
+  // no longer exists. `scheduleRefresh` defers a frame, so on close it runs
+  // after the styles and scroll position are back.
   useEffect(() => {
     if (!isOpen) return undefined;
 
@@ -82,6 +90,7 @@ const LeadModal = ({ isOpen, onClose, source = 'general', serviceInterest = '' }
     body.style.position = 'fixed';
     body.style.top = `-${scrollY}px`;
     body.style.width = '100%';
+    scheduleRefresh();
 
     return () => {
       body.style.overflow = previous.overflow;
@@ -89,6 +98,7 @@ const LeadModal = ({ isOpen, onClose, source = 'general', serviceInterest = '' }
       body.style.top = previous.top;
       body.style.width = previous.width;
       window.scrollTo(0, scrollY);
+      scheduleRefresh();
     };
   }, [isOpen]);
 

@@ -10,8 +10,11 @@
 import { useRef } from 'react';
 import {
   gsap,
-  ScrollTrigger,
   useGSAP,
+  DURATION,
+  EASE_IN_OUT,
+  START,
+  scheduleRefresh,
   prefersReducedMotion,
 } from './gsapSetup';
 
@@ -26,9 +29,9 @@ import {
 export default function useLineReveal(options = {}) {
   const ref = useRef(null);
   const {
-    duration = 1.1,
-    ease = 'power3.inOut',
-    start = 'top 92%',
+    duration = DURATION.line,
+    ease = EASE_IN_OUT,
+    start = START.line,
     once = true,
   } = options;
 
@@ -54,7 +57,7 @@ export default function useLineReveal(options = {}) {
         }
       );
 
-      ScrollTrigger.refresh();
+      scheduleRefresh();
     },
     { scope: ref }
   );

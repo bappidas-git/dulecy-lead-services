@@ -146,3 +146,14 @@
   font-size: 15px;
   font-weight: 600;
 }
+
+/* Intentional improvement on the mockup, which leaves `floaty` and
+   `pulseDot` looping under reduced motion. Both stop at their neutral frame:
+   the icon sits still, the badge dot stays solid red. Matches the same block
+   in `ContactPage.module.css`, whose badge carries the identical dot. */
+@media (prefers-reduced-motion: reduce) {
+  .dot,
+  .float {
+    animation: none;
+  }
+}

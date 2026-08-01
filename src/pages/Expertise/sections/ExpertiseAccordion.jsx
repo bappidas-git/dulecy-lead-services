@@ -20,7 +20,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { expertiseAreas } from '../../../data/expertiseData';
 import { useModal } from '../../../context/ModalContext';
-import { ScrollTrigger } from '../../../animations';
+import { scheduleRefresh } from '../../../animations';
 import { hashToId, scrollToHash } from '../../../utils/hashScroll';
 import layout from '../../../styles/layout.module.css';
 import styles from './ExpertiseAccordion.module.css';
@@ -58,9 +58,11 @@ const ExpertiseAccordion = () => {
   }, [hashId, location.key]);
 
   // Toggling changes the page height — every ScrollTrigger below has to
-  // re-measure, exactly as the mockup refreshed after each toggle.
+  // re-measure, exactly as the mockup refreshed after each toggle. Deferred
+  // by a frame so the newly rendered body is already laid out when we
+  // measure (the effect itself runs before paint).
   useEffect(() => {
-    ScrollTrigger.refresh();
+    scheduleRefresh();
   }, [openId]);
 
   // …then land on the deep-linked item, now that its open state has

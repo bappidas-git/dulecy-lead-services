@@ -11,10 +11,10 @@
 import { useRef } from 'react';
 import {
   gsap,
-  ScrollTrigger,
   useGSAP,
   EASE,
   DURATION,
+  scheduleRefresh,
   prefersReducedMotion,
 } from './gsapSetup';
 
@@ -77,7 +77,7 @@ export default function useCountUp(end, options = {}) {
         scrollTrigger: { trigger: el, start, once },
       });
 
-      ScrollTrigger.refresh();
+      scheduleRefresh();
     },
     { scope: ref, dependencies: [end] }
   );

@@ -11,9 +11,10 @@
 import { useRef } from 'react';
 import {
   gsap,
-  ScrollTrigger,
   useGSAP,
   EASE,
+  DURATION,
+  scheduleRefresh,
   prefersReducedMotion,
 } from './gsapSetup';
 
@@ -31,7 +32,7 @@ export default function useHeroIntro(options = {}) {
   const {
     selector = '[data-hero]',
     y = 36,
-    duration = 1,
+    duration = DURATION.hero,
     stagger = 0.12,
     delay = 0.1,
   } = options;
@@ -57,7 +58,7 @@ export default function useHeroIntro(options = {}) {
 
       // The hero sets the page's top offset — every scroll trigger below it
       // must re-measure once it has mounted.
-      ScrollTrigger.refresh();
+      scheduleRefresh();
     },
     { scope: ref }
   );

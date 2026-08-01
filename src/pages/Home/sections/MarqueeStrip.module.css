@@ -46,3 +46,13 @@
     transform: translateX(-50%);
   }
 }
+
+/* Intentional improvement on the mockup, which leaves its CSS animations
+   running under reduced motion. A 36s scroll is exactly the kind of
+   continuous, unstoppable movement the setting exists to stop, so the strip
+   parks at its start frame and stays readable. */
+@media (prefers-reduced-motion: reduce) {
+  .track {
+    animation: none;
+  }
+}
