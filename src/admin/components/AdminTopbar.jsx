@@ -6,11 +6,12 @@ import React, { useState, useRef, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { Icon } from '@iconify/react';
 import { useAdminAuth } from '../context/AdminAuthContext';
-import { siteConfig } from '../../data/siteConfig';
+import { siteConfig, logoAt } from '../../data/siteConfig';
 import styles from './AdminTopbar.module.css';
 
 // Colour logo — the topbar and the mobile menu are both white surfaces.
-const BRAND_LOGO = siteConfig.logo;
+// Drawn 32px tall (24px on mobile); requested at 2x for retina.
+const BRAND_LOGO = logoAt(siteConfig.logo, { h: 64 });
 
 const navItems = [
   { label: 'Dashboard', path: '/admin/dashboard', icon: 'mdi:view-dashboard' },
@@ -61,7 +62,13 @@ const AdminTopbar = () => {
   return (
     <header className={styles.topbar}>
       <div className={styles.topbarLeft}>
-        <img src={BRAND_LOGO} alt={siteConfig.brandName} className={styles.logo} />
+        <img
+          src={BRAND_LOGO}
+          alt={siteConfig.brandName}
+          className={styles.logo}
+          width="242"
+          height="64"
+        />
         <span className={styles.divider} />
         <span className={styles.wordmark}>Admin Panel</span>
       </div>
@@ -114,6 +121,8 @@ const AdminTopbar = () => {
                 src={BRAND_LOGO}
                 alt={siteConfig.brandName}
                 className={styles.mobileMenuLogo}
+                width="242"
+                height="64"
               />
             </div>
 

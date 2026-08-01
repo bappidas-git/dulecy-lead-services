@@ -242,7 +242,10 @@ const UnifiedLeadForm = ({
   if (successName) {
     return (
       <div className={className}>
-        <div className={styles.success}>
+        {/* This block replaces the form outright, so without a live region a
+            screen-reader user gets no confirmation that the submit worked.
+            `status` announces politely, after the current utterance (Prompt 12). */}
+        <div className={styles.success} role="status">
           <i aria-hidden="true">&#10003;</i>
           <h3 className={styles.successHead}>Thank you, {successName}.</h3>
           <p className={styles.successBody}>

@@ -22,9 +22,10 @@ import { useHeroIntro } from '../../animations';
 import layout from '../../styles/layout.module.css';
 import styles from './ContactPage.module.css';
 
-// Icons8 CDN glyphs, as in the mockup — self-hosted in Prompt 12.
-const ICON_PHONE = 'https://img.icons8.com/ios-filled/100/D5192E/phone.png';
-const ICON_MAIL = 'https://img.icons8.com/ios-filled/100/D5192E/new-post.png';
+// The mockup's icons8 glyphs, self-hosted since Prompt 12. Refresh with
+// `npm run generate:images`.
+const ICON_PHONE = '/images/icons/phone-d5192e.png';
+const ICON_MAIL = '/images/icons/new-post-d5192e.png';
 
 const ContactPage = () => {
   const heroRef = useHeroIntro();
@@ -54,7 +55,14 @@ const ContactPage = () => {
             <div className={styles.cards} data-hero>
               <a href={telHref} className={styles.card}>
                 <i aria-hidden="true">
-                  <img src={ICON_PHONE} alt="" />
+                  {/* Above the fold on /contact — eager, not lazy. */}
+                  <img
+                    src={ICON_PHONE}
+                    alt=""
+                    width="100"
+                    height="100"
+                    decoding="async"
+                  />
                 </i>
                 <span>
                   <span className={styles.cardKey}>Call us</span>
@@ -66,7 +74,13 @@ const ContactPage = () => {
 
               <a href={mailHref} className={styles.card}>
                 <i aria-hidden="true">
-                  <img src={ICON_MAIL} alt="" />
+                  <img
+                    src={ICON_MAIL}
+                    alt=""
+                    width="100"
+                    height="100"
+                    decoding="async"
+                  />
                 </i>
                 <span className={styles.cardText}>
                   <span className={styles.cardKey}>Email us</span>

@@ -12,6 +12,12 @@
   overflow: hidden;
 }
 
+/* Format-negotiation wrapper only — `display: contents` removes its box so
+   `.bg` keeps positioning against `.hero` exactly as before. */
+.bgPicture {
+  display: contents;
+}
+
 .bg {
   position: absolute;
   top: -18%;

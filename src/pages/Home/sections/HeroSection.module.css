@@ -11,6 +11,13 @@
   overflow: hidden;
 }
 
+/* The <picture> is a pure format-negotiation wrapper: `display: contents`
+   removes its own box so `.bg` positions against `.hero` exactly as it did
+   when the <img> was a direct child. */
+.bgPicture {
+  display: contents;
+}
+
 .bg {
   position: absolute;
   top: -18%;

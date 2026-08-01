@@ -122,7 +122,9 @@
 }
 
 .actionWhite .actionSub {
-  color: var(--grey-4);
+  /* Was `--grey-4` (#8B8B92) — 3.38:1 on the white action card, under AA
+     for 13px text. `--grey-3` (#6B6B70) reaches 5.30:1 (Prompt 12). */
+  color: var(--grey-3);
 }
 
 .actionWhite i {
