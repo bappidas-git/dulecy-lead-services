@@ -1,5 +1,5 @@
 /* ============================================
-   useMediaQuery Hook — Nilachal Infracon
+   useMediaQuery Hook — Dulecy Lead Services
    Custom hook for responsive design
    ============================================ */
 

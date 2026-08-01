@@ -1,6 +1,6 @@
 /* ============================================
    Web Vitals Performance Monitoring
-   Nilachal Infracon
+   Dulecy Lead Services
 
    Measures Core Web Vitals:
    - CLS (Cumulative Layout Shift)
