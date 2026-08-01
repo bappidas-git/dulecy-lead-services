@@ -295,44 +295,10 @@
   }
 }
 
-/* ========== Mobile Navigation (Bottom Fixed Nav) ========== */
-@media screen and (max-width: 1023px) {
-  /* Mobile bottom navigation visible */
-  .mobile-nav {
-    display: flex;
-  }
-
-  /* Desktop header nav hidden */
-  .desktop-nav {
-    display: none;
-  }
-
-  /* Add padding to body for fixed bottom nav + safe area for notched devices */
-  body {
-    padding-bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px));
-  }
-
-  /* Adjust scroll for mobile */
-  html {
-    scroll-padding-bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + 20px);
-  }
-}
-
-@media screen and (min-width: 1024px) {
-  /* Mobile nav hidden on desktop */
-  .mobile-nav {
-    display: none;
-  }
-
-  /* Desktop nav visible */
-  .desktop-nav {
-    display: flex;
-  }
-
-  body {
-    padding-bottom: 0;
-  }
-}
+/* ========== Mobile Navigation — REMOVED (Prompt 02) ==========
+   The Nilachal bottom nav is gone (the Dulecy mockup uses a burger →
+   full-screen overlay), so the body padding that reserved room for it
+   is gone too — it left a 64px white band under the footer. */
 
 /* ========== Touch Device Optimizations ========== */
 @media (hover: none) and (pointer: coarse) {
@@ -385,8 +351,6 @@
 /* ========== Print Media ========== */
 @media print {
   /* Hide non-essential elements */
-  .mobile-nav,
-  .desktop-nav,
   .btn,
   button,
   .modal,
@@ -423,12 +387,6 @@
   /* Header with safe area */
   .header {
     padding-top: env(safe-area-inset-top);
-  }
-
-  /* Mobile nav with safe area */
-  .mobile-nav {
-    padding-bottom: env(safe-area-inset-bottom);
-    height: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom));
   }
 
   /* Full height sections account for safe areas */

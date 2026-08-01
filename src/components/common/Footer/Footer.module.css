@@ -1,568 +1,266 @@
 /* ============================================
-   Footer Component Styles — Dulecy Lead Services
-   Four-column layout on deep navy.
+   Footer — values ported verbatim from
+   `mockup/styles.css` (.site-footer, .footer-*)
    ============================================ */
 
-/* Footer Base */
 .footer {
-  background: var(--color-primary-dark);
-  color: var(--color-white);
+  background: var(--ink);
+  color: #a6a6ad;
+  overflow: hidden;
+  position: relative;
   margin-top: auto;
+  /* Match the mockup's default line-height (our body sets 1.5). */
+  line-height: normal;
 }
 
-/* Main Footer */
-.mainFooter {
-  padding: var(--space-16) 0 var(--space-10);
-}
-
-/* Footer Grid — Brand, Quick Links, Contact, Registered Office */
-.footerGrid {
-  display: grid;
-  grid-template-columns: 1.6fr 1fr 1.4fr 1.2fr;
-  gap: var(--space-10);
-}
-
-/* Column 1: Brand */
-.footerBrand {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-
-.logoWrapper {
-  display: flex;
-  align-items: center;
-  margin-bottom: var(--space-2);
-}
-
-.brandLogo {
-  height: 46px;
-  width: auto;
-  object-fit: contain;
-}
-
-.legalName {
-  font-size: var(--fs-base);
-  font-weight: var(--fw-semibold);
-  color: var(--color-white);
-  margin: 0;
-}
-
-.tagline {
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-medium);
-  /* light variant of the green accent — the token itself is 2.98:1 on the
-     dark footer navy; this passes WCAG AA (7.3:1 on #0B0B0C) */
-  color: #5bc489;
-  margin: 0;
-}
-
-.about {
-  font-size: var(--fs-sm);
-  color: rgba(255, 255, 255, 0.6);
-  line-height: var(--lh-relaxed);
-  margin: var(--space-1) 0 0;
-  max-width: 300px;
-}
-
-.brandLine {
-  font-size: var(--fs-xs);
-  color: rgba(255, 255, 255, 0.5);
-  margin: var(--space-2) 0 0;
-  letter-spacing: 0.01em;
-}
-
-/* Footer Columns */
-.footerColumn {
-  display: flex;
-  flex-direction: column;
-}
-
-.columnTitle {
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-semibold);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--color-white);
-  margin: 0 0 var(--space-5) 0;
-}
-
-/* Quick Links */
-.footerLinks {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-
-.footerLink {
-  font-size: var(--fs-sm);
-  color: rgba(255, 255, 255, 0.65);
+.footer a {
+  color: #a6a6ad;
   text-decoration: none;
-  transition: color var(--transition-fast);
 }
 
-.footerLink:hover {
-  color: var(--color-accent);
+.footer a:hover {
+  color: #fff;
 }
 
-/* Contact List */
-.contactList {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+.glow {
+  position: absolute;
+  right: -160px;
+  top: -200px;
+  width: 520px;
+  height: 520px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 40% 40%,
+    rgba(232, 41, 62, 0.18),
+    transparent 65%
+  );
+  pointer-events: none;
+}
+
+/* .container inside the footer */
+.container {
+  position: relative;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding-left: clamp(20px, 4vw, 44px);
+  padding-right: clamp(20px, 4vw, 44px);
+  padding-top: clamp(48px, 7vw, 80px);
+}
+
+/* ========== CTA row ========== */
+.cta {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
-.contactItem {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-3);
-}
-
-.contactIcon {
-  font-size: 1.15rem;
-  color: var(--color-accent);
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-
-.contactValue {
-  font-size: var(--fs-sm);
-  color: rgba(255, 255, 255, 0.7);
-  line-height: var(--lh-normal);
-}
-
-.contactLink {
-  font-size: var(--fs-sm);
-  color: rgba(255, 255, 255, 0.7);
-  text-decoration: none;
-  transition: color var(--transition-fast);
-  line-height: var(--lh-normal);
-}
-
-.contactLink:hover {
-  color: var(--color-accent);
-}
-
-/* WhatsApp Chip */
-.whatsappChip {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin-top: var(--space-5);
-  padding: var(--space-2) var(--space-4);
-  border-radius: var(--radius-full);
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-semibold);
-  text-decoration: none;
-  background: rgba(37, 211, 102, 0.14);
-  color: #4ade80;
-  border: 1px solid rgba(37, 211, 102, 0.3);
-  transition: background var(--transition-fast), color var(--transition-fast),
-    border-color var(--transition-fast);
-  align-self: flex-start;
-}
-
-.whatsappChip svg {
-  font-size: 1.05rem;
-}
-
-.whatsappChip:hover {
-  background: #25d366;
-  color: var(--color-white);
-  border-color: #25d366;
-}
-
-/* Column 4: Registered Office */
-.officeAddress {
-  font-size: var(--fs-sm);
-  color: rgba(255, 255, 255, 0.7);
-  line-height: var(--lh-relaxed);
-  margin: 0 0 var(--space-5);
-}
-
-.cin {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  margin: 0;
-}
-
-.cinLabel {
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.cinValue {
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-semibold);
-  color: rgba(255, 255, 255, 0.85);
-  letter-spacing: 0.02em;
-}
-
-/* Bottom Bar */
-.bottomBar {
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding: var(--space-5) 0;
-}
-
-.bottomContent {
-  display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
-  gap: var(--space-3);
+  gap: 24px 40px;
+  padding-bottom: clamp(36px, 5vw, 56px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.copyright {
-  font-size: var(--fs-sm);
-  color: rgba(255, 255, 255, 0.5);
+.cta h2 {
   margin: 0;
+  font-size: clamp(26px, 4vw, 44px);
+  font-weight: 750;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  color: #fff;
+  max-width: 560px;
+  text-wrap: balance;
 }
 
-.bottomRight {
+.cta :global(.btn--primary) {
+  padding: 15px 30px;
+  font-size: 15.5px;
+  flex-shrink: 0;
+}
+
+.serif {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--red-hi);
+}
+
+/* ========== Columns ========== */
+.cols {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px clamp(36px, 6vw, 90px);
+  padding-top: clamp(40px, 6vw, 64px);
+}
+
+.brand {
+  flex: 2 1 300px;
+  min-width: 260px;
+}
+
+.brand img {
+  height: 52px;
+  width: auto;
+  display: block;
+  margin-bottom: 20px;
+}
+
+.brand p {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.7;
+  max-width: 380px;
+  color: var(--grey-4);
+  text-wrap: pretty;
+}
+
+.brand .tagline {
+  margin-top: 18px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--red-hi);
+}
+
+.col {
+  flex: 1 1 150px;
+  min-width: 140px;
+}
+
+.colWide {
+  flex: 1 1 240px;
+  min-width: 220px;
+}
+
+.col h4 {
+  margin: 0 0 18px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #5c5c63;
+}
+
+/* ========== Explore nav ========== */
+.nav {
+  display: flex;
+  flex-direction: column;
+  font-size: 14.5px;
+}
+
+.nav a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.2s ease;
+  padding: 11px 0;
+  min-height: 22px;
+}
+
+.nav a::before {
+  content: '';
+  width: 14px;
+  height: 1.5px;
+  background: var(--red);
+  flex-shrink: 0;
+}
+
+/* ========== Contact cards ========== */
+.contact {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.contact a {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  flex-wrap: wrap;
+  gap: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  padding: 13px 16px;
+  color: #e7e7ea;
+  transition:
+    border-color 0.25s ease,
+    background 0.25s ease;
 }
 
-.legalLink {
-  font-family: inherit;
-  font-size: var(--fs-sm);
-  color: rgba(255, 255, 255, 0.6);
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  transition: color var(--transition-fast);
-  text-decoration: none;
+.contact a:hover {
+  border-color: var(--red);
+  background: rgba(213, 25, 46, 0.08);
+  color: #fff;
 }
 
-.legalLink:hover {
-  color: var(--color-accent);
-}
-
-.linkDivider {
-  color: rgba(255, 255, 255, 0.25);
-  font-size: var(--fs-xs);
-}
-
-.developerText {
-  font-size: var(--fs-sm);
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.developerLink {
-  color: rgba(255, 255, 255, 0.75);
-  font-weight: var(--fw-semibold);
-  text-decoration: none;
-  transition: color var(--transition-fast);
-}
-
-.developerLink:hover {
-  color: var(--color-accent);
-}
-
-/* ============================================
-   Legal Modal Styles
-   ============================================ */
-
-.modalBackdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: var(--z-modal-backdrop);
+.contact i {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: rgba(213, 25, 46, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-4);
-  background: rgba(11, 11, 12, 0.85);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  flex-shrink: 0;
+  font-style: normal;
 }
 
-.legalModal {
-  position: relative;
-  z-index: var(--z-modal);
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  max-width: 760px;
-  max-height: 90vh;
-  background: var(--color-white);
-  border-radius: var(--radius-2xl);
-  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
-  overflow: hidden;
+.contact i img {
+  width: 16px;
+  height: 16px;
+  display: block;
 }
 
-.modalHeader {
+.contact span {
+  min-width: 0;
+}
+
+.k {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--grey-4);
+  display: block;
+}
+
+.v {
+  font-size: 14.5px;
+  font-weight: 600;
+  display: block;
+}
+
+.vPhone {
+  white-space: nowrap;
+}
+
+.vMail {
+  font-size: 13.5px;
+  word-break: break-all;
+}
+
+/* ========== Watermark + legal ========== */
+.watermark {
+  margin-top: clamp(36px, 5vw, 60px);
+  font-size: clamp(48px, 14vw, 190px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 0.78;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.09);
+  user-select: none;
+  white-space: nowrap;
+}
+
+.legal {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin-top: -8px;
+  padding: 22px 0 28px;
   display: flex;
-  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 24px;
   justify-content: space-between;
-  padding: var(--space-5) var(--space-6);
-  background: var(--color-primary-dark);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 12.5px;
+  color: #5c5c63;
 }
 
-.modalTitle {
-  font-size: var(--fs-xl);
-  font-weight: var(--fw-bold);
-  letter-spacing: var(--ls-tight);
-  color: var(--color-white);
-  margin: 0;
-}
-
-.modalCloseBtn {
-  color: var(--color-white) !important;
-  background: rgba(255, 255, 255, 0.1) !important;
-  width: 40px !important;
-  height: 40px !important;
-  transition: background var(--transition-fast) !important;
-}
-
-.modalCloseBtn:hover {
-  background: rgba(255, 255, 255, 0.2) !important;
-}
-
-.modalBody {
-  flex: 1;
-  padding: var(--space-6);
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Legal Content */
-.legalContent {
-  color: var(--color-slate);
-}
-
-.legalSection {
-  margin-bottom: var(--space-6);
-}
-
-.legalSection:last-of-type {
-  margin-bottom: 0;
-}
-
-.legalSection h3 {
-  font-size: var(--fs-lg);
-  font-weight: var(--fw-semibold);
-  color: var(--color-primary);
-  margin: 0 0 var(--space-3) 0;
-}
-
-.legalSection p {
-  font-size: var(--fs-sm);
-  line-height: var(--lh-relaxed);
-  margin: 0 0 var(--space-3) 0;
-  color: var(--color-slate);
-}
-
-.legalSection ul {
-  margin: var(--space-3) 0;
-  padding-left: var(--space-5);
-}
-
-.legalSection li {
-  font-size: var(--fs-sm);
-  line-height: var(--lh-relaxed);
-  margin-bottom: var(--space-2);
-  color: var(--color-slate);
-}
-
-.legalSection li strong {
-  color: var(--color-primary);
-}
-
-.legalSection li:last-child {
-  margin-bottom: 0;
-}
-
-.legalLinkInline {
-  color: var(--color-accent);
-  font-weight: var(--fw-semibold);
-  text-decoration: none;
-}
-
-.legalLinkInline:hover {
-  text-decoration: underline;
-}
-
-/* Modal Scrollbar */
-.modalBody::-webkit-scrollbar {
-  width: 6px;
-}
-
-.modalBody::-webkit-scrollbar-track {
-  background: var(--color-bg-subtle);
-  border-radius: 3px;
-}
-
-.modalBody::-webkit-scrollbar-thumb {
-  background: var(--color-border);
-  border-radius: 3px;
-}
-
-.modalBody::-webkit-scrollbar-thumb:hover {
-  background: var(--color-slate);
-}
-
-/* ============================================
-   Responsive Styles
-   ============================================ */
-
-/* 4 columns -> 2 columns */
-@media (max-width: 1024px) {
-  .footerGrid {
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-8);
-  }
-
-  .footerBrand {
-    grid-column: 1 / -1;
-  }
-
-  .about {
-    max-width: 480px;
-  }
-}
-
-/* 2 columns -> 1 column */
-@media (max-width: 640px) {
-  .mainFooter {
-    padding: var(--space-10) 0 var(--space-8);
-  }
-
-  .footerGrid {
-    grid-template-columns: 1fr;
-    gap: var(--space-8);
-    text-align: center;
-  }
-
-  .footerBrand {
-    align-items: center;
-  }
-
-  .logoWrapper {
-    justify-content: center;
-  }
-
-  .about {
-    max-width: none;
-  }
-
-  .footerLinks {
-    align-items: center;
-  }
-
-  .footerLink:hover {
-    transform: none;
-  }
-
-  .contactList {
-    align-items: center;
-  }
-
-  .contactItem {
-    justify-content: center;
-    text-align: left;
-  }
-
-  .whatsappChip {
-    align-self: center;
-  }
-
-  .bottomContent {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .bottomRight {
-    justify-content: center;
-  }
-}
-
-@media (max-width: 768px) {
-  .modalBackdrop {
-    padding: 0;
-    align-items: flex-end;
-  }
-
-  .legalModal {
-    max-height: 95vh;
-    border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
-  }
-
-  .modalHeader {
-    padding: var(--space-4) var(--space-5);
-  }
-
-  .modalTitle {
-    font-size: var(--fs-lg);
-  }
-
-  .modalBody {
-    padding: var(--space-5);
-  }
-
-  .legalSection h3 {
-    font-size: var(--fs-base);
-  }
-}
-
-/* Print Styles */
-@media print {
-  .footer {
-    background: white;
-    color: black;
-    padding: var(--space-4) 0;
-  }
-
-  .tagline,
-  .about,
-  .brandLine,
-  .footerLink,
-  .contactValue,
-  .contactLink,
-  .officeAddress,
-  .copyright,
-  .developerText,
-  .legalLink {
-    color: var(--color-slate);
-  }
-
-  .columnTitle,
-  .legalName {
-    color: var(--color-primary);
-  }
-
-  .modalBackdrop {
-    display: none;
-  }
-}
-
-/* Accessibility */
-.legalLink:focus-visible,
-.footerLink:focus-visible,
-.contactLink:focus-visible,
-.whatsappChip:focus-visible,
-.developerLink:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-  border-radius: var(--radius-sm);
-}
-
-.modalCloseBtn:focus-visible {
-  outline: 2px solid var(--color-white) !important;
-  outline-offset: 2px;
+.legal .serif {
+  font-size: 14px;
+  color: var(--grey-4);
 }

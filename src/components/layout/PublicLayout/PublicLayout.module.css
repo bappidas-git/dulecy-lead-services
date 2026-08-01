@@ -1,0 +1,18 @@
+/* ============================================
+   PublicLayout — shell scaffolding only.
+   The header is fixed (68px), so pages own their own top spacing
+   exactly as the mockup's `.hero__inner` padding does.
+   ============================================ */
+
+.shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}

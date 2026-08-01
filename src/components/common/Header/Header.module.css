@@ -1,355 +1,165 @@
 /* ============================================
-   Header Component Styles — Nilachal Infracon
-   Transparent over the hero, solid white on scroll.
+   Header — values ported verbatim from
+   `mockup/styles.css` (.site-header, .nav-desktop, .burger)
    ============================================ */
 
-/* Header Base */
 .header {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  z-index: var(--z-sticky);
-  padding: var(--space-3) 0;
-  background: transparent;
-  transition: background var(--transition-base), box-shadow var(--transition-base),
-    padding var(--transition-base), border-color var(--transition-base);
-  border-bottom: 1px solid transparent;
+  z-index: 90;
+  backdrop-filter: saturate(180%) blur(16px);
+  -webkit-backdrop-filter: saturate(180%) blur(16px);
+  background: rgba(255, 255, 255, 0.78);
+  border-bottom: 1px solid rgba(11, 11, 12, 0.07);
+  /* The mockup's body sets no line-height; ours sets 1.5. Reset it so
+     link/pill boxes measure exactly as they do in `mockup/*.html`. */
+  line-height: normal;
 }
 
-/* Scrolled State — solid white with a subtle border + blur */
-.header.scrolled {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--color-border);
-  box-shadow: var(--shadow-soft);
-  padding: var(--space-2) 0;
-}
-
-/* Header Container */
-.headerContainer {
-  display: flex !important;
+/* .container + .site-header__inner */
+.inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding-left: clamp(20px, 4vw, 44px);
+  padding-right: clamp(20px, 4vw, 44px);
+  height: 68px;
+  display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-4);
-  flex-wrap: nowrap;
+  gap: 16px;
 }
 
-/* Logo Section */
-.logoSection {
+.logo {
+  display: block;
   flex-shrink: 0;
 }
 
-.logoLink {
-  display: inline-flex;
-  align-items: center;
-  text-decoration: none;
-}
-
-.mainLogo {
-  height: 44px;
+.logo img {
+  height: 40px;
   width: auto;
-  object-fit: contain;
   display: block;
-  transition: opacity var(--transition-base);
 }
 
-/* Desktop Navigation */
-.desktopNav {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  min-width: 0;
-}
-
-.navList {
+/* ========== Desktop nav (≥920px) ========== */
+.nav {
   display: flex;
   align-items: center;
-  gap: 0;
-  list-style: none;
-  margin: 0;
-  padding: 0;
+  gap: clamp(18px, 2.4vw, 34px);
 }
 
 .navLink {
   position: relative;
-  padding: var(--space-2) var(--space-3);
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-medium);
-  color: rgba(255, 255, 255, 0.92);
-  text-decoration: none;
-  transition: color var(--transition-fast);
   white-space: nowrap;
+  font-size: 14.5px;
+  font-weight: 500;
+  color: #3d3d42;
+  letter-spacing: 0.01em;
+  padding: 6px 0;
+  text-decoration: none;
+  transition: color 0.25s ease;
 }
 
-.navLink::after {
-  content: "";
-  position: absolute;
-  bottom: 2px;
-  left: 50%;
-  width: 0;
-  height: 2px;
-  background: var(--color-accent);
-  transform: translateX(-50%);
-  transition: width var(--transition-fast);
-  border-radius: var(--radius-full);
+.navLink:hover {
+  color: var(--red);
 }
 
-.navLink:hover,
 .navLink.active {
-  color: #ffffff;
+  font-weight: 700;
+  color: var(--ink);
 }
 
-.navLink:hover::after,
 .navLink.active::after {
-  width: 60%;
-}
-
-/* Once scrolled the header is white — switch text to navy, keep the green
-   accent for hover/active. */
-.header.scrolled .navLink {
-  color: var(--color-slate);
-}
-
-.header.scrolled .navLink:hover,
-.header.scrolled .navLink.active {
-  color: var(--color-accent);
-}
-
-/* Right Section */
-.rightSection {
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-  flex-shrink: 0;
-}
-
-/* Quiet phone text link */
-.phoneLink {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-medium);
-  color: rgba(255, 255, 255, 0.92);
-  text-decoration: none;
-  transition: color var(--transition-fast);
-  white-space: nowrap;
-}
-
-.phoneLink:hover {
-  color: #ffffff;
-}
-
-.header.scrolled .phoneLink {
-  color: var(--color-slate);
-}
-
-.header.scrolled .phoneLink:hover {
-  color: var(--color-primary);
-}
-
-.phoneIcon {
-  font-size: 18px;
-}
-
-/* Primary "Request a Quote" CTA — Nilachal green */
-.quoteButton {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-5);
-  background: var(--color-accent);
-  color: #ffffff;
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-semibold);
-  text-decoration: none;
-  border: none;
-  border-radius: var(--radius-full);
-  cursor: pointer;
-  transition: background var(--transition-fast), transform var(--transition-fast);
-  white-space: nowrap;
-  font-family: inherit;
-}
-
-.quoteButton:hover {
-  background: var(--color-accent-dark);
-  transform: translateY(-1px);
-}
-
-.quoteButton:focus-visible {
-  outline: 2px solid var(--color-accent-dark);
-  outline-offset: 2px;
-}
-
-/* Menu Button (mobile) */
-.menuButton {
-  display: none;
-  padding: var(--space-2);
-  color: #ffffff;
-  transition: color var(--transition-fast);
-}
-
-.header.scrolled .menuButton {
-  color: var(--color-primary);
-}
-
-.menuIcon {
-  font-size: 28px;
-  color: inherit;
-}
-
-/* Mobile Navigation (inline dropdown) */
-.mobileNav {
+  content: '';
   position: absolute;
-  top: 100%;
   left: 0;
   right: 0;
-  background: var(--color-white);
-  border-top: 1px solid var(--color-border);
-  box-shadow: var(--shadow-soft);
-  overflow: hidden;
+  bottom: -2px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #e8293e, #a80e1e);
 }
 
-.mobileNavContent {
-  padding: var(--space-4);
+/* .btn--nav — inline like the mockup's anchor, so the pill measures
+   identically (the label and the arrow are separated by a real space). */
+.navCta {
+  display: inline-block;
+  white-space: nowrap;
+  /* .nav-desktop a's tracking applies to the mockup's CTA anchor too. */
+  letter-spacing: 0.01em;
+  font-family: inherit;
+  background: var(--grad);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 11px 22px;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
-.mobileNavList {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
+.navCta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgba(213, 25, 46, 0.35);
+  color: #fff;
 }
 
-.mobileNavLink {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-  font-size: var(--fs-base);
-  font-weight: var(--fw-medium);
-  color: var(--color-primary);
-  text-decoration: none;
-  border-radius: var(--radius-lg);
-  transition: background var(--transition-fast), color var(--transition-fast);
-  /* Button reset */
-  width: 100%;
+/* ========== Burger (<920px) ========== */
+.burger {
+  display: none;
   background: none;
   border: none;
   cursor: pointer;
-  text-align: left;
-  font-family: inherit;
-}
-
-.mobileNavLink:hover,
-.mobileNavLink.active {
-  background: var(--color-bg-subtle);
-  color: var(--color-accent);
-}
-
-.mobileNavIcon {
-  font-size: 22px;
-  color: var(--color-slate);
-  transition: color var(--transition-fast);
-}
-
-.mobileNavLink:hover .mobileNavIcon,
-.mobileNavLink.active .mobileNavIcon {
-  color: var(--color-accent);
-}
-
-.mobileNavCTA {
-  margin-top: var(--space-4);
-  padding-top: var(--space-4);
-  border-top: 1px solid var(--color-border);
-  display: flex;
+  padding: 10px;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: 5px;
 }
 
-.mobileQuoteButton {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  width: 100%;
-  padding: var(--space-3) var(--space-4);
-  background: var(--color-accent);
-  color: #ffffff;
-  font-size: var(--fs-base);
-  font-weight: var(--fw-semibold);
-  border: none;
-  border-radius: var(--radius-full);
-  cursor: pointer;
-  transition: background var(--transition-fast);
-  font-family: inherit;
+.burger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--ink);
+  border-radius: 2px;
+  transition:
+    transform 0.3s ease,
+    opacity 0.2s ease;
 }
 
-.mobileQuoteButton:hover {
-  background: var(--color-accent-dark);
+.burger.open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
 }
 
-.mobilePhoneLink {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  width: 100%;
-  padding: var(--space-3) var(--space-4);
-  background: transparent;
-  color: var(--color-primary);
-  font-size: var(--fs-base);
-  font-weight: var(--fw-semibold);
-  text-decoration: none;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-full);
-  transition: background var(--transition-fast), border-color var(--transition-fast);
+.burger.open span:nth-child(2) {
+  opacity: 0;
 }
 
-.mobilePhoneLink:hover {
-  background: var(--color-bg-subtle);
-  border-color: var(--color-primary);
+.burger.open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
 }
 
-/* Responsive Styles */
-@media (max-width: 1280px) {
-  .navLink {
-    padding: var(--space-2);
-    font-size: 13px;
-  }
-}
-
-@media (max-width: 1024px) {
-  .desktopNav {
+/* ========== Responsive ========== */
+@media (max-width: 919px) {
+  .nav {
     display: none;
   }
 
-  .menuButton {
+  .burger {
     display: flex;
   }
-
-  .headerContainer {
-    gap: var(--space-3);
-  }
 }
 
-@media (max-width: 768px) {
-  .header {
-    padding: var(--space-2) 0;
+@media (prefers-reduced-motion: reduce) {
+  .navCta,
+  .burger span {
+    transition: none;
   }
 
-  .mainLogo {
-    height: 38px;
+  .navCta:hover {
+    transform: none;
   }
-}
-
-/* Focus States */
-.navLink:focus-visible,
-.mobileNavLink:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
 }

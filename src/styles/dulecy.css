@@ -1,0 +1,117 @@
+/* ============================================
+   Dulecy Primitives — shared design-system classes
+   --------------------------------------------
+   Verbatim ports of the global classes in `mockup/styles.css`
+   (buttons + display typography). They are global on purpose: the
+   mockup defines them once and every page reuses them, so the shell
+   (Header / MobileMenu / Footer) and the page modules all share ONE
+   button implementation instead of re-declaring the gradient pill.
+
+   Component-specific styling still lives in `*.module.css`.
+   ============================================ */
+
+/* ========== Buttons ========== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: normal;
+  border-radius: 999px;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease,
+    color 0.25s ease;
+}
+
+.btn--primary {
+  background: var(--grad);
+  color: #fff;
+  padding: 16px 32px;
+}
+
+.btn--primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 34px rgba(213, 25, 46, 0.38);
+  color: #fff;
+}
+
+.btn--outline {
+  border: 1.5px solid var(--ink);
+  color: var(--ink);
+  padding: 15px 30px;
+  background: transparent;
+}
+
+.btn--outline:hover {
+  background: var(--ink);
+  color: #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn {
+    transition: none;
+  }
+
+  .btn--primary:hover {
+    transform: none;
+  }
+}
+
+/* ========== Display typography ========== */
+.eyebrow {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--red);
+}
+
+.serif {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-weight: 400;
+}
+
+.grad-text {
+  background: var(--grad-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.display {
+  margin: 26px 0 0;
+  font-size: clamp(36px, 8.4vw, 104px);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.04;
+  text-wrap: balance;
+}
+
+.display--md {
+  font-size: clamp(34px, 7vw, 88px);
+  line-height: 1.05;
+}
+
+.display--sm {
+  font-size: clamp(32px, 6.4vw, 80px);
+  line-height: 1.06;
+}
+
+.lede {
+  margin: 30px 0 0;
+  font-size: clamp(16px, 2vw, 19px);
+  line-height: 1.7;
+  color: var(--grey-2);
+  max-width: 660px;
+  text-wrap: pretty;
+}

@@ -1,0 +1,15 @@
+/* Minimal branded 404 — shell spacing only. */
+
+.wrap {
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
+  padding-left: clamp(20px, 4vw, 44px);
+  padding-right: clamp(20px, 4vw, 44px);
+  padding-top: clamp(140px, 18vh, 190px);
+  padding-bottom: clamp(80px, 11vw, 140px);
+}
+
+.cta {
+  margin-top: 38px;
+}

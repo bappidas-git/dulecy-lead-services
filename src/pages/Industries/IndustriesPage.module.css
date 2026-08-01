@@ -1,0 +1,16 @@
+/* Stub hero — mirrors the mockup's `.container.hero__inner` spacing. */
+
+.hero {
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
+  padding-left: clamp(20px, 4vw, 44px);
+  padding-right: clamp(20px, 4vw, 44px);
+  padding-top: clamp(140px, 18vh, 190px);
+  padding-bottom: clamp(50px, 7vw, 80px);
+}
+
+.hero h1 {
+  max-width: 900px;
+  margin-top: 20px;
+}

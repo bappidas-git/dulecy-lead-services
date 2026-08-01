@@ -21,6 +21,7 @@ import './styles/variables.css';
 import './styles/global.css';
 import './styles/animations.css';
 import './styles/responsive.css';
+import './styles/dulecy.css';
 
 // App Component
 import App from './App';
