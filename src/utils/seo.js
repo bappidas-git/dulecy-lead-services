@@ -1,84 +1,141 @@
 /* ============================================
-   SEO Utility Functions
-   Dynamic SEO management for SPAs including
-   meta tag updates and JSON-LD schema injection.
+   SEO Utility Functions — Dulecy Lead Services
+   --------------------------------------------
+   The runtime half of the dual-layer SEO system: pure schema generators
+   plus the DOM helpers that rewrite the head on client-side navigation.
+
+   Injection is *by element id*, so each generator replaces the matching
+   static block in public/index.html rather than duplicating it. The ids
+   below MUST match the `<script type="application/ld+json" id="…">`
+   blocks in that file:
+
+     schema-organization · schema-website · schema-webpage
+     schema-breadcrumb   · schema-services
+
+   Generators are pure (config in → plain object out) so they can be unit
+   tested without a DOM.
    ============================================ */
 
 import { seoConfig } from '../config/seo';
+
+// The public schema ids this module owns — used to clear them on /admin.
+export const PUBLIC_SCHEMA_IDS = [
+  'schema-organization',
+  'schema-website',
+  'schema-webpage',
+  'schema-breadcrumb',
+  'schema-services',
+];
 
 // =========================================
 // Page SEO — Update document title & meta tags
 // =========================================
 
 /**
- * Update page title, meta description, OG tags, and Twitter cards dynamically.
- * @param {Object} pageConfig - Page-specific SEO overrides
+ * Set or create a meta tag, matched on its identifying attribute so tags
+ * are updated in place instead of accumulating duplicates.
+ * @param {'name'|'property'} attr - Identifying attribute
+ * @param {string} key - Attribute value (e.g. 'description', 'og:title')
+ * @param {string} value - The content to set
+ */
+function setMeta(attr, key, value) {
+  if (!value) return;
+  let el = document.querySelector(`meta[${attr}="${key}"]`);
+  if (!el) {
+    el = document.createElement('meta');
+    el.setAttribute(attr, key);
+    document.head.appendChild(el);
+  }
+  el.setAttribute('content', value);
+}
+
+/**
+ * Set a meta tag, or remove it when the route has no value for it — so a
+ * noindex route never inherits the previous route's URL or keywords.
+ * @param {'name'|'property'} attr - Identifying attribute
+ * @param {string} key - Attribute value
+ * @param {string} [value] - The content to set, or falsy to remove the tag
+ */
+function setOrRemoveMeta(attr, key, value) {
+  if (value) {
+    setMeta(attr, key, value);
+    return;
+  }
+  const el = document.querySelector(`meta[${attr}="${key}"]`);
+  if (el && el.parentNode) el.parentNode.removeChild(el);
+}
+
+/**
+ * Set the canonical <link>, creating it once and reusing it thereafter.
+ * Passing no URL removes the tag — noindex routes (/admin, 404) must not
+ * inherit the previous route's canonical.
+ * @param {string} [url] - Absolute canonical URL (no trailing-slash variants)
+ */
+function setCanonical(url) {
+  let canonical = document.querySelector('link[rel="canonical"]');
+  if (!url) {
+    if (canonical && canonical.parentNode) {
+      canonical.parentNode.removeChild(canonical);
+    }
+    return;
+  }
+  if (!canonical) {
+    canonical = document.createElement('link');
+    canonical.setAttribute('rel', 'canonical');
+    document.head.appendChild(canonical);
+  }
+  canonical.setAttribute('href', url);
+}
+
+/**
+ * Update title, description, canonical, robots, Open Graph and Twitter
+ * tags for the current route. Exactly one of each ends up in the DOM.
+ * @param {Object} pageConfig - Resolved page metadata
  * @param {string} [pageConfig.title] - Page title
- * @param {string} [pageConfig.description] - Meta description (150-160 chars recommended)
+ * @param {string} [pageConfig.description] - Meta description (~150–160 chars)
+ * @param {string} [pageConfig.keywords] - Comma-joined keywords (optional)
  * @param {string} [pageConfig.image] - OG/Twitter image URL
- * @param {string} [pageConfig.url] - Canonical URL for this page
- * @param {string} [pageConfig.robots] - Robots directive (e.g., 'noindex, nofollow')
+ * @param {string} [pageConfig.url] - Absolute canonical URL for this page
+ * @param {string} [pageConfig.robots] - Robots directive
  * @param {string} [pageConfig.type] - OG type (default: 'website')
  */
 export function updatePageSEO(pageConfig = {}) {
   const {
-    title,
+    title = seoConfig.defaultTitle,
     description = seoConfig.defaultDescription,
+    keywords,
     image = seoConfig.defaultImage,
     url,
-    robots,
+    robots = 'index, follow',
     type = 'website',
   } = pageConfig;
 
-  // Title
-  if (title) {
-    document.title = title;
-  }
-
-  // Helper to set or create a meta tag
-  const setMeta = (attr, key, value) => {
-    if (!value) return;
-    let el = document.querySelector(`meta[${attr}="${key}"]`);
-    if (!el) {
-      el = document.createElement('meta');
-      el.setAttribute(attr, key);
-      document.head.appendChild(el);
-    }
-    el.setAttribute('content', value);
-  };
+  document.title = title;
 
   // Standard meta
   setMeta('name', 'description', description);
-  if (robots) {
-    setMeta('name', 'robots', robots);
-  }
+  setOrRemoveMeta('name', 'keywords', keywords);
+  setMeta('name', 'robots', robots);
+  setMeta('name', 'googlebot', robots);
 
   // Open Graph
-  setMeta('property', 'og:title', title || seoConfig.defaultTitle);
-  setMeta('property', 'og:description', description);
-  setMeta('property', 'og:image', image);
   setMeta('property', 'og:type', type);
   setMeta('property', 'og:site_name', seoConfig.siteName);
   setMeta('property', 'og:locale', seoConfig.locale);
-  if (url) {
-    setMeta('property', 'og:url', url);
-  }
+  setMeta('property', 'og:title', title);
+  setMeta('property', 'og:description', description);
+  setMeta('property', 'og:image', image);
 
   // Twitter Card
-  setMeta('name', 'twitter:title', title || seoConfig.defaultTitle);
+  setMeta('name', 'twitter:card', 'summary_large_image');
+  setMeta('name', 'twitter:title', title);
   setMeta('name', 'twitter:description', description);
   setMeta('name', 'twitter:image', image);
 
-  // Canonical URL
-  if (url) {
-    let canonical = document.querySelector('link[rel="canonical"]');
-    if (!canonical) {
-      canonical = document.createElement('link');
-      canonical.setAttribute('rel', 'canonical');
-      document.head.appendChild(canonical);
-    }
-    canonical.setAttribute('href', url);
-  }
+  // URL-bearing tags travel together with the canonical.
+  setOrRemoveMeta('property', 'og:url', url);
+  setOrRemoveMeta('name', 'twitter:url', url);
+  setCanonical(url);
 }
 
 // =========================================
@@ -86,9 +143,11 @@ export function updatePageSEO(pageConfig = {}) {
 // =========================================
 
 /**
- * Inject a JSON-LD schema into the <head>. If a script with the given ID
- * already exists, its content is replaced.
- * @param {string} id - Unique ID for the script element (e.g., 'schema-organization')
+ * Inject a JSON-LD schema into <head>. If a script with the given id
+ * already exists (i.e. the static fallback), its content is replaced.
+ * `JSON.stringify` escapes the payload safely for a JS string, and
+ * `textContent` never parses HTML — so no markup can break out.
+ * @param {string} id - Script element id (e.g. 'schema-organization')
  * @param {Object} schemaObject - The JSON-LD object to inject
  */
 export function injectSchema(id, schemaObject) {
@@ -103,8 +162,8 @@ export function injectSchema(id, schemaObject) {
 }
 
 /**
- * Remove a JSON-LD schema by its script element ID.
- * @param {string} id - The ID of the script element to remove
+ * Remove a JSON-LD schema by its script element id.
+ * @param {string} id - The id of the script element to remove
  */
 export function removeSchema(id) {
   const script = document.getElementById(id);
@@ -114,173 +173,85 @@ export function removeSchema(id) {
 }
 
 // =========================================
-// Schema Generators
+// Schema Generators (pure)
 // =========================================
 
 /**
- * Map a list of state names to schema.org areaServed State entries.
- * @param {string[]} states - State names (e.g. seoConfig.organization.areaServed)
- * @returns {Array<Object>} Array of { '@type': 'State', name }
- */
-function mapAreaServed(states) {
-  return states.map((name) => ({ '@type': 'State', name }));
-}
-
-/**
  * Generate Organization schema from seoConfig.
+ * No address/geo/hours — see the note in src/config/seo.js.
  * @param {Object} [config] - Override seoConfig.organization
  * @returns {Object} JSON-LD Organization schema
  */
 export function generateOrganizationSchema(config) {
   const org = config || seoConfig.organization;
+
   const schema = {
     '@context': 'https://schema.org',
     '@type': org.schemaType || 'Organization',
     name: org.name,
     ...(org.legalName && { legalName: org.legalName }),
-    alternateName: org.alternateName,
     url: org.url,
     logo: org.logo,
     description: org.description,
-    telephone: org.phone,
-    email: org.email,
-    address: {
-      '@type': 'PostalAddress',
-      ...(org.address.streetAddress && { streetAddress: org.address.streetAddress }),
-      addressLocality: org.address.addressLocality,
-      addressRegion: org.address.addressRegion,
-      ...(org.address.postalCode && { postalCode: org.address.postalCode }),
-      addressCountry: org.address.addressCountry,
-    },
+    ...(org.slogan && { slogan: org.slogan }),
   };
 
-  if (org.areaServed && org.areaServed.length > 0) {
-    schema.areaServed = mapAreaServed(org.areaServed);
+  if (org.contactPoint) {
+    schema.contactPoint = {
+      '@type': 'ContactPoint',
+      telephone: org.contactPoint.telephone,
+      contactType: org.contactPoint.contactType,
+      ...(org.contactPoint.email && { email: org.contactPoint.email }),
+    };
   }
 
+  if (org.knowsAbout && org.knowsAbout.length > 0) {
+    schema.knowsAbout = org.knowsAbout;
+  }
+
+  // Omit an empty sameAs — an empty array is noise for validators.
   if (org.sameAs && org.sameAs.length > 0) {
     schema.sameAs = org.sameAs;
   }
 
-  if (org.foundingDate) {
-    schema.foundingDate = org.foundingDate;
-  }
-
   return schema;
 }
 
 /**
- * Generate FAQPage schema.
- * @param {Array<{question: string, answer: string}>} [faqs] - Array of FAQ items
- * @returns {Object} JSON-LD FAQPage schema
+ * Generate WebSite schema (site-level identity, emitted on every route).
+ * @returns {Object} JSON-LD WebSite schema
  */
-export function generateFAQSchema(faqs) {
-  const faqItems = faqs || seoConfig.faqs;
+export function generateWebSiteSchema() {
   return {
     '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: faqItems.map((faq) => ({
-      '@type': 'Question',
-      name: faq.question,
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: faq.answer,
-      },
-    })),
-  };
-}
-
-/**
- * Generate LocalBusiness schema.
- * @param {Object} [config] - Override seoConfig.localBusiness
- * @returns {Object} JSON-LD LocalBusiness schema
- */
-export function generateLocalBusinessSchema(config) {
-  const biz = config || seoConfig.localBusiness;
-  const org = seoConfig.organization;
-
-  const schema = {
-    '@context': 'https://schema.org',
-    '@type': biz.type,
-    ...(biz.additionalType && { additionalType: biz.additionalType }),
-    name: org.name,
-    image: org.logo,
-    logo: org.logo,
-    telephone: org.phone,
-    email: org.email,
-    address: {
-      '@type': 'PostalAddress',
-      ...(org.address.streetAddress && { streetAddress: org.address.streetAddress }),
-      addressLocality: org.address.addressLocality,
-      addressRegion: org.address.addressRegion,
-      ...(org.address.postalCode && { postalCode: org.address.postalCode }),
-      addressCountry: org.address.addressCountry,
-    },
-    priceRange: biz.priceRange,
-    openingHoursSpecification: {
-      '@type': 'OpeningHoursSpecification',
-      dayOfWeek: biz.openingHours.days,
-      opens: biz.openingHours.opens,
-      closes: biz.openingHours.closes,
+    '@type': 'WebSite',
+    name: seoConfig.siteName,
+    url: seoConfig.siteUrl,
+    inLanguage: seoConfig.language,
+    publisher: {
+      '@type': 'Organization',
+      name: seoConfig.organization.name,
+      url: seoConfig.organization.url,
     },
   };
-
-  if (biz.geo && biz.geo.latitude && biz.geo.longitude) {
-    schema.geo = {
-      '@type': 'GeoCoordinates',
-      latitude: biz.geo.latitude,
-      longitude: biz.geo.longitude,
-    };
-  }
-
-  if (org.url) {
-    schema.url = org.url;
-  }
-
-  if (biz.hasMap) {
-    schema.hasMap = biz.hasMap;
-  }
-
-  if (org.areaServed && org.areaServed.length > 0) {
-    schema.areaServed = mapAreaServed(org.areaServed);
-  }
-
-  return schema;
 }
 
 /**
- * Generate BreadcrumbList schema.
- * @param {Array<{name: string, url: string}>} items - Breadcrumb items in order
- * @returns {Object} JSON-LD BreadcrumbList schema
- */
-export function generateBreadcrumbSchema(items) {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: items.map((item, index) => ({
-      '@type': 'ListItem',
-      position: index + 1,
-      name: item.name,
-      item: item.url,
-    })),
-  };
-}
-
-/**
- * Generate WebPage schema.
+ * Generate WebPage schema for the current route.
  * @param {Object} config - Page configuration
  * @param {string} config.name - Page name/title
  * @param {string} config.description - Page description
- * @param {string} config.url - Page URL
+ * @param {string} config.url - Absolute page URL
  * @returns {Object} JSON-LD WebPage schema
  */
-export function generateWebPageSchema(config) {
+export function generateWebPageSchema(config = {}) {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
     name: config.name || seoConfig.defaultTitle,
     description: config.description || seoConfig.defaultDescription,
-    url: config.url || seoConfig.siteUrl,
+    url: config.url || `${seoConfig.siteUrl}/`,
+    inLanguage: seoConfig.language,
     isPartOf: {
       '@type': 'WebSite',
       name: seoConfig.siteName,
@@ -298,22 +269,54 @@ export function generateWebPageSchema(config) {
 }
 
 /**
- * Generate Service schema for a list of services/plans.
- * @param {Array<{name: string, description: string, id: string}>} services - Service data
- * @returns {Object} JSON-LD Service schema (ItemList)
+ * Generate BreadcrumbList schema.
+ * @param {Array<{name: string, url: string}>} items - Crumbs, in order
+ * @returns {Object} JSON-LD BreadcrumbList schema
  */
-export function generateServiceSchema(services) {
+export function generateBreadcrumbSchema(items = []) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.name,
+      item: item.url,
+    })),
+  };
+}
+
+/**
+ * Build the crumb trail for a page: Home on `/`, Home → page elsewhere.
+ * @param {Object} page - A seoConfig.pages entry
+ * @returns {Array<{name: string, url: string}>} Breadcrumb items
+ */
+export function breadcrumbItemsFor(page = {}) {
+  const home = { name: 'Home', url: `${seoConfig.siteUrl}/` };
+  if (!page.path || page.path === '/') return [home];
+  return [
+    home,
+    {
+      name: page.breadcrumb || page.title,
+      url: `${seoConfig.siteUrl}${page.path}`,
+    },
+  ];
+}
+
+/**
+ * Generate the ItemList of Service entries from the expertise data layer.
+ * @param {Object} [config] - Override seoConfig.services
+ * @returns {Object} JSON-LD ItemList schema
+ */
+export function generateServiceSchema(config) {
+  const services = config || seoConfig.services;
   const org = seoConfig.organization;
-  const areaServed =
-    org.areaServed && org.areaServed.length > 0
-      ? mapAreaServed(org.areaServed)
-      : undefined;
 
   return {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    name: 'Construction & Infrastructure Services',
-    itemListElement: services.map((service, index) => ({
+    name: services.name,
+    itemListElement: services.items.map((service, index) => ({
       '@type': 'ListItem',
       position: index + 1,
       item: {
@@ -321,78 +324,52 @@ export function generateServiceSchema(services) {
         name: service.name,
         description: service.description,
         serviceType: service.name,
+        ...(service.url && { url: service.url }),
         provider: {
           '@type': 'Organization',
           name: org.name,
           url: org.url,
         },
-        ...(areaServed && { areaServed }),
-      },
-    })),
-  };
-}
-
-/**
- * Generate Product schema for service plans with pricing.
- * @param {Array<Object>} products - Product/plan data
- * @param {string} products[].name - Product name
- * @param {string} products[].description - Product description
- * @param {string} [products[].price] - Price (numeric string)
- * @param {string} [products[].currency] - Currency code (default: 'INR')
- * @returns {Object} JSON-LD Product schema (ItemList)
- */
-export function generateProductSchema(products) {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'ItemList',
-    itemListElement: products.map((product, index) => ({
-      '@type': 'ListItem',
-      position: index + 1,
-      item: {
-        '@type': 'Product',
-        name: product.name,
-        description: product.description,
-        brand: {
-          '@type': 'Organization',
-          name: seoConfig.organization.name,
-        },
-        offers: {
-          '@type': 'Offer',
-          priceCurrency: product.currency || 'INR',
-          ...(product.price
-            ? { price: product.price }
-            : { price: '0', description: 'Contact for pricing' }),
-          availability: 'https://schema.org/InStock',
-        },
       },
     })),
   };
 }
 
 // =========================================
-// Convenience: Inject all default schemas
+// Route-level orchestration
 // =========================================
 
 /**
- * Inject all default schemas (Organization, FAQ, LocalBusiness, BreadcrumbList, WebPage)
- * into the document head. Call this on initial page load.
+ * Inject every schema a public route needs, and clear the ones it does not
+ * (so a stale ItemList never lingers after navigating away from /expertise).
+ * @param {Object} page - A seoConfig.pages entry
  */
-export function injectDefaultSchemas() {
+export function injectPageSchemas(page = {}) {
+  const url = `${seoConfig.siteUrl}${page.path === '/' ? '/' : page.path}`;
+
   injectSchema('schema-organization', generateOrganizationSchema());
-  injectSchema('schema-faq', generateFAQSchema());
-  injectSchema('schema-localbusiness', generateLocalBusinessSchema());
-  injectSchema(
-    'schema-breadcrumb',
-    generateBreadcrumbSchema([
-      { name: 'Home', url: seoConfig.siteUrl + '/' },
-    ])
-  );
+  injectSchema('schema-website', generateWebSiteSchema());
   injectSchema(
     'schema-webpage',
     generateWebPageSchema({
-      name: seoConfig.pages.home.title,
-      description: seoConfig.pages.home.description,
-      url: seoConfig.siteUrl + '/',
-    })
+      name: page.title,
+      description: page.description,
+      url,
+    }),
   );
+  injectSchema('schema-breadcrumb', generateBreadcrumbSchema(breadcrumbItemsFor(page)));
+
+  if (page.services) {
+    injectSchema('schema-services', generateServiceSchema());
+  } else {
+    removeSchema('schema-services');
+  }
+}
+
+/**
+ * Strip every public schema — used on noindex routes (/admin/*) so the
+ * admin panel carries no marketing structured data.
+ */
+export function removePublicSchemas() {
+  PUBLIC_SCHEMA_IDS.forEach(removeSchema);
 }

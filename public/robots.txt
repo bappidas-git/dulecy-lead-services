@@ -1,6 +1,8 @@
+# Dulecy Lead Services — https://www.dulecy.com
+# Everything public is crawlable; only the admin panel is off-limits.
+
 User-agent: *
 Allow: /
-Disallow: /admin/
-Disallow: /thank-you
+Disallow: /admin
 
-Sitemap: https://www.nilachalinfracon.com/sitemap.xml
+Sitemap: https://www.dulecy.com/sitemap.xml
