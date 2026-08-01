@@ -2,7 +2,7 @@
    AboutPage — `/about`
    --------------------------------------------
    The six sections of `mockup/about.html`, in order. Each is its own
-   component + module; the shared header, footer and enquiry drawer come
+   component + module; the shared header, footer and enquiry modal come
    from `PublicLayout` / `App`.
    ============================================ */
 

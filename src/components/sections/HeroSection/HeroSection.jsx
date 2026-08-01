@@ -47,7 +47,7 @@ const HeroSection = () => {
   // `noSsr` so the value is correct on first paint — the parallax ref then
   // attaches only on desktop instead of flickering across the breakpoint.
   const isMobile = useMediaQuery(theme.breakpoints.down("md"), { noSsr: true });
-  const { openLeadDrawer } = useModal();
+  const { openLeadModal } = useModal();
 
   const sectionRef = useRef(null);
   // Subtle background parallax on scroll (desktop only; the hook itself skips
@@ -230,7 +230,7 @@ const HeroSection = () => {
             </a>
             <button
               type="button"
-              onClick={() => openLeadDrawer("request-quote")}
+              onClick={() => openLeadModal("request-quote")}
               className={`${styles.ctaBase} ${styles.ctaSecondary}`}
             >
               Request a Quote

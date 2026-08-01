@@ -35,7 +35,7 @@ const areaIdFromHash = (hash) => {
 };
 
 const ExpertiseAccordion = () => {
-  const { openLeadDrawer } = useModal();
+  const { openLeadModal } = useModal();
   const location = useLocation();
   const hashId = areaIdFromHash(location.hash);
 
@@ -127,7 +127,7 @@ const ExpertiseAccordion = () => {
                         type="button"
                         className={styles.cta}
                         onClick={() =>
-                          openLeadDrawer(`expertise-${area.id}`, {
+                          openLeadModal(`expertise-${area.id}`, {
                             service_interest: area.title,
                           })
                         }

@@ -1,418 +1,88 @@
 /* ============================================
-   UnifiedLeadForm Component
-   Single reusable enquiry form used by the enquiry drawer
-   (and, from prompt 11, the Contact section). Features:
-   - Grouped "Interested In" select (Products / Services / General)
-   - Optional prefill (drawer tiles/rows pass the category)
-   - Server-side duplicate prevention (by mobile, cross-device)
-   - Consent text + privacy-policy modal
-   - Redirect to the Thank-You page on success
-   Dulecy Lead Services — enquiry pipeline.
+   UnifiedLeadForm — the single enquiry form
+   --------------------------------------------
+   One shared component, used in exactly two places: the Contact page's
+   grey panel and the global `LeadModal`. There is no forked copy.
+
+   Markup/styling is a 1:1 port of `mockup/contact.html`'s `.lead-form`
+   plus the inline `.form-success` state — success is shown in place,
+   the page never navigates.
+
+   Field → lead-record mapping (record keys are NEVER renamed):
+     FULL NAME *   → name
+     EMAIL *       → email          (required as of the Dulecy rebuild)
+     PHONE         → mobile         (optional; Indian format when filled)
+     ORGANIZATION  → organization   (new optional key, added in Prompt 07)
+     SUPPORT WITH *→ service_interest (an expertise title, or "Something else")
+     MESSAGE       → message
+   `state` is no longer collected — the key is kept (sent empty) so the
+   record shape stays stable for the admin panel and CSV export.
    ============================================ */
 
-import React, { useState, useCallback, useRef } from "react";
-import { createPortal } from "react-dom";
-import { useNavigate } from "react-router-dom";
-import { submitLeadToWebhook } from "../../../utils/webhookSubmit";
+import React, { useCallback, useRef, useState } from 'react';
+import { submitLeadToWebhook } from '../../../utils/webhookSubmit';
+import { showError, showInfo } from '../../../utils/swalHelper';
 import {
-  Box,
-  TextField,
-  InputAdornment,
-  Typography,
-  CircularProgress,
-  IconButton,
-  Select,
-  MenuItem,
-  ListSubheader,
-  FormControl,
-  FormHelperText,
-} from "@mui/material";
-import { motion, AnimatePresence } from "framer-motion";
-import { Icon } from "@iconify/react";
-import { showSuccess, showError, showInfo } from "../../../utils/swalHelper";
-import Button from "../Button/Button";
-import {
-  getMobileErrorMessage,
   getEmailErrorMessage,
   getNameErrorMessage,
-} from "../../../utils/validators";
-import { productsData } from "../../../data/productsData";
-import { servicesData } from "../../../data/servicesData";
-import { locationData } from "../../../data/locationData";
-import { siteConfig, telHref, fullAddress } from "../../../data/siteConfig";
-import styles from "./UnifiedLeadForm.module.css";
+  getOptionalMobileErrorMessage,
+} from '../../../utils/validators';
+import { expertiseAreas } from '../../../data/expertiseData';
+import { siteConfig, mailHref } from '../../../data/siteConfig';
+import styles from './UnifiedLeadForm.module.css';
 
-// "Interested In" grouped options, sourced from the content data layer (no
-// hardcoded lists). Stored under the legacy `service_interest` key to preserve
-// the admin panel + webhook plumbing — the value is the product/service label.
-// The option values match the names the drawer tiles/rows send as prefill
-// (product.name / service.name), so a pre-selected value resolves cleanly.
-const INTEREST_GROUPS = [
-  { label: "Products", options: productsData.map((p) => p.name) },
-  { label: "Services", options: servicesData.map((s) => s.name) },
-];
-const GENERAL_ENQUIRY = "General Enquiry";
-
-// All valid interest values, used to validate an incoming prefill value.
-const INTEREST_VALUES = [
-  ...INTEREST_GROUPS.flatMap((group) => group.options),
-  GENERAL_ENQUIRY,
+// "What do you need support with?" — the ten expertise titles, straight from
+// the data layer (never a hardcoded copy), plus the mockup's catch-all.
+const SOMETHING_ELSE = 'Something else';
+const INTEREST_OPTIONS = [
+  ...expertiseAreas.map((area) => area.title),
+  SOMETHING_ELSE,
 ];
 
-// State options: the 8 Northeast states we serve (from locationData) + "Other".
-const STATE_OPTIONS = [...locationData.servingStates, "Other"];
+const MESSAGE_MAX = 500;
+const ORGANIZATION_MAX = 100;
 
-// Initial form state
 const initialFormState = {
-  name: "",
-  mobile: "",
-  email: "",
-  service_interest: "",
-  state: "",
-  message: "",
+  name: '',
+  email: '',
+  mobile: '',
+  organization: '',
+  service_interest: '',
+  message: '',
 };
 
-// Initial error state
 const initialErrorState = {
-  name: "",
-  mobile: "",
-  email: "",
-  service_interest: "",
-  state: "",
-  message: "",
+  name: '',
+  email: '',
+  mobile: '',
+  organization: '',
+  service_interest: '',
+  message: '',
 };
 
-// Privacy Policy Content — Dulecy Lead Services enquiry data policy.
-// Kept aligned with the Footer's policy copy (prompt 05).
-const PrivacyPolicyContent = () => (
-  <div style={{ padding: "0 8px" }}>
-    <section style={{ marginBottom: "24px" }}>
-      <h3
-        style={{
-          fontSize: "16px",
-          fontWeight: 600,
-          marginBottom: "12px",
-          color: "#0B0B0C",
-        }}
-      >
-        Introduction
-      </h3>
-      <p style={{ fontSize: "14px", lineHeight: 1.6, color: "#374151" }}>
-        {siteConfig.legalName} (“we”, “us”) respects your privacy. This policy
-        explains what information we collect when you send an enquiry through
-        this website, how we use it, and how you can ask us to remove it.
-      </p>
-    </section>
-
-    <section style={{ marginBottom: "24px" }}>
-      <h3
-        style={{
-          fontSize: "16px",
-          fontWeight: 600,
-          marginBottom: "12px",
-          color: "#0B0B0C",
-        }}
-      >
-        Information We Collect
-      </h3>
-      <p
-        style={{
-          fontSize: "14px",
-          lineHeight: 1.6,
-          color: "#374151",
-          marginBottom: "8px",
-        }}
-      >
-        When you submit an enquiry or request a callback, we collect only the
-        details you choose to share with us:
-      </p>
-      <ul
-        style={{
-          fontSize: "14px",
-          lineHeight: 1.6,
-          color: "#374151",
-          paddingLeft: "20px",
-          margin: 0,
-        }}
-      >
-        <li style={{ marginBottom: "6px" }}>
-          <strong>Your name</strong> — so we know who to address.
-        </li>
-        <li style={{ marginBottom: "6px" }}>
-          <strong>Your phone number</strong> — so our team can call or message
-          you back.
-        </li>
-        <li style={{ marginBottom: "6px" }}>
-          <strong>Your email address</strong> — an optional way for us to reach
-          you.
-        </li>
-        <li>
-          <strong>Your enquiry details</strong> — the products, services or
-          project you would like to discuss.
-        </li>
-      </ul>
-    </section>
-
-    <section style={{ marginBottom: "24px" }}>
-      <h3
-        style={{
-          fontSize: "16px",
-          fontWeight: 600,
-          marginBottom: "12px",
-          color: "#0B0B0C",
-        }}
-      >
-        How We Use Your Information
-      </h3>
-      <ul
-        style={{
-          fontSize: "14px",
-          lineHeight: 1.6,
-          color: "#374151",
-          paddingLeft: "20px",
-          margin: 0,
-        }}
-      >
-        <li style={{ marginBottom: "6px" }}>
-          To respond to your enquiry and help you with the products and services
-          offered by {siteConfig.flagshipBrand} and {siteConfig.brandName}.
-        </li>
-        <li>
-          To share availability, brands, pricing and project guidance you have
-          asked about.
-        </li>
-      </ul>
-      <p
-        style={{
-          fontSize: "14px",
-          lineHeight: 1.6,
-          color: "#374151",
-          marginTop: "8px",
-        }}
-      >
-        Your details are used <strong>only to respond to your enquiry</strong>.
-        We do not use them for anything else.
-      </p>
-    </section>
-
-    <section style={{ marginBottom: "24px" }}>
-      <h3
-        style={{
-          fontSize: "16px",
-          fontWeight: 600,
-          marginBottom: "12px",
-          color: "#0B0B0C",
-        }}
-      >
-        Storage &amp; Sharing
-      </h3>
-      <p style={{ fontSize: "14px", lineHeight: 1.6, color: "#374151" }}>
-        Enquiries are stored on this website’s own server so our team can follow
-        up with you. We <strong>never sell or rent</strong> your information, and
-        we do not share it with advertising platforms or data brokers.
-      </p>
-    </section>
-
-    <section style={{ marginBottom: "24px" }}>
-      <h3
-        style={{
-          fontSize: "16px",
-          fontWeight: 600,
-          marginBottom: "12px",
-          color: "#0B0B0C",
-        }}
-      >
-        Removing Your Data
-      </h3>
-      <p style={{ fontSize: "14px", lineHeight: 1.6, color: "#374151" }}>
-        You can ask us to delete the details you submitted at any time. Email us
-        at{" "}
-        <a
-          href={`mailto:${siteConfig.email}`}
-          style={{ color: "#D5192E", fontWeight: 600 }}
-        >
-          {siteConfig.email}
-        </a>{" "}
-        and we will remove your enquiry from our records.
-      </p>
-    </section>
-
-    <section style={{ marginBottom: "24px" }}>
-      <h3
-        style={{
-          fontSize: "16px",
-          fontWeight: 600,
-          marginBottom: "12px",
-          color: "#0B0B0C",
-        }}
-      >
-        Contact
-      </h3>
-      <p style={{ fontSize: "14px", lineHeight: 1.6, color: "#374151" }}>
-        <strong>{siteConfig.legalName}</strong>
-        <br />
-        {fullAddress}
-        <br />
-        Phone: {siteConfig.phoneDisplay}
-        <br />
-        Email: {siteConfig.email}
-      </p>
-    </section>
-  </div>
-);
-
-// Privacy Policy Modal Component
-const PrivacyPolicyModal = ({ isOpen, onClose }) => {
-  if (typeof window === "undefined") return null;
-
-  const backdropVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { duration: 0.3 } },
-    exit: { opacity: 0, transition: { duration: 0.2 } },
-  };
-
-  const modalVariants = {
-    hidden: { opacity: 0, y: 50, scale: 0.95 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: { type: "spring", damping: 25, stiffness: 300 },
-    },
-    exit: { opacity: 0, y: 30, scale: 0.95, transition: { duration: 0.2 } },
-  };
-
-  return createPortal(
-    <AnimatePresence mode="wait">
-      {isOpen && (
-        <motion.div
-          style={{
-            position: "fixed",
-            inset: 0,
-            backgroundColor: "rgba(0, 0, 0, 0.6)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 9999,
-            padding: "16px",
-          }}
-          variants={backdropVariants}
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-          onClick={onClose}
-        >
-          <motion.div
-            style={{
-              backgroundColor: "#fff",
-              borderRadius: "12px",
-              maxWidth: "600px",
-              width: "100%",
-              maxHeight: "80vh",
-              overflow: "hidden",
-              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
-            }}
-            variants={modalVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                padding: "16px 20px",
-                borderBottom: "1px solid #E5E7EB",
-                backgroundColor: "#F9FAFB",
-              }}
-            >
-              <h2
-                style={{
-                  fontSize: "18px",
-                  fontWeight: 600,
-                  margin: 0,
-                  color: "#0B0B0C",
-                }}
-              >
-                Privacy Policy
-              </h2>
-              <IconButton
-                onClick={onClose}
-                aria-label="Close modal"
-                size="small"
-                sx={{ color: "#6B7280" }}
-              >
-                <Icon icon="mdi:close" />
-              </IconButton>
-            </div>
-            <div
-              style={{
-                padding: "20px",
-                overflowY: "auto",
-                maxHeight: "calc(80vh - 60px)",
-              }}
-            >
-              <PrivacyPolicyContent />
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>,
-    document.body
-  );
-};
-
-// Contextual header defaults (used only when showTitle/showSubtitle are on;
-// the drawer and Contact section pass their own headers and hide these).
-const getHeaderDefaults = (source) => {
-  switch (source) {
-    case "contact":
-      return {
-        title: "Request a Callback",
-        subtitle: "Share your details and our team will call you back.",
-      };
-    default:
-      return {
-        title: "Send an Enquiry",
-        subtitle: "Tell us what you need — we usually respond within 24 hours.",
-      };
-  }
+/**
+ * Keep only digits, and forgive a pasted country/trunk prefix
+ * ("+91 70990 02522" → "7099002522") before capping at 10.
+ */
+const normalizeMobile = (value) => {
+  let digits = value.replace(/\D/g, '');
+  if (digits.length >= 12 && digits.startsWith('91')) digits = digits.slice(2);
+  if (digits.length >= 11 && digits.startsWith('0')) digits = digits.slice(1);
+  return digits.slice(0, 10);
 };
 
 const UnifiedLeadForm = ({
-  variant = "default", // 'default', 'dark', 'drawer' (hero is a dormant path)
-  source = "default",
-  title: titleProp,
-  subtitle: subtitleProp,
-  submitButtonText = "Send Enquiry",
-  showTitle = true,
-  showSubtitle = true,
-  showInterestFields = true, // renders the "Interested In" + "State" selects
-  showTrustBadges = true, // repurposed: renders the quiet reassurance line
-  showConsent = true,
-  showPhoneButton = false,
-  prefill = {}, // e.g. { service_interest: 'Steel Doors' } from drawer tiles/rows
-  onClose, // Called when drawer should close (for drawer variant)
+  source = 'general',
+  prefill = {}, // e.g. { service_interest: 'HR & People Management' }
   onSubmitSuccess,
-  className = "",
-  formId = "unified-lead-form",
+  className = '',
+  formId = 'lead-form',
 }) => {
-  const headerDefaults = getHeaderDefaults(source);
-  const title = titleProp || headerDefaults.title;
-  const subtitle = subtitleProp || headerDefaults.subtitle;
-  const navigate = useNavigate();
+  // Only accept a prefill that matches a real option.
+  const prefilledInterest = INTEREST_OPTIONS.includes(prefill?.service_interest)
+    ? prefill.service_interest
+    : '';
 
-  // Resolve a valid prefilled interest (ignore anything not in the option list).
-  const prefilledInterest =
-    prefill && INTEREST_VALUES.includes(prefill.service_interest)
-      ? prefill.service_interest
-      : "";
-
-  // Form state — seed the interest from any prefill the drawer passed in. The
-  // form remounts each time the drawer opens, so this initializer re-runs with
-  // the fresh prefill value.
   const [formData, setFormData] = useState(() => ({
     ...initialFormState,
     service_interest: prefilledInterest,
@@ -420,208 +90,130 @@ const UnifiedLeadForm = ({
   const [errors, setErrors] = useState(initialErrorState);
   const [touched, setTouched] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
+  // Holds the enquirer's first name once the lead is stored — its presence
+  // is what swaps the form for the inline success block.
+  const [successName, setSuccessName] = useState('');
 
-  const isDarkSurface = variant === "dark" || variant === "drawer";
+  const fieldRefs = {
+    name: useRef(null),
+    email: useRef(null),
+    mobile: useRef(null),
+    service_interest: useRef(null),
+    message: useRef(null),
+  };
 
-  // Refs for input focus management
-  const nameRef = useRef(null);
-  const mobileRef = useRef(null);
-  const emailRef = useRef(null);
-  const serviceRef = useRef(null);
-  const stateSelectRef = useRef(null);
-  const messageRef = useRef(null);
+  // ---- Validation ------------------------------------------------------
+  const validateField = useCallback((field, data) => {
+    switch (field) {
+      case 'name':
+        return getNameErrorMessage(data.name);
+      case 'email':
+        return getEmailErrorMessage(data.email);
+      case 'mobile':
+        return getOptionalMobileErrorMessage(data.mobile);
+      case 'service_interest':
+        return data.service_interest
+          ? ''
+          : 'Please tell us what you need support with';
+      case 'message':
+        return data.message.length > MESSAGE_MAX
+          ? `Message must be ${MESSAGE_MAX} characters or less`
+          : '';
+      default:
+        return '';
+    }
+  }, []);
 
-  // Handle input change
   const handleChange = useCallback(
     (field) => (event) => {
-      let value = event.target.value;
+      const raw = event.target.value;
+      const value = field === 'mobile' ? normalizeMobile(raw) : raw;
 
-      // Special handling for mobile number - only allow digits
-      if (field === "mobile") {
-        value = value.replace(/\D/g, "").slice(0, 10);
-      }
-
-      setFormData((prev) => ({
-        ...prev,
-        [field]: value,
-      }));
-
-      // Clear error when user starts typing
-      if (errors[field]) {
-        setErrors((prev) => ({
-          ...prev,
-          [field]: "",
-        }));
-      }
+      setFormData((prev) => ({ ...prev, [field]: value }));
+      // Clear the error as soon as the user starts fixing the field.
+      setErrors((prev) => (prev[field] ? { ...prev, [field]: '' } : prev));
     },
-    [errors]
+    []
   );
 
-  // Handle input blur - validate on blur
   const handleBlur = useCallback(
     (field) => () => {
-      setTouched((prev) => ({
-        ...prev,
-        [field]: true,
-      }));
-
-      // Validate the field
-      let errorMessage = "";
-
-      switch (field) {
-        case "name":
-          errorMessage = getNameErrorMessage(formData.name);
-          break;
-        case "mobile":
-          errorMessage = getMobileErrorMessage(formData.mobile);
-          break;
-        case "email":
-          if (formData.email) {
-            errorMessage = getEmailErrorMessage(formData.email);
-          }
-          break;
-        case "service_interest":
-          if (showInterestFields && !formData.service_interest) {
-            errorMessage = "Please tell us what you're interested in";
-          }
-          break;
-        case "state":
-          if (showInterestFields && !formData.state) {
-            errorMessage = "Please select your state";
-          }
-          break;
-        case "message":
-          if (formData.message && formData.message.length > 500) {
-            errorMessage = "Message must be 500 characters or less";
-          }
-          break;
-        default:
-          break;
-      }
-
-      setErrors((prev) => ({
-        ...prev,
-        [field]: errorMessage,
-      }));
+      setTouched((prev) => ({ ...prev, [field]: true }));
+      setErrors((prev) => ({ ...prev, [field]: validateField(field, formData) }));
     },
-    [formData, showInterestFields]
+    [formData, validateField]
   );
 
-  // Validate entire form
-  const validateForm = useCallback(() => {
-    const newErrors = {
-      name: getNameErrorMessage(formData.name),
-      mobile: getMobileErrorMessage(formData.mobile),
-      email: formData.email ? getEmailErrorMessage(formData.email) : "",
-      service_interest:
-        showInterestFields && !formData.service_interest
-          ? "Please tell us what you're interested in"
-          : "",
-      state:
-        showInterestFields && !formData.state
-          ? "Please select your state"
-          : "",
-      message:
-        formData.message && formData.message.length > 500
-          ? "Message must be 500 characters or less"
-          : "",
-    };
+  // ---- Submit ----------------------------------------------------------
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (isSubmitting) return; // guard against double-click
 
-    setErrors(newErrors);
+    const nextErrors = {
+      ...initialErrorState,
+      name: validateField('name', formData),
+      email: validateField('email', formData),
+      mobile: validateField('mobile', formData),
+      service_interest: validateField('service_interest', formData),
+      message: validateField('message', formData),
+    };
+    setErrors(nextErrors);
     setTouched({
       name: true,
-      mobile: true,
       email: true,
+      mobile: true,
       service_interest: true,
-      state: true,
       message: true,
     });
 
-    return Object.values(newErrors).every((error) => !error);
-  }, [formData, showInterestFields]);
-
-  // Handle form submission
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    if (isSubmitting) return; // Guard against double-click
-
-    // Validate form
-    if (!validateForm()) {
-      // Focus first field with error
-      if (errors.name || !formData.name) {
-        nameRef.current?.focus();
-      } else if (errors.mobile || !formData.mobile) {
-        mobileRef.current?.focus();
-      } else if (errors.email || !formData.email) {
-        emailRef.current?.focus();
-      }
+    // Focus the first invalid field, in visual order.
+    const firstInvalid = ['name', 'email', 'mobile', 'service_interest', 'message'].find(
+      (field) => nextErrors[field]
+    );
+    if (firstInvalid) {
+      fieldRefs[firstInvalid]?.current?.focus();
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      // Prepare lead data. `service_interest` holds the selected product/service
-      // (or "General Enquiry") — the legacy key is kept for admin compatibility.
+      // `service_interest` keeps its legacy key — the value is the visible
+      // label. `state` is sent empty: no longer collected, never reused.
       const leadData = {
         name: formData.name.trim(),
         mobile: formData.mobile.trim(),
         email: formData.email.trim(),
-        service_interest: formData.service_interest || "",
-        state: formData.state || "",
-        message: formData.message || "",
-        source: formId || "general",
+        organization: formData.organization.trim(),
+        service_interest: formData.service_interest,
+        state: '',
+        message: formData.message.trim(),
+        source,
       };
 
-      // Submit to the shared server-side lead store (single source of truth).
       const result = await submitLeadToWebhook(leadData);
 
-      // The server dedupes by mobile across all devices — surface a friendly
-      // "already received" message instead of creating a second lead.
+      // The server dedupes by mobile across every device — surface it as a
+      // calm "already have it" notice, not an error, and keep the form as-is.
       if (result.duplicate) {
         await showInfo(
-          "Already received!",
-          `We have your earlier enquiry — our team will contact you shortly. Need it faster? Call ${siteConfig.phoneDisplay}.`
+          'Already received!',
+          `We have your earlier enquiry — our team will get back to you shortly. Need it faster? Call ${siteConfig.phoneDisplay}.`
         );
         return;
       }
 
       if (result.success) {
-        // Set lead submitted flag for thank you page access
-        sessionStorage.setItem("lead_submitted", "true");
-        sessionStorage.setItem("lead_name", formData.name);
-
-        // Show success alert ON TOP of drawer
-        await showSuccess(
-          "Enquiry received!",
-          `Thanks for reaching out to ${siteConfig.brandName}. Our team will contact you within 24 hours.`
-        );
-
-        // THEN reset form
-        setFormData(initialFormState);
-        setTouched({});
-        setErrors(initialErrorState);
-
-        // THEN close drawer (if in a drawer)
-        if (onClose) {
-          onClose();
-        }
-
-        // Callback for parent component
-        if (onSubmitSuccess) {
-          onSubmitSuccess(formData);
-        }
-
-        // THEN navigate to thank you page
-        navigate("/thank-you");
-      } else {
-        await showError("Something went wrong", result.message);
+        setSuccessName(leadData.name.split(' ')[0]);
+        if (onSubmitSuccess) onSubmitSuccess(leadData);
+        return;
       }
+
+      await showError('Something went wrong', result.message);
     } catch (error) {
-      console.error("Form submission error:", error);
+      console.error('Form submission error:', error);
       await showError(
-        "Something went wrong",
+        'Something went wrong',
         `Please try again or call us directly at ${siteConfig.phoneDisplay}.`
       );
     } finally {
@@ -629,486 +221,186 @@ const UnifiedLeadForm = ({
     }
   };
 
-  // Animation variants
-  const fieldVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: (i) => ({
-      opacity: 1,
-      y: 0,
-      transition: { delay: 0.05 * i, duration: 0.3 },
-    }),
-  };
+  // ---- Render ----------------------------------------------------------
+  const errorId = (field) => `${formId}-${field}-error`;
 
-  // Determine styles based on variant
-  const getVariantClass = () => {
-    switch (variant) {
-      case "dark":
-        return styles.variantDark;
-      case "hero":
-        return styles.variantHero;
-      case "drawer":
-        return styles.variantDrawer;
-      default:
-        return styles.variantDefault;
-    }
-  };
+  const showFieldError = (field) => touched[field] && errors[field];
 
-  // Placeholder text for empty selects, dimmed appropriately for the surface.
-  const selectPlaceholder = (label) => (
-    <span
-      style={{
-        color: isDarkSurface ? "#FFFFFF80" : undefined,
-        opacity: isDarkSurface ? 1 : 0.5,
-      }}
-    >
-      {label}
-    </span>
-  );
+  const fieldError = (field) =>
+    showFieldError(field) ? (
+      <span className={styles.error} id={errorId(field)} role="alert">
+        {errors[field]}
+      </span>
+    ) : null;
 
-  const selectMenuProps = {
-    PaperProps: {
-      sx: { zIndex: 99999, maxHeight: 360 },
-    },
-    disablePortal: false,
-    style: { zIndex: 99999 },
-  };
+  const controlClass = (base, field) =>
+    `${base} ${showFieldError(field) ? styles.invalid : ''}`.trim();
 
-  const selectSx = isDarkSurface
-    ? { color: "#FFFFFF", "& .MuiSelect-icon": { color: "#FFFFFF80" } }
-    : undefined;
+  const describedBy = (field) =>
+    showFieldError(field) ? errorId(field) : undefined;
 
-  // Framer stagger index base — selects add two extra rows.
-  const submitIndex = showInterestFields ? 6 : 3;
-
-  return (
-    <div
-      className={`${styles.formContainer} ${getVariantClass()} ${className}`}
-    >
-      {/* Form Header */}
-      {(showTitle || showSubtitle) && (
-        <div className={styles.formHeader}>
-          {showTitle && (
-            <Typography variant="h5" className={styles.formTitle}>
-              {title}
-            </Typography>
-          )}
-          {showSubtitle && subtitle && (
-            <Typography
-              variant="body2"
-              className={styles.formSubtitle}
-              sx={isDarkSurface ? { color: "#FFFFFFB3 !important" } : undefined}
-            >
-              {subtitle}
-            </Typography>
-          )}
-        </div>
-      )}
-
-      {/* Form */}
-      <form
-        id={formId}
-        onSubmit={handleSubmit}
-        className={styles.form}
-        noValidate
-        autoComplete="off"
-      >
-        {/* Full Name */}
-        <motion.div
-          custom={0}
-          variants={fieldVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          <TextField
-            inputRef={nameRef}
-            fullWidth
-            placeholder="Full Name"
-            variant="outlined"
-            value={formData.name}
-            onChange={handleChange("name")}
-            onBlur={handleBlur("name")}
-            error={touched.name && !!errors.name}
-            helperText={touched.name && errors.name}
-            disabled={isSubmitting}
-            className={styles.textField}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Icon
-                    icon="mdi:account-outline"
-                    className={styles.inputIcon}
-                    style={isDarkSurface ? { color: "#FFFFFF80" } : undefined}
-                  />
-                </InputAdornment>
-              ),
-            }}
-            inputProps={{
-              "aria-label": "Full name",
-              maxLength: 50,
-            }}
-          />
-        </motion.div>
-
-        {/* Mobile Number */}
-        <motion.div
-          custom={1}
-          variants={fieldVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          <TextField
-            inputRef={mobileRef}
-            fullWidth
-            placeholder="Mobile Number"
-            variant="outlined"
-            value={formData.mobile}
-            onChange={handleChange("mobile")}
-            onBlur={handleBlur("mobile")}
-            error={touched.mobile && !!errors.mobile}
-            helperText={touched.mobile && errors.mobile}
-            disabled={isSubmitting}
-            className={styles.textField}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment
-                  position="start"
-                  className={styles.mobilePrefix}
-                >
-                  <Typography
-                    variant="body2"
-                    className={styles.countryCode}
-                    sx={
-                      isDarkSurface
-                        ? { color: "#FFFFFFCC !important" }
-                        : undefined
-                    }
-                  >
-                    +91
-                  </Typography>
-                  <span
-                    className={styles.prefixDivider}
-                    style={isDarkSurface ? { color: "#FFFFFF4D" } : undefined}
-                  >
-                    -
-                  </span>
-                </InputAdornment>
-              ),
-            }}
-            inputProps={{
-              "aria-label": "Mobile number",
-              maxLength: 10,
-              inputMode: "numeric",
-              pattern: "[0-9]*",
-            }}
-          />
-        </motion.div>
-
-        {/* Email (optional) */}
-        <motion.div
-          custom={2}
-          variants={fieldVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          <TextField
-            inputRef={emailRef}
-            fullWidth
-            placeholder="Email (optional)"
-            type="email"
-            variant="outlined"
-            value={formData.email}
-            onChange={handleChange("email")}
-            onBlur={handleBlur("email")}
-            error={touched.email && !!errors.email}
-            helperText={touched.email && errors.email}
-            disabled={isSubmitting}
-            className={styles.textField}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Icon
-                    icon="mdi:email-outline"
-                    className={styles.inputIcon}
-                    style={isDarkSurface ? { color: "#FFFFFF80" } : undefined}
-                  />
-                </InputAdornment>
-              ),
-            }}
-            inputProps={{
-              "aria-label": "Email address",
-            }}
-          />
-        </motion.div>
-
-        {/* Interested In (grouped select) */}
-        {showInterestFields && (
-          <motion.div
-            custom={3}
-            variants={fieldVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            <FormControl
-              fullWidth
-              error={touched.service_interest && !!errors.service_interest}
-              className={styles.textField}
-            >
-              <Select
-                ref={serviceRef}
-                displayEmpty
-                value={formData.service_interest}
-                onChange={handleChange("service_interest")}
-                onBlur={handleBlur("service_interest")}
-                disabled={isSubmitting}
-                startAdornment={
-                  <InputAdornment position="start">
-                    <Icon
-                      icon="mdi:tag-outline"
-                      className={styles.inputIcon}
-                      style={isDarkSurface ? { color: "#FFFFFF80" } : undefined}
-                    />
-                  </InputAdornment>
-                }
-                renderValue={(selected) =>
-                  selected ? selected : selectPlaceholder("Interested In")
-                }
-                MenuProps={selectMenuProps}
-                inputProps={{ "aria-label": "Interested in" }}
-                SelectDisplayProps={{
-                  "aria-describedby":
-                    touched.service_interest && errors.service_interest
-                      ? `${formId}-service-interest-error`
-                      : undefined,
-                }}
-                sx={selectSx}
-              >
-                {INTEREST_GROUPS.map((group) => [
-                  <ListSubheader
-                    key={group.label}
-                    className={styles.selectGroupLabel}
-                  >
-                    {group.label}
-                  </ListSubheader>,
-                  ...group.options.map((option) => (
-                    <MenuItem key={option} value={option}>
-                      {option}
-                    </MenuItem>
-                  )),
-                ])}
-                <MenuItem value={GENERAL_ENQUIRY}>{GENERAL_ENQUIRY}</MenuItem>
-              </Select>
-              {touched.service_interest && errors.service_interest && (
-                <FormHelperText id={`${formId}-service-interest-error`}>
-                  {errors.service_interest}
-                </FormHelperText>
-              )}
-            </FormControl>
-          </motion.div>
-        )}
-
-        {/* State */}
-        {showInterestFields && (
-          <motion.div
-            custom={4}
-            variants={fieldVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            <FormControl
-              fullWidth
-              error={touched.state && !!errors.state}
-              className={styles.textField}
-            >
-              <Select
-                ref={stateSelectRef}
-                displayEmpty
-                value={formData.state}
-                onChange={handleChange("state")}
-                onBlur={handleBlur("state")}
-                disabled={isSubmitting}
-                startAdornment={
-                  <InputAdornment position="start">
-                    <Icon
-                      icon="mdi:map-marker-outline"
-                      className={styles.inputIcon}
-                      style={isDarkSurface ? { color: "#FFFFFF80" } : undefined}
-                    />
-                  </InputAdornment>
-                }
-                renderValue={(selected) =>
-                  selected ? selected : selectPlaceholder("State")
-                }
-                MenuProps={selectMenuProps}
-                inputProps={{ "aria-label": "State" }}
-                SelectDisplayProps={{
-                  "aria-describedby":
-                    touched.state && errors.state
-                      ? `${formId}-state-error`
-                      : undefined,
-                }}
-                sx={selectSx}
-              >
-                {STATE_OPTIONS.map((option) => (
-                  <MenuItem key={option} value={option}>
-                    {option}
-                  </MenuItem>
-                ))}
-              </Select>
-              {touched.state && errors.state && (
-                <FormHelperText id={`${formId}-state-error`}>
-                  {errors.state}
-                </FormHelperText>
-              )}
-            </FormControl>
-          </motion.div>
-        )}
-
-        {/* Message (optional) */}
-        <motion.div
-          custom={5}
-          variants={fieldVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          <TextField
-            inputRef={messageRef}
-            fullWidth
-            placeholder="Tell us about your requirement…"
-            variant="outlined"
-            value={formData.message}
-            onChange={handleChange("message")}
-            onBlur={handleBlur("message")}
-            error={touched.message && !!errors.message}
-            helperText={touched.message && errors.message}
-            disabled={isSubmitting}
-            multiline
-            minRows={2}
-            maxRows={4}
-            className={`${styles.textField} ${styles.messageField}`}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment
-                  position="start"
-                  className={styles.messageAdornment}
-                >
-                  <Icon
-                    icon="mdi:message-text-outline"
-                    className={styles.inputIcon}
-                    style={isDarkSurface ? { color: "#FFFFFF80" } : undefined}
-                  />
-                </InputAdornment>
-              ),
-            }}
-            inputProps={{
-              "aria-label": "Message",
-              maxLength: 500,
-            }}
-          />
-        </motion.div>
-
-        {/* Submit Button */}
-        <motion.div
-          custom={submitIndex}
-          variants={fieldVariants}
-          initial="hidden"
-          animate="visible"
-          className={styles.submitWrapper}
-        >
-          <Button
-            type="submit"
-            variant="primary"
-            fullWidth
-            disabled={isSubmitting}
-            className={styles.submitButton}
-          >
-            {isSubmitting ? (
-              <Box className={styles.loadingState}>
-                <CircularProgress size={20} color="inherit" />
-                <span>Sending…</span>
-              </Box>
-            ) : (
-              <>
-                <Icon icon="mdi:send-outline" className={styles.submitIcon} />
-                <span>{submitButtonText}</span>
-              </>
-            )}
-          </Button>
-        </motion.div>
-
-        {/* Quiet reassurance line (replaces the old trust-badge row) */}
-        {showTrustBadges && (
-          <motion.div
-            custom={submitIndex + 1}
-            variants={fieldVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            <Typography
-              variant="caption"
-              className={styles.reassurance}
-              sx={isDarkSurface ? { color: "#FFFFFF99 !important" } : undefined}
-            >
-              We respond within 24 hours. Your details stay private.
-            </Typography>
-          </motion.div>
-        )}
-
-        {/* Consent Text */}
-        {showConsent && (
-          <motion.div
-            custom={submitIndex + 2}
-            variants={fieldVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            <Typography
-              variant="caption"
-              className={styles.consentText}
-              sx={isDarkSurface ? { color: "#FFFFFF99 !important" } : undefined}
-            >
-              By submitting, I agree to be contacted by {siteConfig.brandName}{" "}
-              regarding my enquiry. See our{" "}
-              <button
-                type="button"
-                onClick={() => setPrivacyModalOpen(true)}
-                className={styles.privacyLink}
-                style={{
-                  background: "none",
-                  border: "none",
-                  padding: 0,
-                  cursor: "pointer",
-                }}
-              >
-                Privacy Policy
-              </button>
-              .
-            </Typography>
-          </motion.div>
-        )}
-      </form>
-
-      {/* Phone Button */}
-      {showPhoneButton && (
-        <div className={styles.phoneSection}>
-          <Typography
-            className={styles.orText}
-            sx={{ color: "#FFFFFF80 !important" }}
-          >
-            Or call us directly
-          </Typography>
-          <a href={telHref} className={styles.phoneLink}>
-            <Icon icon="mdi:phone" />
-            <span>{siteConfig.phoneDisplay}</span>
+  if (successName) {
+    return (
+      <div className={className}>
+        <div className={styles.success}>
+          <i aria-hidden="true">&#10003;</i>
+          <h3 className={styles.successHead}>Thank you, {successName}.</h3>
+          <p className={styles.successBody}>
+            Your enquiry has been noted. Our team will get back to you within
+            one business day.
+          </p>
+          <a href={mailHref} className={styles.successMail}>
+            {siteConfig.email}
           </a>
         </div>
-      )}
+      </div>
+    );
+  }
 
-      {/* Privacy Policy Modal */}
-      <PrivacyPolicyModal
-        isOpen={privacyModalOpen}
-        onClose={() => setPrivacyModalOpen(false)}
-      />
-    </div>
+  return (
+    <form
+      id={formId}
+      className={`${styles.form} ${className}`.trim()}
+      onSubmit={handleSubmit}
+      noValidate
+    >
+      <div className={styles.row2}>
+        <label className={styles.label}>
+          FULL NAME *
+          <input
+            ref={fieldRefs.name}
+            name="name"
+            className={controlClass(styles.input, 'name')}
+            placeholder="Your name"
+            value={formData.name}
+            onChange={handleChange('name')}
+            onBlur={handleBlur('name')}
+            disabled={isSubmitting}
+            maxLength={50}
+            autoComplete="name"
+            aria-invalid={showFieldError('name') ? true : undefined}
+            aria-describedby={describedBy('name')}
+          />
+          {fieldError('name')}
+        </label>
+
+        <label className={styles.label}>
+          EMAIL *
+          <input
+            ref={fieldRefs.email}
+            name="email"
+            type="email"
+            className={controlClass(styles.input, 'email')}
+            placeholder="you@company.com"
+            value={formData.email}
+            onChange={handleChange('email')}
+            onBlur={handleBlur('email')}
+            disabled={isSubmitting}
+            autoComplete="email"
+            aria-invalid={showFieldError('email') ? true : undefined}
+            aria-describedby={describedBy('email')}
+          />
+          {fieldError('email')}
+        </label>
+      </div>
+
+      <div className={styles.row2}>
+        <label className={styles.label}>
+          PHONE
+          <input
+            ref={fieldRefs.mobile}
+            name="phone"
+            type="tel"
+            inputMode="numeric"
+            className={controlClass(styles.input, 'mobile')}
+            placeholder="+91 ..."
+            value={formData.mobile}
+            onChange={handleChange('mobile')}
+            onBlur={handleBlur('mobile')}
+            disabled={isSubmitting}
+            autoComplete="tel-national"
+            aria-invalid={showFieldError('mobile') ? true : undefined}
+            aria-describedby={describedBy('mobile')}
+          />
+          {fieldError('mobile')}
+        </label>
+
+        <label className={styles.label}>
+          ORGANIZATION
+          <input
+            name="org"
+            className={styles.input}
+            placeholder="Company / institution"
+            value={formData.organization}
+            onChange={handleChange('organization')}
+            disabled={isSubmitting}
+            maxLength={ORGANIZATION_MAX}
+            autoComplete="organization"
+          />
+        </label>
+      </div>
+
+      <label className={styles.label}>
+        WHAT DO YOU NEED SUPPORT WITH? *
+        <select
+          ref={fieldRefs.service_interest}
+          name="service"
+          className={controlClass(styles.select, 'service_interest')}
+          value={formData.service_interest}
+          onChange={handleChange('service_interest')}
+          onBlur={handleBlur('service_interest')}
+          disabled={isSubmitting}
+          aria-invalid={showFieldError('service_interest') ? true : undefined}
+          aria-describedby={describedBy('service_interest')}
+        >
+          <option value="">Select an area</option>
+          {INTEREST_OPTIONS.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+        {fieldError('service_interest')}
+      </label>
+
+      <label className={styles.label}>
+        MESSAGE
+        <textarea
+          ref={fieldRefs.message}
+          name="message"
+          rows={4}
+          className={controlClass(styles.textarea, 'message')}
+          placeholder="Tell us briefly about your requirement..."
+          value={formData.message}
+          onChange={handleChange('message')}
+          onBlur={handleBlur('message')}
+          disabled={isSubmitting}
+          maxLength={MESSAGE_MAX}
+          aria-invalid={showFieldError('message') ? true : undefined}
+          aria-describedby={describedBy('message')}
+        />
+        {fieldError('message')}
+      </label>
+
+      <button
+        type="submit"
+        className={`btn btn--primary ${styles.submit}`}
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? (
+          'Sending…'
+        ) : (
+          <>
+            Send Enquiry <span aria-hidden="true">&rarr;</span>
+          </>
+        )}
+      </button>
+
+      <p className={styles.alt}>
+        Prefer email? Write to us at{' '}
+        <a href={mailHref}>{siteConfig.email}</a>
+      </p>
+    </form>
   );
 };
 

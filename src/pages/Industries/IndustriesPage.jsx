@@ -4,7 +4,7 @@
    The three blocks of `mockup/industries.html`, in order: the
    parallaxed hero, the seven-sector grid closed by the red enquiry
    card, and the grey "One partner. Many dimensions." sign-off. The
-   shared header, footer and enquiry drawer come from `PublicLayout` /
+   shared header, footer and enquiry modal come from `PublicLayout` /
    `App`.
    ============================================ */
 

@@ -16,7 +16,7 @@ import { NAV_LINKS } from '../../../data/navigation';
 import styles from './Header.module.css';
 
 const Header = ({ isMenuOpen = false, onToggleMenu, menuId = 'mobile-menu' }) => {
-  const { openLeadDrawer } = useModal();
+  const { openLeadModal } = useModal();
 
   return (
     <header className={styles.header}>
@@ -45,7 +45,7 @@ const Header = ({ isMenuOpen = false, onToggleMenu, menuId = 'mobile-menu' }) =>
           <button
             type="button"
             className={styles.navCta}
-            onClick={() => openLeadDrawer('header-cta')}
+            onClick={() => openLeadModal('header-cta')}
           >
             Let&rsquo;s Talk <span aria-hidden="true">&rarr;</span>
           </button>

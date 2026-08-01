@@ -19,7 +19,7 @@ const ICON_PHONE = 'https://img.icons8.com/ios-filled/100/F0293E/phone.png';
 const ICON_MAIL = 'https://img.icons8.com/ios-filled/100/F0293E/new-post.png';
 
 const Footer = () => {
-  const { openLeadDrawer } = useModal();
+  const { openLeadModal } = useModal();
 
   return (
     <footer className={styles.footer}>
@@ -33,7 +33,7 @@ const Footer = () => {
           <button
             type="button"
             className="btn btn--primary"
-            onClick={() => openLeadDrawer('footer-cta')}
+            onClick={() => openLeadModal('footer-cta')}
           >
             Start a Conversation <span aria-hidden="true">&rarr;</span>
           </button>

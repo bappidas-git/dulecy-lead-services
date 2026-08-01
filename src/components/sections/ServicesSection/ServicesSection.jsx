@@ -26,7 +26,7 @@ import {
 import styles from "./ServicesSection.module.css";
 
 const ServicesSection = () => {
-  const { openLeadDrawer } = useModal();
+  const { openLeadModal } = useModal();
 
   // Header fades up once on scroll-in; the rows stagger in. Each hook refreshes
   // ScrollTrigger so this lazy-mounted section measures correctly.
@@ -43,7 +43,7 @@ const ServicesSection = () => {
   // Whole row opens the enquiry drawer pre-filled with the service, so the form
   // arrives with the right context (prompt 10 wires the prefill in).
   const handleRowEnquiry = (service) =>
-    openLeadDrawer("service-enquiry", {
+    openLeadModal("service-enquiry", {
       subtitle: service.name,
       service_interest: service.name,
     });

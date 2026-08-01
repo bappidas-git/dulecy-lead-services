@@ -30,7 +30,7 @@ const featureImage = {
 };
 
 const ProductsSection = () => {
-  const { openLeadDrawer } = useModal();
+  const { openLeadModal } = useModal();
 
   // Header fades up once on scroll-in; the tile grid staggers its cards. Each
   // hook refreshes ScrollTrigger so this lazy-mounted section measures correctly.
@@ -40,7 +40,7 @@ const ProductsSection = () => {
   // Whole tile opens the enquiry drawer pre-filled with the category, so the
   // form arrives with the right context (prompt 10 wires the prefill in).
   const handleTileEnquiry = (product) =>
-    openLeadDrawer("product-enquiry", {
+    openLeadModal("product-enquiry", {
       subtitle: product.name,
       service_interest: product.name,
     });
@@ -97,7 +97,7 @@ const ProductsSection = () => {
           <button
             type="button"
             className={styles.ctaBtn}
-            onClick={() => openLeadDrawer("product-enquiry")}
+            onClick={() => openLeadModal("product-enquiry")}
           >
             <span>Request Product Pricing</span>
             <Icon icon="mdi:arrow-right" aria-hidden="true" />

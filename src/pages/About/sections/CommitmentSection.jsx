@@ -2,7 +2,7 @@
    About / Our commitment — ported 1:1 from `mockup/about.html`
    --------------------------------------------
    Centred sign-off: the four "behind the …" phrases stacked and
-   staggered in, then the enquiry drawer on the left button and
+   staggered in, then the enquiry modal on the left button and
    /expertise on the right.
    ============================================ */
 
@@ -27,7 +27,7 @@ const PHRASES = [
 ];
 
 const CommitmentSection = () => {
-  const { openLeadDrawer } = useModal();
+  const { openLeadModal } = useModal();
   const eyebrowRef = useReveal(REVEAL_PRESET);
   const introRef = useReveal({ ...REVEAL_PRESET, delay: 0.05 });
   const phrasesRef = useStaggerReveal(STAGGER_PRESET);
@@ -57,7 +57,7 @@ const CommitmentSection = () => {
           <button
             type="button"
             className="btn btn--primary"
-            onClick={() => openLeadDrawer('about-cta')}
+            onClick={() => openLeadModal('about-cta')}
           >
             Work With Us <span aria-hidden="true">&rarr;</span>
           </button>

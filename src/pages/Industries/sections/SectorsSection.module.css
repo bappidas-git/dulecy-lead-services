@@ -3,7 +3,7 @@
    `mockup/styles.css` (.sectors, .sector*) plus the section's
    bottom padding from `mockup/industries.html`.
 
-   The red card is a <button> here (it opens the enquiry drawer
+   The red card is a <button> here (it opens the enquiry modal
    rather than navigating), so it also resets the UA button
    chrome the mockup's <a> never had.
    ============================================ */
@@ -79,7 +79,7 @@
   text-wrap: pretty;
 }
 
-/* ========== Closing red card (opens the enquiry drawer) ========== */
+/* ========== Closing red card (opens the enquiry modal) ========== */
 .sectorRed {
   border: none;
   border-radius: 22px;

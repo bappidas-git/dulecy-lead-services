@@ -3,7 +3,7 @@
    `mockup/industries.html`
    --------------------------------------------
    Grey split sign-off: the pitch on the left, three stacked action
-   cards on the right — the enquiry drawer, a direct dial read from
+   cards on the right — the enquiry modal, a direct dial read from
    `siteConfig`, and a route into /expertise.
    ============================================ */
 
@@ -24,7 +24,7 @@ import styles from './CtaSection.module.css';
 const ICON_PHONE = 'https://img.icons8.com/ios-filled/100/D5192E/phone.png';
 
 const CtaSection = () => {
-  const { openLeadDrawer } = useModal();
+  const { openLeadModal } = useModal();
   const eyebrowRef = useReveal(REVEAL_PRESET);
   const headRef = useReveal({ ...REVEAL_PRESET, delay: 0.05 });
   const bodyRef = useReveal({ ...REVEAL_PRESET, delay: 0.1 });
@@ -53,7 +53,7 @@ const CtaSection = () => {
           <button
             type="button"
             className={`${styles.action} ${styles.actionRed}`}
-            onClick={() => openLeadDrawer('industries-cta-2')}
+            onClick={() => openLeadModal('industries-cta-2')}
           >
             <span className={styles.actionBody}>
               <span className={styles.actionTitle}>Start a conversation</span>

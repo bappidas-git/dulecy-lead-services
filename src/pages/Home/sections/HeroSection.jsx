@@ -27,7 +27,7 @@ const PILLARS = [
 ];
 
 const HeroSection = () => {
-  const { openLeadDrawer } = useModal();
+  const { openLeadModal } = useModal();
   const heroRef = useHeroIntro();
   const bgRef = useParallax(parallaxPreset(-16));
 
@@ -73,7 +73,7 @@ const HeroSection = () => {
           <button
             type="button"
             className="btn btn--primary"
-            onClick={() => openLeadDrawer('home-hero')}
+            onClick={() => openLeadModal('home-hero')}
           >
             Start a Conversation <span aria-hidden="true">&rarr;</span>
           </button>
