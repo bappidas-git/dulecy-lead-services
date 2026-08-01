@@ -30,18 +30,21 @@ import SEOHead from './components/common/SEO/SEOHead';
 // Shared #hash → scroll helper (also used by the /expertise accordion)
 import { hashToId, scrollToHash } from './utils/hashScroll';
 
-// Admin
-import { AdminAuthProvider } from './admin/context/AdminAuthContext';
-import AdminLogin from './admin/components/AdminLogin';
-import ProtectedRoute from './admin/components/ProtectedRoute';
-
 // Pages (Lazy loaded)
 const AboutPage = lazy(() => import('./pages/About/AboutPage'));
 const ExpertisePage = lazy(() => import('./pages/Expertise/ExpertisePage'));
 const IndustriesPage = lazy(() => import('./pages/Industries/IndustriesPage'));
 const ContactPage = lazy(() => import('./pages/Contact/ContactPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFound/NotFoundPage'));
+
+// Admin — lazy, so nothing under /admin ships in the public bundle
+// (Prompt 12). The auth provider is pulled in through this same boundary
+// by `AdminGate` below rather than imported at module scope.
 const AdminLayout = lazy(() => import('./admin/components/AdminLayout'));
+const AdminLoginRoute = lazy(() => import('./admin/components/AdminLoginRoute'));
+const AdminProtectedShell = lazy(() =>
+  import('./admin/components/AdminProtectedShell')
+);
 
 // ===========================================
 // Error Boundary Component
@@ -267,25 +270,25 @@ const App = () => {
                 <Route path="*" element={lazyRoute(<NotFoundPage />)} />
               </Route>
 
-              {/* Admin Routes */}
+              {/* Admin Routes — each behind its own Suspense boundary so the
+                  admin chunk (auth context, MUI tables, Iconify) is only
+                  fetched once someone actually navigates to /admin. */}
               <Route
                 path="/admin/login"
                 element={
-                  <AdminAuthProvider>
-                    <AdminLogin />
-                  </AdminAuthProvider>
+                  <Suspense fallback={<SectionLoader height={400} variant="default" />}>
+                    <AdminLoginRoute />
+                  </Suspense>
                 }
               />
               <Route
                 path="/admin/*"
                 element={
-                  <AdminAuthProvider>
-                    <ProtectedRoute>
-                      <Suspense fallback={<SectionLoader height={400} variant="default" />}>
-                        <AdminLayout />
-                      </Suspense>
-                    </ProtectedRoute>
-                  </AdminAuthProvider>
+                  <Suspense fallback={<SectionLoader height={400} variant="default" />}>
+                    <AdminProtectedShell>
+                      <AdminLayout />
+                    </AdminProtectedShell>
+                  </Suspense>
                 }
               />
             </Routes>
