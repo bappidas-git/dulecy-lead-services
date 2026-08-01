@@ -6,10 +6,8 @@
    routes and a branded `*` catch-all. `/thank-you` was retired in
    Prompt 07 — the enquiry form now confirms inline.
 
-   The Nilachal-era floating UI (bottom mobile nav, swipe drawer,
-   WhatsApp FAB, scroll-progress bar, back-to-top) is no longer
-   mounted — the Dulecy mockup has none of it. Those files are
-   deleted in Prompt 11.
+   The only floating UI is the burger → full-screen overlay menu
+   (`MobileMenu`) and the global enquiry modal (`LeadModal`).
    ============================================ */
 
 import React, { Suspense, lazy, useEffect, memo } from 'react';
