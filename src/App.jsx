@@ -29,6 +29,9 @@ import HomePage from './pages/Home/HomePage';
 import LeadFormDrawer from './components/common/LeadFormDrawer/LeadFormDrawer';
 import SEOHead from './components/common/SEO/SEOHead';
 
+// Shared #hash → scroll helper (also used by the /expertise accordion)
+import { hashToId, scrollToHash } from './utils/hashScroll';
+
 // Admin
 import { AdminAuthProvider } from './admin/context/AdminAuthContext';
 import AdminLogin from './admin/components/AdminLogin';
@@ -42,10 +45,6 @@ const ContactPage = lazy(() => import('./pages/Contact/ContactPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFound/NotFoundPage'));
 const ThankYouPage = lazy(() => import('./pages/ThankYou/ThankYou'));
 const AdminLayout = lazy(() => import('./admin/components/AdminLayout'));
-
-// Fixed header height (68px) + breathing room, used when a hash lands
-// mid-page so the anchored element clears the glass bar.
-const HEADER_OFFSET = 90;
 
 // ===========================================
 // Error Boundary Component
@@ -216,39 +215,12 @@ const ScrollManager = () => {
     if (!location.hash) window.scrollTo(0, 0);
   }, [location.pathname, location.hash]);
 
-  useEffect(() => {
-    const hash = location.hash;
-    if (!hash) return undefined;
-
-    const targetId = decodeURIComponent(hash.substring(1));
-    let cancelled = false;
-
-    const scrollToTarget = () => {
-      const targetElement = document.getElementById(targetId);
-      if (!targetElement) return false;
-      const elementPosition = targetElement.getBoundingClientRect().top;
-      const offsetPosition =
-        elementPosition + window.pageYOffset - HEADER_OFFSET;
-      window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-      return true;
-    };
-
-    // Try immediately, then retry with increasing delays to wait for
-    // lazy-loaded pages/sections to mount.
-    if (scrollToTarget()) return undefined;
-
-    const retryDelays = [100, 300, 600, 1000, 2000];
-    const timers = retryDelays.map((delay) =>
-      setTimeout(() => {
-        if (!cancelled) scrollToTarget();
-      }, delay)
-    );
-
-    return () => {
-      cancelled = true;
-      timers.forEach(clearTimeout);
-    };
-  }, [location.pathname, location.hash]);
+  // A hash scrolls to its target instead — polling while lazy
+  // pages/sections mount, and cancelling any pending retry on unmount.
+  useEffect(
+    () => scrollToHash(hashToId(location.hash)),
+    [location.pathname, location.hash]
+  );
 
   return null;
 };

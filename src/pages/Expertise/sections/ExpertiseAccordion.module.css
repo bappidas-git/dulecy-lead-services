@@ -1,0 +1,221 @@
+/* ============================================
+   Expertise / Accordion — values ported verbatim from
+   `mockup/styles.css` (.acc*, @keyframes expandIn) plus the
+   section's inline bottom padding in `mockup/expertise.html`
+   (the accordion sits straight in `.container`, not in `.section`).
+   ============================================ */
+
+.section {
+  padding-bottom: clamp(80px, 10vw, 130px);
+}
+
+.acc {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--line);
+}
+
+.item {
+  border-bottom: 1px solid var(--line);
+  /* `#e01`–`#e10` deep links land clear of the 68px fixed header. */
+  scroll-margin-top: 90px;
+}
+
+/* ========== Header row ========== */
+.head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: clamp(14px, 3vw, 32px);
+  padding: clamp(20px, 3vw, 30px) clamp(8px, 1.5vw, 18px);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  color: var(--ink);
+  font-family: inherit;
+  transition: background 0.25s ease;
+}
+
+.head:hover,
+.item.open .head {
+  background: #f7f7f8;
+}
+
+.num {
+  font-size: clamp(13px, 1.4vw, 15px);
+  font-weight: 700;
+  color: var(--red);
+  min-width: 34px;
+}
+
+.titles {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.title {
+  font-size: clamp(19px, 2.8vw, 28px);
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.tagline {
+  font-size: clamp(12px, 1.4vw, 13.5px);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--grey-4);
+}
+
+.icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1.5px solid #dedee2;
+  background: transparent;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+  font-style: normal;
+  transition:
+    transform 0.3s ease,
+    background 0.3s ease,
+    color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.item.open .icon {
+  transform: rotate(45deg);
+  border-color: transparent;
+  background: var(--grad);
+  color: #fff;
+}
+
+/* ========== Open body ========== */
+.body {
+  padding: 6px clamp(8px, 1.5vw, 18px) clamp(28px, 4vw, 40px);
+  animation: expandIn 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cols {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px clamp(32px, 5vw, 72px);
+  margin-left: clamp(0px, 3vw, 66px);
+}
+
+.text {
+  flex: 1.2 1 300px;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.text p {
+  margin: 0;
+}
+
+.desc {
+  font-size: clamp(16px, 1.8vw, 18.5px);
+  line-height: 1.7;
+  color: var(--grey-1);
+  text-wrap: pretty;
+}
+
+.note {
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: var(--grey-3);
+  text-wrap: pretty;
+}
+
+.closing {
+  margin-top: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--red);
+  /* The mockup leaves this inherited; our reset gives <p> 1.625. */
+  line-height: normal;
+}
+
+/* ========== Tag column ========== */
+.side {
+  flex: 1 1 280px;
+  min-width: 240px;
+}
+
+.sideLabel {
+  margin: 0 0 14px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--grey-4);
+  line-height: normal;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tags span {
+  border: 1px solid var(--line);
+  background: #fafafb;
+  border-radius: 999px;
+  padding: 8px 15px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #3d3d42;
+}
+
+.cta {
+  margin-top: 22px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--red);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+  line-height: normal;
+}
+
+@keyframes expandIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .head,
+  .icon {
+    transition: none;
+  }
+
+  .body {
+    animation: none;
+  }
+}
