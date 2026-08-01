@@ -1,11 +1,14 @@
-/* Stub hero — mirrors the mockup's `.container.hero__inner` spacing. */
+/* ============================================
+   HomePage — page shell only.
+   --------------------------------------------
+   The mockup styles nothing at page level, so its sections inherit the
+   browser's defaults from <body>. Our global reset sets a 1.5
+   line-height and a fluid base font-size instead, so the page restores
+   the mockup's inherited values here — every element that sets its own
+   size or line-height is unaffected.
+   ============================================ */
 
-.hero {
-  max-width: 1280px;
-  margin: 0 auto;
-  width: 100%;
-  padding-left: clamp(20px, 4vw, 44px);
-  padding-right: clamp(20px, 4vw, 44px);
-  padding-top: clamp(140px, 18vh, 190px);
-  padding-bottom: clamp(70px, 9vw, 110px);
+.page {
+  font-size: 16px;
+  line-height: normal;
 }

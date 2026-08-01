@@ -61,6 +61,9 @@ export default function useStaggerReveal(options = {}) {
           duration,
           ease: EASE,
           stagger,
+          // Drop the inline transform once the item has landed — otherwise it
+          // outranks CSS `:hover` transforms (card lifts) for good.
+          clearProps: 'transform',
           scrollTrigger: { trigger: el, start, once },
         }
       );

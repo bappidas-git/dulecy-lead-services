@@ -1,0 +1,65 @@
+/* ============================================
+   Dulecy layout primitives — shared CSS module
+   --------------------------------------------
+   Verbatim ports of the mockup's layout classes (`mockup/styles.css`:
+   .container, .section, .section--grey, .section--dark, .split*).
+
+   They live in a *module* rather than in global CSS because the legacy
+   Nilachal stylesheets already own global `.container` / `.section` with
+   different padding (and `responsive.css` overrides them per breakpoint).
+   Importing this module keeps the mockup's exact spacing without
+   depending on stylesheet order:
+
+     import layout from '../../../styles/layout.module.css';
+     <section className={`${layout.section} ${layout.sectionGrey}`}>
+       <div className={layout.container}>…</div>
+     </section>
+   ============================================ */
+
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding-left: clamp(20px, 4vw, 44px);
+  padding-right: clamp(20px, 4vw, 44px);
+}
+
+.section {
+  padding-top: clamp(80px, 11vw, 140px);
+  padding-bottom: clamp(80px, 11vw, 140px);
+}
+
+.sectionGrey {
+  background: var(--bg-grey);
+}
+
+.sectionDark {
+  background: var(--ink);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ========== Two-column split (aside + main) ========== */
+.split {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px clamp(40px, 6vw, 100px);
+}
+
+.splitAside {
+  flex: 1 1 260px;
+  min-width: 240px;
+}
+
+.splitMain {
+  flex: 1.4 1 340px;
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.splitMain p {
+  margin: 0;
+}

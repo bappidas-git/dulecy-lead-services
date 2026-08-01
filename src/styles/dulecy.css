@@ -70,6 +70,9 @@
   margin: 0;
   font-size: 11px;
   font-weight: 700;
+  /* The mockup leaves this inherited; our reset gives <p> 1.625, which
+     would add ~5px of height under every eyebrow. */
+  line-height: normal;
   letter-spacing: 0.24em;
   text-transform: uppercase;
   color: var(--red);
@@ -114,4 +117,76 @@
   color: var(--grey-2);
   max-width: 660px;
   text-wrap: pretty;
+}
+
+.section-head {
+  margin: 16px 0 0;
+  font-size: clamp(30px, 4.4vw, 52px);
+  font-weight: 750;
+  letter-spacing: -0.03em;
+  line-height: 1.06;
+  text-wrap: balance;
+}
+
+/* ========== Body copy ========== */
+.body-lg {
+  font-size: clamp(17px, 1.8vw, 20px);
+  line-height: 1.75;
+  color: var(--grey-1);
+  text-wrap: pretty;
+}
+
+.body-md {
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--grey-3);
+  text-wrap: pretty;
+}
+
+/* ========== "More about …" link with the circled arrow ========== */
+.link-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  text-decoration: none;
+  margin-top: 4px;
+}
+
+.link-more:hover {
+  color: var(--red);
+}
+
+.link-more i {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-style: normal;
+}
+
+/* ========== Decorative primitives ========== */
+
+/* Short gradient bar under a section aside — wiped in by `useLineReveal`. */
+.rule {
+  margin-top: 28px;
+  height: 3px;
+  width: 88px;
+  background: linear-gradient(90deg, #e8293e, #a80e1e);
+  border-radius: 3px;
+  transform-origin: left center;
+}
+
+/* Soft radial light. Position / size / gradient come from the section that
+   places it, exactly as the mockup set them per instance. */
+.glow {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
 }

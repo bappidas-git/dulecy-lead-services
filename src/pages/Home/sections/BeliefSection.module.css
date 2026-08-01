@@ -1,0 +1,40 @@
+/* ============================================
+   Home / Belief band — the per-instance values the
+   mockup set inline on this section (`mockup/index.html`);
+   the band, container and glow base come from the shared
+   layout module + `dulecy.css`.
+   ============================================ */
+
+.glow {
+  right: -140px;
+  top: -140px;
+  width: 480px;
+  height: 480px;
+  background: radial-gradient(
+    circle at 35% 35%,
+    rgba(232, 41, 62, 0.35),
+    transparent 65%
+  );
+}
+
+.inner {
+  max-width: 1080px;
+  text-align: center;
+}
+
+.eyebrow {
+  margin-bottom: 22px;
+}
+
+.statement {
+  margin: 0;
+  font-size: clamp(26px, 4.4vw, 48px);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+  text-wrap: balance;
+}
+
+.statement em {
+  color: var(--red-hi);
+}
