@@ -11,7 +11,7 @@
 import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useModal } from '../../../context/ModalContext';
-import { siteConfig } from '../../../data/siteConfig';
+import { siteConfig, logoAt } from '../../../data/siteConfig';
 import { NAV_LINKS } from '../../../data/navigation';
 import styles from './Header.module.css';
 
@@ -26,7 +26,14 @@ const Header = ({ isMenuOpen = false, onToggleMenu, menuId = 'mobile-menu' }) =>
           className={styles.logo}
           aria-label={`${siteConfig.brandName} — Home`}
         >
-          <img src={siteConfig.logo} alt={siteConfig.brandName} />
+          {/* Drawn 40px tall; requested at 2× for retina. */}
+          <img
+            src={logoAt(siteConfig.logo, { h: 96 })}
+            alt={siteConfig.brandName}
+            width="364"
+            height="96"
+            decoding="async"
+          />
         </Link>
 
         <nav className={styles.nav} aria-label="Main">

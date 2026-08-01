@@ -36,4 +36,25 @@ export const telHref = `tel:${siteConfig.phone}`;
 /** `mailto:` href for the company email. */
 export const mailHref = `mailto:${siteConfig.email}`;
 
+/**
+ * Display URL for a Cloudinary logo, capped to the size that surface
+ * actually renders (Prompt 12).
+ *
+ * The originals are 1800×475 / 1000×1001 PNGs — 500 KB across the three of
+ * them — while the header draws the logo 40px tall. `f_auto` negotiates
+ * WebP/AVIF, `q_auto:best` keeps a brand mark's edges clean, and `w`/`h`
+ * should be passed at **2× the CSS box** so it stays crisp on retina.
+ *
+ * The logos stay on Cloudinary; this only asks for fewer pixels. Pass the
+ * untransformed `siteConfig.logo*` values to SEO schemas — crawlers should
+ * keep seeing the full-resolution originals.
+ *
+ * @example logoAt(siteConfig.logo, { h: 96 })  // header, 40px tall
+ */
+export const logoAt = (url, { w, h } = {}) => {
+  const size = [w && `w_${w}`, h && `h_${h}`].filter(Boolean).join(',');
+  const transform = ['f_auto', 'q_auto:best', size].filter(Boolean).join(',');
+  return url.replace('/image/upload/', `/image/upload/${transform}/`);
+};
+
 export default siteConfig;

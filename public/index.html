@@ -117,9 +117,13 @@
          ========================================= -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preconnect" href="https://api.iconify.design" />
+    <!-- Cloudinary serves the logo in the header/footer of every page. -->
+    <link rel="preconnect" href="https://res.cloudinary.com" />
     <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
     <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    <!-- api.iconify.design is intentionally NOT preconnected: Iconify is only
+         imported by the lazy-loaded /admin bundle, so a public visitor would
+         pay for a handshake they never use. -->
 
     <!-- =========================================
          Preload Critical Resources
@@ -139,6 +143,41 @@
         rel="stylesheet"
       />
     </noscript>
+
+    <!-- =========================================
+         LCP image preload — home route only
+         --------------------------------------------
+         The home hero backdrop is the largest above-the-fold asset and is
+         rendered by React, so without a preload it is not discovered until
+         the main bundle has parsed.
+
+         This is a SPA: index.html is served for every route, so a static
+         <link rel="preload"> here would also download the home hero on
+         /about, /expertise, /industries and /contact — where it is never
+         used, costing those routes bandwidth and LCP. The guard keeps the
+         preload for the route that needs it and skips it everywhere else.
+         Runs synchronously in <head>, so discovery still happens long
+         before the bundle executes.
+
+         Keep the srcset in sync with HERO_BG_SRCSET in
+         src/pages/Home/sections/HeroSection.jsx.
+         ========================================= -->
+    <script>
+      (function () {
+        if (window.location.pathname !== "/") return;
+        var link = document.createElement("link");
+        link.rel = "preload";
+        link.as = "image";
+        link.href = "/images/hero-home.jpg";
+        link.setAttribute(
+          "imagesrcset",
+          "/images/hero-home-960.webp 960w, /images/hero-home-1920.webp 1920w",
+        );
+        link.setAttribute("imagesizes", "100vw");
+        link.setAttribute("fetchpriority", "high");
+        document.head.appendChild(link);
+      })();
+    </script>
 
     <!-- =========================================
          Page Title
@@ -732,12 +771,16 @@
       <div class="loader-wrapper">
         <!-- Logo + Brand -->
         <div class="loader-brand">
+          <!-- Drawn 180px wide; requested from Cloudinary at 2× for retina
+               (f_auto,q_auto:best,w_360) instead of the 1000px original —
+               this sits on the first-paint path. Mirrors logoAt() in
+               src/data/siteConfig.js. -->
           <img
-            src="https://res.cloudinary.com/dn9gyaiik/image/upload/v1785484838/Dulecy-Logo-Icon_hylrpw.png"
+            src="https://res.cloudinary.com/dn9gyaiik/image/upload/f_auto,q_auto:best,w_360/v1785484838/Dulecy-Logo-Icon_hylrpw.png"
             alt="Dulecy Lead Services"
             class="loader-logo-img"
-            width="180"
-            height="auto"
+            width="360"
+            height="361"
           />
           <p class="loader-tagline">Beyond Business Support</p>
         </div>
