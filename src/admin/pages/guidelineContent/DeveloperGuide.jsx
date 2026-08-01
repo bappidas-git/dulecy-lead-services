@@ -248,10 +248,6 @@ const DeveloperGuide = ({ styles }) => {
               <td className={styles.guideTableCell}>The hero's entrance timeline</td>
             </tr>
             <tr>
-              <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>useCountUp</code></td>
-              <td className={styles.guideTableCell}>Scroll-triggered number counters</td>
-            </tr>
-            <tr>
               <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>useParallax</code></td>
               <td className={styles.guideTableCell}>Subtle scrubbed background parallax</td>
             </tr>

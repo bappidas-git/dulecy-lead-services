@@ -24,7 +24,6 @@ export {
 
 export { default as useReveal } from './useReveal';
 export { default as useStaggerReveal } from './useStaggerReveal';
-export { default as useCountUp } from './useCountUp';
 export { default as useParallax } from './useParallax';
 export { default as useHeroIntro } from './useHeroIntro';
 export { default as useLineReveal } from './useLineReveal';
