@@ -153,6 +153,10 @@
   color: var(--ink);
   text-decoration: none;
   margin-top: 4px;
+  /* Stated explicitly, at the same 0.25s the Header gives its nav links.
+     Without it this inherits the legacy `a{transition:color 150ms}` from
+     `global.css` — a duration nothing else on these pages uses. */
+  transition: color 0.25s ease;
 }
 
 .link-more:hover {

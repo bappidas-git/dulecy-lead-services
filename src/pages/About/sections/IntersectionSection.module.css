@@ -6,6 +6,11 @@
    placement, column flex, kicker).
    ============================================ */
 
+/* No `will-change` here: the mockup declares it on `.hero__bg` only, and this
+   band's backdrop is a bare `<img data-parallax="-22">`. `useParallax` tweens
+   with `force3D: true`, which promotes the layer for the duration of the
+   scrub anyway — a permanent hint would just hold a compositor layer for a
+   full-bleed image that is off-screen most of the page. */
 .bg {
   position: absolute;
   top: -18%;
@@ -16,7 +21,6 @@
   object-position: center;
   opacity: 0.38;
   pointer-events: none;
-  will-change: transform;
 }
 
 .scrim {

@@ -10,11 +10,11 @@
 import { useRef } from 'react';
 import {
   gsap,
-  ScrollTrigger,
   useGSAP,
   EASE,
   DURATION,
   REVEAL_START,
+  scheduleRefresh,
   prefersReducedMotion,
 } from './gsapSetup';
 
@@ -65,8 +65,9 @@ export default function useReveal(options = {}) {
       );
 
       // Lazy-loaded sections shift page layout as they mount — recompute
-      // every ScrollTrigger so start/end positions stay accurate.
-      ScrollTrigger.refresh();
+      // every ScrollTrigger so start/end positions stay accurate. Coalesced,
+      // so a page full of these costs one refresh, not one each.
+      scheduleRefresh();
     },
     { scope: ref }
   );

@@ -10,8 +10,9 @@
 import { useRef } from 'react';
 import {
   gsap,
-  ScrollTrigger,
   useGSAP,
+  START,
+  scheduleRefresh,
   prefersReducedMotion,
 } from './gsapSetup';
 
@@ -33,7 +34,7 @@ export default function useParallax(options = {}) {
   const {
     amount = 8,
     scrub = true,
-    start = 'top bottom',
+    start = START.parallax,
     end = 'bottom top',
     trigger = 'self',
     invert = false,
@@ -63,7 +64,7 @@ export default function useParallax(options = {}) {
         }
       );
 
-      ScrollTrigger.refresh();
+      scheduleRefresh();
     },
     { scope: ref }
   );

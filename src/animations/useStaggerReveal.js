@@ -9,11 +9,11 @@
 import { useRef } from 'react';
 import {
   gsap,
-  ScrollTrigger,
   useGSAP,
   EASE,
   DURATION,
   REVEAL_START,
+  scheduleRefresh,
   prefersReducedMotion,
 } from './gsapSetup';
 
@@ -68,7 +68,7 @@ export default function useStaggerReveal(options = {}) {
         }
       );
 
-      ScrollTrigger.refresh();
+      scheduleRefresh();
     },
     { scope: ref }
   );

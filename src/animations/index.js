@@ -11,11 +11,14 @@ export {
   ScrollTrigger,
   useGSAP,
   EASE,
+  EASE_IN_OUT,
   DURATION,
   REVEAL_START,
+  START,
   REVEAL_PRESET,
   STAGGER_PRESET,
   parallaxPreset,
+  scheduleRefresh,
   prefersReducedMotion,
 } from './gsapSetup';
 
