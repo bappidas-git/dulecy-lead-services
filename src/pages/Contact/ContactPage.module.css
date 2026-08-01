@@ -215,15 +215,8 @@
   color: var(--grey-3);
 }
 
-/* Strip the UnifiedLeadForm default-variant card so the panel is the only
-   surface (mirrors the drawer/embed override pattern). The form's own field
-   styling is rebuilt in Prompt 07. */
-.formInner {
-  padding: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
-}
+/* The panel is the only surface — `UnifiedLeadForm` renders bare fields
+   (no card of its own), so nothing needs overriding here. */
 
 /* Below the flex-wrap break the panel is full-width under the intro column;
    trim its inner gutter so the fields keep the container's rhythm. */

@@ -50,7 +50,7 @@ const BrandCell = ({ brand }) => {
 };
 
 const BrandsSection = () => {
-  const { openLeadDrawer } = useModal();
+  const { openLeadModal } = useModal();
 
   // Header fades up once on scroll-in; the brand cells stagger in. Each hook
   // refreshes ScrollTrigger so this lazy-mounted section measures correctly.
@@ -87,7 +87,7 @@ const BrandsSection = () => {
           <button
             type="button"
             className={styles.ctaBtn}
-            onClick={() => openLeadDrawer("request-quote")}
+            onClick={() => openLeadModal("request-quote")}
           >
             <span>Request a Quote</span>
             <Icon icon="mdi:arrow-right" aria-hidden="true" />

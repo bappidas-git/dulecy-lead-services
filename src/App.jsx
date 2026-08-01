@@ -2,8 +2,9 @@
    App Component — Dulecy Lead Services
    --------------------------------------------
    Five-route public site (Home · About · Expertise · Who We Serve ·
-   Contact) sharing one shell via `PublicLayout`, plus the retained
-   `/thank-you` and `/admin/*` routes and a branded `*` catch-all.
+   Contact) sharing one shell via `PublicLayout`, plus the `/admin/*`
+   routes and a branded `*` catch-all. `/thank-you` was retired in
+   Prompt 07 — the enquiry form now confirms inline.
 
    The Nilachal-era floating UI (bottom mobile nav, swipe drawer,
    WhatsApp FAB, scroll-progress bar, back-to-top) is no longer
@@ -26,7 +27,7 @@ import { ModalProvider, useModal } from './context/ModalContext';
 // Shell + eager (critical-path) route
 import PublicLayout from './components/layout/PublicLayout/PublicLayout';
 import HomePage from './pages/Home/HomePage';
-import LeadFormDrawer from './components/common/LeadFormDrawer/LeadFormDrawer';
+import LeadModal from './components/common/LeadModal/LeadModal';
 import SEOHead from './components/common/SEO/SEOHead';
 
 // Shared #hash → scroll helper (also used by the /expertise accordion)
@@ -43,7 +44,6 @@ const ExpertisePage = lazy(() => import('./pages/Expertise/ExpertisePage'));
 const IndustriesPage = lazy(() => import('./pages/Industries/IndustriesPage'));
 const ContactPage = lazy(() => import('./pages/Contact/ContactPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFound/NotFoundPage'));
-const ThankYouPage = lazy(() => import('./pages/ThankYou/ThankYou'));
 const AdminLayout = lazy(() => import('./admin/components/AdminLayout'));
 
 // ===========================================
@@ -226,19 +226,17 @@ const ScrollManager = () => {
 };
 
 // ===========================================
-// Lead Form Drawer Wrapper
+// Lead Modal Wrapper
 // ===========================================
-const LeadFormDrawerWrapper = () => {
-  const { isDrawerOpen, drawerConfig, closeLeadDrawer } = useModal();
+const LeadModalWrapper = () => {
+  const { isModalOpen, modalConfig, closeLeadModal } = useModal();
 
   return (
-    <LeadFormDrawer
-      isOpen={isDrawerOpen}
-      onClose={closeLeadDrawer}
-      title={drawerConfig.title}
-      subtitle={drawerConfig.subtitle}
-      source={drawerConfig.source}
-      serviceInterest={drawerConfig.service_interest}
+    <LeadModal
+      isOpen={isModalOpen}
+      onClose={closeLeadModal}
+      source={modalConfig.source}
+      serviceInterest={modalConfig.service_interest}
     />
   );
 };
@@ -296,16 +294,6 @@ const App = () => {
                 <Route path="*" element={lazyRoute(<NotFoundPage />)} />
               </Route>
 
-              {/* Thank You Page — retired in Prompt 07 */}
-              <Route
-                path="/thank-you"
-                element={
-                  <Suspense fallback={<SectionLoader height={400} variant="default" />}>
-                    <ThankYouPage />
-                  </Suspense>
-                }
-              />
-
               {/* Admin Routes */}
               <Route
                 path="/admin/login"
@@ -329,8 +317,8 @@ const App = () => {
               />
             </Routes>
 
-            {/* Lead Form Drawer - Available globally */}
-            <LeadFormDrawerWrapper />
+            {/* Enquiry modal — available globally */}
+            <LeadModalWrapper />
           </div>
         </ModalProvider>
       </CustomThemeProvider>

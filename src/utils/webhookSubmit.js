@@ -40,15 +40,19 @@ const generateUUID = () => {
 /**
  * Submit lead data to the shared server-side store.
  * @param {Object} leadData - The form data to submit
- * @param {string} leadData.name - Applicant's full name
- * @param {string} leadData.mobile - Mobile number (10 digits, +91 added separately)
- * @param {string} [leadData.email] - Email address (optional)
+ * @param {string} leadData.name - Enquirer's full name
+ * @param {string} leadData.email - Email address (required as of the Dulecy rebuild)
+ * @param {string} [leadData.mobile] - Mobile number, 10 digits (optional as of the
+ *   Dulecy rebuild — the server's duplicate check only applies when it is present)
+ * @param {string} [leadData.organization] - Company / institution (optional; added
+ *   in Prompt 07. The store is schemaless, so no PHP change was needed)
  * @param {string} leadData.service_interest - Selected interest (legacy key — value is
- *   the product/service label, e.g. "Steel Doors", or "General Enquiry"). Kept as
+ *   the visible label, e.g. "HR & People Management", or "Something else"). Kept as
  *   `service_interest` to preserve the existing admin panel mapping.
- * @param {string} leadData.state - Enquirer's home state (NE India + "Other")
- * @param {string} [leadData.message] - Optional free-text question
- * @param {string} leadData.source - Form source identifier (e.g., 'hero-form', 'contact-form')
+ * @param {string} [leadData.state] - No longer collected; sent empty. The key is
+ *   retained (never renamed or reused) so the record shape stays stable.
+ * @param {string} [leadData.message] - Optional free-text requirement
+ * @param {string} leadData.source - CTA identifier (e.g. 'header-cta', 'contact-page')
  * @returns {Promise<{success: boolean, duplicate?: boolean, message: string}>}
  */
 export const submitLeadToWebhook = async (leadData) => {

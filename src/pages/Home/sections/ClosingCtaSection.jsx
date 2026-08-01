@@ -1,7 +1,7 @@
 /* ============================================
    Home / Closing CTA — ported 1:1 from `mockup/index.html`
    --------------------------------------------
-   Centred sign-off: the enquiry drawer on the left button, a direct
+   Centred sign-off: the enquiry modal on the left button, a direct
    dial (from `siteConfig`) on the right.
    ============================================ */
 
@@ -13,7 +13,7 @@ import layout from '../../../styles/layout.module.css';
 import styles from './ClosingCtaSection.module.css';
 
 const ClosingCtaSection = () => {
-  const { openLeadDrawer } = useModal();
+  const { openLeadModal } = useModal();
   const eyebrowRef = useReveal(REVEAL_PRESET);
   const headRef = useReveal({ ...REVEAL_PRESET, delay: 0.05 });
   const actionsRef = useReveal({ ...REVEAL_PRESET, delay: 0.12 });
@@ -32,7 +32,7 @@ const ClosingCtaSection = () => {
           <button
             type="button"
             className="btn btn--primary"
-            onClick={() => openLeadDrawer('home-cta')}
+            onClick={() => openLeadModal('home-cta')}
           >
             Start a Conversation <span aria-hidden="true">&rarr;</span>
           </button>

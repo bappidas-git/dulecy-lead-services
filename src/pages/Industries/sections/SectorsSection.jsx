@@ -4,7 +4,7 @@
    --------------------------------------------
    The seven sectors from `industriesData` (icon tile + number, name,
    description), closed by the red gradient card that opens the enquiry
-   drawer for anyone whose sector isn't listed. The grid staggers in as
+   modal for anyone whose sector isn't listed. The grid staggers in as
    it scrolls into view.
    ============================================ */
 
@@ -16,7 +16,7 @@ import layout from '../../../styles/layout.module.css';
 import styles from './SectorsSection.module.css';
 
 const SectorsSection = () => {
-  const { openLeadDrawer } = useModal();
+  const { openLeadModal } = useModal();
   const gridRef = useStaggerReveal(STAGGER_PRESET);
 
   return (
@@ -40,7 +40,7 @@ const SectorsSection = () => {
         <button
           type="button"
           className={styles.sectorRed}
-          onClick={() => openLeadDrawer('industries-cta')}
+          onClick={() => openLeadModal('industries-cta')}
         >
           <span className={`${styles.name} ${styles.nameRed}`}>
             Don&rsquo;t see your sector? Our approach begins with your context.

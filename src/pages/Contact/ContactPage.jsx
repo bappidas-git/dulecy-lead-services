@@ -7,9 +7,9 @@
    (the mockup's `data-hero` elements, marked with the same attribute
    here).
 
-   The panel hosts the shared `UnifiedLeadForm` — the enquiry pipeline
-   is untouched, only the panel chrome is the mockup's. The form's own
-   field styling is rebuilt in Prompt 07.
+   The panel hosts the shared `UnifiedLeadForm` — the same component the
+   global enquiry modal renders, so both surfaces are identical down to
+   the field styling.
 
    Every contact value comes from `siteConfig` (the single source of
    business truth), never hardcoded here.
@@ -92,17 +92,7 @@ const ContactPage = () => {
               the right expertise.
             </p>
 
-            <UnifiedLeadForm
-              variant="default"
-              source="contact-page"
-              formId="contact-page"
-              showTitle={false}
-              showSubtitle={false}
-              showTrustBadges={true}
-              showConsent={true}
-              submitButtonText="Send Enquiry"
-              className={styles.formInner}
-            />
+            <UnifiedLeadForm source="contact-page" formId="contact-page" />
           </div>
         </div>
       </section>

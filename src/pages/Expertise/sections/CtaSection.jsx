@@ -3,7 +3,7 @@
    `mockup/expertise.html`
    --------------------------------------------
    Grey split sign-off: the pitch on the left, three stacked action
-   cards on the right — the enquiry drawer, then a direct dial and a
+   cards on the right — the enquiry modal, then a direct dial and a
    mailto, both read from `siteConfig`.
    ============================================ */
 
@@ -24,7 +24,7 @@ const ICON_PHONE = 'https://img.icons8.com/ios-filled/100/D5192E/phone.png';
 const ICON_MAIL = 'https://img.icons8.com/ios-filled/100/D5192E/new-post.png';
 
 const CtaSection = () => {
-  const { openLeadDrawer } = useModal();
+  const { openLeadModal } = useModal();
   const eyebrowRef = useReveal(REVEAL_PRESET);
   const headRef = useReveal({ ...REVEAL_PRESET, delay: 0.05 });
   const bodyRef = useReveal({ ...REVEAL_PRESET, delay: 0.1 });
@@ -51,7 +51,7 @@ const CtaSection = () => {
           <button
             type="button"
             className={`${styles.action} ${styles.actionRed}`}
-            onClick={() => openLeadDrawer('expertise-cta')}
+            onClick={() => openLeadModal('expertise-cta')}
           >
             <span className={styles.actionBody}>
               <span className={styles.actionTitle}>Send us an enquiry</span>

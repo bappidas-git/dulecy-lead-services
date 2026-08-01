@@ -18,7 +18,7 @@ import { NAV_LINKS } from '../../../data/navigation';
 import styles from './MobileMenu.module.css';
 
 const MobileMenu = ({ isOpen, onClose, id = 'mobile-menu' }) => {
-  const { openLeadDrawer } = useModal();
+  const { openLeadModal } = useModal();
 
   // Escape closes the menu; body scroll stays locked while it is open.
   useEffect(() => {
@@ -40,7 +40,7 @@ const MobileMenu = ({ isOpen, onClose, id = 'mobile-menu' }) => {
 
   const handleTalkClick = () => {
     onClose();
-    openLeadDrawer('mobile-menu-cta');
+    openLeadModal('mobile-menu-cta');
   };
 
   return (

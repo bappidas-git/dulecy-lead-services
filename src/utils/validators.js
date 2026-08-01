@@ -98,6 +98,19 @@ export const getMobileErrorMessage = (mobile) => {
 };
 
 /**
+ * Get validation error message for an OPTIONAL mobile number.
+ * The Dulecy enquiry form makes PHONE optional (email is the required
+ * contact channel), so an empty value is valid — but anything typed must
+ * still be a real Indian mobile number.
+ * @param {string} mobile - Mobile number (may be empty)
+ * @returns {string} - Error message or empty string
+ */
+export const getOptionalMobileErrorMessage = (mobile) => {
+  if (!mobile || !mobile.trim()) return '';
+  return getMobileErrorMessage(mobile);
+};
+
+/**
  * Get validation error message for email
  * @param {string} email - Email address
  * @returns {string} - Error message or empty string
@@ -228,6 +241,7 @@ const validators = {
   validateName,
   validateMessage,
   getMobileErrorMessage,
+  getOptionalMobileErrorMessage,
   getEmailErrorMessage,
   getNameErrorMessage,
   getMessageErrorMessage,
