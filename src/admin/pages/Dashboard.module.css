@@ -410,15 +410,15 @@
 }
 
 .recentTable tbody tr:hover {
-  background: #F8FAFF;
+  background: var(--admin-bg);
 }
 
 .rowAlt {
-  background: #FAFBFD;
+  background: #FAFAFB;
 }
 
 .rowAlt:hover {
-  background: #F8FAFF !important;
+  background: var(--admin-bg) !important;
 }
 
 .leadName {
@@ -451,7 +451,7 @@
 }
 
 .mobileCard:hover {
-  background: #F8FAFF;
+  background: var(--admin-bg);
 }
 
 .mobileCardTop {

@@ -8,19 +8,22 @@
    into the UI when one copy drifted. Keeping the list here — and importing
    it everywhere — guarantees only the present statuses are ever shown:
 
-     New · Contacted · Quote Sent · Follow-Up · Converted · Not Interested
+     New · Contacted · Proposal Sent · Follow-Up · Converted · Not Interested
 
    The `value` keys are the canonical workflow keys persisted on each lead
    and sent in sync/export payloads. DO NOT rename them — only the human
-   `label` (and its color) is shown in the UI.
+   `label` (and its color) is shown in the UI. The labels below map the
+   frozen keys onto Dulecy's consulting pipeline; the colors stay functional
+   (one distinct hue per stage) rather than brand-tinted, so a status is
+   readable at a glance in the table.
    ============================================ */
 
 export const STATUS_OPTIONS = [
   { value: "new", label: "New", color: "#2B7BD5", bg: "#EBF5FF" },
   { value: "contacted", label: "Contacted", color: "#0E7490", bg: "#E0F7FA" },
-  { value: "consultation_booked", label: "Quote Sent", color: "#B45309", bg: "#FEF3E2" },
+  { value: "consultation_booked", label: "Proposal Sent", color: "#B45309", bg: "#FEF3E2" },
   { value: "procedure_scheduled", label: "Follow-Up", color: "#7C3AED", bg: "#EDE9FE" },
-  { value: "completed", label: "Converted", color: "#1E7B45", bg: "#E8F5EE" },
+  { value: "completed", label: "Converted", color: "#1E8E5A", bg: "#E7F5EE" },
   { value: "not_interested", label: "Not Interested", color: "#6B7280", bg: "#F3F4F6" },
 ];
 

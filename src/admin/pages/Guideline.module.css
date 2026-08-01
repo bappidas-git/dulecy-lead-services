@@ -275,7 +275,7 @@
 
 /* Code block */
 .guideCode {
-  background: #f1f5f9;
+  background: var(--admin-bg);
   border: 1px solid var(--admin-border);
   border-radius: 8px;
   padding: 16px;
@@ -295,22 +295,22 @@
 }
 
 .guideCode::-webkit-scrollbar-track {
-  background: #e2e8f0;
+  background: var(--admin-border);
   border-radius: 3px;
 }
 
 .guideCode::-webkit-scrollbar-thumb {
-  background: #94a3b8;
+  background: var(--admin-text-muted);
   border-radius: 3px;
 }
 
 .guideCode::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
+  background: var(--admin-text-secondary);
 }
 
 /* Inline code */
 .guideInlineCode {
-  background: #f1f5f9;
+  background: var(--admin-bg);
   padding: 2px 6px;
   border-radius: 4px;
   font-size: 0.85em;
@@ -378,7 +378,7 @@
 
 /* Note box */
 .guideNote {
-  background: #ebf5ff;
+  background: var(--admin-bg);
   border-left: 4px solid var(--admin-accent);
   padding: 14px 18px;
   border-radius: 0 8px 8px 0;
@@ -402,8 +402,8 @@
 
 /* Tip box */
 .guideTip {
-  background: #ecfdf5;
-  border-left: 4px solid #10b981;
+  background: #EAF6F0;
+  border-left: 4px solid var(--admin-success);
   padding: 14px 18px;
   border-radius: 0 8px 8px 0;
   margin: 16px 0;

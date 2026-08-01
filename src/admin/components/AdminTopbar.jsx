@@ -6,10 +6,11 @@ import React, { useState, useRef, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { Icon } from '@iconify/react';
 import { useAdminAuth } from '../context/AdminAuthContext';
+import { siteConfig } from '../../data/siteConfig';
 import styles from './AdminTopbar.module.css';
 
-const NILACHAL_LOGO =
-  'https://res.cloudinary.com/dn9gyaiik/image/upload/v1784965863/nilachal-logo_v2lolq.png';
+// Colour logo — the topbar and the mobile menu are both white surfaces.
+const BRAND_LOGO = siteConfig.logo;
 
 const navItems = [
   { label: 'Dashboard', path: '/admin/dashboard', icon: 'mdi:view-dashboard' },
@@ -60,7 +61,7 @@ const AdminTopbar = () => {
   return (
     <header className={styles.topbar}>
       <div className={styles.topbarLeft}>
-        <img src={NILACHAL_LOGO} alt="Nilachal Infracon" className={styles.logo} />
+        <img src={BRAND_LOGO} alt={siteConfig.brandName} className={styles.logo} />
         <span className={styles.divider} />
         <span className={styles.wordmark}>Admin Panel</span>
       </div>
@@ -110,8 +111,8 @@ const AdminTopbar = () => {
             {/* Logo at top */}
             <div className={styles.mobileMenuHeader}>
               <img
-                src={NILACHAL_LOGO}
-                alt="Nilachal Infracon"
+                src={BRAND_LOGO}
+                alt={siteConfig.brandName}
                 className={styles.mobileMenuLogo}
               />
             </div>
@@ -150,7 +151,9 @@ const AdminTopbar = () => {
             </div>
 
             {/* Footer */}
-            <p className={styles.mobileMenuFooter}>Nilachal Infracon · Admin Panel</p>
+            <p className={styles.mobileMenuFooter}>
+              {siteConfig.brandName} · Admin Panel
+            </p>
           </div>
         </div>
       )}

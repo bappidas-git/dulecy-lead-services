@@ -88,7 +88,9 @@ export const seoConfig = {
       robots: "noindex, nofollow",
     },
     admin: {
-      title: "Admin Panel — Nilachal Infracon",
+      // The admin panel's browser-tab title — the one part of this
+      // (still Nilachal-era) config that renders inside /admin/*.
+      title: "Admin Panel — Dulecy Lead Services",
       robots: "noindex, nofollow",
     },
   },

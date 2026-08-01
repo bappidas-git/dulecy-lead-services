@@ -82,13 +82,13 @@
 }
 
 .errorMessage {
-  background: rgba(239, 68, 68, 0.08);
+  background: var(--admin-accent-tint);
   color: var(--admin-error);
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-md);
   font-size: var(--fs-sm);
   text-align: center;
-  border: 1px solid rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(213, 25, 46, 0.2);
 }
 
 .submitButton {

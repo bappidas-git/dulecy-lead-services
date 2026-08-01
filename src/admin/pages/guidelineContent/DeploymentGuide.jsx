@@ -3,412 +3,348 @@ import React from 'react';
 const DeploymentGuide = ({ styles }) => {
   return (
     <div>
-      {/* Section 1: Build the Project */}
-      <h2 className={styles.guideTitle}>1. Build the Project</h2>
+      {/* Section 1: Build */}
+      <h2 className={styles.guideTitle}>1. Build the Site</h2>
       <div className={styles.guideSection}>
         <p className={styles.guideParagraph}>
-          Before deploying, you need to create a production build of your landing page.
+          Deploying means uploading a <em>build</em> — a compiled copy of the site. The source
+          code in <code className={styles.guideInlineCode}>src/</code> is never uploaded.
         </p>
-
-        <ol className={styles.guideStepList}>
-          <li className={styles.guideStepItem}>Open terminal in the project folder</li>
-          <li className={styles.guideStepItem}>
-            Run: <code className={styles.guideInlineCode}>npm run build</code>
-          </li>
-          <li className={styles.guideStepItem}>
-            This creates a <code className={styles.guideInlineCode}>build/</code> folder containing your production-ready landing page
-          </li>
-        </ol>
-
         <pre className={styles.guideCode}>
-{`# Navigate to project folder
-cd your-project-folder
-
-# Build for production
-npm run build`}
+{`# In the project folder
+npm install        # first time only
+npm run build      # creates build/`}
         </pre>
-
-        <div className={styles.guideNote}>
-          <strong>Note:</strong> The <code className={styles.guideInlineCode}>build/</code> folder is what you upload to your hosting. It contains optimized HTML, CSS, JS, and all assets. The source code (<code className={styles.guideInlineCode}>src/</code> folder) is NOT uploaded.
-        </div>
-      </div>
-
-      {/* Section 2: Deploy to Netlify (Easiest) */}
-      <h2 className={styles.guideTitle}>2. Deploy to Netlify (Easiest)</h2>
-      <div className={styles.guideSection}>
-        <ol className={styles.guideStepList}>
-          <li className={styles.guideStepItem}>
-            Go to <strong>https://app.netlify.com</strong>
-          </li>
-          <li className={styles.guideStepItem}>
-            Sign up with GitHub, GitLab, or email
-          </li>
-          <li className={styles.guideStepItem}>
-            <strong>Option A (Drag & Drop):</strong> Click "Add new site" → "Deploy manually" → Drag your <code className={styles.guideInlineCode}>build/</code> folder into the upload area
-          </li>
-          <li className={styles.guideStepItem}>
-            <strong>Option B (Git):</strong> Click "Add new site" → "Import an existing project" → Connect your GitHub repo → Build command: <code className={styles.guideInlineCode}>npm run build</code>, Publish directory: <code className={styles.guideInlineCode}>build/</code>
-          </li>
-          <li className={styles.guideStepItem}>
-            Netlify gives you a URL like <code className={styles.guideInlineCode}>your-site.netlify.app</code> — your landing page is live!
-          </li>
-        </ol>
-
         <div className={styles.guideNoteWarning}>
-          <strong>IMPORTANT — SPA Routing Fix for Netlify:</strong>
-          <p style={{ marginTop: '8px' }}>
-            Create a file <code className={styles.guideInlineCode}>public/_redirects</code> (no extension) with this content:
-          </p>
-          <pre className={styles.guideCode}>
-{`/*    /index.html   200`}
-          </pre>
-          <p>
-            This ensures <code className={styles.guideInlineCode}>/thank-you</code> and <code className={styles.guideInlineCode}>/admin</code> routes work when accessed directly.
-          </p>
+          <strong>Environment values are baked in at build time.</strong> Everything in{' '}
+          <code className={styles.guideInlineCode}>.env</code> — admin username, admin password,
+          the leads API URL and the leads admin key — is compiled into the JavaScript when you run{' '}
+          <code className={styles.guideInlineCode}>npm run build</code>. Changing{' '}
+          <code className={styles.guideInlineCode}>.env</code> on its own changes nothing on the
+          server; you must rebuild and re-upload.
         </div>
       </div>
 
-      {/* Section 3: Deploy to Vercel */}
-      <h2 className={styles.guideTitle}>3. Deploy to Vercel</h2>
-      <div className={styles.guideSection}>
-        <ol className={styles.guideStepList}>
-          <li className={styles.guideStepItem}>
-            Go to <strong>https://vercel.com</strong>
-          </li>
-          <li className={styles.guideStepItem}>
-            Sign up and import your Git repository
-          </li>
-          <li className={styles.guideStepItem}>
-            Framework Preset: <strong>"Create React App"</strong>
-          </li>
-          <li className={styles.guideStepItem}>
-            Click <strong>"Deploy"</strong> — Vercel handles everything automatically
-          </li>
-        </ol>
-
-        <div className={styles.guideNote}>
-          <strong>Note:</strong> Vercel automatically handles SPA routing, so no <code className={styles.guideInlineCode}>_redirects</code> file is needed.
-        </div>
-      </div>
-
-      {/* Section 4: Deploy to cPanel (Shared Hosting) */}
-      <h2 className={styles.guideTitle}>4. Deploy to cPanel (Shared Hosting)</h2>
-      <div className={styles.guideSection}>
-        <ol className={styles.guideStepList}>
-          <li className={styles.guideStepItem}>
-            Build the project: <code className={styles.guideInlineCode}>npm run build</code>
-          </li>
-          <li className={styles.guideStepItem}>
-            Open cPanel → File Manager → Navigate to <code className={styles.guideInlineCode}>public_html</code> (or your domain's folder)
-          </li>
-          <li className={styles.guideStepItem}>
-            Upload ALL contents of the <code className={styles.guideInlineCode}>build/</code> folder (not the folder itself — the files inside it)
-          </li>
-          <li className={styles.guideStepItem}>
-            Create a <code className={styles.guideInlineCode}>.htaccess</code> file in <code className={styles.guideInlineCode}>public_html</code> with SPA routing rules (see below)
-          </li>
-          <li className={styles.guideStepItem}>
-            Visit your domain — the landing page should be live
-          </li>
-        </ol>
-
-        <h3 className={styles.guideSubtitle}>.htaccess File Content</h3>
-        <pre className={styles.guideCode}>
-{`Options -MultiViews
-RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^ index.html [QSA,L]`}
-        </pre>
-
-        <div className={styles.guideNoteWarning}>
-          <strong>Warning:</strong> Upload the CONTENTS of the <code className={styles.guideInlineCode}>build/</code> folder, not the folder itself. Your <code className={styles.guideInlineCode}>public_html</code> should directly contain <code className={styles.guideInlineCode}>index.html</code>, <code className={styles.guideInlineCode}>static/</code>, etc.
-        </div>
-      </div>
-
-      {/* Section 5: Deploy to Cloudways */}
-      <h2 className={styles.guideTitle}>5. Deploy to Cloudways</h2>
-      <div className={styles.guideSection}>
-        <ol className={styles.guideStepList}>
-          <li className={styles.guideStepItem}>
-            SSH into your Cloudways server: <code className={styles.guideInlineCode}>ssh master@your-server-ip</code>
-          </li>
-          <li className={styles.guideStepItem}>
-            Navigate to your application folder: <code className={styles.guideInlineCode}>cd applications/your-app/public_html</code>
-          </li>
-          <li className={styles.guideStepItem}>
-            <strong>Option A (Manual):</strong> Upload <code className={styles.guideInlineCode}>build/</code> contents via SFTP (use FileZilla or WinSCP)
-          </li>
-          <li className={styles.guideStepItem}>
-            <strong>Option B (Git Deploy):</strong> Clone your repo, run <code className={styles.guideInlineCode}>npm install && npm run build</code>, then copy <code className={styles.guideInlineCode}>build/*</code> to <code className={styles.guideInlineCode}>public_html/</code>
-          </li>
-          <li className={styles.guideStepItem}>
-            Create <code className={styles.guideInlineCode}>.htaccess</code> with the SPA routing rules (same as cPanel above)
-          </li>
-          <li className={styles.guideStepItem}>
-            Set up SSL (Cloudways dashboard → SSL Certificate → Let's Encrypt)
-          </li>
-        </ol>
-
-        <h3 className={styles.guideSubtitle}>Git-Based Deployment</h3>
-        <pre className={styles.guideCode}>
-{`# On Cloudways server
-cd /tmp
-git clone https://github.com/your-repo.git
-cd your-repo
-npm install
-npm run build
-cp -r build/* /home/master/applications/your-app/public_html/`}
-        </pre>
-      </div>
-
-      {/* Section 6: Deploy to AWS S3 + CloudFront */}
-      <h2 className={styles.guideTitle}>6. Deploy to AWS S3 + CloudFront</h2>
+      {/* Section 2: what to upload */}
+      <h2 className={styles.guideTitle}>2. What to Upload</h2>
       <div className={styles.guideSection}>
         <p className={styles.guideParagraph}>
-          For advanced users who want maximum scalability and performance:
+          Upload the <strong>contents</strong> of{' '}
+          <code className={styles.guideInlineCode}>build/</code> — not the folder itself — into
+          your web root (<code className={styles.guideInlineCode}>public_html</code> on most
+          hosts). The web root should directly contain{' '}
+          <code className={styles.guideInlineCode}>index.html</code>,{' '}
+          <code className={styles.guideInlineCode}>static/</code> and{' '}
+          <code className={styles.guideInlineCode}>api/</code>.
         </p>
-
-        <ol className={styles.guideStepList}>
-          <li className={styles.guideStepItem}>
-            Create an S3 bucket with static website hosting enabled
-          </li>
-          <li className={styles.guideStepItem}>
-            Upload <code className={styles.guideInlineCode}>build/</code> contents to the bucket
-          </li>
-          <li className={styles.guideStepItem}>
-            Set bucket policy to allow public read access
-          </li>
-          <li className={styles.guideStepItem}>
-            Create a CloudFront distribution pointing to the S3 bucket
-          </li>
-          <li className={styles.guideStepItem}>
-            Set custom error responses: 404 → <code className={styles.guideInlineCode}>/index.html</code> (response code 200) — this handles SPA routing
-          </li>
-          <li className={styles.guideStepItem}>
-            Point your domain's DNS to CloudFront
-          </li>
-        </ol>
-      </div>
-
-      {/* Section 7: SPA Routing — Why It Matters */}
-      <h2 className={styles.guideTitle}>7. SPA Routing — Why It Matters</h2>
-      <div className={styles.guideSection}>
-        <p className={styles.guideParagraph}>
-          Your landing page is a Single Page Application (SPA) — all routes (<code className={styles.guideInlineCode}>/thank-you</code>, <code className={styles.guideInlineCode}>/admin/dashboard</code>) are handled by JavaScript, not by separate HTML files.
-        </p>
-        <p className={styles.guideParagraph}>
-          When someone directly visits <code className={styles.guideInlineCode}>www.nilachalinfracon.com/admin/login</code>, the server looks for a file at <code className={styles.guideInlineCode}>/admin/login</code> — which doesn't exist. The solution is to tell the server to always serve <code className={styles.guideInlineCode}>index.html</code> for any URL, and let React Router handle the routing.
-        </p>
-
-        <h3 className={styles.guideSubtitle}>Routing Fixes by Platform</h3>
         <table className={styles.guideTable}>
           <thead className={styles.guideTableHead}>
             <tr>
-              <th>Platform</th>
-              <th>Fix</th>
+              <th>What</th>
+              <th>Why it matters</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td className={styles.guideTableCell}>Netlify</td>
-              <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>public/_redirects</code> with <code className={styles.guideInlineCode}>{"/* /index.html 200"}</code></td>
+              <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>index.html</code> + <code className={styles.guideInlineCode}>static/</code></td>
+              <td className={styles.guideTableCell}>The site itself</td>
             </tr>
             <tr>
-              <td className={styles.guideTableCell}>Vercel</td>
-              <td className={styles.guideTableCell}>Automatic (no fix needed)</td>
+              <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>api/</code></td>
+              <td className={styles.guideTableCell}>
+                The lead store. Without it the enquiry form has nowhere to save and the Admin
+                Panel stays empty.
+              </td>
             </tr>
             <tr>
-              <td className={styles.guideTableCell}>Apache (cPanel/Cloudways)</td>
-              <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>.htaccess</code> with RewriteRule</td>
+              <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>api/data/</code></td>
+              <td className={styles.guideTableCell}>
+                Created automatically on first submission and must be writable by PHP. It holds{' '}
+                <code className={styles.guideInlineCode}>leads.json</code> — <strong>never
+                overwrite it on a redeploy</strong>, that is your live lead data.
+              </td>
+            </tr>
+            <tr>
+              <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>robots.txt</code>, <code className={styles.guideInlineCode}>sitemap.xml</code>, icons, <code className={styles.guideInlineCode}>og-image.png</code></td>
+              <td className={styles.guideTableCell}>SEO and share previews</td>
+            </tr>
+          </tbody>
+        </table>
+        <div className={styles.guideNote}>
+          <strong>PHP is required.</strong> Any normal shared host, cPanel, Hostinger, Cloudways
+          or VPS works. Purely static hosts (Netlify, Vercel, S3) cannot run{' '}
+          <code className={styles.guideInlineCode}>leads.php</code> — if you use one, host the{' '}
+          <code className={styles.guideInlineCode}>api/</code> folder on a small PHP server and
+          point <code className={styles.guideInlineCode}>REACT_APP_LEADS_API_URL</code> at its
+          full URL, then rebuild.
+        </div>
+      </div>
+
+      {/* Section 3: SPA routing */}
+      <h2 className={styles.guideTitle}>3. SPA Rewrites (Required)</h2>
+      <div className={styles.guideSection}>
+        <p className={styles.guideParagraph}>
+          The site is a single-page app: <code className={styles.guideInlineCode}>/about</code>,{' '}
+          <code className={styles.guideInlineCode}>/expertise</code> and{' '}
+          <code className={styles.guideInlineCode}>/admin/dashboard</code> are handled by
+          JavaScript, not by real files on disk. Without a rewrite rule, opening one of those URLs
+          directly (or refreshing the page) returns a 404. The fix is to serve{' '}
+          <code className={styles.guideInlineCode}>index.html</code> for anything that is not a
+          real file, and let the router take it from there.
+        </p>
+        <h3 className={styles.guideSubtitle}>Apache (cPanel, Hostinger, Cloudways)</h3>
+        <p className={styles.guideParagraph}>
+          Create <code className={styles.guideInlineCode}>.htaccess</code> in the web root:
+        </p>
+        <pre className={styles.guideCode}>
+{`Options -MultiViews
+RewriteEngine On
+
+# Never rewrite the PHP lead API or real files
+RewriteCond %{REQUEST_URI} ^/api/ [OR]
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+RewriteRule ^ index.html [QSA,L]`}
+        </pre>
+        <div className={styles.guideNoteWarning}>
+          <strong>Exclude <code className={styles.guideInlineCode}>/api/</code> from the rewrite.</strong>{' '}
+          A blanket “send everything to index.html” rule swallows{' '}
+          <code className={styles.guideInlineCode}>/api/leads.php</code>, and every enquiry then
+          fails silently while the site looks perfectly fine.
+        </div>
+        <table className={styles.guideTable}>
+          <thead className={styles.guideTableHead}>
+            <tr>
+              <th>Platform</th>
+              <th>Rewrite</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td className={styles.guideTableCell}>Apache (cPanel / Cloudways)</td>
+              <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>.htaccess</code> as above</td>
             </tr>
             <tr>
               <td className={styles.guideTableCell}>Nginx</td>
-              <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>try_files $uri /index.html;</code> in server config</td>
+              <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>try_files $uri /index.html;</code> (with a separate PHP location block for <code className={styles.guideInlineCode}>/api/</code>)</td>
             </tr>
             <tr>
-              <td className={styles.guideTableCell}>AWS CloudFront</td>
-              <td className={styles.guideTableCell}>Custom error response: 404 → <code className={styles.guideInlineCode}>/index.html</code> (200)</td>
+              <td className={styles.guideTableCell}>Netlify</td>
+              <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>public/_redirects</code> containing <code className={styles.guideInlineCode}>{'/* /index.html 200'}</code> — static only, so the API must live elsewhere</td>
+            </tr>
+            <tr>
+              <td className={styles.guideTableCell}>CloudFront</td>
+              <td className={styles.guideTableCell}>Custom error response: 404 → <code className={styles.guideInlineCode}>/index.html</code> with status 200</td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      {/* Section 8: Custom Domain Setup */}
-      <h2 className={styles.guideTitle}>8. Custom Domain Setup</h2>
-      <div className={styles.guideSection}>
-        <ol className={styles.guideStepList}>
-          <li className={styles.guideStepItem}>
-            Buy a domain from GoDaddy, Namecheap, Google Domains, etc.
-          </li>
-          <li className={styles.guideStepItem}>
-            Point your domain's DNS to your hosting:
-            <ul style={{ marginTop: '8px', paddingLeft: '20px' }}>
-              <li style={{ marginBottom: '4px' }}><strong>Netlify:</strong> Add custom domain in site settings, update DNS records</li>
-              <li style={{ marginBottom: '4px' }}><strong>Vercel:</strong> Add domain in project settings, update DNS</li>
-              <li><strong>cPanel/Cloudways:</strong> Point A record to server IP</li>
-            </ul>
-          </li>
-          <li className={styles.guideStepItem}>
-            Enable SSL (HTTPS) — most platforms offer free Let's Encrypt SSL
-          </li>
-          <li className={styles.guideStepItem}>
-            Update your <code className={styles.guideInlineCode}>.env</code> and configuration files with the final domain URL
-          </li>
-        </ol>
-      </div>
-
-      {/* Lead Management Server Setup */}
-      <h2 className={styles.guideTitle}>8b. Lead Management Server Setup (one-time)</h2>
+      {/* Section 4: key alignment */}
+      <h2 className={styles.guideTitle}>4. Admin Key Alignment (the one that bites)</h2>
       <div className={styles.guideSection}>
         <p className={styles.guideParagraph}>
-          After your site is uploaded, you need to enable the shared lead storage so the Admin
-          Panel can display leads from every device. Do this <strong>once</strong> after the first
-          deploy.
+          The Admin Panel authenticates to the lead API with a shared key. The build carries{' '}
+          <code className={styles.guideInlineCode}>REACT_APP_LEADS_ADMIN_KEY</code>; the server
+          resolves its key in this order:
         </p>
-        <div className={styles.guideNote}>
-          <strong>Requires PHP hosting.</strong> cPanel, Hostinger, Cloudways, VPS — all work.
-          Netlify/Vercel (static only) do not — host <code className={styles.guideInlineCode}>leads.php</code>{' '}
-          on any cheap PHP server and set <code className={styles.guideInlineCode}>REACT_APP_LEADS_API_URL</code>{' '}
-          to its full URL.
-        </div>
-        <div className={styles.guideNote}>
-          <strong>It works out of the box.</strong>{' '}
-          <code className={styles.guideInlineCode}>leads.php</code> ships a built-in admin key
-          that already matches the <code className={styles.guideInlineCode}>REACT_APP_LEADS_ADMIN_KEY</code>{' '}
-          committed in <code className={styles.guideInlineCode}>.env</code> — you do{' '}
-          <strong>not</strong> need to create <code className={styles.guideInlineCode}>config.php</code>.
-          Only follow the steps below if you want to replace that pair with your own private key.
-        </div>
         <ol className={styles.guideStepList}>
           <li className={styles.guideStepItem}>
-            <em>(Optional — private key.)</em> On the server, open the deployed{' '}
-            <code className={styles.guideInlineCode}>api/</code> folder, copy{' '}
-            <code className={styles.guideInlineCode}>config.example.php</code> →{' '}
-            <code className={styles.guideInlineCode}>config.php</code>, and set{' '}
-            <code className={styles.guideInlineCode}>ADMIN_API_KEY</code> to a long random string:
-            <pre className={styles.guideCode}>{`define('ADMIN_API_KEY', 'Zk8pQ3mX9yL2wN7bV5rT1jH6cD4fG0aE');`}</pre>
+            <code className={styles.guideInlineCode}>ADMIN_API_KEY</code> defined in{' '}
+            <code className={styles.guideInlineCode}>api/config.php</code> — <strong>wins over
+            everything else</strong>
           </li>
           <li className={styles.guideStepItem}>
-            In your local project, put <strong>the same value</strong> in{' '}
-            <code className={styles.guideInlineCode}>.env</code>:
-            <pre className={styles.guideCode}>
-{`REACT_APP_LEADS_API_URL="/api/leads.php"
-REACT_APP_LEADS_ADMIN_KEY="Zk8pQ3mX9yL2wN7bV5rT1jH6cD4fG0aE"`}
-            </pre>
-            then run <code className={styles.guideInlineCode}>npm run build</code> and re-upload{' '}
-            <code className={styles.guideInlineCode}>build/</code> (env values are baked in at
-            build time). A <code className={styles.guideInlineCode}>config.php</code>{' '}
-            <strong>overrides</strong> the built-in key, so creating it without rebuilding locks
-            your own admin panel out.
+            a <code className={styles.guideInlineCode}>LEADS_ADMIN_KEY</code> /{' '}
+            <code className={styles.guideInlineCode}>ADMIN_API_KEY</code> server environment variable
+          </li>
+          <li className={styles.guideStepItem}>
+            the committed fallback inside{' '}
+            <code className={styles.guideInlineCode}>api/leads.php</code>, which already matches
+            the <code className={styles.guideInlineCode}>.env</code> in this repo
+          </li>
+        </ol>
+        <div className={styles.guideNote}>
+          <strong>It works out of the box.</strong> You do <strong>not</strong> need to create{' '}
+          <code className={styles.guideInlineCode}>config.php</code>. Create it only to replace
+          the shipped key with your own private one — and if you do, put the same value in{' '}
+          <code className={styles.guideInlineCode}>.env</code> and rebuild:
+        </div>
+        <pre className={styles.guideCode}>
+{`# On the server: api/config.php
+define('ADMIN_API_KEY', 'a-long-random-string-you-generated');
+
+# Locally: .env  (same value, then npm run build and re-upload)
+REACT_APP_LEADS_API_URL="/api/leads.php"
+REACT_APP_LEADS_ADMIN_KEY="a-long-random-string-you-generated"`}
+        </pre>
+        <div className={styles.guideNoteWarning}>
+          <strong>Seeing “Refresh failed: Server returned 401”?</strong> The server's key and the
+          key baked into the build do not match — nearly always because{' '}
+          <code className={styles.guideInlineCode}>api/config.php</code> was created (or left
+          behind from an earlier deploy) with a different{' '}
+          <code className={styles.guideInlineCode}>ADMIN_API_KEY</code>. This exact mismatch broke
+          the first live deploy of the previous build, so check it first.
+          <p style={{ marginTop: '8px' }}>
+            The tell-tale symptom: <strong>the public form keeps saving leads normally</strong>{' '}
+            (creating a lead needs no key) while every Admin Panel call 401s. No data is lost —
+            the leads are safe in <code className={styles.guideInlineCode}>api/data/leads.json</code>{' '}
+            and appear the moment the keys line up. Fix by editing{' '}
+            <code className={styles.guideInlineCode}>api/config.php</code> to the build's key, or
+            deleting the file to fall back to the shipped key, or rebuilding with the server's
+            value.
+          </p>
+          <p style={{ marginTop: '8px' }}>
+            Open <code className={styles.guideInlineCode}>/api/leads.php?action=health</code> on
+            your domain — it reports which key source is active, a fingerprint of that key, and
+            whether the caller's key matches. No lead data is exposed.
+          </p>
+        </div>
+      </div>
+
+      {/* Section 5: first deploy */}
+      <h2 className={styles.guideTitle}>5. First Deploy — Order of Operations</h2>
+      <div className={styles.guideSection}>
+        <ol className={styles.guideStepList}>
+          <li className={styles.guideStepItem}>
+            Set a strong <code className={styles.guideInlineCode}>REACT_APP_ADMIN_USERNAME</code>{' '}
+            and <code className={styles.guideInlineCode}>REACT_APP_ADMIN_PASSWORD</code> in{' '}
+            <code className={styles.guideInlineCode}>.env</code>
+          </li>
+          <li className={styles.guideStepItem}>
+            <code className={styles.guideInlineCode}>npm run build</code>
+          </li>
+          <li className={styles.guideStepItem}>
+            Upload the contents of <code className={styles.guideInlineCode}>build/</code> to the
+            web root
+          </li>
+          <li className={styles.guideStepItem}>
+            Add the <code className={styles.guideInlineCode}>.htaccess</code> rewrite rules
           </li>
           <li className={styles.guideStepItem}>
             Make sure <code className={styles.guideInlineCode}>api/data/</code> is writable by PHP
-            (<code className={styles.guideInlineCode}>chmod 755</code> on VPS; automatic on most
-            cPanel hosts).
+            (<code className={styles.guideInlineCode}>chmod 755</code> on a VPS; automatic on most
+            shared hosts)
           </li>
           <li className={styles.guideStepItem}>
-            Submit a test lead from any device, then refresh{' '}
-            <code className={styles.guideInlineCode}>/admin/lms</code> — it should appear.
+            Enable SSL (free Let's Encrypt on nearly every host) and force HTTPS
+          </li>
+          <li className={styles.guideStepItem}>
+            Submit a test enquiry, then open{' '}
+            <code className={styles.guideInlineCode}>/admin/lms</code> — it should appear within
+            15 seconds
           </li>
         </ol>
-        <div className={styles.guideNoteWarning}>
-          <strong>Seeing “Refresh failed: Server returned 401”?</strong> The key on the server and
-          the key baked into your build don't match — usually because{' '}
-          <code className={styles.guideInlineCode}>api/config.php</code> was created with a
-          different <code className={styles.guideInlineCode}>ADMIN_API_KEY</code> than the build's{' '}
-          <code className={styles.guideInlineCode}>REACT_APP_LEADS_ADMIN_KEY</code>. Fix it by
-          editing <code className={styles.guideInlineCode}>api/config.php</code> to the build's key
-          (or deleting the file to use the built-in key), or by rebuilding with the matching value.
-          Open <code className={styles.guideInlineCode}>/api/leads.php?action=health</code> on your
-          domain to see which key source the server is using — leads submitted meanwhile are safe
-          in <code className={styles.guideInlineCode}>api/data/leads.json</code> and appear as soon
-          as the keys match.
-        </div>
-        <div className={styles.guideTip}>
-          <strong>Sync:</strong> All leads and admin actions (status changes, notes, deletions)
-          flow through <code className={styles.guideInlineCode}>/api/leads.php</code>, so every
-          browser and device shows the same data. See the Lead Storage tab for details.
-        </div>
       </div>
 
-      {/* Section 9: Post-Deployment Checklist */}
-      <h2 className={styles.guideTitle}>9. Post-Deployment Checklist</h2>
+      {/* Section 6: redeploys */}
+      <h2 className={styles.guideTitle}>6. Redeploying Later</h2>
+      <div className={styles.guideSection}>
+        <ol className={styles.guideStepList}>
+          <li className={styles.guideStepItem}>
+            <code className={styles.guideInlineCode}>npm run build</code> and upload{' '}
+            <code className={styles.guideInlineCode}>build/</code> over the old files
+          </li>
+          <li className={styles.guideStepItem}>
+            <strong>Leave <code className={styles.guideInlineCode}>api/data/</code> alone</strong> —
+            it holds every lead ever submitted. Take a copy of{' '}
+            <code className={styles.guideInlineCode}>leads.json</code> (or an Admin Panel CSV
+            export) before any risky deploy.
+          </li>
+          <li className={styles.guideStepItem}>
+            If you keep a custom <code className={styles.guideInlineCode}>api/config.php</code>,
+            leave that alone too, and make sure the new build was compiled with the matching key
+          </li>
+          <li className={styles.guideStepItem}>
+            Hard-refresh once (Ctrl/Cmd + Shift + R) so the browser drops the old JavaScript
+          </li>
+        </ol>
+      </div>
+
+      {/* Section 7: checklist */}
+      <h2 className={styles.guideTitle}>7. Post-Deployment Checklist</h2>
       <div className={styles.guideSection}>
         <table className={styles.guideTable}>
           <thead className={styles.guideTableHead}>
             <tr>
               <th>#</th>
               <th>Item</th>
-              <th>How to Verify</th>
+              <th>How to verify</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td className={styles.guideTableCell}>1</td>
-              <td className={styles.guideTableCell}>Landing page loads at your domain</td>
-              <td className={styles.guideTableCell}>Visit the URL</td>
+              <td className={styles.guideTableCell}>Home page loads over HTTPS</td>
+              <td className={styles.guideTableCell}>Visit the domain, look for the padlock</td>
             </tr>
             <tr>
               <td className={styles.guideTableCell}>2</td>
-              <td className={styles.guideTableCell}>All sections render correctly</td>
-              <td className={styles.guideTableCell}>Scroll through the page</td>
+              <td className={styles.guideTableCell}>All five pages render</td>
+              <td className={styles.guideTableCell}>Home, About, Expertise, Who We Serve, Contact</td>
             </tr>
             <tr>
               <td className={styles.guideTableCell}>3</td>
-              <td className={styles.guideTableCell}>Forms submit successfully</td>
-              <td className={styles.guideTableCell}>Fill and submit a test form</td>
+              <td className={styles.guideTableCell}>Deep links and refresh work</td>
+              <td className={styles.guideTableCell}>
+                Open <code className={styles.guideInlineCode}>/expertise</code> directly and press
+                refresh — a 404 means the rewrite rule is missing
+              </td>
             </tr>
             <tr>
               <td className={styles.guideTableCell}>4</td>
-              <td className={styles.guideTableCell}>Thank You page appears after submission</td>
-              <td className={styles.guideTableCell}>Submit form → should redirect</td>
+              <td className={styles.guideTableCell}>The enquiry form submits</td>
+              <td className={styles.guideTableCell}>Send a test enquiry; the success state appears in place</td>
             </tr>
             <tr>
               <td className={styles.guideTableCell}>5</td>
-              <td className={styles.guideTableCell}>Admin panel accessible at <code className={styles.guideInlineCode}>/admin</code></td>
-              <td className={styles.guideTableCell}>Visit <code className={styles.guideInlineCode}>www.nilachalinfracon.com/admin</code></td>
+              <td className={styles.guideTableCell}>Admin login works</td>
+              <td className={styles.guideTableCell}>
+                <code className={styles.guideInlineCode}>/admin</code> with the{' '}
+                <code className={styles.guideInlineCode}>.env</code> credentials
+              </td>
             </tr>
             <tr>
               <td className={styles.guideTableCell}>6</td>
-              <td className={styles.guideTableCell}>Admin login works</td>
-              <td className={styles.guideTableCell}>Enter credentials</td>
+              <td className={styles.guideTableCell}>The test lead is in the Admin Panel</td>
+              <td className={styles.guideTableCell}>
+                Dashboard “Recent Enquiries” and{' '}
+                <code className={styles.guideInlineCode}>/admin/lms</code>, within 15s
+              </td>
             </tr>
             <tr>
               <td className={styles.guideTableCell}>7</td>
-              <td className={styles.guideTableCell}>Server receives form data</td>
-              <td className={styles.guideTableCell}>Check <code className={styles.guideInlineCode}>api/data/leads.json</code> / Admin Panel</td>
-            </tr>
-            <tr>
-              <td className={styles.guideTableCell}>7b</td>
+              <td className={styles.guideTableCell}>Cross-device sync works</td>
               <td className={styles.guideTableCell}>
-                Admin panel shows leads from other devices
-              </td>
-              <td className={styles.guideTableCell}>
-                Submit a lead from your phone, then open <code className={styles.guideInlineCode}>/admin/lms</code> on desktop — the lead should appear. If not (or refresh shows a 401), open{' '}
-                <code className={styles.guideInlineCode}>/api/leads.php?action=health</code> and make{' '}
-                <code className={styles.guideInlineCode}>config.php</code> /{' '}
-                <code className={styles.guideInlineCode}>REACT_APP_LEADS_ADMIN_KEY</code> match (see 8b).
+                Submit from a phone, watch it appear on the desktop Admin Panel. A 401 here means
+                the key mismatch in section 4.
               </td>
             </tr>
             <tr>
               <td className={styles.guideTableCell}>8</td>
-              <td className={styles.guideTableCell}>Mobile layout works</td>
-              <td className={styles.guideTableCell}>Test on a real phone</td>
+              <td className={styles.guideTableCell}>Status change and note stick</td>
+              <td className={styles.guideTableCell}>Change a status, reload — it should persist</td>
             </tr>
             <tr>
               <td className={styles.guideTableCell}>9</td>
-              <td className={styles.guideTableCell}>SSL certificate active</td>
-              <td className={styles.guideTableCell}>Look for lock icon in browser URL bar</td>
+              <td className={styles.guideTableCell}>CSV export opens correctly</td>
+              <td className={styles.guideTableCell}>Export from the Leads page, open in a spreadsheet</td>
             </tr>
             <tr>
               <td className={styles.guideTableCell}>10</td>
-              <td className={styles.guideTableCell}>OG image shows on sharing</td>
-              <td className={styles.guideTableCell}>Share URL on WhatsApp/Slack → check preview</td>
+              <td className={styles.guideTableCell}>Mobile layout is clean</td>
+              <td className={styles.guideTableCell}>Test on a real phone, not just a narrow window</td>
             </tr>
             <tr>
               <td className={styles.guideTableCell}>11</td>
-              <td className={styles.guideTableCell}>Page speed score &gt; 80</td>
-              <td className={styles.guideTableCell}>Run Lighthouse in Chrome DevTools</td>
+              <td className={styles.guideTableCell}>Share preview shows the right image</td>
+              <td className={styles.guideTableCell}>Paste the URL into WhatsApp or Slack</td>
+            </tr>
+            <tr>
+              <td className={styles.guideTableCell}>12</td>
+              <td className={styles.guideTableCell}>Delete the test lead</td>
+              <td className={styles.guideTableCell}>So the client's first real number is honest</td>
             </tr>
           </tbody>
         </table>

@@ -127,7 +127,7 @@ const LeadDetail = () => {
   // Keep this lead in sync with the shared server store so status/note changes
   // made on another browser or device show up here without a manual reload.
   // We sync on mount, poll while the tab is visible, re-sync when the tab
-  // regains focus, and react to cross-tab localStorage writes. The merge in
+  // regains focus, and react to cross-tab changes. The merge in
   // syncLeadsFromServer is last-write-wins, so an open detail view converges
   // to whatever the most recent edit was, wherever it was made.
   useEffect(() => {
@@ -135,13 +135,24 @@ const LeadDetail = () => {
     const POLL_MS = 15000;
     let intervalId = null;
 
+    // Re-read from the cache after ANY successful sync, not only one that
+    // reported a delta. The list pages can gate on the delta counters because
+    // they always render whatever the cache holds — but this page also decides
+    // "not found" from it, and the counters describe what THIS call changed,
+    // not what the cache contains. On a direct load of /admin/lms/lead/:id,
+    // AdminLayout's own mount sync often wins the race and fills the cache
+    // first; ours then reports 0/0/0 and the gate would strand the page on
+    // "Lead not found" for a lead that is sitting right there.
+    // loadLead() is a cache lookup plus two setStates that React bails out of
+    // when nothing changed, so running it every poll costs nothing.
+    const reloadAfterSync = (result) => {
+      if (cancelled || result.error) return;
+      loadLead();
+    };
+
     const syncAndReload = () => {
       if (document.visibilityState !== "visible") return;
-      syncLeadsFromServer().then((result) => {
-        if (cancelled || result.error) return;
-        if (result.added > 0 || result.updated > 0 || result.removed > 0)
-          loadLead();
-      });
+      syncLeadsFromServer().then(reloadAfterSync);
     };
 
     const start = () => {
@@ -168,11 +179,7 @@ const LeadDetail = () => {
     const unsubscribe = onLeadsChanged(() => loadLead());
 
     // Initial sync on mount (independent of visibility-change events).
-    syncLeadsFromServer().then((result) => {
-      if (cancelled || result.error) return;
-      if (result.added > 0 || result.updated > 0 || result.removed > 0)
-        loadLead();
-    });
+    syncLeadsFromServer().then(reloadAfterSync);
 
     if (document.visibilityState === "visible") start();
     document.addEventListener("visibilitychange", handleVisibilityChange);
@@ -302,6 +309,14 @@ const LeadDetail = () => {
                   <span className={styles.infoDash}>{"\u2014"}</span>
                 )}
               </div>
+              <div className={styles.infoFieldFull}>
+                <span className={styles.infoLabel}>Organization</span>
+                <span
+                  className={lead.organization ? styles.infoValue : styles.infoDash}
+                >
+                  {lead.organization || "\u2014"}
+                </span>
+              </div>
             </div>
           </div>
 
@@ -312,16 +327,10 @@ const LeadDetail = () => {
               Enquiry
             </h3>
             <div className={styles.infoGrid}>
-              <div className={styles.infoField}>
+              <div className={styles.infoFieldFull}>
                 <span className={styles.infoLabel}>Interested In</span>
                 <span className={lead.service_interest ? styles.infoValue : styles.infoDash}>
                   {lead.service_interest || "\u2014"}
-                </span>
-              </div>
-              <div className={styles.infoField}>
-                <span className={styles.infoLabel}>State</span>
-                <span className={lead.state ? styles.infoValue : styles.infoDash}>
-                  {lead.state || "\u2014"}
                 </span>
               </div>
               <div className={styles.infoFieldFull}>
