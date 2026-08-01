@@ -1,5 +1,5 @@
 /* ============================================
-   ThankYou Page Styles — Nilachal Infracon
+   ThankYou Page Styles — Dulecy Lead Services
    Minimal navy-on-white confirmation, consistent with the
    site's Apple-like design language (generous whitespace,
    thin hairlines, green used sparingly).
@@ -40,7 +40,7 @@
   background: radial-gradient(
     circle,
     var(--color-accent-tint) 0%,
-    rgba(30, 123, 69, 0) 70%
+    rgba(213, 25, 46, 0) 70%
   );
   transform-origin: center;
   opacity: 0.4;
@@ -174,7 +174,7 @@
 .callBtn {
   background: var(--color-accent);
   color: #ffffff;
-  box-shadow: 0 6px 18px rgba(30, 123, 69, 0.24);
+  box-shadow: 0 6px 18px rgba(213, 25, 46, 0.24);
 }
 
 .callBtn:hover {

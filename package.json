@@ -1,7 +1,7 @@
 {
-  "name": "nilachal-infracon-website",
+  "name": "dulecy-lead-services-website",
   "version": "1.0.0",
-  "description": "Nilachal Infracon Private Limited — one-page business website for Northeast India's infrastructure & building materials company (flagship brand: North East Buildmart). React 18 + MUI + GSAP, with lead-capturing enquiry form and admin panel.",
+  "description": "Dulecy Lead Services — multi-page business-consulting website (React 18 + MUI + GSAP) with lead management admin panel.",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.11.3",
@@ -54,15 +54,12 @@
   "author": "Assam Digital",
   "license": "UNLICENSED",
   "keywords": [
-    "nilachal-infracon",
-    "north-east-buildmart",
-    "building-materials",
-    "construction",
-    "infrastructure",
-    "northeast-india",
-    "assam",
-    "nagaon",
-    "landing-page",
+    "dulecy",
+    "lead-services",
+    "business-consulting",
+    "hr",
+    "business-analytics",
+    "admin-panel",
     "lead-generation"
   ]
 }

@@ -78,7 +78,7 @@
 
 .statCard:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 34px rgba(16, 28, 41, 0.1);
+  box-shadow: 0 12px 34px rgba(11, 11, 12, 0.1);
 }
 
 .statIcon {
@@ -92,7 +92,7 @@
 }
 
 .statIconNavy {
-  background: rgba(22, 50, 79, 0.09);
+  background: rgba(11, 11, 12, 0.09);
   color: var(--admin-primary);
 }
 
@@ -282,7 +282,7 @@
 .actionOutlined:hover {
   border-color: var(--admin-accent);
   color: var(--admin-accent);
-  background: rgba(30, 123, 69, 0.04);
+  background: rgba(213, 25, 46, 0.04);
 }
 
 .actionSolid {
@@ -293,7 +293,7 @@
 
 .actionSolid:hover {
   opacity: 0.9;
-  box-shadow: 0 4px 12px rgba(30, 123, 69, 0.25);
+  box-shadow: 0 4px 12px rgba(213, 25, 46, 0.25);
 }
 
 .actionGhost {
@@ -304,7 +304,7 @@
 
 .actionGhost:hover {
   color: var(--admin-accent);
-  background: rgba(30, 123, 69, 0.04);
+  background: rgba(213, 25, 46, 0.04);
 }
 
 /* ── Recent Enquiries Section ── */

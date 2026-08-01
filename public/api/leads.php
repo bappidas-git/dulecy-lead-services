@@ -1,6 +1,6 @@
 <?php
 /* ============================================
-   Lead Storage API
+   Lead Storage API — Dulecy Lead Services
    Server-side shared storage for leads so the
    admin panel can see leads submitted from any
    browser/device (localStorage is per-device).
@@ -118,7 +118,7 @@ if ($adminKey === '') {
 }
 if ($adminKey === '') {
     // Default — keep in sync with REACT_APP_LEADS_ADMIN_KEY in .env.
-    $adminKey = 'idpFeRFMVsr80CkF8S6jGmcpAFagTIycB5GXa9GGi1z8LKP8';
+    $adminKey = 'UjTUIwdxyIoXbCrEpsfEBvk0NFwqVeITfWpSzCY3uk3Z35Y0';
 }
 
 // ----- Helpers -----

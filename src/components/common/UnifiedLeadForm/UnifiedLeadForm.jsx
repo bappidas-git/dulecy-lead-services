@@ -7,7 +7,7 @@
    - Server-side duplicate prevention (by mobile, cross-device)
    - Consent text + privacy-policy modal
    - Redirect to the Thank-You page on success
-   Nilachal Infracon Private Limited — enquiry pipeline.
+   Dulecy Lead Services — enquiry pipeline.
    ============================================ */
 
 import React, { useState, useCallback, useRef } from "react";
@@ -82,7 +82,7 @@ const initialErrorState = {
   message: "",
 };
 
-// Privacy Policy Content — Nilachal Infracon enquiry data policy.
+// Privacy Policy Content — Dulecy Lead Services enquiry data policy.
 // Kept aligned with the Footer's policy copy (prompt 05).
 const PrivacyPolicyContent = () => (
   <div style={{ padding: "0 8px" }}>
@@ -92,7 +92,7 @@ const PrivacyPolicyContent = () => (
           fontSize: "16px",
           fontWeight: 600,
           marginBottom: "12px",
-          color: "#16324F",
+          color: "#0B0B0C",
         }}
       >
         Introduction
@@ -110,7 +110,7 @@ const PrivacyPolicyContent = () => (
           fontSize: "16px",
           fontWeight: 600,
           marginBottom: "12px",
-          color: "#16324F",
+          color: "#0B0B0C",
         }}
       >
         Information We Collect
@@ -159,7 +159,7 @@ const PrivacyPolicyContent = () => (
           fontSize: "16px",
           fontWeight: 600,
           marginBottom: "12px",
-          color: "#16324F",
+          color: "#0B0B0C",
         }}
       >
         How We Use Your Information
@@ -201,7 +201,7 @@ const PrivacyPolicyContent = () => (
           fontSize: "16px",
           fontWeight: 600,
           marginBottom: "12px",
-          color: "#16324F",
+          color: "#0B0B0C",
         }}
       >
         Storage &amp; Sharing
@@ -219,7 +219,7 @@ const PrivacyPolicyContent = () => (
           fontSize: "16px",
           fontWeight: 600,
           marginBottom: "12px",
-          color: "#16324F",
+          color: "#0B0B0C",
         }}
       >
         Removing Your Data
@@ -229,7 +229,7 @@ const PrivacyPolicyContent = () => (
         at{" "}
         <a
           href={`mailto:${siteConfig.email}`}
-          style={{ color: "#1E7B45", fontWeight: 600 }}
+          style={{ color: "#D5192E", fontWeight: 600 }}
         >
           {siteConfig.email}
         </a>{" "}
@@ -243,7 +243,7 @@ const PrivacyPolicyContent = () => (
           fontSize: "16px",
           fontWeight: 600,
           marginBottom: "12px",
-          color: "#16324F",
+          color: "#0B0B0C",
         }}
       >
         Contact
@@ -333,7 +333,7 @@ const PrivacyPolicyModal = ({ isOpen, onClose }) => {
                   fontSize: "18px",
                   fontWeight: 600,
                   margin: 0,
-                  color: "#16324F",
+                  color: "#0B0B0C",
                 }}
               >
                 Privacy Policy

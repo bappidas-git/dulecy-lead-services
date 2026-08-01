@@ -1,5 +1,5 @@
 /* ============================================
-   Entry Point — Nilachal Infracon
+   Entry Point — Dulecy Lead Services
    Official Website
 
    Performance optimized with:
@@ -38,7 +38,7 @@ const preloadResources = () => {
   const fontLink = document.createElement('link');
   fontLink.rel = 'preload';
   fontLink.as = 'style';
-  fontLink.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap';
+  fontLink.href = 'https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap';
   document.head.appendChild(fontLink);
 };
 
@@ -133,7 +133,7 @@ reportWebVitals(handleWebVitals);
 
 if (process.env.NODE_ENV === 'development') {
   // Log when app is ready
-  console.log('%c Nilachal Infracon — Official Website ', 'background: #16324F; color: #FFFFFF; padding: 10px 20px; font-size: 14px; font-weight: bold; border-radius: 4px;');
+  console.log('%c Dulecy Lead Services — Official Website ', 'background: #0B0B0C; color: #FFFFFF; padding: 10px 20px; font-size: 14px; font-weight: bold; border-radius: 4px;');
   console.log('%c Development Mode ', 'background: #4CAF50; color: white; padding: 5px 10px; font-size: 12px; border-radius: 4px;');
 }
 

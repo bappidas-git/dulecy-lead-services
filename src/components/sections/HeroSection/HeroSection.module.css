@@ -1,5 +1,5 @@
 /* ============================================
-   HeroSection Styles — Nilachal Infracon
+   HeroSection Styles — Dulecy Lead Services
    Cinematic, Apple-minimal full-viewport hero.
    Background stack (bottom → top):
      gradient fallback → image (parallax) → navy scrim → content
@@ -22,7 +22,7 @@
   position: absolute;
   inset: 0;
   z-index: 0;
-  background: linear-gradient(135deg, #16324f 0%, #0f2438 55%, #0f2438 100%);
+  background: linear-gradient(135deg, #0B0B0C 0%, #0B0B0C 55%, #0B0B0C 100%);
 }
 
 /* Layer 2: Cinematic background image. Always rendered (opacity toggled once
@@ -48,7 +48,7 @@
 }
 
 /* Layer 3: Navy scrim for text readability.
-   - Primary vertical scrim: rgba(15,36,56,.85) at the bottom → .45 at the top.
+   - Primary vertical scrim: rgba(11, 11, 12,.85) at the bottom → .45 at the top.
    - Left assist: extra navy on the left where the desktop copy sits.
    - Top assist: a short darkening under the transparent header so the white
      header logo / nav stay legible over the lighter sky. */
@@ -59,19 +59,19 @@
   background:
     linear-gradient(
       to bottom,
-      rgba(15, 36, 56, 0.55) 0%,
-      rgba(15, 36, 56, 0) 130px
+      rgba(11, 11, 12, 0.55) 0%,
+      rgba(11, 11, 12, 0) 130px
     ),
     linear-gradient(
       to right,
-      rgba(15, 36, 56, 0.5) 0%,
-      rgba(15, 36, 56, 0) 60%
+      rgba(11, 11, 12, 0.5) 0%,
+      rgba(11, 11, 12, 0) 60%
     ),
     linear-gradient(
       to top,
-      rgba(15, 36, 56, 0.85) 0%,
-      rgba(15, 36, 56, 0.6) 45%,
-      rgba(15, 36, 56, 0.45) 100%
+      rgba(11, 11, 12, 0.85) 0%,
+      rgba(11, 11, 12, 0.6) 45%,
+      rgba(11, 11, 12, 0.45) 100%
     );
   pointer-events: none;
 }
@@ -110,7 +110,7 @@
   width: 28px;
   height: 2px;
   border-radius: 2px;
-  background: var(--color-accent, #1e7b45);
+  background: var(--color-accent, #D5192E);
   flex-shrink: 0;
 }
 
@@ -184,15 +184,15 @@
 
 /* Primary — the one sparing use of green */
 .ctaPrimary {
-  background: var(--color-accent, #1e7b45);
+  background: var(--color-accent, #D5192E);
   color: #ffffff;
-  box-shadow: 0 8px 24px rgba(30, 123, 69, 0.35);
+  box-shadow: 0 8px 24px rgba(213, 25, 46, 0.35);
 }
 
 .ctaPrimary:hover {
-  background: var(--color-accent-dark, #176437);
+  background: var(--color-accent-dark, #A80E1E);
   transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(30, 123, 69, 0.45);
+  box-shadow: 0 12px 30px rgba(213, 25, 46, 0.45);
 }
 
 /* Secondary — ghost / white outline */

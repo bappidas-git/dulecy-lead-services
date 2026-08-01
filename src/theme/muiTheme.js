@@ -1,74 +1,75 @@
 /* ============================================
-   MUI Theme Configuration — Nilachal Design System
-   Nilachal Infracon Private Limited
-   "Building Tomorrow, Together."
+   MUI Theme Configuration — Dulecy Design System
+   Dulecy Lead Services
+   "Beyond Business Support"
    ============================================ */
 
 import { createTheme, alpha } from '@mui/material/styles';
 
-// Color palette — Nilachal steel navy / green.
+// Color palette — Dulecy ink / red.
 // Matches the tokens in src/styles/variables.css.
 const colors = {
   primary: {
-    main: '#16324F',
-    light: '#274B6E',
-    dark: '#0F2438',
+    main: '#0B0B0C',
+    light: '#2A2A2E',
+    dark: '#0B0B0C',
     contrastText: '#FFFFFF',
   },
   secondary: {
-    main: '#1E7B45',
-    light: '#2E9A5C',
-    dark: '#176437',
+    main: '#D5192E',
+    light: '#F0293E',
+    dark: '#A80E1E',
     contrastText: '#FFFFFF',
   },
-  // Nilachal green — primary CTA buttons and key highlights.
+  // Dulecy red — primary CTA buttons and key highlights.
   accent: {
-    main: '#1E7B45',
-    light: '#2E9A5C',
-    dark: '#176437',
+    main: '#D5192E',
+    light: '#F0293E',
+    dark: '#A80E1E',
     contrastText: '#FFFFFF',
-    50: '#E8F5EE',
-    100: '#C6E6D3',
-    200: '#9FD4B4',
-    300: '#6FBE90',
-    400: '#2E9A5C',
-    500: '#1E7B45',
-    600: '#176437',
-    700: '#124E2B',
-    800: '#0D3F23',
-    900: '#082A17',
+    50: '#FDECEE',
+    100: '#FAD1D6',
+    200: '#F3A6AF',
+    300: '#EC7382',
+    400: '#F0293E',
+    500: '#D5192E',
+    600: '#A80E1E',
+    700: '#870A17',
+    800: '#660711',
+    900: '#45040B',
   },
   // Legacy alias — many components still reference `palette.orange.*`.
-  // Mapped to Nilachal green so CTAs render correctly without sweeping renames.
+  // Mapped to Dulecy red so CTAs render correctly without sweeping renames.
   orange: {
-    main: '#1E7B45',
-    light: '#2E9A5C',
-    dark: '#176437',
-    50: '#E8F5EE',
-    100: '#C6E6D3',
-    200: '#9FD4B4',
-    300: '#6FBE90',
-    400: '#2E9A5C',
-    500: '#1E7B45',
-    600: '#176437',
-    700: '#124E2B',
-    800: '#0D3F23',
-    900: '#082A17',
+    main: '#D5192E',
+    light: '#F0293E',
+    dark: '#A80E1E',
+    50: '#FDECEE',
+    100: '#FAD1D6',
+    200: '#F3A6AF',
+    300: '#EC7382',
+    400: '#F0293E',
+    500: '#D5192E',
+    600: '#A80E1E',
+    700: '#870A17',
+    800: '#660711',
+    900: '#45040B',
   },
+  // Legacy alias — `palette.navy.*` now resolves to the Dulecy ink ramp.
   navy: {
-    main: '#16324F',
-    light: '#274B6E',
-    dark: '#0F2438',
-    50: '#EAEEF3',
-    100: '#C9D3DE',
-    200: '#9DAEC0',
-    300: '#6E86A0',
-    400: '#3F5E80',
-    500: '#274B6E',
-    600: '#1E3D5C',
-    700: '#16324F',
-    800: '#0F2438',
-    900: '#091725',
+    main: '#0B0B0C',
+    light: '#2A2A2E',
+    dark: '#0B0B0C',
+    50: '#F5F5F6',
+    100: '#E7E7EA',
+    200: '#C9C9CE',
+    300: '#8B8B92',
+    400: '#6B6B70',
+    500: '#4A4A4F',
+    600: '#3A3A3E',
+    700: '#2A2A2E',
+    800: '#1A1A1D',
+    900: '#0B0B0C',
   },
   success: {
     main: '#1E8E5A',
@@ -80,63 +81,70 @@ const colors = {
     main: '#E0A100',
     light: '#F0C24A',
     dark: '#B07E00',
-    contrastText: '#101C29',
+    contrastText: '#0B0B0C',
   },
   error: {
-    main: '#DC2626',
-    light: '#EF5350',
-    dark: '#B91C1C',
+    main: '#D5192E',
+    light: '#F0293E',
+    dark: '#A80E1E',
     contrastText: '#FFFFFF',
   },
   info: {
-    main: '#16324F',
-    light: '#274B6E',
-    dark: '#0F2438',
+    main: '#0B0B0C',
+    light: '#2A2A2E',
+    dark: '#0B0B0C',
     contrastText: '#FFFFFF',
   },
   grey: {
-    50: '#FAFAFA',
-    100: '#F8F9FA',
-    200: '#F5F7FA',
-    300: '#E8EDF2',
-    400: '#B0BEC5',
-    500: '#90A4AE',
-    600: '#78909C',
-    700: '#607D8B',
-    800: '#455A64',
-    900: '#263238',
+    50: '#FAFAFB',
+    100: '#F8F8F9',
+    200: '#F5F5F6',
+    300: '#E7E7EA',
+    400: '#8B8B92',
+    500: '#6B6B70',
+    600: '#4A4A4F',
+    700: '#3A3A3E',
+    800: '#2A2A2E',
+    900: '#0B0B0C',
   },
   background: {
     default: '#FFFFFF',
     paper: '#FFFFFF',
-    dark: '#16324F',
-    light: '#F5F7FA',
+    dark: '#0B0B0C',
+    light: '#F5F5F6',
   },
   text: {
-    primary: '#101C29',
-    secondary: '#4A5A6A',
-    disabled: '#90A4AE',
-    dark: '#101C29',
+    primary: '#0B0B0C',
+    secondary: '#4A4A4F',
+    disabled: '#8B8B92',
+    dark: '#0B0B0C',
     light: '#FFFFFF',
   },
   iconColors: {
-    gold: '#16324F',
+    gold: '#0B0B0C',
     green: '#1E8E5A',
     purple: '#6B3FA0',
-    orange: '#1E7B45',
-    pink: '#1E7B45',
-    red: '#1E7B45',
-    teal: '#16324F',
-    blue: '#16324F',
+    orange: '#D5192E',
+    pink: '#D5192E',
+    red: '#D5192E',
+    teal: '#0B0B0C',
+    blue: '#0B0B0C',
   },
   cardBg: {
-    yellow: '#E8F5EE',
-    green: '#E5F5EC',
-    pink: '#FCE4E8',
-    purple: '#EFE7F7',
-    orange: '#E8F5EE',
-    blue: '#EAEEF3',
+    yellow: '#FDECEE',
+    green: '#F5F5F6',
+    pink: '#FDECEE',
+    purple: '#F5F5F6',
+    orange: '#FDECEE',
+    blue: '#F5F5F6',
   },
+};
+
+// Brand gradients — mirror `--grad` / `--grad-text` in variables.css.
+const gradients = {
+  brand: 'linear-gradient(135deg, #E8293E 0%, #A80E1E 100%)',
+  brandReverse: 'linear-gradient(135deg, #A80E1E 0%, #E8293E 100%)',
+  text: 'linear-gradient(120deg, #E8293E, #A80E1E)',
 };
 
 // Breakpoints matching CSS variables
@@ -151,10 +159,15 @@ const breakpoints = {
   },
 };
 
-// Typography configuration — Inter everywhere
+// Typography configuration — Archivo everywhere, Instrument Serif for the
+// italic display accents used in the mockup.
+const FONT_SANS = "'Archivo', system-ui, sans-serif";
+const FONT_SERIF = "'Instrument Serif', serif";
+
 const typography = {
-  fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif",
-  fontFamilyHeading: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+  fontFamily: FONT_SANS,
+  fontFamilyHeading: FONT_SANS,
+  fontFamilySerif: FONT_SERIF,
   fontWeightLight: 300,
   fontWeightRegular: 400,
   fontWeightMedium: 500,
@@ -162,80 +175,83 @@ const typography = {
   fontWeightBold: 700,
   fontWeightExtraBold: 800,
   h1: {
-    fontFamily: "'Inter', sans-serif",
+    fontFamily: FONT_SANS,
     fontWeight: 700,
     fontSize: 'clamp(2.5rem, 2rem + 2.5vw, 4.5rem)',
-    lineHeight: 1.1,
-    letterSpacing: '-0.02em',
+    lineHeight: 1.04,
+    letterSpacing: '-0.035em',
     color: colors.primary.main,
   },
   h2: {
-    fontFamily: "'Inter', sans-serif",
+    fontFamily: FONT_SANS,
     fontWeight: 700,
     fontSize: 'clamp(2rem, 1.5rem + 2.5vw, 3rem)',
-    lineHeight: 1.1,
-    letterSpacing: '-0.02em',
+    lineHeight: 1.06,
+    letterSpacing: '-0.03em',
     color: colors.primary.main,
   },
   h3: {
-    fontFamily: "'Inter', sans-serif",
+    fontFamily: FONT_SANS,
     fontWeight: 700,
     fontSize: 'clamp(1.75rem, 1.4rem + 1.75vw, 2.5rem)',
-    lineHeight: 1.2,
-    letterSpacing: '-0.02em',
+    lineHeight: 1.15,
+    letterSpacing: '-0.025em',
     color: colors.primary.main,
   },
   h4: {
-    fontFamily: "'Inter', sans-serif",
+    fontFamily: FONT_SANS,
     fontWeight: 700,
     fontSize: 'clamp(1.5rem, 1.25rem + 1.25vw, 2rem)',
     lineHeight: 1.25,
+    letterSpacing: '-0.02em',
     color: colors.primary.main,
   },
   h5: {
-    fontFamily: "'Inter', sans-serif",
+    fontFamily: FONT_SANS,
     fontWeight: 600,
     fontSize: 'clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem)',
     lineHeight: 1.3,
+    letterSpacing: '-0.02em',
     color: colors.primary.main,
   },
   h6: {
-    fontFamily: "'Inter', sans-serif",
+    fontFamily: FONT_SANS,
     fontWeight: 600,
     fontSize: 'clamp(1.1rem, 1rem + 0.5vw, 1.25rem)',
     lineHeight: 1.4,
+    letterSpacing: '-0.02em',
     color: colors.primary.main,
   },
   subtitle1: {
-    fontFamily: "'Inter', sans-serif",
+    fontFamily: FONT_SANS,
     fontWeight: 500,
     fontSize: '1.125rem',
     lineHeight: 1.5,
     color: colors.text.secondary,
   },
   subtitle2: {
-    fontFamily: "'Inter', sans-serif",
+    fontFamily: FONT_SANS,
     fontWeight: 500,
     fontSize: '0.875rem',
     lineHeight: 1.5,
     color: colors.text.secondary,
   },
   body1: {
-    fontFamily: "'Inter', sans-serif",
+    fontFamily: FONT_SANS,
     fontWeight: 400,
     fontSize: '1rem',
     lineHeight: 1.625,
     color: colors.text.primary,
   },
   body2: {
-    fontFamily: "'Inter', sans-serif",
+    fontFamily: FONT_SANS,
     fontWeight: 400,
     fontSize: '0.875rem',
     lineHeight: 1.5,
     color: colors.text.secondary,
   },
   button: {
-    fontFamily: "'Inter', sans-serif",
+    fontFamily: FONT_SANS,
     fontWeight: 600,
     fontSize: '0.9375rem',
     lineHeight: 1,
@@ -243,14 +259,14 @@ const typography = {
     letterSpacing: '0.025em',
   },
   caption: {
-    fontFamily: "'Inter', sans-serif",
+    fontFamily: FONT_SANS,
     fontWeight: 400,
     fontSize: '0.75rem',
     lineHeight: 1.5,
     color: colors.text.secondary,
   },
   overline: {
-    fontFamily: "'Inter', sans-serif",
+    fontFamily: FONT_SANS,
     fontWeight: 600,
     fontSize: '0.75rem',
     lineHeight: 1.5,
@@ -289,10 +305,10 @@ const shadows = [
   '0 40px 152px rgba(0, 0, 0, 0.28)',
 ];
 
-// Green shadow for CTA buttons and highlights.
+// Red shadow for CTA buttons and highlights.
 // Legacy exports kept as `orangeShadow*` / `amberShadow*` so existing imports keep working.
-const orangeShadow = '0 4px 14px rgba(30, 123, 69, 0.30)';
-const orangeShadowHover = '0 6px 20px rgba(30, 123, 69, 0.40)';
+const orangeShadow = '0 10px 26px rgba(213, 25, 46, 0.35)';
+const orangeShadowHover = '0 14px 34px rgba(213, 25, 46, 0.38)';
 const amberShadow = orangeShadow;
 const amberShadowHover = orangeShadowHover;
 
@@ -379,7 +395,7 @@ const theme = createTheme({
           overflowX: 'hidden',
         },
         '::selection': {
-          backgroundColor: colors.primary.main,
+          backgroundColor: colors.accent.main,
           color: colors.background.default,
         },
         '::-webkit-scrollbar': {
@@ -406,7 +422,7 @@ const theme = createTheme({
       },
       styleOverrides: {
         root: {
-          borderRadius: 12,
+          borderRadius: 999,
           padding: '12px 24px',
           fontWeight: 600,
           fontSize: '0.9375rem',
@@ -424,13 +440,13 @@ const theme = createTheme({
             transform: 'translateY(-2px)',
           },
         },
-        // CTA button — Nilachal green gradient with white text.
+        // CTA button — Dulecy red gradient with white text.
         containedPrimary: {
-          background: `linear-gradient(135deg, ${colors.accent.main} 0%, ${colors.accent.light} 100%)`,
+          background: gradients.brand,
           color: colors.accent.contrastText,
           boxShadow: amberShadow,
           '&:hover': {
-            background: `linear-gradient(135deg, ${colors.accent.light} 0%, ${colors.accent.main} 100%)`,
+            background: gradients.brandReverse,
             boxShadow: amberShadowHover,
             transform: 'translateY(-2px)',
           },
@@ -1139,7 +1155,7 @@ const theme = createTheme({
           },
         },
         primary: {
-          background: `linear-gradient(135deg, ${colors.accent.main} 0%, ${colors.accent.light} 100%)`,
+          background: gradients.brand,
           color: colors.accent.contrastText,
         },
       },
@@ -1148,11 +1164,11 @@ const theme = createTheme({
     MuiSpeedDial: {
       styleOverrides: {
         fab: {
-          background: `linear-gradient(135deg, ${colors.accent.main} 0%, ${colors.accent.light} 100%)`,
+          background: gradients.brand,
           color: colors.accent.contrastText,
           boxShadow: amberShadow,
           '&:hover': {
-            background: `linear-gradient(135deg, ${colors.accent.light} 0%, ${colors.accent.main} 100%)`,
+            background: gradients.brandReverse,
             boxShadow: amberShadowHover,
           },
         },
@@ -1174,5 +1190,5 @@ const theme = createTheme({
 });
 
 // Export theme and colors for use in styled components
-export { colors, orangeShadow, orangeShadowHover, amberShadow, amberShadowHover };
+export { colors, gradients, orangeShadow, orangeShadowHover, amberShadow, amberShadowHover };
 export default theme;
