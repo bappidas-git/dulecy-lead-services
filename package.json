@@ -29,7 +29,8 @@
     "eject": "react-scripts eject",
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "generate:icons": "node scripts/generate-icons.js",
-    "generate:og": "node scripts/generate-og.js"
+    "generate:og": "node scripts/generate-og.js",
+    "generate:images": "node scripts/generate-images.js"
   },
   "eslintConfig": {
     "extends": [

@@ -10,13 +10,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useModal } from '../../../context/ModalContext';
-import { siteConfig, telHref, mailHref } from '../../../data/siteConfig';
+import { siteConfig, telHref, mailHref, logoAt } from '../../../data/siteConfig';
 import { NAV_LINKS } from '../../../data/navigation';
 import styles from './Footer.module.css';
 
-// Icons8 CDN glyphs, as in the mockup — self-hosted in Prompt 12.
-const ICON_PHONE = 'https://img.icons8.com/ios-filled/100/F0293E/phone.png';
-const ICON_MAIL = 'https://img.icons8.com/ios-filled/100/F0293E/new-post.png';
+// The mockup's icons8 glyphs, self-hosted since Prompt 12 (the footer sits on
+// ink, so it uses the brighter red-hi variant). Refresh with
+// `npm run generate:images`.
+const ICON_PHONE = '/images/icons/phone-f0293e.png';
+const ICON_MAIL = '/images/icons/new-post-f0293e.png';
 
 const Footer = () => {
   const { openLeadModal } = useModal();
@@ -42,7 +44,15 @@ const Footer = () => {
         <div className={styles.cols}>
           <div className={styles.brand}>
             <Link to="/" aria-label={`${siteConfig.brandName} — Home`}>
-              <img src={siteConfig.logoWhite} alt={siteConfig.brandName} />
+              {/* Drawn 52px tall; requested at 2× for retina. */}
+              <img
+                src={logoAt(siteConfig.logoWhite, { h: 128 })}
+                alt={siteConfig.brandName}
+                width="485"
+                height="128"
+                loading="lazy"
+                decoding="async"
+              />
             </Link>
             <p>
               A professional business support and consulting organization —
@@ -53,7 +63,7 @@ const Footer = () => {
           </div>
 
           <div className={styles.col}>
-            <h4>Explore</h4>
+            <h3>Explore</h3>
             <nav className={styles.nav} aria-label="Footer">
               {NAV_LINKS.map((link) => (
                 <Link key={link.to} to={link.to}>
@@ -64,11 +74,18 @@ const Footer = () => {
           </div>
 
           <div className={`${styles.col} ${styles.colWide}`}>
-            <h4>Get in touch</h4>
+            <h3>Get in touch</h3>
             <div className={styles.contact}>
               <a href={telHref}>
                 <i>
-                  <img src={ICON_PHONE} alt="" />
+                  <img
+                    src={ICON_PHONE}
+                    alt=""
+                    width="100"
+                    height="100"
+                    loading="lazy"
+                    decoding="async"
+                  />
                 </i>
                 <span>
                   <span className={styles.k}>Call us</span>
@@ -79,7 +96,14 @@ const Footer = () => {
               </a>
               <a href={mailHref}>
                 <i>
-                  <img src={ICON_MAIL} alt="" />
+                  <img
+                    src={ICON_MAIL}
+                    alt=""
+                    width="100"
+                    height="100"
+                    loading="lazy"
+                    decoding="async"
+                  />
                 </i>
                 <span>
                   <span className={styles.k}>Email us</span>

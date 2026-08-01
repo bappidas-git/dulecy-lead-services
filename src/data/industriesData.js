@@ -9,8 +9,9 @@
      for the short cards — e.g. "Pharmaceutical & Healthcare Organizations"
      shortens to "Pharmaceutical & Healthcare".
 
-   `icon` keeps the mockup's icons8 CDN URL for pixel parity; the assets
-   are self-hosted in Prompt 12.
+   `icon` points at the self-hosted copy of the mockup's icons8 glyph
+   (Prompt 12) — byte-identical downloads, so the rendered card is
+   unchanged. Refresh them with `npm run generate:images`.
    ============================================ */
 
 export const industries = [
@@ -19,7 +20,7 @@ export const industries = [
     name: 'Pharmaceutical & Healthcare Organizations',
     description:
       'Specialized business expertise supported by HR, analytics, administration, training, and management experience.',
-    icon: 'https://img.icons8.com/ios-filled/100/D5192E/pill.png',
+    icon: '/images/icons/pill-d5192e.png',
     homeTitle: 'Pharmaceutical & Healthcare',
     homeDesc: 'Specialized business expertise with real industry depth.',
   },
@@ -28,7 +29,7 @@ export const industries = [
     name: 'Hospitals & Healthcare Institutions',
     description:
       'HR, leadership, professional development, communication, and organizational capability programs.',
-    icon: 'https://img.icons8.com/ios-filled/100/D5192E/hospital-3.png',
+    icon: '/images/icons/hospital-3-d5192e.png',
     homeTitle: 'Hospitals & Healthcare Institutions',
     homeDesc: 'HR, leadership, and capability programs.',
   },
@@ -37,7 +38,7 @@ export const industries = [
     name: 'Corporate Organizations',
     description:
       'HR management, leadership development, professional training, business analytics, and organizational support.',
-    icon: 'https://img.icons8.com/ios-filled/100/D5192E/company.png',
+    icon: '/images/icons/company-d5192e.png',
     homeTitle: 'Corporate Organizations',
     homeDesc: 'HR, analytics, training, and organizational support.',
   },
@@ -46,7 +47,7 @@ export const industries = [
     name: 'Marketing & Sales Organizations',
     description:
       'Leadership, team development, performance management, communication, and professional capability building.',
-    icon: 'https://img.icons8.com/ios-filled/100/D5192E/commercial.png',
+    icon: '/images/icons/commercial-d5192e.png',
     homeTitle: 'Marketing & Sales Organizations',
     homeDesc: 'Performance, leadership, and team development.',
   },
@@ -55,7 +56,7 @@ export const industries = [
     name: 'Business Schools & Colleges',
     description:
       'Leadership, employability, professional development, business skills, and industry-oriented learning.',
-    icon: 'https://img.icons8.com/ios-filled/100/D5192E/graduation-cap.png',
+    icon: '/images/icons/graduation-cap-d5192e.png',
     homeTitle: 'Business Schools & Colleges',
     homeDesc: 'Employability and industry-oriented learning.',
   },
@@ -64,7 +65,7 @@ export const industries = [
     name: 'Startups & Growing Businesses',
     description:
       'HR systems, administration, business management, analytics, corporate documentation, and strategic support.',
-    icon: 'https://img.icons8.com/ios-filled/100/D5192E/rocket.png',
+    icon: '/images/icons/rocket-d5192e.png',
     homeTitle: 'Startups & Growing Businesses',
     homeDesc: 'Systems, documentation, and strategic support.',
   },
@@ -73,7 +74,7 @@ export const industries = [
     name: 'Entrepreneurs & Investors',
     description:
       'Business setup, corporate documentation, intellectual property support, business management, and strategic assistance.',
-    icon: 'https://img.icons8.com/ios-filled/100/D5192E/briefcase.png',
+    icon: '/images/icons/briefcase-d5192e.png',
     homeTitle: 'Entrepreneurs & Investors',
     homeDesc: 'Setup, IP support, and strategic assistance.',
   },

@@ -11,6 +11,12 @@
    with `force3D: true`, which promotes the layer for the duration of the
    scrub anyway — a permanent hint would just hold a compositor layer for a
    full-bleed image that is off-screen most of the page. */
+/* Format-negotiation wrapper only — `display: contents` removes its box so
+   `.bg` keeps positioning against the section exactly as before. */
+.bgPicture {
+  display: contents;
+}
+
 .bg {
   position: absolute;
   top: -18%;

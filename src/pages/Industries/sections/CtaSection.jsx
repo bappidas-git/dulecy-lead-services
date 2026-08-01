@@ -21,7 +21,7 @@ import layout from '../../../styles/layout.module.css';
 import styles from './CtaSection.module.css';
 
 // Icons8 CDN glyph, as in the mockup — self-hosted in Prompt 12.
-const ICON_PHONE = 'https://img.icons8.com/ios-filled/100/D5192E/phone.png';
+const ICON_PHONE = '/images/icons/phone-d5192e.png';
 
 const CtaSection = () => {
   const { openLeadModal } = useModal();
@@ -72,7 +72,14 @@ const CtaSection = () => {
               <span className={styles.actionSub}>Talk to us directly</span>
             </span>
             <i aria-hidden="true">
-              <img src={ICON_PHONE} alt="" />
+              <img
+                src={ICON_PHONE}
+                alt=""
+                width="100"
+                height="100"
+                loading="lazy"
+                decoding="async"
+              />
             </i>
           </a>
 
