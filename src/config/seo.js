@@ -1,136 +1,197 @@
 /* ============================================
-   SEO Configuration
+   SEO Configuration — Dulecy Lead Services
    --------------------------------------------
-   Central configuration for all SEO-related settings, schemas, and page
-   metadata for the Nilachal Infracon website.
+   Central configuration for every SEO setting, page title/description and
+   schema input used by the five-route Dulecy site.
 
-   Everything here is generated from the single sources of business truth so
-   the schemas can never drift from the visible site:
-     - contact / company facts  → src/data/siteConfig.js
-     - the Northeast states served → src/data/locationData.js
-     - the FAQ Q&As (must match the FAQ section exactly) → src/data/faqData.js
+   Everything here is generated from the single sources of truth so the
+   metadata can never drift from the visible site:
+     - company / contact facts   → src/data/siteConfig.js
+     - the ten expertise areas   → src/data/expertiseData.js
+     - the seven sectors served  → src/data/industriesData.js
+     - the nav labels (used for breadcrumb names) → src/data/navigation.js
 
-   The runtime SEO utilities (src/utils/seo.js) consume this config and inject
-   matching JSON-LD at runtime, overriding the static fallbacks in
-   public/index.html (which share the same element ids).
+   Two layers consume this file and MUST stay in sync with each other:
+     1. runtime  — src/utils/seo.js generators + SEOHead inject JSON-LD by
+        element id and rewrite the head on every client-side navigation.
+     2. static   — public/index.html carries the same tags and the same
+        schema element ids as a no-JS fallback for crawlers. When a schema
+        id or the home-page copy changes here, mirror it there.
+
+   Deliberately NOT modelled (no fabricated facts — Google structured-data
+   guidelines): LocalBusiness, PostalAddress, geo coordinates, opening
+   hours, aggregate ratings, and FAQPage (the site has no visible FAQ).
    ============================================ */
 
-import { siteConfig, fullAddress } from "../data/siteConfig";
-import { locationData } from "../data/locationData";
-import { faqData } from "../data/faqData";
+import { siteConfig } from '../data/siteConfig';
+import { expertiseAreas, expertiseTitles } from '../data/expertiseData';
+import { industries } from '../data/industriesData';
+import { NAV_LINKS } from '../data/navigation';
 
-// The 8 Northeast states Nilachal Infracon serves — used for areaServed.
-const areaServed = locationData.servingStates;
+const SITE_URL = siteConfig.siteUrl; // https://www.dulecy.com
 
-// PostalAddress parts, shaped for schema.org from the siteConfig address.
-const address = {
-  streetAddress: `${siteConfig.address.line1}, ${siteConfig.address.line2}`,
-  addressLocality: siteConfig.address.city,
-  addressRegion: siteConfig.address.state,
-  postalCode: siteConfig.address.pincode,
-  addressCountry: "IN",
-};
+/** Absolute URL for a route path ('/' → siteUrl + '/'). */
+const absolute = (path) => `${SITE_URL}${path}`;
+
+/** The nav label for a route — breadcrumb names match the visible nav. */
+const navLabel = (path) =>
+  (NAV_LINKS.find((link) => link.to === path) || {}).label;
+
+/** Comma-joined keyword string, brand-prefixed. */
+const keywords = (...terms) => [siteConfig.brandName, ...terms].join(', ');
+
+const industryNames = industries.map((industry) => industry.name);
 
 export const seoConfig = {
   // =========================================
   // Site-level Settings
   // =========================================
-  siteName: "Nilachal Infracon",
-  siteUrl: siteConfig.siteUrl, // https://www.nilachalinfracon.com
-  defaultTitle:
-    "Nilachal Infracon — Building Materials & Construction, Northeast India",
-  titleTemplate: "%s | Nilachal Infracon",
+  siteName: siteConfig.brandName,
+  siteUrl: SITE_URL,
+  defaultTitle: `${siteConfig.brandName} — ${siteConfig.tagline}`,
+  titleTemplate: `%s — ${siteConfig.brandName}`,
   defaultDescription:
-    "North East Buildmart by Nilachal Infracon: premium building materials & construction services in Nagaon, Assam & across Northeast India. Get a quote today.",
-  defaultImage: `${siteConfig.siteUrl}/og-image.png`,
-  locale: "en_IN",
-  language: "en",
+    'Dulecy Lead Services works with businesses, institutions and entrepreneurs to navigate complexity, strengthen organizational capability and grow sustainably.',
+  defaultImage: `${SITE_URL}/og-image.png`,
+  locale: 'en_IN',
+  language: 'en',
 
   // =========================================
   // Organization Details
+  // --------------------------------------------
+  // Emitted as a plain `Organization` — there is no public postal address,
+  // and inventing one to qualify for LocalBusiness would be a guidelines
+  // violation. Contact reachability is expressed via `contactPoint`.
   // =========================================
   organization: {
-    // schema.org @type for the Organization JSON-LD block.
-    schemaType: "Organization",
-    name: siteConfig.legalName,
+    schemaType: 'Organization',
+    name: siteConfig.brandName,
     legalName: siteConfig.legalName,
-    alternateName: siteConfig.flagshipBrand, // North East Buildmart
-    url: siteConfig.siteUrl,
-    logo: siteConfig.logo, // color logo for light backgrounds
-    phone: siteConfig.phoneDisplay,
-    email: siteConfig.email,
+    url: SITE_URL,
+    logo: siteConfig.logo, // color logo (light backgrounds)
+    // The footer brand paragraph, verbatim.
     description:
-      "Nilachal Infracon Private Limited is an infrastructure and building-materials company in Nagaon, Assam. Through its flagship retail brand North East Buildmart it supplies premium construction materials, and delivers residential, commercial and institutional construction projects across Northeast India.",
-    address,
-    sameAs: [], // fill when the client's social profiles exist
-    foundingDate: "2026",
-    areaServed,
+      'A professional business support and consulting organization — helping businesses, institutions, entrepreneurs, and professionals build for sustainable growth.',
+    slogan: siteConfig.tagline, // Beyond Business Support
+    contactPoint: {
+      // schema.org prefers a hyphenated E.164-ish string.
+      telephone: siteConfig.phoneDisplay.replace(/\s+/g, '-'),
+      contactType: 'customer service',
+      email: siteConfig.email,
+    },
+    // Fill when the client provides real profiles; empty arrays are dropped.
+    sameAs: [],
+    // The ten areas of experience — what this organization has expertise in.
+    knowsAbout: expertiseTitles,
+  },
+
+  // =========================================
+  // Service list (ItemList of Service)
+  // --------------------------------------------
+  // Generated from expertiseData so the schema and the /expertise accordion
+  // can never disagree. Each item deep-links to its accordion panel.
+  // =========================================
+  services: {
+    name: 'Areas of Experience',
+    items: expertiseAreas.map((area) => ({
+      name: area.title,
+      description: area.description,
+      url: `${SITE_URL}/expertise#${area.id}`,
+    })),
   },
 
   // =========================================
   // Page-specific SEO Settings
-  // (SEOHead reads pages.home / pages.thankYou / pages.admin)
+  // --------------------------------------------
+  // Titles are the mockup <title> values verbatim. Descriptions are written
+  // from each page's own visible copy and kept to ~150–160 characters.
+  // `path` drives the canonical URL; `breadcrumb` is the nav label.
   // =========================================
   pages: {
     home: {
-      title:
-        "Nilachal Infracon — Building Materials & Construction, Northeast India",
+      path: '/',
+      title: `${siteConfig.brandName} — ${siteConfig.tagline}`,
       description:
-        "North East Buildmart by Nilachal Infracon: premium building materials & construction services in Nagaon, Assam & across Northeast India. Get a quote today.",
-      keywords:
-        "Nilachal Infracon, North East Buildmart, building materials Nagaon, construction materials Assam, building materials supplier Northeast India, construction company Nagaon Assam, TMT bars, cement, tiles, sanitaryware, UPVC doors Assam",
-      robots: "index, follow",
+        'Dulecy Lead Services works with businesses, institutions and entrepreneurs to navigate complexity, strengthen organizational capability and grow sustainably.',
+      keywords: keywords(
+        siteConfig.tagline,
+        'business solutions',
+        'people & organization',
+        'corporate services',
+        'leadership & capability building',
+      ),
+      robots: 'index, follow',
+      // The service list is relevant to the home index and /expertise only.
+      services: true,
     },
-    thankYou: {
-      title: "Thank You — Nilachal Infracon",
+    about: {
+      path: '/about',
+      breadcrumb: navLabel('/about'),
+      title: `About — ${siteConfig.brandName}`,
       description:
-        "Thanks for reaching out to Nilachal Infracon. Our team will call or WhatsApp you within 24 hours with your quotation or consultation.",
-      robots: "noindex, nofollow",
+        'Built on experience, defined by trust — Dulecy Lead Services brings people, processes, information, operations and leadership together, with depth in pharma.',
+      keywords: keywords(
+        'about Dulecy',
+        'business consulting India',
+        'organizational capability',
+        'pharmaceutical business experience',
+      ),
+      robots: 'index, follow',
     },
+    expertise: {
+      path: '/expertise',
+      breadcrumb: navLabel('/expertise'),
+      title: `Our Expertise — ${siteConfig.brandName}`,
+      description:
+        'Ten connected areas of experience — HR, administration, analytics, pharma, corporate and legal, leadership, soft skills, academics, coaching and branding.',
+      keywords: keywords(...expertiseTitles),
+      robots: 'index, follow',
+      services: true,
+    },
+    industries: {
+      path: '/industries',
+      breadcrumb: navLabel('/industries'),
+      title: `Who We Serve — ${siteConfig.brandName}`,
+      description:
+        'Our expertise, your industry — pharma and healthcare, hospitals, corporates, marketing and sales teams, business schools, startups, entrepreneurs, investors.',
+      keywords: keywords(...industryNames),
+      robots: 'index, follow',
+    },
+    contact: {
+      path: '/contact',
+      breadcrumb: navLabel('/contact'),
+      title: `Contact — ${siteConfig.brandName}`,
+      description: `Let's build what comes next. Call ${siteConfig.phoneDisplay}, email us, or send an enquiry — we usually reply within a day. One conversation is where it starts.`,
+      keywords: keywords(
+        'contact',
+        'business enquiry',
+        'business consulting enquiry',
+        siteConfig.phoneDisplay,
+      ),
+      robots: 'index, follow',
+    },
+
+    // ---- Non-indexable routes ----
     admin: {
-      // The admin panel's browser-tab title — the one part of this
-      // (still Nilachal-era) config that renders inside /admin/*.
-      title: "Admin Panel — Dulecy Lead Services",
-      robots: "noindex, nofollow",
+      path: '/admin',
+      // The admin panel's browser-tab title.
+      title: `Admin Panel — ${siteConfig.brandName}`,
+      description: '',
+      robots: 'noindex, nofollow',
+      noindex: true,
+    },
+    notFound: {
+      path: '/404',
+      title: `Page Not Found — ${siteConfig.brandName}`,
+      description:
+        'The page you are looking for does not exist. Return to Dulecy Lead Services to explore our expertise, the sectors we serve, or start a conversation.',
+      robots: 'noindex, nofollow',
+      noindex: true,
     },
   },
 
-  // =========================================
-  // FAQ Schema Data
-  // --------------------------------------------
-  // Derived from src/data/faqData.js so the FAQPage schema exactly matches the
-  // visible FAQ section (a Google structured-data requirement). Only the
-  // question/answer text is needed for the schema.
-  // =========================================
-  faqs: faqData.map(({ question, answer }) => ({ question, answer })),
-
-  // =========================================
-  // LocalBusiness / HomeAndConstructionBusiness Schema Settings
-  // =========================================
-  localBusiness: {
-    type: ["LocalBusiness", "HomeAndConstructionBusiness"],
-    // additionalType hint that this business supplies building materials.
-    additionalType: "https://www.productontology.org/id/Building_material",
-    priceRange: "₹₹",
-    openingHours: {
-      // TODO: confirm exact business hours with the client.
-      days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-      opens: "09:00",
-      closes: "19:00",
-    },
-    geo: {
-      // Approximate — Nagaon town / Lawkhowa Road area (town centre ≈
-      // 26.3504, 92.6796). Refine with the exact store coordinates when known.
-      latitude: "26.3489",
-      longitude: "92.6820",
-    },
-    hasMap: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-      siteConfig.mapsQuery,
-    )}`,
-  },
-
-  // Convenience: the full one-line postal address (from siteConfig helper).
-  fullAddress,
+  // Convenience: absolute-URL helper shared with the runtime generators.
+  absolute,
 };
 
 export default seoConfig;

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en-IN">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" sizes="any" />
@@ -39,15 +39,19 @@
     <meta name="msapplication-tap-highlight" content="no" />
 
     <!-- =========================================
-         SEO Meta Tags
+         SEO Meta Tags — home page (static fallback)
+         --------------------------------------------
+         SEOHead rewrites these per route at runtime; the values here must
+         match seoConfig.pages.home in src/config/seo.js so a crawler that
+         never runs JS sees exactly what a browser does.
          ========================================= -->
     <meta
       name="description"
-      content="Dulecy Lead Services works with businesses, institutions, entrepreneurs, and professionals to navigate complexity, strengthen organizational capability, and build for sustainable growth."
+      content="Dulecy Lead Services works with businesses, institutions and entrepreneurs to navigate complexity, strengthen organizational capability and grow sustainably."
     />
     <meta
       name="keywords"
-      content="Dulecy Lead Services, business consulting, business solutions, people and organization, corporate services, leadership and capability building, HR consulting, business analytics"
+      content="Dulecy Lead Services, Beyond Business Support, business solutions, people &amp; organization, corporate services, leadership &amp; capability building"
     />
     <meta name="author" content="Dulecy Lead Services" />
     <meta name="robots" content="index, follow" />
@@ -64,7 +68,7 @@
     />
     <meta
       property="og:description"
-      content="Dulecy Lead Services works with businesses, institutions, entrepreneurs, and professionals to navigate complexity, strengthen organizational capability, and build for sustainable growth."
+      content="Dulecy Lead Services works with businesses, institutions and entrepreneurs to navigate complexity, strengthen organizational capability and grow sustainably."
     />
     <meta
       property="og:image"
@@ -74,7 +78,7 @@
     <meta property="og:image:height" content="630" />
     <meta
       property="og:image:alt"
-      content="Dulecy Lead Services — Your Partner in Business Leadership"
+      content="Dulecy Lead Services — Beyond Business Support"
     />
     <meta property="og:site_name" content="Dulecy Lead Services" />
     <meta property="og:locale" content="en_IN" />
@@ -90,7 +94,7 @@
     />
     <meta
       name="twitter:description"
-      content="Dulecy Lead Services works with businesses, institutions, entrepreneurs, and professionals to navigate complexity, strengthen organizational capability, and build for sustainable growth."
+      content="Dulecy Lead Services works with businesses, institutions and entrepreneurs to navigate complexity, strengthen organizational capability and grow sustainably."
     />
     <meta
       name="twitter:image"
@@ -101,9 +105,6 @@
          Canonical URL
          ========================================= -->
     <link rel="canonical" href="https://www.dulecy.com/" />
-
-    <!-- Geo Tags -->
-    <meta name="geo.region" content="IN" />
 
     <!-- =========================================
          PWA Manifest & Icons
@@ -150,7 +151,7 @@
 
     <!-- These static schemas serve as fallbacks; the SEOHead component injects dynamic versions at runtime (matching element ids) from src/config/seo.js -->
 
-    <!-- Schema: Organization -->
+    <!-- Schema: Organization — mirrors generateOrganizationSchema() -->
     <script type="application/ld+json" id="schema-organization">
       {
         "@context": "https://schema.org",
@@ -159,39 +160,71 @@
         "legalName": "Dulecy Lead Services",
         "url": "https://www.dulecy.com",
         "logo": "https://res.cloudinary.com/dn9gyaiik/image/upload/v1785484838/Dulecy-Logo_qr2ka7.png",
-        "description": "Dulecy Lead Services works with businesses, institutions, entrepreneurs, and professionals to navigate complexity, strengthen organizational capability, and build for sustainable growth.",
-        "telephone": "+91 70990 02522",
-        "email": "dulceyleadservices@gmail.com",
-        "areaServed": { "@type": "Country", "name": "India" }
+        "description": "A professional business support and consulting organization — helping businesses, institutions, entrepreneurs, and professionals build for sustainable growth.",
+        "slogan": "Beyond Business Support",
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": "+91-70990-02522",
+          "contactType": "customer service",
+          "email": "dulceyleadservices@gmail.com"
+        },
+        "knowsAbout": [
+          "HR & People Management",
+          "Administration & Business Operations",
+          "Business Analytics & Intelligence",
+          "Pharmaceutical Business & Healthcare",
+          "Corporate, Legal & Intellectual Property",
+          "Leadership & Organizational Development",
+          "Soft Skills & Professional Development",
+          "Academic & Institutional Engagement",
+          "Business Management & Coaching",
+          "Corporate Branding & Graphics"
+        ]
       }
     </script>
 
-    <!-- Schema: FAQPage (mirrors the visible FAQ section / src/data/faqData.js) -->
-    <script type="application/ld+json" id="schema-faq">
+    <!-- Schema: WebSite — mirrors generateWebSiteSchema() -->
+    <script type="application/ld+json" id="schema-website">
       {
         "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": []
-      }
-    </script>
-
-    <!-- Schema: LocalBusiness / HomeAndConstructionBusiness -->
-    <script type="application/ld+json" id="schema-localbusiness">
-      {
-        "@context": "https://schema.org",
-        "@type": ["ProfessionalService", "Organization"],
+        "@type": "WebSite",
         "name": "Dulecy Lead Services",
-        "image": "https://res.cloudinary.com/dn9gyaiik/image/upload/v1785484838/Dulecy-Logo_qr2ka7.png",
-        "logo": "https://res.cloudinary.com/dn9gyaiik/image/upload/v1785484838/Dulecy-Logo_qr2ka7.png",
-        "telephone": "+91 70990 02522",
-        "email": "dulceyleadservices@gmail.com",
         "url": "https://www.dulecy.com",
-        "areaServed": { "@type": "Country", "name": "India" }
+        "inLanguage": "en",
+        "publisher": {
+          "@type": "Organization",
+          "name": "Dulecy Lead Services",
+          "url": "https://www.dulecy.com"
+        }
       }
     </script>
 
-    <!-- Schema: BreadcrumbList -->
-    <!-- Dynamically updated by SEOHead component -->
+    <!-- Schema: WebPage (home) — SEOHead re-injects this per route -->
+    <script type="application/ld+json" id="schema-webpage">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "Dulecy Lead Services — Beyond Business Support",
+        "description": "Dulecy Lead Services works with businesses, institutions and entrepreneurs to navigate complexity, strengthen organizational capability and grow sustainably.",
+        "url": "https://www.dulecy.com/",
+        "inLanguage": "en",
+        "isPartOf": {
+          "@type": "WebSite",
+          "name": "Dulecy Lead Services",
+          "url": "https://www.dulecy.com"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "Dulecy Lead Services",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://res.cloudinary.com/dn9gyaiik/image/upload/v1785484838/Dulecy-Logo_qr2ka7.png"
+          }
+        }
+      }
+    </script>
+
+    <!-- Schema: BreadcrumbList (home only) — SEOHead appends the current page -->
     <script type="application/ld+json" id="schema-breadcrumb">
       {
         "@context": "https://schema.org",
@@ -207,29 +240,177 @@
       }
     </script>
 
-    <!-- Schema: WebPage / WebSite -->
-    <!-- Dynamically updated by SEOHead component -->
-    <script type="application/ld+json" id="schema-webpage">
-      {
-        "@context": "https://schema.org",
-        "@type": "WebPage",
-        "name": "Dulecy Lead Services — Beyond Business Support",
-        "description": "Dulecy Lead Services works with businesses, institutions, entrepreneurs, and professionals to navigate complexity, strengthen organizational capability, and build for sustainable growth.",
-        "url": "https://www.dulecy.com/",
-        "isPartOf": {
-          "@type": "WebSite",
-          "name": "Dulecy Lead Services",
-          "url": "https://www.dulecy.com"
-        },
-        "publisher": {
-          "@type": "Organization",
-          "name": "Dulecy Lead Services",
-          "logo": {
-            "@type": "ImageObject",
-            "url": "https://res.cloudinary.com/dn9gyaiik/image/upload/v1785484838/Dulecy-Logo_qr2ka7.png"
-          }
+    <!-- Schema: ItemList of Service — mirrors src/data/expertiseData.js.
+         Regenerate whenever an expertise title or description changes so
+         the static and runtime layers stay identical. -->
+    <script type="application/ld+json" id="schema-services">
+        {
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          "name": "Areas of Experience",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "item": {
+                "@type": "Service",
+                "name": "HR & People Management",
+                "description": "People are at the centre of every successful organization. We bring practical experience in helping organizations establish structured, professional, and effective people practices that support performance, accountability, and organizational growth.",
+                "serviceType": "HR & People Management",
+                "url": "https://www.dulecy.com/expertise#e01",
+                "provider": {
+                  "@type": "Organization",
+                  "name": "Dulecy Lead Services",
+                  "url": "https://www.dulecy.com"
+                }
+              }
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "item": {
+                "@type": "Service",
+                "name": "Administration & Business Operations",
+                "description": "Behind every well-run organization is a disciplined operating structure. We bring experience in helping businesses create greater clarity, coordination, and control across their administrative and operational functions.",
+                "serviceType": "Administration & Business Operations",
+                "url": "https://www.dulecy.com/expertise#e02",
+                "provider": {
+                  "@type": "Organization",
+                  "name": "Dulecy Lead Services",
+                  "url": "https://www.dulecy.com"
+                }
+              }
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "item": {
+                "@type": "Service",
+                "name": "Business Analytics & Intelligence",
+                "description": "Data is valuable only when it leads to better understanding and better decisions. We look beyond surface-level reporting to identify patterns, inconsistencies, performance deviations, process gaps, and areas that may require management attention.",
+                "serviceType": "Business Analytics & Intelligence",
+                "url": "https://www.dulecy.com/expertise#e03",
+                "provider": {
+                  "@type": "Organization",
+                  "name": "Dulecy Lead Services",
+                  "url": "https://www.dulecy.com"
+                }
+              }
+            },
+            {
+              "@type": "ListItem",
+              "position": 4,
+              "item": {
+                "@type": "Service",
+                "name": "Pharmaceutical Business & Healthcare",
+                "description": "Pharmaceutical and healthcare business is a specialized area of our experience. We understand the interconnected nature of people, field operations, sales and marketing, product knowledge, business analytics, performance management, administration, and operational discipline.",
+                "serviceType": "Pharmaceutical Business & Healthcare",
+                "url": "https://www.dulecy.com/expertise#e04",
+                "provider": {
+                  "@type": "Organization",
+                  "name": "Dulecy Lead Services",
+                  "url": "https://www.dulecy.com"
+                }
+              }
+            },
+            {
+              "@type": "ListItem",
+              "position": 5,
+              "item": {
+                "@type": "Service",
+                "name": "Corporate, Legal & Intellectual Property",
+                "description": "A successful business is built on more than vision — it is built on a strong legal foundation. We help businesses establish the right corporate structure, safeguard intellectual property, and implement legally sound documentation that protects both the organisation and its people.",
+                "serviceType": "Corporate, Legal & Intellectual Property",
+                "url": "https://www.dulecy.com/expertise#e05",
+                "provider": {
+                  "@type": "Organization",
+                  "name": "Dulecy Lead Services",
+                  "url": "https://www.dulecy.com"
+                }
+              }
+            },
+            {
+              "@type": "ListItem",
+              "position": 6,
+              "item": {
+                "@type": "Service",
+                "name": "Leadership & Organizational Development",
+                "description": "Leadership capability is a strategic organizational asset. We design customized leadership and organizational development programs for businesses and institutions seeking to strengthen managerial effectiveness, accountability, and performance.",
+                "serviceType": "Leadership & Organizational Development",
+                "url": "https://www.dulecy.com/expertise#e06",
+                "provider": {
+                  "@type": "Organization",
+                  "name": "Dulecy Lead Services",
+                  "url": "https://www.dulecy.com"
+                }
+              }
+            },
+            {
+              "@type": "ListItem",
+              "position": 7,
+              "item": {
+                "@type": "Service",
+                "name": "Soft Skills & Professional Development",
+                "description": "Professional excellence is shaped not only by technical knowledge, but by the ability to communicate, collaborate, lead, and adapt.",
+                "serviceType": "Soft Skills & Professional Development",
+                "url": "https://www.dulecy.com/expertise#e07",
+                "provider": {
+                  "@type": "Organization",
+                  "name": "Dulecy Lead Services",
+                  "url": "https://www.dulecy.com"
+                }
+              }
+            },
+            {
+              "@type": "ListItem",
+              "position": 8,
+              "item": {
+                "@type": "Service",
+                "name": "Academic & Institutional Engagement",
+                "description": "The transition from education to professional life requires more than academic knowledge. It requires perspective, confidence, communication, and an understanding of how organizations actually work.",
+                "serviceType": "Academic & Institutional Engagement",
+                "url": "https://www.dulecy.com/expertise#e08",
+                "provider": {
+                  "@type": "Organization",
+                  "name": "Dulecy Lead Services",
+                  "url": "https://www.dulecy.com"
+                }
+              }
+            },
+            {
+              "@type": "ListItem",
+              "position": 9,
+              "item": {
+                "@type": "Service",
+                "name": "Business Management & Coaching",
+                "description": "Every business journey presents different questions. How should the business be structured? Where are the gaps? What needs attention? What should happen next?",
+                "serviceType": "Business Management & Coaching",
+                "url": "https://www.dulecy.com/expertise#e09",
+                "provider": {
+                  "@type": "Organization",
+                  "name": "Dulecy Lead Services",
+                  "url": "https://www.dulecy.com"
+                }
+              }
+            },
+            {
+              "@type": "ListItem",
+              "position": 10,
+              "item": {
+                "@type": "Service",
+                "name": "Corporate Branding & Graphics",
+                "description": "Your business identity is expressed through every interaction. We help businesses communicate their identity, ideas, capabilities, and vision with greater clarity, consistency, and professionalism.",
+                "serviceType": "Corporate Branding & Graphics",
+                "url": "https://www.dulecy.com/expertise#e10",
+                "provider": {
+                  "@type": "Organization",
+                  "name": "Dulecy Lead Services",
+                  "url": "https://www.dulecy.com"
+                }
+              }
+            }
+          ]
         }
-      }
     </script>
 
     <!-- =========================================
