@@ -1,0 +1,92 @@
+/* ============================================
+   Home / Who we serve — values ported verbatim from
+   `mockup/styles.css` (.cards, .card*) plus the heading's
+   inline max-width and the red card's title size
+   (`mockup/index.html`).
+   ============================================ */
+
+.head {
+  max-width: 700px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr));
+  gap: 14px;
+  margin-top: clamp(36px, 5vw, 56px);
+}
+
+.card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 24px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: var(--ink);
+  text-decoration: none;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px rgba(11, 11, 12, 0.08);
+  border-color: var(--red);
+  color: var(--ink);
+}
+
+.title {
+  font-size: 15.5px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+.desc {
+  font-size: 13px;
+  color: var(--grey-4);
+  line-height: 1.5;
+}
+
+/* ========== Closing gradient card ========== */
+.cardRed {
+  background: var(--grad);
+  border: none;
+  color: #fff;
+  justify-content: space-between;
+}
+
+.cardRed:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px rgba(213, 25, 46, 0.35);
+  border-color: transparent;
+  color: #fff;
+}
+
+.titleRed {
+  font-size: 15.5px;
+  line-height: 1.35;
+}
+
+.cardRed i {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-style: normal;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card:hover,
+  .cardRed:hover {
+    transform: none;
+  }
+}

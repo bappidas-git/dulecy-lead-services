@@ -1,0 +1,26 @@
+/* ============================================
+   Home / Closing CTA — the per-instance values the
+   mockup set inline on this section (`mockup/index.html`).
+   ============================================ */
+
+.section {
+  text-align: center;
+}
+
+.head {
+  margin: 18px auto 0;
+  font-size: clamp(32px, 5.6vw, 64px);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.04;
+  max-width: 820px;
+  text-wrap: balance;
+}
+
+.actions {
+  margin-top: 36px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+}

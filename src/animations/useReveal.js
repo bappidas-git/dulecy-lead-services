@@ -57,6 +57,9 @@ export default function useReveal(options = {}) {
           duration,
           delay,
           ease: EASE,
+          // Drop the inline transform once the element has landed — otherwise
+          // it outranks any CSS `:hover` transform on the same element.
+          clearProps: 'transform',
           scrollTrigger: { trigger: el, start, once },
         }
       );

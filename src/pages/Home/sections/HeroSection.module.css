@@ -1,0 +1,148 @@
+/* ============================================
+   Home / Hero — values ported verbatim from
+   `mockup/styles.css` (.hero*, .pulse-dot) plus the
+   per-instance inline styles in `mockup/index.html`
+   (background opacity / object-position, scrim
+   gradients, lede max-width).
+   ============================================ */
+
+.hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.bg {
+  position: absolute;
+  top: -18%;
+  left: 0;
+  width: 100%;
+  height: 136%;
+  object-fit: cover;
+  object-position: center 30%;
+  opacity: 0.5;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.92) 0%,
+      rgba(255, 255, 255, 0.82) 45%,
+      rgba(255, 255, 255, 0.96) 100%
+    ),
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.9) 0%,
+      rgba(255, 255, 255, 0.35) 70%
+    );
+}
+
+.inner {
+  position: relative;
+  padding-top: clamp(140px, 18vh, 190px);
+  padding-bottom: clamp(70px, 9vw, 110px);
+}
+
+/* ========== Badge ========== */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #3d3d42;
+  background: #fff;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--red);
+  animation: pulseDot 2.2s ease-in-out infinite;
+}
+
+@keyframes pulseDot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.4;
+    transform: scale(0.8);
+  }
+}
+
+/* The hero lede is narrower than the shared `.lede` default. */
+.lede {
+  max-width: 640px;
+}
+
+.cta {
+  margin-top: 38px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+}
+
+/* ========== Floating icon logo ========== */
+.float {
+  position: absolute;
+  right: clamp(-40px, 2vw, 60px);
+  top: 110px;
+  width: clamp(180px, 26vw, 380px);
+  opacity: 0.07;
+  animation: floaty 9s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes floaty {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0);
+  }
+
+  50% {
+    transform: translateY(-16px) rotate(2deg);
+  }
+}
+
+/* ========== Pillars row ========== */
+.pillars {
+  margin-top: clamp(48px, 7vw, 80px);
+  display: flex;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--line);
+}
+
+.pillars > div {
+  flex: 1 1 220px;
+  padding: 22px 24px 0 0;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.pillars b {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--red);
+}
+
+.pillars span {
+  font-size: 15px;
+  font-weight: 600;
+}

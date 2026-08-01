@@ -21,6 +21,11 @@ import {
  * @param {boolean|number} [options.scrub=true] ScrollTrigger scrub (true or seconds).
  * @param {string} [options.start]        ScrollTrigger start (default 'top bottom').
  * @param {string} [options.end]          ScrollTrigger end (default 'bottom top').
+ * @param {'self'|'parent'} [options.trigger='self'] Which element drives the
+ *   scrub. Absolutely-positioned layers (hero backgrounds, glows) must use
+ *   'parent' — their own box does not travel with the section.
+ * @param {boolean} [options.invert=false] Travel +amount → −amount (the
+ *   mockup's direction) instead of −amount → +amount.
  * @returns {React.RefObject} ref to attach to the element to parallax.
  */
 export default function useParallax(options = {}) {
@@ -30,6 +35,8 @@ export default function useParallax(options = {}) {
     scrub = true,
     start = 'top bottom',
     end = 'bottom top',
+    trigger = 'self',
+    invert = false,
   } = options;
 
   useGSAP(
@@ -42,13 +49,17 @@ export default function useParallax(options = {}) {
         return;
       }
 
+      const triggerEl =
+        trigger === 'parent' ? el.parentElement || el : el;
+
       gsap.fromTo(
         el,
-        { yPercent: -amount },
+        { yPercent: invert ? amount : -amount },
         {
-          yPercent: amount,
+          yPercent: invert ? -amount : amount,
           ease: 'none',
-          scrollTrigger: { trigger: el, start, end, scrub },
+          force3D: true,
+          scrollTrigger: { trigger: triggerEl, start, end, scrub },
         }
       );
 
