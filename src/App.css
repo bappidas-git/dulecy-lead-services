@@ -350,11 +350,7 @@ html {
    =========================================== */
 
 @media print {
-  .no-print,
-  .mobile-nav,
-  .back-to-top,
-  .whatsapp-fab,
-  .scroll-progress {
+  .no-print {
     display: none !important;
   }
 
@@ -507,66 +503,10 @@ html {
 */
 
 /* ===========================================
-   Floating action buttons (Back-to-top + WhatsApp)
-   Restyled to the Dulecy design tokens.
+   Floating action buttons — REMOVED (Prompt 02)
+   -------------------------------------------
+   The Dulecy mockup has no back-to-top button, WhatsApp FAB,
+   scroll-progress bar or bottom mobile nav: the burger →
+   full-screen overlay menu is the only floating UI. The styles
+   that backed those widgets are gone with them.
    =========================================== */
-
-/* Back to top — token-based ink pill (framer handles entrance/scale) */
-.back-to-top {
-  position: fixed;
-  bottom: 100px;
-  right: 24px;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background-color: var(--color-primary);
-  color: #ffffff;
-  border: 1px solid var(--color-border);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: var(--shadow-soft);
-  z-index: 1000;
-  transition: background-color 0.2s ease;
-}
-
-.back-to-top:hover {
-  background-color: var(--color-primary-dark);
-}
-
-/* Floating WhatsApp button — desktop only, green FAB bottom-right */
-.whatsapp-fab {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background-color: var(--color-accent);
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 30px;
-  text-decoration: none;
-  box-shadow: 0 8px 24px rgba(213, 25, 46, 0.35);
-  z-index: 1000;
-  transition: background-color 0.2s ease, transform 0.2s ease;
-}
-
-.whatsapp-fab:hover {
-  background-color: var(--color-accent-dark);
-  transform: translateY(-2px);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .back-to-top,
-  .whatsapp-fab {
-    transition: none;
-  }
-
-  .whatsapp-fab:hover {
-    transform: none;
-  }
-}

@@ -1,34 +1,31 @@
 /* ============================================
    App Component — Dulecy Lead Services
-   Main application component with providers,
-   lazy loading, and performance optimizations
+   --------------------------------------------
+   Five-route public site (Home · About · Expertise · Who We Serve ·
+   Contact) sharing one shell via `PublicLayout`, plus the retained
+   `/thank-you` and `/admin/*` routes and a branded `*` catch-all.
+
+   The Nilachal-era floating UI (bottom mobile nav, swipe drawer,
+   WhatsApp FAB, scroll-progress bar, back-to-top) is no longer
+   mounted — the Dulecy mockup has none of it. Those files are
+   deleted in Prompt 11.
    ============================================ */
 
-import React, { Suspense, lazy, useEffect, useState, useRef, memo } from 'react';
+import React, { Suspense, lazy, useEffect, memo } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
-import { CircularProgress, useMediaQuery, useTheme, Skeleton, Box } from '@mui/material';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Icon } from '@iconify/react';
+import { CircularProgress, Skeleton, Box } from '@mui/material';
+import { motion } from 'framer-motion';
 
 // App Styles
 import './App.css';
-
-// Animation foundation (GSAP)
-import { gsap, prefersReducedMotion } from './animations';
-
-// Business config (single source of truth)
-import { siteConfig, waHref } from './data/siteConfig';
 
 // Context Providers
 import { ThemeProvider as CustomThemeProvider } from './context/ThemeContext';
 import { ModalProvider, useModal } from './context/ModalContext';
 
-// Components (Eager loaded for critical path - Above the fold)
-import Header from './components/common/Header/Header';
-import HeroSection from './components/sections/HeroSection/HeroSection';
-import Footer from './components/common/Footer/Footer';
-import MobileNavigation from './components/common/MobileNavigation/MobileNavigation';
-import MobileDrawer from './components/common/MobileDrawer/MobileDrawer';
+// Shell + eager (critical-path) route
+import PublicLayout from './components/layout/PublicLayout/PublicLayout';
+import HomePage from './pages/Home/HomePage';
 import LeadFormDrawer from './components/common/LeadFormDrawer/LeadFormDrawer';
 import SEOHead from './components/common/SEO/SEOHead';
 
@@ -38,18 +35,17 @@ import AdminLogin from './admin/components/AdminLogin';
 import ProtectedRoute from './admin/components/ProtectedRoute';
 
 // Pages (Lazy loaded)
+const AboutPage = lazy(() => import('./pages/About/AboutPage'));
+const ExpertisePage = lazy(() => import('./pages/Expertise/ExpertisePage'));
+const IndustriesPage = lazy(() => import('./pages/Industries/IndustriesPage'));
+const ContactPage = lazy(() => import('./pages/Contact/ContactPage'));
+const NotFoundPage = lazy(() => import('./pages/NotFound/NotFoundPage'));
 const ThankYouPage = lazy(() => import('./pages/ThankYou/ThankYou'));
 const AdminLayout = lazy(() => import('./admin/components/AdminLayout'));
 
-// Lazy loaded sections for performance (Below the fold)
-const AboutSection = lazy(() => import('./components/sections/AboutSection/AboutSection'));
-const ProductsSection = lazy(() => import('./components/sections/ProductsSection/ProductsSection'));
-const ServicesSection = lazy(() => import('./components/sections/ServicesSection/ServicesSection'));
-const StatsSection = lazy(() => import('./components/sections/StatsSection/StatsSection'));
-const BrandsSection = lazy(() => import('./components/sections/BrandsSection/BrandsSection'));
-const WhyUsSection = lazy(() => import('./components/sections/WhyUsSection/WhyUsSection'));
-const FAQSection = lazy(() => import('./components/sections/FAQSection/FAQSection'));
-const ContactSection = lazy(() => import('./components/sections/ContactSection/ContactSection'));
+// Fixed header height (68px) + breathing room, used when a hash lands
+// mid-page so the anchored element clears the glass bar.
+const HEADER_OFFSET = 90;
 
 // ===========================================
 // Error Boundary Component
@@ -77,7 +73,7 @@ class ErrorBoundary extends React.Component {
             justifyContent: 'center',
             alignItems: 'center',
             minHeight: '200px',
-            backgroundColor: '#F8F9FA',
+            backgroundColor: '#F5F5F6',
             borderRadius: '8px',
             margin: '20px',
             padding: '40px',
@@ -124,7 +120,7 @@ const SectionLoader = memo(({ height = 300, variant = 'default' }) => {
           alignItems: 'center',
           minHeight: height,
           width: '100%',
-          background: 'linear-gradient(180deg, #F8F9FA 0%, #FFFFFF 100%)',
+          background: 'linear-gradient(180deg, #F5F5F6 0%, #FFFFFF 100%)',
         }}
       >
         <motion.div
@@ -143,7 +139,7 @@ const SectionLoader = memo(({ height = 300, variant = 'default' }) => {
       </Box>
     ),
     skeleton: (
-      <Box sx={{ padding: '40px 20px', maxWidth: '1200px', margin: '0 auto' }}>
+      <Box sx={{ padding: '40px 20px', maxWidth: '1280px', margin: '0 auto' }}>
         <Skeleton
           variant="text"
           width="30%"
@@ -197,182 +193,64 @@ const SectionLoader = memo(({ height = 300, variant = 'default' }) => {
 
 SectionLoader.displayName = 'SectionLoader';
 
+// Page-level chunk fallback — sits inside the shell's <main>, so it only
+// needs to hold vertical space while the route chunk downloads.
+const PageFallback = () => <SectionLoader height={520} variant="skeleton" />;
+
+// Wraps a lazy route element in the shared ErrorBoundary + Suspense pattern.
+const lazyRoute = (element) => (
+  <ErrorBoundary>
+    <Suspense fallback={<PageFallback />}>{element}</Suspense>
+  </ErrorBoundary>
+);
+
 // ===========================================
-// Scroll Progress Indicator
+// Scroll Manager
+// Route changes jump to the top; a hash instead scrolls to its target,
+// polling until the element exists (pages/sections may be lazy).
 // ===========================================
-const ScrollProgressIndicator = memo(() => {
-  const [scrollProgress, setScrollProgress] = useState(0);
+const ScrollManager = () => {
+  const location = useLocation();
 
   useEffect(() => {
-    const updateScrollProgress = () => {
-      const scrollPx = document.documentElement.scrollTop;
-      const winHeightPx = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      const scrolled = (scrollPx / winHeightPx) * 100;
-      setScrollProgress(scrolled);
+    if (!location.hash) window.scrollTo(0, 0);
+  }, [location.pathname, location.hash]);
+
+  useEffect(() => {
+    const hash = location.hash;
+    if (!hash) return undefined;
+
+    const targetId = decodeURIComponent(hash.substring(1));
+    let cancelled = false;
+
+    const scrollToTarget = () => {
+      const targetElement = document.getElementById(targetId);
+      if (!targetElement) return false;
+      const elementPosition = targetElement.getBoundingClientRect().top;
+      const offsetPosition =
+        elementPosition + window.pageYOffset - HEADER_OFFSET;
+      window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+      return true;
     };
 
-    window.addEventListener('scroll', updateScrollProgress, { passive: true });
-    return () => window.removeEventListener('scroll', updateScrollProgress);
-  }, []);
+    // Try immediately, then retry with increasing delays to wait for
+    // lazy-loaded pages/sections to mount.
+    if (scrollToTarget()) return undefined;
 
-  return (
-    <Box
-      sx={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: `${scrollProgress}%`,
-        height: '3px',
-        background: 'linear-gradient(90deg, #0B0B0C 0%, #2A2A2E 100%)',
-        zIndex: 9999,
-        transition: 'width 0.1s ease-out',
-      }}
-    />
-  );
-});
+    const retryDelays = [100, 300, 600, 1000, 2000];
+    const timers = retryDelays.map((delay) =>
+      setTimeout(() => {
+        if (!cancelled) scrollToTarget();
+      }, delay)
+    );
 
-ScrollProgressIndicator.displayName = 'ScrollProgressIndicator';
-
-// ===========================================
-// Back to Top Button
-// ===========================================
-const BackToTopButton = memo(() => {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const toggleVisibility = () => {
-      if (window.pageYOffset > 500) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-      }
+    return () => {
+      cancelled = true;
+      timers.forEach(clearTimeout);
     };
+  }, [location.pathname, location.hash]);
 
-    window.addEventListener('scroll', toggleVisibility, { passive: true });
-    return () => window.removeEventListener('scroll', toggleVisibility);
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
-  };
-
-  return (
-    <AnimatePresence>
-      {isVisible && (
-        <motion.button
-          initial={{ opacity: 0, scale: 0.5, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.5, y: 20 }}
-          whileHover={{ scale: 1.08 }}
-          whileTap={{ scale: 0.92 }}
-          onClick={scrollToTop}
-          className="back-to-top"
-          aria-label="Back to top"
-        >
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-          >
-            <path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z" />
-          </svg>
-        </motion.button>
-      )}
-    </AnimatePresence>
-  );
-});
-
-BackToTopButton.displayName = 'BackToTopButton';
-
-// ===========================================
-// Floating WhatsApp Button (desktop only)
-// Mobile already has WhatsApp in the bottom nav. Appears (GSAP) once
-// the user scrolls past the hero; links to wa.me from siteConfig.
-// ===========================================
-const WhatsAppFab = memo(() => {
-  const fabRef = useRef(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const toggleVisibility = () => {
-      // Reveal after scrolling roughly one hero-height down.
-      setIsVisible(window.pageYOffset > window.innerHeight * 0.8);
-    };
-    toggleVisibility();
-    window.addEventListener('scroll', toggleVisibility, { passive: true });
-    return () => window.removeEventListener('scroll', toggleVisibility);
-  }, []);
-
-  useEffect(() => {
-    const el = fabRef.current;
-    if (!el) return;
-    if (prefersReducedMotion()) {
-      gsap.set(el, { autoAlpha: isVisible ? 1 : 0, scale: 1 });
-      return;
-    }
-    gsap.to(el, {
-      autoAlpha: isVisible ? 1 : 0,
-      scale: isVisible ? 1 : 0.6,
-      duration: 0.3,
-      ease: 'power3.out',
-    });
-  }, [isVisible]);
-
-  return (
-    <a
-      ref={fabRef}
-      href={waHref}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="whatsapp-fab"
-      aria-label={`Chat with ${siteConfig.brandName} on WhatsApp`}
-      style={{ visibility: 'hidden', opacity: 0 }}
-    >
-      <Icon icon="mdi:whatsapp" aria-hidden="true" />
-    </a>
-  );
-});
-
-WhatsAppFab.displayName = 'WhatsAppFab';
-
-// ===========================================
-// Preload Manager - Preload sections on idle
-// ===========================================
-const useIdlePreload = () => {
-  useEffect(() => {
-    // Preload sections during idle time
-    if ('requestIdleCallback' in window) {
-      const sections = [
-        () => import('./components/sections/AboutSection/AboutSection'),
-        () => import('./components/sections/ProductsSection/ProductsSection'),
-        () => import('./components/sections/ServicesSection/ServicesSection'),
-        () => import('./components/sections/StatsSection/StatsSection'),
-        () => import('./components/sections/BrandsSection/BrandsSection'),
-        () => import('./components/sections/WhyUsSection/WhyUsSection'),
-        () => import('./components/sections/FAQSection/FAQSection'),
-        () => import('./components/sections/ContactSection/ContactSection'),
-      ];
-
-      let currentIndex = 0;
-
-      const preloadNext = (deadline) => {
-        while (deadline.timeRemaining() > 0 && currentIndex < sections.length) {
-          sections[currentIndex]();
-          currentIndex++;
-        }
-        if (currentIndex < sections.length) {
-          window.requestIdleCallback(preloadNext, { timeout: 2000 });
-        }
-      };
-
-      const idleId = window.requestIdleCallback(preloadNext, { timeout: 2000 });
-      return () => window.cancelIdleCallback(idleId);
-    }
-  }, []);
+  return null;
 };
 
 // ===========================================
@@ -394,155 +272,9 @@ const LeadFormDrawerWrapper = () => {
 };
 
 // ===========================================
-// Home Page Content Component
-// ===========================================
-const HomePageContent = () => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
-  const { openLeadDrawer } = useModal();
-  const location = useLocation();
-
-  const handleMenuClick = () => setIsMobileDrawerOpen(true);
-  const handleMobileDrawerClose = () => setIsMobileDrawerOpen(false);
-  const handleMobileDrawerOpen = () => setIsMobileDrawerOpen(true);
-  const handleEnquiryClick = () => openLeadDrawer('request-quote');
-
-  // Handle hash-based scroll to section (e.g., /#overview, /#floor-plans)
-  // Sections are lazy-loaded, so we poll until the target element appears in the DOM
-  useEffect(() => {
-    const hash = location.hash;
-    if (!hash) return;
-
-    const targetId = hash.substring(1);
-    const headerOffset = 80;
-    let cancelled = false;
-
-    const scrollToTarget = () => {
-      const targetElement = document.getElementById(targetId);
-      if (targetElement) {
-        const elementPosition = targetElement.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: 'smooth',
-        });
-        return true;
-      }
-      return false;
-    };
-
-    // Try immediately, then retry with increasing delays to wait for lazy sections
-    if (!scrollToTarget()) {
-      const retryDelays = [100, 300, 600, 1000, 2000];
-      const timers = retryDelays.map((delay) =>
-        setTimeout(() => {
-          if (!cancelled) scrollToTarget();
-        }, delay)
-      );
-      return () => {
-        cancelled = true;
-        timers.forEach(clearTimeout);
-      };
-    }
-  }, [location.hash]);
-
-  return (
-    <>
-      {/* Header/Navigation */}
-      <Header forceCloseMenu={isMobileDrawerOpen} />
-
-      {/* Main Content */}
-      <main id="main-content" className="main-content">
-        {/* Hero Section - Critical, loaded immediately */}
-        <HeroSection />
-
-        {/* Lazy loaded sections with error boundaries */}
-        <ErrorBoundary>
-          <Suspense fallback={<SectionLoader height={400} variant="skeleton" />}>
-            <AboutSection />
-          </Suspense>
-        </ErrorBoundary>
-
-        <ErrorBoundary>
-          <Suspense fallback={<SectionLoader height={400} variant="skeleton" />}>
-            <ProductsSection />
-          </Suspense>
-        </ErrorBoundary>
-
-        <ErrorBoundary>
-          <Suspense fallback={<SectionLoader height={400} variant="skeleton" />}>
-            <ServicesSection />
-          </Suspense>
-        </ErrorBoundary>
-
-        <ErrorBoundary>
-          <Suspense fallback={<SectionLoader height={300} variant="skeleton" />}>
-            <StatsSection />
-          </Suspense>
-        </ErrorBoundary>
-
-        <ErrorBoundary>
-          <Suspense fallback={<SectionLoader height={500} variant="skeleton" />}>
-            <BrandsSection />
-          </Suspense>
-        </ErrorBoundary>
-
-        <ErrorBoundary>
-          <Suspense fallback={<SectionLoader height={400} variant="skeleton" />}>
-            <WhyUsSection />
-          </Suspense>
-        </ErrorBoundary>
-
-        <ErrorBoundary>
-          <Suspense fallback={<SectionLoader height={500} variant="skeleton" />}>
-            <FAQSection />
-          </Suspense>
-        </ErrorBoundary>
-
-        <ErrorBoundary>
-          <Suspense fallback={<SectionLoader height={500} variant="skeleton" />}>
-            <ContactSection />
-          </Suspense>
-        </ErrorBoundary>
-      </main>
-
-      {/* Footer */}
-      <Footer />
-
-      {/* Mobile Bottom Navigation */}
-      {isMobile && (
-        <>
-          <MobileNavigation
-            onMenuClick={handleMenuClick}
-            onEnquiryClick={handleEnquiryClick}
-            isDrawerOpen={isMobileDrawerOpen}
-          />
-          <MobileDrawer
-            open={isMobileDrawerOpen}
-            onClose={handleMobileDrawerClose}
-            onOpen={handleMobileDrawerOpen}
-            onBookConsultation={handleEnquiryClick}
-          />
-        </>
-      )}
-
-      {/* Back to Top Button */}
-      <BackToTopButton />
-
-      {/* Floating WhatsApp button — desktop only (mobile uses the bottom nav) */}
-      {!isMobile && <WhatsAppFab />}
-    </>
-  );
-};
-
-// ===========================================
 // Main App Component
 // ===========================================
 const App = () => {
-  // Enable idle preloading
-  useIdlePreload();
-
   // Hide initial loader after mount
   useEffect(() => {
     const initialLoader = document.getElementById('initial-loader');
@@ -554,12 +286,11 @@ const App = () => {
     }
   }, []);
 
-  // Smooth scroll restoration
+  // Scroll restoration is manual — ScrollManager owns route scrolling.
   useEffect(() => {
     if ('scrollRestoration' in window.history) {
       window.history.scrollRestoration = 'manual';
     }
-    // Only scroll to top if there's no hash in the URL
     if (!window.location.hash) {
       window.scrollTo(0, 0);
     }
@@ -573,20 +304,27 @@ const App = () => {
             {/* SEO Head — manages meta tags and schemas per route */}
             <SEOHead />
 
-            {/* Scroll Progress Indicator */}
-            <ScrollProgressIndicator />
+            {/* Route-change scrolling (top, or to a #hash target) */}
+            <ScrollManager />
 
-            {/* Skip to main content link for accessibility */}
-            <a href="#main-content" className="skip-link">
-              Skip to main content
-            </a>
-
-            {/* Routes */}
             <Routes>
-              {/* Home Page */}
-              <Route path="/" element={<HomePageContent />} />
+              {/* Public site — one shared Dulecy shell */}
+              <Route element={<PublicLayout />}>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/about" element={lazyRoute(<AboutPage />)} />
+                <Route
+                  path="/expertise"
+                  element={lazyRoute(<ExpertisePage />)}
+                />
+                <Route
+                  path="/industries"
+                  element={lazyRoute(<IndustriesPage />)}
+                />
+                <Route path="/contact" element={lazyRoute(<ContactPage />)} />
+                <Route path="*" element={lazyRoute(<NotFoundPage />)} />
+              </Route>
 
-              {/* Thank You Page */}
+              {/* Thank You Page — retired in Prompt 07 */}
               <Route
                 path="/thank-you"
                 element={
