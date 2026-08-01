@@ -139,6 +139,48 @@ RewriteRule ^ index.html [QSA,L]`}
             </tr>
           </tbody>
         </table>
+
+        <h3 className={styles.guideSubtitle}>Caching &amp; compression for static assets</h3>
+        <p className={styles.guideParagraph}>
+          Everything under <code className={styles.guideInlineCode}>/static/</code> and{' '}
+          <code className={styles.guideInlineCode}>/images/</code> is content-addressed or
+          version-stable, so it can be cached for a year. Text assets should also be
+          compressed — the JavaScript bundle is roughly a third of its size gzipped. Add
+          this alongside the rewrite rules:
+        </p>
+        <pre className={styles.guideCode}>
+{`# Long-cache fingerprinted bundles and page imagery
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/png  "access plus 1 year"
+  ExpiresByType text/css   "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\\.(webp|jpg|jpeg|png|svg|woff2)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  # index.html must stay fresh — it points at the hashed bundles
+  <FilesMatch "\\.(html)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json image/svg+xml
+</IfModule>`}
+        </pre>
+        <div className={styles.guideNoteWarning}>
+          <strong>Never long-cache{' '}
+          <code className={styles.guideInlineCode}>index.html</code>.</strong> It carries the
+          hashed bundle filenames, so a cached copy pins visitors to an old deploy. The API
+          responses under <code className={styles.guideInlineCode}>/api/</code> already send{' '}
+          <code className={styles.guideInlineCode}>Cache-Control: no-store</code> and must
+          stay that way.
+        </div>
       </div>
 
       {/* Section 4: key alignment */}
