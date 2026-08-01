@@ -7,13 +7,16 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextField, IconButton } from "@mui/material";
 import { Icon } from "@iconify/react";
+import { siteConfig } from "../../data/siteConfig";
 import styles from "./Guideline.module.css";
 import LeadStorageGuide from "./guidelineContent/LeadStorageGuide";
 import SEOSetupGuide from "./guidelineContent/SEOSetupGuide";
 import DeploymentGuide from "./guidelineContent/DeploymentGuide";
 import DeveloperGuide from "./guidelineContent/DeveloperGuide";
 
-const GUIDELINE_PASSWORD = "Nilachal@Guide2026";
+// Second gate in front of the setup docs (the admin login is the first).
+// Rotated for the Dulecy rebuild — the previous value is dead.
+const GUIDELINE_PASSWORD = "Dulecy@Guide2026";
 const SESSION_KEY = "guideline_unlocked";
 
 const TABS = [
@@ -76,8 +79,8 @@ const Guideline = () => {
       <div className={styles.modalOverlay}>
         <div className={styles.modalCard}>
           <img
-            src="https://res.cloudinary.com/dn9gyaiik/image/upload/v1784965863/nilachal-logo_v2lolq.png"
-            alt="Nilachal Infracon"
+            src={siteConfig.logo}
+            alt={siteConfig.brandName}
             className={styles.modalLogo}
           />
           <h2 className={styles.modalTitle}>Restricted Access</h2>
@@ -143,7 +146,8 @@ const Guideline = () => {
       <div className={styles.pageHeader}>
         <h1 className={styles.pageTitle}>Setup Guidelines</h1>
         <p className={styles.pageSubtitle}>
-          Step-by-step guides for configuring and deploying your landing page.
+          How the {siteConfig.brandName} site stores leads, ranks on Google,
+          deploys, and is put together.
         </p>
       </div>
 

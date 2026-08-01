@@ -1,5 +1,5 @@
 /* ============================================
-   Dashboard Page — Nilachal Infracon Lead Management
+   Dashboard Page — Dulecy Lead Services enquiry overview
    ============================================ */
 
 import React, { useState, useEffect } from 'react';
@@ -9,6 +9,7 @@ import { Chip, IconButton, Tooltip, Snackbar, Alert } from '@mui/material';
 import { useAdminAuth } from '../context/AdminAuthContext';
 import { getLeadStats, exportLeadsCSV, getLeads, syncLeadsFromServer, onLeadsChanged } from '../utils/leadService';
 import { getStatusConfig } from '../utils/leadStatus';
+import { siteConfig } from '../../data/siteConfig';
 import styles from './Dashboard.module.css';
 
 const formatDate = () => {
@@ -229,7 +230,7 @@ const Dashboard = () => {
       {/* Page Header */}
       <div className={styles.pageHeader}>
         <div>
-          <h1 className={styles.pageTitle}>Nilachal Infracon — Lead Management</h1>
+          <h1 className={styles.pageTitle}>{siteConfig.brandName} — Lead Management</h1>
           <p className={styles.pageSubtitle}>
             Welcome back. Here&rsquo;s your latest enquiry overview.
           </p>
@@ -347,8 +348,8 @@ const Dashboard = () => {
                   <tr>
                     <th>Name</th>
                     <th>Mobile</th>
+                    <th>Organization</th>
                     <th>Interested In</th>
-                    <th>State</th>
                     <th>Status</th>
                     <th>Received</th>
                     <th>Action</th>
@@ -361,8 +362,8 @@ const Dashboard = () => {
                       <tr key={lead.lead_id} className={idx % 2 === 1 ? styles.rowAlt : undefined}>
                         <td className={styles.leadName}>{lead.name || '—'}</td>
                         <td>{lead.mobile || '—'}</td>
+                        <td>{lead.organization || '—'}</td>
                         <td>{lead.service_interest || '—'}</td>
-                        <td>{lead.state || '—'}</td>
                         <td>
                           <Chip
                             label={sc.label}
@@ -428,7 +429,7 @@ const Dashboard = () => {
                     </div>
                     <div className={styles.mobileCardBottom}>
                       <Chip
-                        label={lead.state || '—'}
+                        label={lead.organization || '—'}
                         size="small"
                         variant="outlined"
                         sx={{ fontSize: '0.65rem', height: 22 }}
@@ -447,7 +448,7 @@ const Dashboard = () => {
 
       {/* Footer Badge */}
       <p className={styles.footerBadge}>
-        Nilachal Infracon Private Limited · Admin Panel
+        {siteConfig.legalName} · Admin Panel
       </p>
 
       <Snackbar

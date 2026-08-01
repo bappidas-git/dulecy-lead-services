@@ -18,7 +18,7 @@ const ProtectedRoute = ({ children }) => {
           justifyContent: 'center',
           alignItems: 'center',
           minHeight: '100vh',
-          backgroundColor: '#F8FAFC',
+          backgroundColor: 'var(--admin-bg)',
         }}
       >
         <CircularProgress sx={{ color: 'var(--admin-accent)' }} />

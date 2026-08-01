@@ -54,8 +54,12 @@ import {
   onLeadsChanged,
 } from "../utils/leadService";
 import { STATUS_OPTIONS, getStatusConfig } from "../utils/leadStatus";
+import { expertiseTitles } from "../../data/expertiseData";
 import useMediaQuery from "../../hooks/useMediaQuery";
 import styles from "./LeadManagement.module.css";
+
+// The enquiry form's catch-all option, mirrored from UnifiedLeadForm.
+const SOMETHING_ELSE = "Something else";
 
 const DATE_RANGE_OPTIONS = [
   { value: "all", label: "All Time" },
@@ -76,18 +80,19 @@ const formatShortDate = (dateStr) => {
 };
 
 // Columns config — `service_interest` is the canonical key (kept from the
-// public form), displayed as "Interested In" in the UI.
+// public form), displayed as "Interested In" in the UI. `organization` took
+// the slot the retired `state` column used to occupy.
 const COLUMNS = [
   { id: "name", label: "Name", sortable: true },
   { id: "mobile", label: "Mobile", sortable: true, width: 130 },
   { id: "email", label: "Email", sortable: true, hideTablet: true },
+  { id: "organization", label: "Organization", sortable: true, width: 160 },
   {
     id: "service_interest",
     label: "Interested In",
     sortable: true,
     hideTablet: true,
   },
-  { id: "state", label: "State", sortable: true, width: 120 },
   { id: "source", label: "Source", sortable: true, width: 130 },
   { id: "status", label: "Status", sortable: true, width: 150 },
   { id: "submitted_at", label: "Date", sortable: true, width: 100 },
@@ -103,6 +108,7 @@ const LeadManagement = () => {
   // Filter state
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [interestFilter, setInterestFilter] = useState("all");
   const [sourceFilter, setSourceFilter] = useState("all");
   const [dateRange, setDateRange] = useState("all");
   const [customStart, setCustomStart] = useState("");
@@ -129,8 +135,9 @@ const LeadManagement = () => {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const isTablet = useMediaQuery("(max-width: 1024px)");
 
-  // Sources from data
+  // Sources + "Interested In" values present in the data
   const [availableSources, setAvailableSources] = useState([]);
+  const [leadInterests, setLeadInterests] = useState([]);
 
   // Manual refresh state
   const [refreshing, setRefreshing] = useState(false);
@@ -140,6 +147,7 @@ const LeadManagement = () => {
     const filters = {
       search,
       status: statusFilter,
+      interest: interestFilter,
       source: sourceFilter,
       dateRange,
       startDate: customStart,
@@ -151,7 +159,25 @@ const LeadManagement = () => {
     const s = getLeadStats();
     setStats(s);
     setAvailableSources(s.sources);
-  }, [search, statusFilter, sourceFilter, dateRange, customStart, customEnd]);
+    setLeadInterests(s.interests);
+  }, [
+    search,
+    statusFilter,
+    interestFilter,
+    sourceFilter,
+    dateRange,
+    customStart,
+    customEnd,
+  ]);
+
+  // "Interested In" options = the ten expertise titles + the form's catch-all,
+  // unioned with whatever is actually stored (so legacy values such as
+  // "General Enquiry" stay selectable instead of being unfilterable).
+  const interestOptions = useMemo(() => {
+    const known = [...expertiseTitles, SOMETHING_ELSE];
+    const extras = leadInterests.filter((i) => !known.includes(i)).sort();
+    return [...known, ...extras];
+  }, [leadInterests]);
 
   // Keep the latest loadData in a ref so event listeners below don't need
   // to re-bind every time filters change.
@@ -371,6 +397,7 @@ const LeadManagement = () => {
   const clearFilters = () => {
     setSearch("");
     setStatusFilter("all");
+    setInterestFilter("all");
     setSourceFilter("all");
     setDateRange("all");
     setCustomStart("");
@@ -385,6 +412,7 @@ const LeadManagement = () => {
   const hasActiveFilters =
     search ||
     statusFilter !== "all" ||
+    interestFilter !== "all" ||
     sourceFilter !== "all" ||
     dateRange !== "all";
 
@@ -568,7 +596,7 @@ const LeadManagement = () => {
         <div className={styles.filtersBar}>
           <TextField
             size="small"
-            placeholder="Search by name, email, mobile, interest, or state..."
+            placeholder="Search by name, email, mobile, organization, or interest..."
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -616,6 +644,31 @@ const LeadManagement = () => {
               {STATUS_OPTIONS.map((s) => (
                 <MenuItem key={s.value} value={s.value}>
                   {s.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl size="small" sx={{ minWidth: 170 }}>
+            <InputLabel>Interested In</InputLabel>
+            <Select
+              value={interestFilter}
+              label="Interested In"
+              onChange={(e) => {
+                setInterestFilter(e.target.value);
+                setPage(0);
+              }}
+              MenuProps={{ PaperProps: { sx: { maxHeight: 340 } } }}
+              sx={{
+                borderRadius: "8px",
+                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "var(--admin-accent)",
+                },
+              }}
+            >
+              <MenuItem value="all">All Interests</MenuItem>
+              {interestOptions.map((i) => (
+                <MenuItem key={i} value={i}>
+                  {i}
                 </MenuItem>
               ))}
             </Select>
@@ -700,7 +753,7 @@ const LeadManagement = () => {
                 size="small"
                 onDelete={() => setSearch("")}
                 sx={{
-                  bgcolor: "#EBF5FF",
+                  bgcolor: "var(--admin-accent-tint)",
                   color: "var(--admin-accent)",
                   "& .MuiChip-deleteIcon": { color: "var(--admin-accent)" },
                 }}
@@ -720,13 +773,25 @@ const LeadManagement = () => {
                 }}
               />
             )}
+            {interestFilter !== "all" && (
+              <Chip
+                label={`Interested In: ${interestFilter}`}
+                size="small"
+                onDelete={() => setInterestFilter("all")}
+                sx={{
+                  bgcolor: "var(--admin-accent-tint)",
+                  color: "var(--admin-accent)",
+                  "& .MuiChip-deleteIcon": { color: "var(--admin-accent)" },
+                }}
+              />
+            )}
             {sourceFilter !== "all" && (
               <Chip
                 label={`Source: ${sourceFilter}`}
                 size="small"
                 onDelete={() => setSourceFilter("all")}
                 sx={{
-                  bgcolor: "#EBF5FF",
+                  bgcolor: "var(--admin-accent-tint)",
                   color: "var(--admin-accent)",
                   "& .MuiChip-deleteIcon": { color: "var(--admin-accent)" },
                 }}
@@ -742,7 +807,7 @@ const LeadManagement = () => {
                   setCustomEnd("");
                 }}
                 sx={{
-                  bgcolor: "#EBF5FF",
+                  bgcolor: "var(--admin-accent-tint)",
                   color: "var(--admin-accent)",
                   "& .MuiChip-deleteIcon": { color: "var(--admin-accent)" },
                 }}
@@ -942,12 +1007,12 @@ const LeadManagement = () => {
                           sx={{
                             cursor: "pointer",
                             bgcolor: isSelected
-                              ? "rgba(43, 123, 213, 0.06)"
+                              ? "var(--admin-accent-tint)"
                               : "#fff",
                             borderLeft: isSelected
                               ? "3px solid var(--admin-accent)"
                               : "3px solid transparent",
-                            "&:hover": { bgcolor: "#F8FAFF" },
+                            "&:hover": { bgcolor: "var(--admin-bg)" },
                             transition: "background 0.15s ease",
                             "& td": {
                               borderBottom: "1px solid var(--admin-border)",
@@ -1002,6 +1067,22 @@ const LeadManagement = () => {
                               </Typography>
                             </TableCell>
                           )}
+                          <TableCell>
+                            <Typography
+                              variant="body2"
+                              sx={{
+                                fontSize: "0.8125rem",
+                                color: "var(--admin-text-secondary)",
+                                maxWidth: 160,
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap",
+                              }}
+                              title={lead.organization || undefined}
+                            >
+                              {lead.organization || "—"}
+                            </Typography>
+                          </TableCell>
                           {!isTablet && (
                             <TableCell>
                               <Typography
@@ -1015,17 +1096,6 @@ const LeadManagement = () => {
                               </Typography>
                             </TableCell>
                           )}
-                          <TableCell>
-                            <Typography
-                              variant="body2"
-                              sx={{
-                                fontSize: "0.8125rem",
-                                color: "var(--admin-text-secondary)",
-                              }}
-                            >
-                              {lead.state || "—"}
-                            </Typography>
-                          </TableCell>
                           <TableCell>
                             <Chip
                               label={lead.source || "—"}
@@ -1176,7 +1246,7 @@ const LeadManagement = () => {
                       }}
                     >
                       {lead.service_interest || "—"}
-                      {lead.state ? ` · ${lead.state}` : ""}
+                      {lead.organization ? ` · ${lead.organization}` : ""}
                     </div>
                     <div
                       className={styles.leadCardChips}

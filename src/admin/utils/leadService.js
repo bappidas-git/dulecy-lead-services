@@ -183,6 +183,11 @@ const describeSyncFailure = async (url, status) => {
 const normalizeLead = (lead) => ({
   ...lead,
   status: lead.status || "new",
+  // `organization` arrived with the Dulecy form; leads stored before it (and
+  // CSV imports without the column) have no such key. Defaulting it here keeps
+  // one cache shape so every table/detail/export reads `lead.organization`
+  // without optional chaining.
+  organization: lead.organization ?? "",
   notes: Array.isArray(lead.notes) ? lead.notes : [],
   activity: Array.isArray(lead.activity)
     ? lead.activity
@@ -280,13 +285,14 @@ export const syncLeadsFromServer = async () => {
 
 /**
  * Get all leads with optional filters (read from the server-backed cache).
- * @param {Object} filters - { search, status, source, dateRange, startDate, endDate }
+ * @param {Object} filters - { search, status, interest, source, dateRange, startDate, endDate }
  * @returns {Array} Filtered leads
  */
 export const getLeads = (filters = {}) => {
   let leads = [..._cache];
 
-  // Search filter — name, email, mobile, interest (service_interest), state
+  // Search filter — name, email, mobile, organization, interest
+  // (service_interest), and legacy `state` on pre-Dulecy records.
   if (filters.search) {
     const q = filters.search.toLowerCase();
     leads = leads.filter(
@@ -294,6 +300,7 @@ export const getLeads = (filters = {}) => {
         (l.name || "").toLowerCase().includes(q) ||
         (l.email || "").toLowerCase().includes(q) ||
         (l.mobile || "").includes(q) ||
+        (l.organization || "").toLowerCase().includes(q) ||
         (l.service_interest || "").toLowerCase().includes(q) ||
         (l.state || "").toLowerCase().includes(q)
     );
@@ -302,6 +309,13 @@ export const getLeads = (filters = {}) => {
   // Status filter
   if (filters.status && filters.status !== "all") {
     leads = leads.filter((l) => l.status === filters.status);
+  }
+
+  // Interested-In filter — matches the stored `service_interest` label
+  // exactly, so every option the picker offers (expertise titles, "Something
+  // else", and legacy values still present in the data) filters correctly.
+  if (filters.interest && filters.interest !== "all") {
+    leads = leads.filter((l) => (l.service_interest || "") === filters.interest);
   }
 
   // Source filter
@@ -470,8 +484,8 @@ export const exportLeadsCSV = (leads) => {
     "Name",
     "Mobile",
     "Email",
+    "Organization",
     "Interested In",
-    "State",
     "Source",
     "Status",
     "Submitted At",
@@ -497,8 +511,8 @@ export const exportLeadsCSV = (leads) => {
     l.name,
     l.mobile,
     l.email,
+    l.organization,
     l.service_interest,
-    l.state,
     l.source,
     l.status,
     l.submitted_at,
@@ -537,7 +551,14 @@ export const importLeadsCSV = async (csvText) => {
 
   const headers = lines[0].split(",").map((h) => h.replace(/"/g, "").trim().toLowerCase());
   const mobileIdx = headers.findIndex((h) => h === "mobile");
-  const existingMobiles = new Set(_cache.map((l) => l.mobile));
+  const emailIdx = headers.findIndex((h) => h === "email");
+  const existingMobiles = new Set(_cache.map((l) => l.mobile).filter(Boolean));
+  // Mobile is optional on the Dulecy form, so a mobile-only dedupe lets every
+  // phone-less lead re-import as a copy of itself. Email is required, so it is
+  // the fallback key — matching the server's rule for the field it does have.
+  const existingEmails = new Set(
+    _cache.map((l) => (l.email || "").toLowerCase()).filter(Boolean)
+  );
 
   let imported = 0;
   let duplicates = 0;
@@ -552,6 +573,9 @@ export const importLeadsCSV = async (csvText) => {
     // CSVs still import into the same key.
     "interested in": "service_interest",
     "service interest": "service_interest",
+    organization: "organization",
+    // Pre-Dulecy exports carried a State column instead of Organization —
+    // still mapped so an old CSV round-trips into the same (unused) key.
     state: "state",
     source: "source",
     status: "status",
@@ -562,8 +586,12 @@ export const importLeadsCSV = async (csvText) => {
   for (let i = 1; i < lines.length; i++) {
     const values = lines[i].split(",").map((v) => v.replace(/^"|"$/g, "").trim());
     const mobile = mobileIdx >= 0 ? values[mobileIdx] : null;
+    const email = emailIdx >= 0 ? (values[emailIdx] || "").toLowerCase() : "";
 
-    if (mobile && existingMobiles.has(mobile)) {
+    if (
+      (mobile && existingMobiles.has(mobile)) ||
+      (!mobile && email && existingEmails.has(email))
+    ) {
       duplicates++;
       continue;
     }
@@ -573,6 +601,9 @@ export const importLeadsCSV = async (csvText) => {
       lead_id: crypto.randomUUID
         ? crypto.randomUUID()
         : Date.now().toString() + Math.random().toString(36).slice(2),
+      // Same default as normalizeLead, so a CSV without the column still
+      // lands in the cache with the shape the admin UI expects.
+      organization: "",
       status: "new",
       submitted_at: now,
       updated_at: now,
@@ -587,6 +618,7 @@ export const importLeadsCSV = async (csvText) => {
 
     newLeads.push(lead);
     if (mobile) existingMobiles.add(mobile);
+    if (email) existingEmails.add(email);
     imported++;
   }
 
@@ -654,6 +686,13 @@ export const getLeadStats = () => {
   // Unique sources
   const sources = [...new Set(leads.map((l) => l.source).filter(Boolean))];
 
+  // Unique "Interested In" values actually present in the store. The filter
+  // picker unions these with the current expertise titles, so a legacy value
+  // (e.g. "General Enquiry") stays selectable instead of being unfilterable.
+  const interests = [
+    ...new Set(leads.map((l) => l.service_interest).filter(Boolean)),
+  ];
+
   // 14-day enquiry trend — submissions per calendar day for the last 14 days
   // (oldest first). Powers the hand-rolled SVG sparkline on the dashboard.
   const trend = [];
@@ -693,6 +732,7 @@ export const getLeadStats = () => {
     topSource,
     recentLeads,
     sources,
+    interests,
     trend,
     statusBreakdown,
   };

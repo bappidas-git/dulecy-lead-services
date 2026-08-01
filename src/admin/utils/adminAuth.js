@@ -55,8 +55,10 @@ export const clearStoredAuth = () => {
  * Validate credentials against env vars or defaults
  */
 export const validateCredentials = (username, password) => {
-  const validUsername = process.env.REACT_APP_ADMIN_USERNAME || 'nilachaladmin';
-  const validPassword = process.env.REACT_APP_ADMIN_PASSWORD || 'Nilachal@Infra2026';
+  // Credentials come from .env; these fallbacks only apply to a build made
+  // without them (never the deployed one) — set real values before deploying.
+  const validUsername = process.env.REACT_APP_ADMIN_USERNAME || 'dulecyadmin';
+  const validPassword = process.env.REACT_APP_ADMIN_PASSWORD || 'Dulecy@Admin2026';
   return username === validUsername && password === validPassword;
 };
 

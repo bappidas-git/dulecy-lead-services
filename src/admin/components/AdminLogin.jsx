@@ -6,6 +6,7 @@ import React, { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { TextField, Checkbox, CircularProgress } from '@mui/material';
 import { useAdminAuth } from '../context/AdminAuthContext';
+import { siteConfig } from '../../data/siteConfig';
 import styles from './AdminLogin.module.css';
 
 const AdminLogin = () => {
@@ -40,13 +41,13 @@ const AdminLogin = () => {
       <div className={styles.loginCard}>
         <div className={styles.loginHeader}>
           <div className={styles.loginLogo}>
-            <img
-              src="https://res.cloudinary.com/dn9gyaiik/image/upload/v1784965863/nilachal-logo_v2lolq.png"
-              alt="Nilachal Infracon"
-            />
+            {/* Colour logo — the card behind it is white. */}
+            <img src={siteConfig.logo} alt={siteConfig.brandName} />
           </div>
-          <h1 className={styles.loginTitle}>Nilachal Infracon</h1>
-          <p className={styles.loginSubtitle}>Admin Panel</p>
+          <h1 className={styles.loginTitle}>{siteConfig.brandName}</h1>
+          <p className={styles.loginSubtitle}>
+            Admin — sign in to manage enquiries
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className={styles.form}>

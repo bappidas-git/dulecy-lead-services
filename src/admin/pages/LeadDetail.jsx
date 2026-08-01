@@ -302,6 +302,14 @@ const LeadDetail = () => {
                   <span className={styles.infoDash}>{"\u2014"}</span>
                 )}
               </div>
+              <div className={styles.infoFieldFull}>
+                <span className={styles.infoLabel}>Organization</span>
+                <span
+                  className={lead.organization ? styles.infoValue : styles.infoDash}
+                >
+                  {lead.organization || "\u2014"}
+                </span>
+              </div>
             </div>
           </div>
 
@@ -312,16 +320,10 @@ const LeadDetail = () => {
               Enquiry
             </h3>
             <div className={styles.infoGrid}>
-              <div className={styles.infoField}>
+              <div className={styles.infoFieldFull}>
                 <span className={styles.infoLabel}>Interested In</span>
                 <span className={lead.service_interest ? styles.infoValue : styles.infoDash}>
                   {lead.service_interest || "\u2014"}
-                </span>
-              </div>
-              <div className={styles.infoField}>
-                <span className={styles.infoLabel}>State</span>
-                <span className={lead.state ? styles.infoValue : styles.infoDash}>
-                  {lead.state || "\u2014"}
                 </span>
               </div>
               <div className={styles.infoFieldFull}>
