@@ -1,0 +1,128 @@
+/* ============================================
+   StatsSection Styles — Nilachal metrics band
+   A full-width deep-navy band: five big white counters in
+   one row with slate-on-dark labels, divided by thin
+   vertical hairlines. Wraps to a centered 2×2 + 1 grid on
+   mobile (the fifth item spans the full width).
+   ============================================ */
+
+/* ========== Band ========== */
+.statsBand {
+  background-color: var(--color-primary-dark, #0f2438);
+  padding: 4.5rem 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ========== Row (desktop: 5 across) ========== */
+.row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  align-items: center;
+}
+
+/* ========== Item ========== */
+.item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+}
+
+/* Thin vertical hairline between items (skip the first in the row) */
+.item:not(:first-child)::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.number {
+  font-family: "Inter", sans-serif;
+  font-weight: 700;
+  font-size: clamp(2.75rem, 4.2vw, 4.5rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+}
+
+.label {
+  font-family: "Inter", sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: rgba(226, 232, 240, 0.72);
+  max-width: 18ch;
+}
+
+/* ========== Responsive ========== */
+
+/* Large desktop */
+@media (min-width: 1440px) {
+  .statsBand {
+    padding: 5.5rem 0;
+  }
+}
+
+/* Tablet — keep five across but tighten spacing */
+@media (max-width: 1023px) {
+  .item {
+    padding: 0.5rem 0.5rem;
+  }
+
+  .label {
+    font-size: 0.8125rem;
+  }
+}
+
+/* Mobile — 2×2 + 1 (fifth item full width, centered) */
+@media (max-width: 767px) {
+  .statsBand {
+    padding: 3rem 0;
+  }
+
+  .row {
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 2.5rem;
+  }
+
+  /* No stray vertical rules once the row wraps */
+  .item:not(:first-child)::before {
+    display: none;
+  }
+
+  .item {
+    padding: 0 0.5rem;
+  }
+
+  /* The fifth stat sits on its own full-width row, centered */
+  .item:nth-child(5) {
+    grid-column: 1 / -1;
+  }
+
+  .label {
+    font-size: 0.875rem;
+    max-width: 22ch;
+  }
+}
+
+/* ========== Reduced motion ========== */
+@media (prefers-reduced-motion: reduce) {
+  /* Counters render their final value instantly via useCountUp; nothing to
+     disable here beyond deferring to the hooks' reduced-motion guards. */
+  .item {
+    transition: none;
+  }
+}

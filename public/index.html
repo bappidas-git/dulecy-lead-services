@@ -1,0 +1,763 @@
+<!doctype html>
+<html lang="en-IN">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" sizes="any" />
+    <link
+      rel="icon"
+      href="%PUBLIC_URL%/favicon.png"
+      type="image/png"
+      sizes="32x32"
+    />
+
+    <!-- =========================================
+         Viewport & Mobile Optimization
+         ========================================= -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover"
+    />
+    <meta
+      name="theme-color"
+      content="#16324F"
+      media="(prefers-color-scheme: dark)"
+    />
+    <meta
+      name="theme-color"
+      content="#16324F"
+      media="(prefers-color-scheme: light)"
+    />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="Nilachal Infracon" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-TileColor" content="#16324F" />
+    <meta name="msapplication-tap-highlight" content="no" />
+
+    <!-- =========================================
+         SEO Meta Tags
+         ========================================= -->
+    <meta
+      name="description"
+      content="North East Buildmart by Nilachal Infracon: premium building materials & construction services in Nagaon, Assam & across Northeast India. Get a quote today."
+    />
+    <meta
+      name="keywords"
+      content="Nilachal Infracon, North East Buildmart, building materials Nagaon, construction materials Assam, building materials supplier Northeast India, construction company Nagaon Assam, TMT bars, cement, tiles, sanitaryware, UPVC doors Assam"
+    />
+    <meta name="author" content="Nilachal Infracon Private Limited" />
+    <meta name="robots" content="index, follow" />
+    <meta name="googlebot" content="index, follow" />
+
+    <!-- =========================================
+         Open Graph / Facebook
+         ========================================= -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.nilachalinfracon.com/" />
+    <meta
+      property="og:title"
+      content="Nilachal Infracon — Building Materials & Construction, Northeast India"
+    />
+    <meta
+      property="og:description"
+      content="North East Buildmart by Nilachal Infracon: premium building materials & construction services in Nagaon, Assam & across Northeast India. Get a quote today."
+    />
+    <meta
+      property="og:image"
+      content="https://www.nilachalinfracon.com/og-image.png"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Nilachal Infracon — Building the Future of Northeast India"
+    />
+    <meta property="og:site_name" content="Nilachal Infracon" />
+    <meta property="og:locale" content="en_IN" />
+
+    <!-- =========================================
+         Twitter Card
+         ========================================= -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://www.nilachalinfracon.com/" />
+    <meta
+      name="twitter:title"
+      content="Nilachal Infracon — Building Materials & Construction, Northeast India"
+    />
+    <meta
+      name="twitter:description"
+      content="North East Buildmart by Nilachal Infracon: premium building materials & construction services in Nagaon, Assam & across Northeast India."
+    />
+    <meta
+      name="twitter:image"
+      content="https://www.nilachalinfracon.com/og-image.png"
+    />
+
+    <!-- =========================================
+         Canonical URL
+         ========================================= -->
+    <link rel="canonical" href="https://www.nilachalinfracon.com/" />
+
+    <!-- Geo Tags -->
+    <meta name="geo.region" content="IN-AS" />
+    <meta name="geo.placename" content="Nagaon" />
+    <meta name="geo.position" content="26.3489;92.6820" />
+    <meta name="ICBM" content="26.3489, 92.6820" />
+
+    <!-- =========================================
+         PWA Manifest & Icons
+         ========================================= -->
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/apple-touch-icon.png" />
+
+    <!-- =========================================
+         Preconnect & DNS Prefetch
+         ========================================= -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://api.iconify.design" />
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+
+    <!-- =========================================
+         Preload Critical Resources
+         ========================================= -->
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      as="style"
+      onload="
+        this.onload = null;
+        this.rel = 'stylesheet';
+      "
+    />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
+
+    <!-- =========================================
+         Page Title
+         ========================================= -->
+    <title>
+      Nilachal Infracon — Building Materials &amp; Construction, Northeast India
+    </title>
+
+    <!-- =========================================
+         Structured Data / JSON-LD for SEO
+         ========================================= -->
+
+    <!-- These static schemas serve as fallbacks; the SEOHead component injects dynamic versions at runtime (matching element ids) from src/config/seo.js -->
+
+    <!-- Schema: Organization -->
+    <script type="application/ld+json" id="schema-organization">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Nilachal Infracon Private Limited",
+        "legalName": "Nilachal Infracon Private Limited",
+        "alternateName": "North East Buildmart",
+        "url": "https://www.nilachalinfracon.com",
+        "logo": "https://res.cloudinary.com/dn9gyaiik/image/upload/v1784965863/nilachal-logo_v2lolq.png",
+        "description": "Nilachal Infracon Private Limited is an infrastructure and building-materials company in Nagaon, Assam. Through its flagship retail brand North East Buildmart it supplies premium construction materials, and delivers residential, commercial and institutional construction projects across Northeast India.",
+        "telephone": "+91 86385 43526",
+        "email": "info@nilachalinfracon.com",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Lawkhowa Road, Near Aditya Multispeciality Hospital",
+          "addressLocality": "Nagaon",
+          "addressRegion": "Assam",
+          "postalCode": "782003",
+          "addressCountry": "IN"
+        },
+        "areaServed": [
+          { "@type": "State", "name": "Assam" },
+          { "@type": "State", "name": "Arunachal Pradesh" },
+          { "@type": "State", "name": "Meghalaya" },
+          { "@type": "State", "name": "Manipur" },
+          { "@type": "State", "name": "Mizoram" },
+          { "@type": "State", "name": "Nagaland" },
+          { "@type": "State", "name": "Tripura" },
+          { "@type": "State", "name": "Sikkim" }
+        ],
+        "foundingDate": "2026"
+      }
+    </script>
+
+    <!-- Schema: FAQPage (mirrors the visible FAQ section / src/data/faqData.js) -->
+    <script type="application/ld+json" id="schema-faq">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What does Nilachal Infracon do?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Nilachal Infracon Private Limited is an infrastructure and building materials company based in Nagaon, Assam. We supply premium construction materials through our flagship retail brand, North East Buildmart, and deliver dependable project solutions for residential, commercial, and institutional developments across Northeast India."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What products does North East Buildmart sell?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "North East Buildmart stocks a complete range of building materials — steel, UPVC and WPC doors, tiles, sanitaryware, bath fittings, cement, TMT bars, hardware, and general construction materials — all sourced from trusted, established brands."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Do you deliver across the Northeastern states?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. We deliver across Northeast India, including Assam, Arunachal Pradesh, Meghalaya, Manipur, Mizoram, Nagaland, Tripura, and Sikkim, through a growing supply network. Delivery timelines depend on your location and order size — contact us for a specific estimate."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Are your products genuine and branded?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Every product we sell is 100% genuine, original, and quality-checked. We work only with reputed manufacturers and authorised brands, so you receive warranty-backed products you can build on with confidence."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Do you handle end-to-end construction projects?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Beyond supplying materials, Nilachal Infracon takes on residential, commercial, institutional, and renovation projects, and offers project management covering planning, procurement, and on-site execution — from foundation to finish."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do I request a quote?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Share your requirement through the enquiry form on this website, or call or WhatsApp us at +91 86385 43526. Tell us the products or project scope you need and our team will get back to you with a transparent quotation."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Where is your store / office located?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Our office and store are on Lawkhowa Road, near Aditya Multispeciality Hospital, Nagaon, Assam – 782003. You are welcome to visit us, or reach out by phone, WhatsApp, or email to plan your purchase."
+            }
+          }
+        ]
+      }
+    </script>
+
+    <!-- Schema: LocalBusiness / HomeAndConstructionBusiness -->
+    <script type="application/ld+json" id="schema-localbusiness">
+      {
+        "@context": "https://schema.org",
+        "@type": ["LocalBusiness", "HomeAndConstructionBusiness"],
+        "additionalType": "https://www.productontology.org/id/Building_material",
+        "name": "Nilachal Infracon Private Limited",
+        "image": "https://res.cloudinary.com/dn9gyaiik/image/upload/v1784965863/nilachal-logo_v2lolq.png",
+        "logo": "https://res.cloudinary.com/dn9gyaiik/image/upload/v1784965863/nilachal-logo_v2lolq.png",
+        "telephone": "+91 86385 43526",
+        "email": "info@nilachalinfracon.com",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Lawkhowa Road, Near Aditya Multispeciality Hospital",
+          "addressLocality": "Nagaon",
+          "addressRegion": "Assam",
+          "postalCode": "782003",
+          "addressCountry": "IN"
+        },
+        "priceRange": "₹₹",
+        "openingHoursSpecification": {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday"
+          ],
+          "opens": "09:00",
+          "closes": "19:00"
+        },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": "26.3489",
+          "longitude": "92.6820"
+        },
+        "url": "https://www.nilachalinfracon.com",
+        "hasMap": "https://www.google.com/maps/search/?api=1&query=Nilachal%20Infracon%20Private%20Limited%2C%20Lawkhowa%20Road%2C%20Nagaon%2C%20Assam%20782003",
+        "areaServed": [
+          { "@type": "State", "name": "Assam" },
+          { "@type": "State", "name": "Arunachal Pradesh" },
+          { "@type": "State", "name": "Meghalaya" },
+          { "@type": "State", "name": "Manipur" },
+          { "@type": "State", "name": "Mizoram" },
+          { "@type": "State", "name": "Nagaland" },
+          { "@type": "State", "name": "Tripura" },
+          { "@type": "State", "name": "Sikkim" }
+        ]
+      }
+    </script>
+
+    <!-- Schema: BreadcrumbList -->
+    <!-- Dynamically updated by SEOHead component -->
+    <script type="application/ld+json" id="schema-breadcrumb">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://www.nilachalinfracon.com/"
+          }
+        ]
+      }
+    </script>
+
+    <!-- Schema: WebPage / WebSite -->
+    <!-- Dynamically updated by SEOHead component -->
+    <script type="application/ld+json" id="schema-webpage">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "Nilachal Infracon — Building Materials & Construction, Northeast India",
+        "description": "North East Buildmart by Nilachal Infracon: premium building materials & construction services in Nagaon, Assam & across Northeast India. Get a quote today.",
+        "url": "https://www.nilachalinfracon.com/",
+        "isPartOf": {
+          "@type": "WebSite",
+          "name": "Nilachal Infracon",
+          "url": "https://www.nilachalinfracon.com"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "Nilachal Infracon Private Limited",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://res.cloudinary.com/dn9gyaiik/image/upload/v1784965863/nilachal-logo_v2lolq.png"
+          }
+        }
+      }
+    </script>
+
+    <!-- =========================================
+         Critical CSS (Above the Fold)
+         ========================================= -->
+    <style>
+      /* Critical CSS - Inline for fastest first paint */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        -webkit-text-size-adjust: 100%;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      body {
+        font-family:
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          Oxygen,
+          Ubuntu,
+          sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+        overflow-x: hidden;
+        background-color: #ffffff;
+        color: #1a1a1a;
+        line-height: 1.5;
+      }
+
+      /* Root element setup */
+      #root {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        isolation: isolate;
+      }
+
+      /* Skip link for accessibility */
+      .skip-link {
+        position: absolute;
+        top: -40px;
+        left: 0;
+        background: #16324F;
+        color: #FFFFFF;
+        padding: 8px 16px;
+        z-index: 10000;
+        font-weight: 600;
+        text-decoration: none;
+        border-radius: 0 0 4px 0;
+        transition: top 0.2s ease;
+      }
+
+      .skip-link:focus {
+        top: 0;
+      }
+
+      /* ============================================
+         Initial Loader — Branded Splash Screen
+         Shown until React mounts, then fades out
+         ============================================ */
+      .initial-loader {
+        position: fixed;
+        inset: 0;
+        z-index: 999999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #0F2438;
+        transition:
+          opacity 0.4s ease,
+          visibility 0.4s ease;
+      }
+
+      .initial-loader.hidden {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      /* Wrapper */
+      .loader-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 28px;
+        padding: 24px;
+        max-width: 280px;
+        width: 100%;
+      }
+
+      /* Brand Block */
+      .loader-brand {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .loader-logo-img {
+        width: 180px;
+        height: auto;
+        object-fit: contain;
+        animation: loaderFadeIn 0.6s ease both;
+      }
+
+      .loader-tagline {
+        margin: 0;
+        font-family:
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
+        font-size: 13px;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.72);
+        letter-spacing: 0.04em;
+        text-align: center;
+        animation: loaderFadeIn 0.6s 0.2s ease both;
+      }
+
+      /* Progress Bar Track */
+      .loader-bar-track {
+        width: 100%;
+        height: 3px;
+        background: rgba(255, 255, 255, 0.12);
+        border-radius: 3px;
+        overflow: hidden;
+        animation: loaderFadeIn 0.4s 0.3s ease both;
+      }
+
+      .loader-bar-fill {
+        height: 100%;
+        width: 0%;
+        border-radius: 3px;
+        background: linear-gradient(90deg, #16324F, #274B6E, #1E7B45);
+        background-size: 200% 100%;
+        animation:
+          loaderProgress 2s 0.4s ease-in-out forwards,
+          loaderShimmer 1.5s 0.4s ease-in-out infinite;
+      }
+
+      /* Loading Status Text */
+      .loader-status {
+        margin: 0;
+        font-family:
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
+        font-size: 12px;
+        font-weight: 400;
+        color: rgba(255, 255, 255, 0.5);
+        letter-spacing: 0.02em;
+        animation: loaderFadeIn 0.4s 0.4s ease both;
+      }
+
+      /* Animated dots "Loading..." */
+      .loader-dots::after {
+        content: "";
+        animation: loaderDots 1.4s steps(4, end) infinite;
+      }
+
+      /* ============================================
+         Loader Keyframes
+         ============================================ */
+      @keyframes loaderFadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes loaderProgress {
+        0% {
+          width: 0%;
+        }
+        30% {
+          width: 40%;
+        }
+        60% {
+          width: 70%;
+        }
+        100% {
+          width: 92%;
+        }
+      }
+
+      @keyframes loaderShimmer {
+        0% {
+          background-position: 200% 0;
+        }
+        100% {
+          background-position: -200% 0;
+        }
+      }
+
+      @keyframes loaderDots {
+        0% {
+          content: "";
+        }
+        25% {
+          content: ".";
+        }
+        50% {
+          content: "..";
+        }
+        75% {
+          content: "...";
+        }
+        100% {
+          content: "";
+        }
+      }
+
+      /* Safe area for notched devices (iPhone X+) */
+      @supports (padding-bottom: env(safe-area-inset-bottom)) {
+        body {
+          padding-left: env(safe-area-inset-left);
+          padding-right: env(safe-area-inset-right);
+          padding-bottom: env(safe-area-inset-bottom);
+        }
+      }
+
+      /* ============================================
+         Reduced Motion — Respect user preference
+         ============================================ */
+      @media (prefers-reduced-motion: reduce) {
+        .loader-logo-img,
+        .loader-tagline,
+        .loader-bar-track,
+        .loader-status {
+          animation: none;
+          opacity: 1;
+          transform: none;
+        }
+        .loader-bar-fill {
+          animation: loaderProgress 2s ease-in-out forwards;
+        }
+
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+
+        html {
+          scroll-behavior: auto;
+        }
+      }
+
+      /* ============================================
+         Dark mode support (if user's OS is dark)
+         ============================================ */
+      @media (prefers-color-scheme: dark) {
+        .initial-loader {
+          background: #0F2438;
+        }
+        .loader-tagline {
+          color: rgba(255, 255, 255, 0.6);
+        }
+        .loader-bar-track {
+          background: rgba(255, 255, 255, 0.1);
+        }
+        .loader-status {
+          color: rgba(255, 255, 255, 0.4);
+        }
+      }
+
+      /* High contrast mode support */
+      @media (prefers-contrast: high) {
+        body {
+          background-color: #000;
+          color: #fff;
+        }
+      }
+
+      /* Print styles */
+      @media print {
+        .initial-loader {
+          display: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Noscript fallback -->
+    <noscript>
+      <div
+        style="
+          padding: 20px;
+          text-align: center;
+          background: #16324F;
+          color: #ffffff;
+          font-family: sans-serif;
+        "
+      >
+        <h1 style="color: #8FD3AB; margin-bottom: 10px">JavaScript Required</h1>
+        <p>You need to enable JavaScript to run this app.</p>
+        <p style="margin-top: 10px">
+          Please enable JavaScript in your browser settings and refresh the
+          page.
+        </p>
+      </div>
+    </noscript>
+
+    <!-- Initial Loader — Professional Branded Splash Screen -->
+    <div
+      class="initial-loader"
+      id="initial-loader"
+      role="progressbar"
+      aria-label="Loading Nilachal Infracon"
+    >
+      <div class="loader-wrapper">
+        <!-- Logo + Brand -->
+        <div class="loader-brand">
+          <img
+            src="https://res.cloudinary.com/dn9gyaiik/image/upload/v1784965863/nilachal-logo-white_hus13s.png"
+            alt="Nilachal Infracon"
+            class="loader-logo-img"
+            width="180"
+            height="auto"
+          />
+          <p class="loader-tagline">Building Tomorrow, Together.</p>
+        </div>
+
+        <!-- Animated Progress Bar -->
+        <div class="loader-bar-track">
+          <div class="loader-bar-fill"></div>
+        </div>
+
+        <!-- Loading text -->
+        <p class="loader-status">Loading<span class="loader-dots"></span></p>
+      </div>
+    </div>
+
+    <!-- React Root -->
+    <div id="root"></div>
+
+    <!-- Hide initial loader when React is ready -->
+    <script>
+      (function () {
+        // Performance mark for load timing
+        if (window.performance && window.performance.mark) {
+          window.performance.mark("loader-start");
+        }
+
+        // Hide loader on window load
+        window.addEventListener("load", function () {
+          // Give React time to mount
+          setTimeout(function () {
+            var loader = document.getElementById("initial-loader");
+            if (loader) {
+              loader.classList.add("hidden");
+
+              // Remove from DOM after transition
+              setTimeout(function () {
+                if (loader && loader.parentNode) {
+                  loader.style.display = "none";
+                }
+
+                // Performance mark for load complete
+                if (window.performance && window.performance.mark) {
+                  window.performance.mark("loader-end");
+                  window.performance.measure(
+                    "app-load-time",
+                    "loader-start",
+                    "loader-end",
+                  );
+                }
+              }, 400);
+            }
+          }, 200);
+        });
+
+        // Fallback: Hide loader after max timeout
+        setTimeout(function () {
+          var loader = document.getElementById("initial-loader");
+          if (loader && !loader.classList.contains("hidden")) {
+            loader.classList.add("hidden");
+            setTimeout(function () {
+              loader.style.display = "none";
+            }, 400);
+          }
+        }, 5000);
+      })();
+    </script>
+
+    <!-- Register touch events for mobile performance -->
+    <script>
+      document.addEventListener("touchstart", function () {}, {
+        passive: true,
+      });
+    </script>
+  </body>
+</html>

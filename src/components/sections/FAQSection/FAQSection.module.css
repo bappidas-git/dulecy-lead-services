@@ -1,0 +1,183 @@
+/* ============================================
+   FAQSection Styles — Frequently asked questions
+   Apple-minimal accordion on a subtle background: centered
+   eyebrow + headline, then a ~800px-wide column of
+   hairline-separated rows. Each row is a full-width button
+   (question in ink + a rotating plus icon); the answer panel
+   height is GSAP-driven, so it only needs to hide overflow.
+   ============================================ */
+
+/* ========== Section ========== */
+.faqSection {
+  position: relative;
+  padding: 6rem 0;
+  background-color: var(--color-bg-subtle, #f5f7fa);
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ========== Header (centered) ========== */
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+/* Eyebrow — mirrors the Products/Services eyebrow (bar + tracked uppercase) */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 20px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-accent, #1e7b45);
+}
+
+.eyebrowBar {
+  width: 28px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--color-accent, #1e7b45);
+  flex-shrink: 0;
+}
+
+.headline {
+  margin: 0;
+  font-family: "Inter", system-ui, sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+  line-height: 1.14;
+  letter-spacing: -0.02em;
+  color: var(--color-ink, #101c29);
+  text-wrap: balance;
+}
+
+/* ========== Accordion ========== */
+.list {
+  border-top: 1px solid var(--color-border, #e5eaf0);
+}
+
+.item {
+  border-bottom: 1px solid var(--color-border, #e5eaf0);
+}
+
+/* Question (button reset + row) */
+.question {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.5rem 0.25rem;
+}
+
+.questionText {
+  font-family: "Inter", sans-serif;
+  font-size: 1.0625rem;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  color: var(--color-ink, #101c29);
+  transition: color 0.25s ease;
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  font-size: 22px;
+  color: var(--color-accent, #1e7b45);
+  /* GSAP rotates this to 45° when the row opens */
+  will-change: transform;
+}
+
+@media (hover: hover) {
+  .question:hover .questionText {
+    color: var(--color-accent-dark, #176437);
+  }
+}
+
+.question:focus-visible {
+  outline: 2px solid var(--color-accent, #1e7b45);
+  outline-offset: -2px;
+  border-radius: 8px;
+}
+
+/* Answer panel — height + opacity are GSAP-driven (starts collapsed) */
+.panel {
+  overflow: hidden;
+}
+
+.answer {
+  margin: 0;
+  padding: 0 3rem 1.5rem 0.25rem;
+  font-family: "Inter", sans-serif;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--color-slate, #4a5a6a);
+}
+
+/* ========== Responsive ========== */
+
+/* Large desktop */
+@media (min-width: 1440px) {
+  .faqSection {
+    padding: 7rem 0;
+  }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+  .faqSection {
+    padding: 4rem 0;
+  }
+
+  .container {
+    padding: 0 20px;
+  }
+
+  .header {
+    margin-bottom: 2.5rem;
+  }
+
+  .question {
+    gap: 1rem;
+    padding: 1.25rem 0.25rem;
+  }
+
+  .questionText {
+    font-size: 1rem;
+  }
+
+  .answer {
+    padding-right: 1.5rem;
+    font-size: 0.9375rem;
+  }
+}
+
+/* ========== Reduced motion ========== */
+@media (prefers-reduced-motion: reduce) {
+  .questionText,
+  .icon {
+    transition: none;
+  }
+}

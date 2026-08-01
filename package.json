@@ -1,0 +1,68 @@
+{
+  "name": "nilachal-infracon-website",
+  "version": "1.0.0",
+  "description": "Nilachal Infracon Private Limited — one-page business website for Northeast India's infrastructure & building materials company (flagship brand: North East Buildmart). React 18 + MUI + GSAP, with lead-capturing enquiry form and admin panel.",
+  "private": true,
+  "dependencies": {
+    "@emotion/react": "^11.11.3",
+    "@emotion/styled": "^11.11.0",
+    "@gsap/react": "^2.1.2",
+    "@iconify/react": "^4.1.1",
+    "@mui/material": "^5.15.10",
+    "framer-motion": "^11.0.5",
+    "gsap": "^3.15.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^7.12.0",
+    "react-scripts": "5.0.1",
+    "sweetalert2": "^11.10.5",
+    "web-vitals": "^3.5.2"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "png-to-ico": "^3.0.2",
+    "sharp": "^0.35.3"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "analyze": "source-map-explorer 'build/static/js/*.js'",
+    "generate:icons": "node scripts/generate-icons.js",
+    "generate:og": "node scripts/generate-og.js"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "homepage": "/",
+  "author": "Assam Digital",
+  "license": "UNLICENSED",
+  "keywords": [
+    "nilachal-infracon",
+    "north-east-buildmart",
+    "building-materials",
+    "construction",
+    "infrastructure",
+    "northeast-india",
+    "assam",
+    "nagaon",
+    "landing-page",
+    "lead-generation"
+  ]
+}

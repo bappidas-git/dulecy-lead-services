@@ -1,0 +1,271 @@
+/* ============================================
+   AboutSection Styles — "Welcome to Nilachal Infracon"
+   Apple-minimal: white background, 1200px content width,
+   large tight-tracked headline, thin hairlines, green used
+   only for the eyebrow bar and pillar icons.
+   ============================================ */
+
+/* ========== Section ========== */
+.aboutSection {
+  position: relative;
+  padding: 6rem 0;
+  background-color: var(--color-bg, #ffffff);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ========== Part A — Intro split ========== */
+.intro {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 4rem;
+  align-items: center;
+}
+
+.introText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Eyebrow — mirrors the Hero eyebrow pattern (bar + tracked uppercase) */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 20px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-accent, #1e7b45);
+}
+
+.eyebrowBar {
+  width: 28px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--color-accent, #1e7b45);
+  flex-shrink: 0;
+}
+
+.headline {
+  margin: 0 0 1.5rem;
+  font-family: "Inter", system-ui, sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+  line-height: 1.14;
+  letter-spacing: -0.02em;
+  color: var(--color-ink, #101c29);
+  text-wrap: balance;
+}
+
+.paragraph {
+  margin: 0 0 2rem;
+  font-family: "Inter", sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: var(--color-slate, #4a5a6a);
+}
+
+.paragraph strong {
+  color: var(--color-ink, #101c29);
+  font-weight: 700;
+}
+
+/* Quiet text-link CTA */
+.textLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: "Inter", sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-accent, #1e7b45);
+  text-decoration: none;
+  transition: gap 0.25s ease, color 0.25s ease;
+}
+
+.textLinkIcon {
+  font-size: 1.15em;
+  transition: transform 0.25s ease;
+}
+
+@media (hover: hover) {
+  .textLink:hover {
+    gap: 10px;
+    color: var(--color-accent-dark, #176437);
+  }
+
+  .textLink:hover .textLinkIcon {
+    transform: translateX(2px);
+  }
+}
+
+.textLink:focus-visible {
+  outline: 2px solid var(--color-accent, #1e7b45);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+/* ========== Image (rounded 20px, subtle parallax) ========== */
+.introMedia {
+  display: flex;
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid var(--color-border, #e5eaf0);
+  box-shadow: 0 8px 30px rgba(16, 28, 41, 0.06);
+}
+
+/* Overscan (taller than the frame) so the ±6% parallax drift never
+   reveals a gap at the top or bottom edge. */
+.image {
+  position: absolute;
+  top: -10%;
+  left: 0;
+  width: 100%;
+  height: 120%;
+  object-fit: cover;
+  display: block;
+  will-change: transform;
+}
+
+/* ========== Part B — Four pillars ========== */
+.pillars {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  margin-top: 5.5rem;
+}
+
+/* Borderless card: thin top hairline, green icon, title, text */
+.pillar {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-top: 1.5rem;
+}
+
+.pillarRule {
+  width: 100%;
+  height: 1px;
+  background: var(--color-border, #e5eaf0);
+  margin-bottom: 1.5rem;
+}
+
+.pillarIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: var(--color-accent, #1e7b45);
+  margin-bottom: 1rem;
+}
+
+.pillarTitle {
+  margin: 0 0 0.5rem;
+  font-family: "Inter", sans-serif;
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--color-ink, #101c29);
+}
+
+.pillarText {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: var(--color-slate, #4a5a6a);
+}
+
+/* ========== Responsive ========== */
+
+/* Large desktop */
+@media (min-width: 1440px) {
+  .aboutSection {
+    padding: 7rem 0;
+  }
+}
+
+/* Tablet — image drops below copy, pillars go 2×2 */
+@media (max-width: 1023px) {
+  .intro {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  .imageWrapper {
+    aspect-ratio: 16 / 10;
+    max-width: 640px;
+  }
+
+  .pillars {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem 2.5rem;
+    margin-top: 4rem;
+  }
+}
+
+/* Mobile — everything stacks */
+@media (max-width: 767px) {
+  .aboutSection {
+    padding: 4rem 0;
+  }
+
+  .container {
+    padding: 0 20px;
+  }
+
+  .intro {
+    gap: 2rem;
+  }
+
+  .headline {
+    margin-bottom: 1.25rem;
+  }
+
+  .paragraph {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .imageWrapper {
+    aspect-ratio: 3 / 2;
+  }
+
+  .pillars {
+    grid-template-columns: 1fr;
+    gap: 0;
+    margin-top: 3rem;
+  }
+
+  /* On a single column the pillars read as a hairline-divided list */
+  .pillar {
+    padding-top: 1.75rem;
+    padding-bottom: 1.75rem;
+  }
+
+  .pillar:last-child {
+    padding-bottom: 0;
+  }
+}
+
+/* ========== Reduced Motion ========== */
+@media (prefers-reduced-motion: reduce) {
+  .image,
+  .textLink,
+  .textLinkIcon {
+    transition: none;
+  }
+}

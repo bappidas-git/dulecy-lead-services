@@ -1,0 +1,271 @@
+/* ============================================
+   ServicesSection Styles — Construction & Infrastructure
+   Apple-minimal list on a subtle background: left-aligned
+   eyebrow + headline, then five service rows (large index
+   numeral, name, description, feature tags, hover-revealed
+   arrow) divided by thin hairlines. No cards, no carousel.
+   ============================================ */
+
+/* ========== Section ========== */
+.servicesSection {
+  position: relative;
+  padding: 6rem 0;
+  background-color: var(--color-bg-subtle, #f5f7fa);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ========== Header (left-aligned) ========== */
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 3.5rem;
+}
+
+/* Eyebrow — mirrors the About/Hero eyebrow (bar + tracked uppercase) */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 20px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-accent, #1e7b45);
+}
+
+.eyebrowBar {
+  width: 28px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--color-accent, #1e7b45);
+  flex-shrink: 0;
+}
+
+.headline {
+  margin: 0 0 1rem;
+  font-family: "Inter", system-ui, sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+  line-height: 1.14;
+  letter-spacing: -0.02em;
+  color: var(--color-ink, #101c29);
+  text-wrap: balance;
+}
+
+.subtext {
+  margin: 0;
+  max-width: 620px;
+  font-family: "Inter", sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: var(--color-slate, #4a5a6a);
+}
+
+/* ========== Service list ========== */
+.list {
+  border-top: 1px solid var(--color-border, #e5eaf0);
+}
+
+/* Row (button reset + hairline-divided list item) */
+.row {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--color-border, #e5eaf0);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: start;
+  column-gap: 2rem;
+  padding: 2rem 0.75rem;
+  transition: background 0.25s ease;
+}
+
+.rowIndex {
+  font-family: "Inter", sans-serif;
+  font-size: clamp(1.5rem, 2vw, 2rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--color-accent, #1e7b45);
+  font-variant-numeric: tabular-nums;
+}
+
+.rowBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.rowName {
+  font-family: "Inter", sans-serif;
+  font-size: clamp(1.125rem, 1.8vw, 1.375rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  color: var(--color-ink, #101c29);
+  transition: color 0.25s ease;
+}
+
+.rowDesc {
+  font-family: "Inter", sans-serif;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--color-slate, #4a5a6a);
+  max-width: 60ch;
+}
+
+.rowTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.rowTag {
+  font-family: "Inter", sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--color-accent-dark, #176437);
+  background: var(--color-accent-tint, #e8f5ee);
+  border-radius: 999px;
+  padding: 4px 12px;
+}
+
+.rowArrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  align-self: center;
+  border-radius: 50%;
+  border: 1px solid var(--color-border, #e5eaf0);
+  color: var(--color-accent, #1e7b45);
+  font-size: 20px;
+  transition: background 0.25s ease, border-color 0.25s ease,
+    transform 0.25s ease, opacity 0.25s ease, color 0.25s ease;
+}
+
+/* Pointer devices: arrow tucks away and reveals on hover; row lifts to white */
+@media (hover: hover) {
+  .rowArrow {
+    opacity: 0;
+    transform: translateX(-6px);
+  }
+
+  .row:hover {
+    background: rgba(255, 255, 255, 0.65);
+  }
+
+  .row:hover .rowName {
+    color: var(--color-accent-dark, #176437);
+  }
+
+  .row:hover .rowArrow {
+    opacity: 1;
+    transform: translateX(0);
+    background: var(--color-accent, #1e7b45);
+    border-color: var(--color-accent, #1e7b45);
+    color: #ffffff;
+  }
+}
+
+.row:focus-visible {
+  outline: 2px solid var(--color-accent, #1e7b45);
+  outline-offset: -2px;
+  border-radius: 8px;
+}
+
+.row:focus-visible .rowArrow {
+  opacity: 1;
+  transform: translateX(0);
+  background: var(--color-accent, #1e7b45);
+  border-color: var(--color-accent, #1e7b45);
+  color: #ffffff;
+}
+
+/* ========== Responsive ========== */
+
+/* Large desktop */
+@media (min-width: 1440px) {
+  .servicesSection {
+    padding: 7rem 0;
+  }
+}
+
+/* Tablet */
+@media (max-width: 1023px) {
+  .header {
+    margin-bottom: 3rem;
+  }
+
+  .row {
+    column-gap: 1.5rem;
+    padding: 1.75rem 0.5rem;
+  }
+}
+
+/* Mobile — tighten the row grid, keep the numeral leading */
+@media (max-width: 767px) {
+  .servicesSection {
+    padding: 4rem 0;
+  }
+
+  .container {
+    padding: 0 20px;
+  }
+
+  .header {
+    margin-bottom: 2.5rem;
+  }
+
+  .subtext {
+    font-size: 1rem;
+  }
+
+  .row {
+    column-gap: 1rem;
+    padding: 1.5rem 0.25rem;
+  }
+
+  .rowArrow {
+    width: 38px;
+    height: 38px;
+    font-size: 18px;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 374px) {
+  .row {
+    column-gap: 0.75rem;
+  }
+
+  .rowArrow {
+    display: none;
+  }
+}
+
+/* ========== Reduced motion ========== */
+@media (prefers-reduced-motion: reduce) {
+  .row,
+  .rowName,
+  .rowArrow {
+    transition: none;
+  }
+}

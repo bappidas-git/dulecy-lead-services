@@ -1,0 +1,355 @@
+/* ============================================
+   Header Component Styles — Nilachal Infracon
+   Transparent over the hero, solid white on scroll.
+   ============================================ */
+
+/* Header Base */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-sticky);
+  padding: var(--space-3) 0;
+  background: transparent;
+  transition: background var(--transition-base), box-shadow var(--transition-base),
+    padding var(--transition-base), border-color var(--transition-base);
+  border-bottom: 1px solid transparent;
+}
+
+/* Scrolled State — solid white with a subtle border + blur */
+.header.scrolled {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: var(--shadow-soft);
+  padding: var(--space-2) 0;
+}
+
+/* Header Container */
+.headerContainer {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: nowrap;
+}
+
+/* Logo Section */
+.logoSection {
+  flex-shrink: 0;
+}
+
+.logoLink {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.mainLogo {
+  height: 44px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+  transition: opacity var(--transition-base);
+}
+
+/* Desktop Navigation */
+.desktopNav {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+}
+
+.navList {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navLink {
+  position: relative;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  color: rgba(255, 255, 255, 0.92);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+  white-space: nowrap;
+}
+
+.navLink::after {
+  content: "";
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--color-accent);
+  transform: translateX(-50%);
+  transition: width var(--transition-fast);
+  border-radius: var(--radius-full);
+}
+
+.navLink:hover,
+.navLink.active {
+  color: #ffffff;
+}
+
+.navLink:hover::after,
+.navLink.active::after {
+  width: 60%;
+}
+
+/* Once scrolled the header is white — switch text to navy, keep the green
+   accent for hover/active. */
+.header.scrolled .navLink {
+  color: var(--color-slate);
+}
+
+.header.scrolled .navLink:hover,
+.header.scrolled .navLink.active {
+  color: var(--color-accent);
+}
+
+/* Right Section */
+.rightSection {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-shrink: 0;
+}
+
+/* Quiet phone text link */
+.phoneLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  color: rgba(255, 255, 255, 0.92);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+  white-space: nowrap;
+}
+
+.phoneLink:hover {
+  color: #ffffff;
+}
+
+.header.scrolled .phoneLink {
+  color: var(--color-slate);
+}
+
+.header.scrolled .phoneLink:hover {
+  color: var(--color-primary);
+}
+
+.phoneIcon {
+  font-size: 18px;
+}
+
+/* Primary "Request a Quote" CTA — Nilachal green */
+.quoteButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-5);
+  background: var(--color-accent);
+  color: #ffffff;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  text-decoration: none;
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: background var(--transition-fast), transform var(--transition-fast);
+  white-space: nowrap;
+  font-family: inherit;
+}
+
+.quoteButton:hover {
+  background: var(--color-accent-dark);
+  transform: translateY(-1px);
+}
+
+.quoteButton:focus-visible {
+  outline: 2px solid var(--color-accent-dark);
+  outline-offset: 2px;
+}
+
+/* Menu Button (mobile) */
+.menuButton {
+  display: none;
+  padding: var(--space-2);
+  color: #ffffff;
+  transition: color var(--transition-fast);
+}
+
+.header.scrolled .menuButton {
+  color: var(--color-primary);
+}
+
+.menuIcon {
+  font-size: 28px;
+  color: inherit;
+}
+
+/* Mobile Navigation (inline dropdown) */
+.mobileNav {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--color-white);
+  border-top: 1px solid var(--color-border);
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+}
+
+.mobileNavContent {
+  padding: var(--space-4);
+}
+
+.mobileNavList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.mobileNavLink {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--fs-base);
+  font-weight: var(--fw-medium);
+  color: var(--color-primary);
+  text-decoration: none;
+  border-radius: var(--radius-lg);
+  transition: background var(--transition-fast), color var(--transition-fast);
+  /* Button reset */
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+}
+
+.mobileNavLink:hover,
+.mobileNavLink.active {
+  background: var(--color-bg-subtle);
+  color: var(--color-accent);
+}
+
+.mobileNavIcon {
+  font-size: 22px;
+  color: var(--color-slate);
+  transition: color var(--transition-fast);
+}
+
+.mobileNavLink:hover .mobileNavIcon,
+.mobileNavLink.active .mobileNavIcon {
+  color: var(--color-accent);
+}
+
+.mobileNavCTA {
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.mobileQuoteButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-accent);
+  color: #ffffff;
+  font-size: var(--fs-base);
+  font-weight: var(--fw-semibold);
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  font-family: inherit;
+}
+
+.mobileQuoteButton:hover {
+  background: var(--color-accent-dark);
+}
+
+.mobilePhoneLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: transparent;
+  color: var(--color-primary);
+  font-size: var(--fs-base);
+  font-weight: var(--fw-semibold);
+  text-decoration: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.mobilePhoneLink:hover {
+  background: var(--color-bg-subtle);
+  border-color: var(--color-primary);
+}
+
+/* Responsive Styles */
+@media (max-width: 1280px) {
+  .navLink {
+    padding: var(--space-2);
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .desktopNav {
+    display: none;
+  }
+
+  .menuButton {
+    display: flex;
+  }
+
+  .headerContainer {
+    gap: var(--space-3);
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: var(--space-2) 0;
+  }
+
+  .mainLogo {
+    height: 38px;
+  }
+}
+
+/* Focus States */
+.navLink:focus-visible,
+.mobileNavLink:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}

@@ -1,0 +1,34 @@
+{
+  "short_name": "Nilachal",
+  "name": "Nilachal Infracon",
+  "description": "Nilachal Infracon Private Limited — premium building materials (North East Buildmart) and construction services across Nagaon, Assam and Northeast India.",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "16x16 32x32 48x48",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "logo192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "logo512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#16324F",
+  "background_color": "#FFFFFF",
+  "categories": ["business", "shopping"],
+  "lang": "en",
+  "dir": "ltr",
+  "scope": "/",
+  "prefer_related_applications": false
+}

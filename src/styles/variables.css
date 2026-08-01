@@ -1,0 +1,323 @@
+/* ============================================
+   CSS Variables — Nilachal Design System
+   Nilachal Infracon Private Limited
+   "Building Tomorrow, Together."
+   ============================================ */
+
+:root {
+  /* ========== Nilachal Brand Tokens (master palette) ==========
+     Source of truth — use these names in new code. */
+  --color-primary: #16324F;        /* Deep steel navy — headings, header, footer */
+  --color-primary-dark: #0F2438;   /* Darkest navy — footer bg, hero scrim */
+  --color-primary-light: #274B6E;  /* Lighter navy */
+  --color-secondary: #1E7B45;      /* Nilachal green — accents, labels, badges */
+  --color-accent: #1E7B45;         /* Nilachal green — CTAs, highlights, links */
+  --color-accent-dark: #176437;    /* CTA hover */
+  --color-accent-tint: #E8F5EE;    /* Light green wash for chips/backgrounds */
+  --color-success: #1E8E5A;        /* Positive highlights */
+  --color-ink: #101C29;            /* Body headings text */
+  --color-slate: #4A5A6A;          /* Secondary text */
+  --color-bg: #FFFFFF;             /* Page background */
+  --color-bg-subtle: #F5F7FA;      /* Alternating section background */
+  --color-border: #E5EAF0;         /* Thin 1px borders */
+  --color-tint: #F5F7FA;           /* Light card/section backgrounds */
+  --color-text: #101C29;           /* Body text on light */
+  --color-white: #FFFFFF;
+
+  /* ========== Primary Colors (legacy names → Nilachal navy) ========== */
+  --primary-dark: #16324F;
+  --primary-dark-alt: #0F2438;
+  --primary-dark-light: #274B6E;
+  --primary-dark-lighter: #6E86A0;
+
+  /* ========== Accent (legacy `--accent-gold*`) — remapped to navy ==========
+     Older stylesheets used `--accent-gold` for structural accents.
+     We map them all to Nilachal navy so existing CSS references stay valid
+     and the page reads as steel navy. */
+  --accent-gold: #16324F;
+  --accent-gold-light: #274B6E;
+  --accent-gold-dark: #0F2438;
+  --accent-gold-hover: #274B6E;
+  --accent-gold-gradient: linear-gradient(135deg, #16324F 0%, #274B6E 100%);
+  --accent-gold-gradient-reverse: linear-gradient(135deg, #274B6E 0%, #16324F 100%);
+  --accent-gold-gradient-horizontal: linear-gradient(90deg, #16324F 0%, #274B6E 50%, #16324F 100%);
+
+  /* ========== Accent Green — CTAs Only (legacy `--accent-orange`) ========== */
+  --accent-orange: #1E7B45;
+  --accent-orange-light: #2E9A5C;
+  --accent-orange-dark: #176437;
+  --accent-orange-gradient: linear-gradient(135deg, #1E7B45 0%, #2E9A5C 100%);
+  --accent-orange-gradient-reverse: linear-gradient(135deg, #2E9A5C 0%, #1E7B45 100%);
+
+  /* Nilachal green CTA aliases (preferred for new code) */
+  --accent-amber: #1E7B45;
+  --accent-amber-light: #2E9A5C;
+  --accent-amber-dark: #176437;
+  --accent-amber-gradient: linear-gradient(135deg, #1E7B45 0%, #2E9A5C 100%);
+
+  /* ========== Secondary Green (legacy `--accent-red`) ========== */
+  --accent-red: #1E7B45;
+  --accent-red-light: #2E9A5C;
+  --accent-red-dark: #176437;
+
+  /* ========== Neutral Colors ========== */
+  --white: #FFFFFF;
+  --off-white: #FAFBFC;
+  --light-gray: #F5F7FA;
+  --medium-gray: #E5EAF0;
+  --border-gray: #E5EAF0;
+  --text-gray: #4A5A6A;
+  --text-dark-gray: #101C29;
+  --dark-gray: #22344A;
+
+  /* ========== Icon Background Colors ========== */
+  --icon-gold: #16324F;
+  --icon-gold-bg: rgba(22, 50, 79, 0.12);
+  --icon-green: #1E8E5A;
+  --icon-green-bg: rgba(30, 142, 90, 0.15);
+  --icon-purple: #6B3FA0;
+  --icon-purple-bg: rgba(107, 63, 160, 0.15);
+  --icon-orange: #1E7B45;
+  --icon-orange-bg: rgba(30, 123, 69, 0.15);
+  --icon-pink: #1E7B45;
+  --icon-pink-bg: rgba(30, 123, 69, 0.12);
+  --icon-red: #1E7B45;
+  --icon-red-bg: rgba(30, 123, 69, 0.12);
+  --icon-teal: #16324F;
+  --icon-teal-bg: rgba(22, 50, 79, 0.12);
+  --icon-blue: #16324F;
+  --icon-blue-bg: rgba(22, 50, 79, 0.12);
+
+  /* ========== Card Backgrounds ========== */
+  --card-yellow: #E8F5EE;
+  --card-green: #E5F5EC;
+  --card-pink: #FCE4E8;
+  --card-purple: #EFE7F7;
+  --card-orange: #E8F5EE;
+  --card-blue: #EAEEF3;
+  --card-gold-gradient: linear-gradient(135deg, #16324F 0%, #0F2438 100%);
+  --card-dark-gradient: linear-gradient(135deg, #16324F 0%, #274B6E 100%);
+
+  /* ========== Semantic Colors ========== */
+  --success: #1E8E5A;
+  --success-light: #4FB07F;
+  --warning: #E0A100;
+  --warning-light: #F0C24A;
+  --error: #DC2626;
+  --error-light: #EF5350;
+  --info: #16324F;
+  --info-light: #274B6E;
+
+  /* ========== Shadow Colors ========== */
+  --shadow-light: rgba(0, 0, 0, 0.05);
+  --shadow-medium: rgba(0, 0, 0, 0.1);
+  --shadow-dark: rgba(0, 0, 0, 0.15);
+  --shadow-gold: rgba(22, 50, 79, 0.3);
+  --shadow-soft: 0 8px 30px rgba(16, 28, 41, 0.06);      /* elevated-card token */
+  --shadow-card: 0 2px 12px rgba(16, 28, 41, 0.06);
+  --shadow-card-hover: 0 8px 30px rgba(16, 28, 41, 0.10);
+  --shadow-button: 0 4px 14px rgba(30, 123, 69, 0.30);
+  --shadow-button-hover: 0 6px 20px rgba(30, 123, 69, 0.40);
+
+  /* ========== Typography ========== */
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  --font-heading: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+
+  /* Font Weights */
+  --fw-light: 300;
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+  --fw-extrabold: 800;
+
+  /* Font Sizes - Fluid Typography */
+  --fs-xs: clamp(0.7rem, 0.66rem + 0.2vw, 0.8rem);
+  --fs-sm: clamp(0.8rem, 0.74rem + 0.3vw, 0.9rem);
+  --fs-base: clamp(0.9rem, 0.85rem + 0.25vw, 1rem);
+  --fs-md: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
+  --fs-lg: clamp(1.1rem, 1rem + 0.5vw, 1.25rem);
+  --fs-xl: clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem);
+  --fs-2xl: clamp(1.5rem, 1.25rem + 1.25vw, 2rem);
+  --fs-3xl: clamp(1.75rem, 1.4rem + 1.75vw, 2.5rem);
+  --fs-4xl: clamp(2rem, 1.5rem + 2.5vw, 3rem);
+  --fs-5xl: clamp(2.5rem, 1.75rem + 3.75vw, 4rem);
+  --fs-hero: clamp(2.5rem, 2rem + 2.5vw, 4.5rem);
+
+  /* Line Heights */
+  --lh-tight: 1.1;
+  --lh-snug: 1.25;
+  --lh-normal: 1.5;
+  --lh-relaxed: 1.625;
+  --lh-loose: 2;
+
+  /* Letter Spacing */
+  --ls-tight: -0.02em;
+  --ls-normal: 0;
+  --ls-wide: 0.025em;
+  --ls-wider: 0.05em;
+  --ls-widest: 0.1em;
+
+  /* ========== Spacing Scale ========== */
+  --space-0: 0;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-14: 3.5rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --space-32: 8rem;
+  --space-40: 10rem;
+  --space-48: 12rem;
+  --space-64: 16rem;
+
+  /* Section Padding */
+  --section-py: clamp(3rem, 5vw, 6rem);
+  --section-px: clamp(1rem, 3vw, 2rem);
+
+  /* ========== Border Radius ========== */
+  --radius-none: 0;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
+  --radius-full: 9999px;
+
+  /* ========== Borders ========== */
+  --border-thin: 1px solid var(--border-gray);
+  --border-medium: 2px solid var(--border-gray);
+  --border-gold: 2px solid var(--accent-gold);
+  --border-gold-thin: 1px solid var(--accent-gold);
+
+  /* ========== Transitions ========== */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 350ms ease;
+  --transition-slower: 500ms ease;
+  --transition-spring: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition-bounce: 600ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --transition-smooth: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ========== Z-Index Scale ========== */
+  --z-below: -1;
+  --z-base: 0;
+  --z-above: 1;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-fixed: 300;
+  --z-drawer: 400;
+  --z-modal-backdrop: 500;
+  --z-modal: 600;
+  --z-popover: 700;
+  --z-tooltip: 800;
+  --z-toast: 900;
+  --z-max: 9999;
+
+  /* ========== Container Widths ========== */
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+  --container-2xl: 1440px;
+  --container-max: 1600px;
+
+  /* ========== Breakpoints (for reference in JS) ========== */
+  --bp-xs: 480px;
+  --bp-sm: 640px;
+  --bp-md: 768px;
+  --bp-lg: 1024px;
+  --bp-xl: 1280px;
+  --bp-2xl: 1440px;
+
+  /* ========== Header/Navigation ========== */
+  --header-height: 80px;
+  --header-height-scrolled: 70px;
+  --mobile-nav-height: 64px;
+
+  /* ========== Overlays ========== */
+  --overlay-light: rgba(255, 255, 255, 0.8);
+  --overlay-dark: rgba(15, 36, 56, 0.7);
+  --overlay-darker: rgba(15, 36, 56, 0.85);
+  --overlay-gradient: linear-gradient(180deg, rgba(15, 36, 56, 0.9) 0%, rgba(15, 36, 56, 0.4) 100%);
+  --overlay-gradient-reverse: linear-gradient(0deg, rgba(15, 36, 56, 0.9) 0%, rgba(15, 36, 56, 0.2) 100%);
+
+  /* ========== Aspect Ratios ========== */
+  --aspect-square: 1 / 1;
+  --aspect-video: 16 / 9;
+  --aspect-portrait: 3 / 4;
+  --aspect-landscape: 4 / 3;
+  --aspect-wide: 21 / 9;
+
+  /* ========== Animation Durations ========== */
+  --duration-instant: 0ms;
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+  --duration-slower: 750ms;
+  --duration-slowest: 1000ms;
+
+  /* ========== Blur Values ========== */
+  --blur-sm: 4px;
+  --blur-md: 8px;
+  --blur-lg: 16px;
+  --blur-xl: 24px;
+}
+
+/* ========== Admin Panel Colors ==========
+   The admin panel shares the Nilachal design system: deep steel navy
+   (--admin-primary), Nilachal green (--admin-accent), an off-white app
+   background, white cards with thin 1px borders, and the single soft
+   elevation token. Green is used sparingly (primary CTAs + key highlights). */
+:root {
+  --admin-primary: #16324F;
+  --admin-primary-light: #274B6E;
+  --admin-primary-dark: #0F2438;
+  --admin-accent: #1E7B45;
+  --admin-accent-light: #2E9A5C;
+  --admin-accent-dark: #176437;
+  --admin-accent-tint: #E8F5EE;
+  --admin-magenta: #1E7B45;
+  --admin-magenta-light: #2E9A5C;
+  --admin-cyan: #274B6E;
+  --admin-cyan-light: #3A6389;
+  --admin-gradient: linear-gradient(135deg, #16324F 0%, #274B6E 100%);
+  --admin-gradient-accent: linear-gradient(135deg, #16324F 0%, #1E7B45 100%);
+  --admin-bg: #F5F7FA;
+  --admin-card-bg: #FFFFFF;
+  --admin-border: #E5EAF0;
+  --admin-shadow: 0 8px 30px rgba(16, 28, 41, 0.06);
+  --admin-text-primary: #101C29;
+  --admin-text-secondary: #4A5A6A;
+  --admin-text-muted: #8E9BAD;
+  --admin-success: #1E8E5A;
+  --admin-warning: #E0A100;
+  --admin-error: #DC2626;
+  --admin-info: #16324F;
+}
+
+/* ========== Dark Mode Variables (for potential future use) ========== */
+[data-theme="dark"] {
+  --bg-primary: var(--primary-dark);
+  --bg-secondary: var(--primary-dark-alt);
+  --text-primary: var(--white);
+  --text-secondary: var(--off-white);
+}
+
+/* ========== Light Mode Variables ========== */
+[data-theme="light"] {
+  --bg-primary: var(--white);
+  --bg-secondary: var(--off-white);
+  --text-primary: var(--primary-dark);
+  --text-secondary: var(--text-dark-gray);
+}
