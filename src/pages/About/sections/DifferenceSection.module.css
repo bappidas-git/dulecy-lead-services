@@ -1,0 +1,56 @@
+/* ============================================
+   About / Our difference — the per-instance values the
+   mockup set inline on this section (`mockup/about.html`);
+   the grey band, container and heading scale come from the
+   shared layout module + `dulecy.css`.
+   ============================================ */
+
+.head {
+  font-size: clamp(28px, 4.4vw, 50px);
+  line-height: 1.08;
+  max-width: 860px;
+}
+
+.intro {
+  margin: 26px 0 0;
+  max-width: 640px;
+}
+
+/* ========== Perspective cards ========== */
+.cards {
+  margin-top: clamp(32px, 4vw, 48px);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
+  gap: 14px;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 26px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.num {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--red);
+}
+
+.title {
+  font-size: 16.5px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+.closing {
+  margin: 32px 0 0;
+  font-size: 15.5px;
+  font-weight: 600;
+  /* The mockup leaves this inherited; our reset gives <p> 1.625. */
+  line-height: normal;
+}

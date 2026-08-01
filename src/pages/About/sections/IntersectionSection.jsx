@@ -1,0 +1,106 @@
+/* ============================================
+   About / Intersection band — ported 1:1 from `mockup/about.html`
+   --------------------------------------------
+   The page's signature dark band: a parallaxed Unsplash backdrop
+   (`data-parallax="-22"`) under the dual ink gradient, a red glow
+   drifting up from the bottom-left corner (`-10`), then the four
+   stacked display words — alternating solid / outline-stroke, each
+   closed by a red punctuation mark — beside the numbered list.
+   ============================================ */
+
+import React from 'react';
+import {
+  useReveal,
+  useStaggerReveal,
+  useParallax,
+  REVEAL_PRESET,
+  STAGGER_PRESET,
+  parallaxPreset,
+} from '../../../animations';
+import layout from '../../../styles/layout.module.css';
+import styles from './IntersectionSection.module.css';
+
+// Mockup asset — self-hosted in Prompt 12.
+const BAND_BG =
+  'https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2400&auto=format&fit=crop';
+
+// `outline` marks the words drawn as stroke-only text.
+const WORDS = [
+  { word: 'People', mark: ',', outline: false },
+  { word: 'Processes', mark: ',', outline: true },
+  { word: 'Performance', mark: ',', outline: false },
+  { word: '& Priorities', mark: '.', outline: true },
+];
+
+const DIMENSIONS = [
+  { num: '01', label: 'The quality of its people' },
+  { num: '02', label: 'The strength of its processes' },
+  { num: '03', label: 'The visibility of its information' },
+  { num: '04', label: 'The discipline of its leadership decisions' },
+];
+
+const IntersectionSection = () => {
+  const bgRef = useParallax(parallaxPreset(-22));
+  const glowRef = useParallax(parallaxPreset(-10));
+  const kickerRef = useReveal(REVEAL_PRESET);
+  const wordsRef = useStaggerReveal(STAGGER_PRESET);
+  const listRef = useReveal({ ...REVEAL_PRESET, delay: 0.15 });
+
+  return (
+    <section className={layout.sectionDark}>
+      <img
+        ref={bgRef}
+        className={styles.bg}
+        src={BAND_BG}
+        alt=""
+        aria-hidden="true"
+        width="2400"
+        height="1600"
+        decoding="async"
+      />
+      <div className={styles.scrim} aria-hidden="true" />
+      <div ref={glowRef} className={`glow ${styles.glow}`} aria-hidden="true" />
+
+      <div className={`${layout.container} ${styles.inner}`}>
+        <div className={styles.cols}>
+          <div className={styles.colWords}>
+            <p className={styles.kicker} ref={kickerRef}>
+              <span className={styles.dash} aria-hidden="true" />
+              We work at the intersection of
+            </p>
+
+            <div className={styles.stackWords} ref={wordsRef}>
+              {WORDS.map((entry) => (
+                <span
+                  key={entry.word}
+                  className={entry.outline ? styles.outline : undefined}
+                >
+                  {entry.word}
+                  <i>{entry.mark}</i>
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className={styles.colList} ref={listRef}>
+            <p className={styles.intro}>
+              Helping organizations create greater structure, clarity, and
+              control.
+            </p>
+
+            <div className={styles.numlist}>
+              {DIMENSIONS.map((item) => (
+                <div key={item.num}>
+                  <b>{item.num}</b>
+                  <span>{item.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default IntersectionSection;
