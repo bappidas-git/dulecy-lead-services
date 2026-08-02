@@ -20,6 +20,19 @@ import { useGSAP } from '@gsap/react';
 // (including non-browser / SSR) context — registration is a no-op there.
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger, useGSAP);
+
+  // ScrollTrigger snapshots `history.scrollRestoration` when it initialises
+  // and writes that snapshot back on EVERY refresh() — and this module is
+  // imported before any React effect can run. Left alone it therefore pins
+  // the document to the browser's default "auto", so a reload re-applies the
+  // visitor's old offset once the lazy route has grown the page back (on the
+  // short /contact route: straight into the footer). `clearScrollMemory` is
+  // GSAP's supported way to change that snapshot; ScrollManager in
+  // src/App.jsx owns route scrolling from here on.
+  //
+  // public/index.html sets the same mode inline so it also beats the
+  // browser's own restore; this call is what keeps it set.
+  ScrollTrigger.clearScrollMemory('manual');
 }
 
 // Shared easing tokens — `mockup/scripts.js` uses exactly these two.

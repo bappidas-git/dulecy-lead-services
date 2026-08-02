@@ -2,6 +2,31 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+
+    <!-- =========================================
+         Scroll Restoration — claim it before anything else
+         -----------------------------------------
+         This is a lazy-route SPA: on a reload the document is a stub when
+         the browser applies its saved scroll offset, then the route chunk
+         mounts and grows it back. With the default "auto" mode the browser
+         re-applies the pre-reload offset AFTER that growth, landing the
+         visitor mid-page — on the short /contact route that is inside the
+         footer. ScrollManager (src/App.jsx) owns route scrolling instead.
+
+         Deliberately inline, first thing in <head>, for two reasons:
+         1. it beats the browser's own restore, which the main bundle does not,
+         2. gsap/ScrollTrigger caches history.scrollRestoration at import time
+            and writes its cached copy back on every refresh() — so whatever
+            is set here is what GSAP keeps re-asserting. Setting it later
+            (from a React effect) gets silently reverted to "auto".
+         src/animations/gsapSetup.js calls ScrollTrigger.clearScrollMemory
+         ('manual') so GSAP's cached copy agrees with this one and keeps
+         re-asserting it rather than fighting it.
+         ========================================= -->
+    <script>
+      if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+    </script>
+
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" sizes="any" />
     <link
       rel="icon"
