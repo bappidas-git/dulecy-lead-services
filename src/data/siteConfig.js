@@ -25,6 +25,12 @@ export const siteConfig = {
   // that is the asset's immutable delivery path, not a brand string.
   logoIcon: `${CLOUDINARY_BASE}/v1785484838/Dulecy-Logo-Icon_hylrpw.png`,
   social: {}, // fill when the client provides profiles; components must hide empty entries
+  // Studio credit rendered in the footer's legal row. External site, so the
+  // footer opens it in a new tab.
+  developer: {
+    name: 'Assam Digital',
+    url: 'https://assamdigital.com',
+  },
 };
 
 // =========================================

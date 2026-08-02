@@ -121,10 +121,23 @@ const Footer = () => {
         </div>
 
         <div className={styles.legal}>
-          <span>
-            &copy; {new Date().getFullYear()} {siteConfig.legalName}. All rights
-            reserved.
-          </span>
+          <div className={styles.legalMeta}>
+            <span>
+              &copy; {new Date().getFullYear()} {siteConfig.legalName}. All
+              rights reserved.
+            </span>
+            <span className={styles.credit}>
+              Designed &amp; Developed by{' '}
+              <a
+                href={siteConfig.developer.url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {siteConfig.developer.name}
+                <span className="sr-only"> (opens in a new tab)</span>
+              </a>
+            </span>
+          </div>
           <span className={styles.serif}>{siteConfig.tagline}.</span>
         </div>
       </div>
