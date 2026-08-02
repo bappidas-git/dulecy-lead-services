@@ -93,9 +93,17 @@ npm run build      # creates build/`}
           real file, and let the router take it from there.
         </p>
         <h3 className={styles.guideSubtitle}>Apache (cPanel, Hostinger, Cloudways)</h3>
-        <p className={styles.guideParagraph}>
-          Create <code className={styles.guideInlineCode}>.htaccess</code> in the web root:
-        </p>
+        <div className={styles.guideNote}>
+          <strong>Already done for you.</strong> The repository ships{' '}
+          <code className={styles.guideInlineCode}>public/.htaccess</code>, and{' '}
+          <code className={styles.guideInlineCode}>npm run build</code> copies it into{' '}
+          <code className={styles.guideInlineCode}>build/</code> — so uploading the build contents
+          puts the rewrite, caching and hardening rules in the web root automatically. You only
+          need the block below if your host ignores{' '}
+          <code className={styles.guideInlineCode}>.htaccess</code> and you must paste the rules
+          into a vhost config instead. Check the upload actually arrived: FTP clients and ZIP tools
+          frequently hide dotfiles.
+        </div>
         <pre className={styles.guideCode}>
 {`Options -MultiViews
 RewriteEngine On
@@ -390,6 +398,160 @@ REACT_APP_LEADS_ADMIN_KEY="a-long-random-string-you-generated"`}
             </tr>
           </tbody>
         </table>
+      </div>
+
+      {/* Section 8: go-live checklist */}
+      <h2 className={styles.guideTitle}>8. Go-Live Checklist (First Launch)</h2>
+      <div className={styles.guideSection}>
+        <p className={styles.guideParagraph}>
+          Section 7 checks a deploy that already works. This is the <strong>one-time
+          rotate-and-verify run</strong> for pointing the site at its real domain. Work top to
+          bottom — steps 1–3 must happen together, because the admin key is baked into the build.
+        </p>
+        <table className={styles.guideTable}>
+          <thead className={styles.guideTableHead}>
+            <tr>
+              <th>#</th>
+              <th>Do this</th>
+              <th>Confirm it worked</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td className={styles.guideTableCell}>1</td>
+              <td className={styles.guideTableCell}>
+                Set the final{' '}
+                <code className={styles.guideInlineCode}>REACT_APP_ADMIN_USERNAME</code> /{' '}
+                <code className={styles.guideInlineCode}>REACT_APP_ADMIN_PASSWORD</code> and a new{' '}
+                <code className={styles.guideInlineCode}>REACT_APP_LEADS_ADMIN_KEY</code> in{' '}
+                <code className={styles.guideInlineCode}>.env</code>
+              </td>
+              <td className={styles.guideTableCell}>
+                Both differ from the values committed to the repository. Everything in{' '}
+                <code className={styles.guideInlineCode}>.env</code> is versioned in git, so the
+                shipped values must be treated as already public.
+              </td>
+            </tr>
+            <tr>
+              <td className={styles.guideTableCell}>2</td>
+              <td className={styles.guideTableCell}>
+                Align the server key: either set the same value as{' '}
+                <code className={styles.guideInlineCode}>ADMIN_API_KEY</code> in{' '}
+                <code className={styles.guideInlineCode}>api/config.php</code>,{' '}
+                <strong>or delete <code className={styles.guideInlineCode}>config.php</code></strong>{' '}
+                so the committed fallback is used
+              </td>
+              <td className={styles.guideTableCell}>
+                A leftover <code className={styles.guideInlineCode}>config.php</code> from an
+                earlier deploy <strong>overrides everything</strong> and is the single most common
+                cause of a broken launch (section 4).
+              </td>
+            </tr>
+            <tr>
+              <td className={styles.guideTableCell}>3</td>
+              <td className={styles.guideTableCell}>
+                <code className={styles.guideInlineCode}>npm run build</code>
+              </td>
+              <td className={styles.guideTableCell}>
+                Finishes with “Compiled successfully.” The new key is now compiled into the bundle
+                — a build from before step 1 will 401.
+              </td>
+            </tr>
+            <tr>
+              <td className={styles.guideTableCell}>4</td>
+              <td className={styles.guideTableCell}>
+                Upload the <strong>contents</strong> of{' '}
+                <code className={styles.guideInlineCode}>build/</code> to the web root, and make
+                sure <code className={styles.guideInlineCode}>api/</code> is served by PHP
+              </td>
+              <td className={styles.guideTableCell}>
+                <code className={styles.guideInlineCode}>/api/leads.php?action=health</code>{' '}
+                returns <strong>JSON</strong>. If it returns HTML, the rewrite is swallowing{' '}
+                <code className={styles.guideInlineCode}>/api/</code>; if it downloads as a file,
+                PHP is not executing.
+              </td>
+            </tr>
+            <tr>
+              <td className={styles.guideTableCell}>5</td>
+              <td className={styles.guideTableCell}>
+                Confirm the hidden{' '}
+                <code className={styles.guideInlineCode}>.htaccess</code> actually uploaded
+              </td>
+              <td className={styles.guideTableCell}>
+                Enable “show hidden files” in your FTP client / File Manager. Many clients skip
+                dotfiles silently, which breaks every deep link.
+              </td>
+            </tr>
+            <tr>
+              <td className={styles.guideTableCell}>6</td>
+              <td className={styles.guideTableCell}>
+                Open{' '}
+                <code className={styles.guideInlineCode}>/api/leads.php?action=health</code> on the
+                live domain
+              </td>
+              <td className={styles.guideTableCell}>
+                <code className={styles.guideInlineCode}>keySource</code> is the source you
+                intended, <code className={styles.guideInlineCode}>storeWritable: true</code>. Then
+                log into the Admin Panel — if leads load, the keys match.
+              </td>
+            </tr>
+            <tr>
+              <td className={styles.guideTableCell}>7</td>
+              <td className={styles.guideTableCell}>
+                Submit a real test enquiry, find it in the Admin Panel, then delete it
+              </td>
+              <td className={styles.guideTableCell}>
+                Inline “Thank you” on the site; the lead appears on Dashboard and{' '}
+                <code className={styles.guideInlineCode}>/admin/lms</code> within 15s; the count
+                returns to zero after deleting.
+              </td>
+            </tr>
+            <tr>
+              <td className={styles.guideTableCell}>8</td>
+              <td className={styles.guideTableCell}>
+                Deep-link refresh test: open{' '}
+                <code className={styles.guideInlineCode}>/expertise#e05</code> directly and press
+                reload
+              </td>
+              <td className={styles.guideTableCell}>
+                The page loads, item 05 is open and scrolled into view — not a 404.
+              </td>
+            </tr>
+            <tr>
+              <td className={styles.guideTableCell}>9</td>
+              <td className={styles.guideTableCell}>
+                Force HTTPS and one canonical host at the hosting level (redirect{' '}
+                <code className={styles.guideInlineCode}>http://</code> and the bare domain to{' '}
+                <code className={styles.guideInlineCode}>https://www.dulecy.com</code>)
+              </td>
+              <td className={styles.guideTableCell}>
+                All three variants land on the <code className={styles.guideInlineCode}>www</code>{' '}
+                HTTPS URL with a single 301. This must match the{' '}
+                <code className={styles.guideInlineCode}>canonical</code> tags and{' '}
+                <code className={styles.guideInlineCode}>sitemap.xml</code>, or the site competes
+                with itself in search.
+              </td>
+            </tr>
+            <tr>
+              <td className={styles.guideTableCell}>10</td>
+              <td className={styles.guideTableCell}>
+                Submit <code className={styles.guideInlineCode}>sitemap.xml</code> in Google Search
+                Console
+              </td>
+              <td className={styles.guideTableCell}>
+                Verify the property first, then submit{' '}
+                <code className={styles.guideInlineCode}>https://www.dulecy.com/sitemap.xml</code>{' '}
+                — it should report the five public URLs and no errors.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div className={styles.guideNoteWarning}>
+          <strong>Never paste real credentials into a ticket, PR or chat.</strong> They live in{' '}
+          <code className={styles.guideInlineCode}>.env</code> (client side) and{' '}
+          <code className={styles.guideInlineCode}>api/config.php</code> or the server's
+          environment (server side). Refer to where a value lives, not to the value itself.
+        </div>
       </div>
     </div>
   );

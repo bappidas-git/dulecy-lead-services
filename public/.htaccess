@@ -1,0 +1,152 @@
+# ==============================================================================
+# Dulecy Lead Services — Apache configuration
+#
+# This file lives in public/ so `npm run build` copies it verbatim into build/.
+# Upload it with the rest of build/ and it becomes the web-root .htaccess.
+# You do NOT need to hand-write one on the server.
+#
+# It does four things, in this order:
+#   1. Hardening      — no directory listings, no dotfile downloads
+#   2. SPA rewrites   — deep links work, and /api/ is NEVER swallowed
+#   3. Caching        — hashed bundles + imagery cached hard, HTML never
+#   4. Compression    — text assets gzipped
+#
+# Everything is wrapped in <IfModule> where Apache allows it, so a host that
+# is missing mod_headers or mod_deflate degrades instead of returning a 500.
+# ==============================================================================
+
+
+# ------------------------------------------------------------------------------
+# 1. Hardening
+# ------------------------------------------------------------------------------
+
+# No directory listings. Without this, /images/ and /static/js/ would render a
+# browsable index of every file on the server.
+Options -Indexes
+
+# MultiViews makes Apache content-negotiate extensionless URLs — it can resolve
+# /about to some other on-disk file before mod_rewrite ever sees the request,
+# which breaks client-side routing in ways that are very hard to diagnose.
+<IfModule mod_negotiation.c>
+  Options -MultiViews
+</IfModule>
+
+
+# ------------------------------------------------------------------------------
+# 2. SPA rewrites
+# ------------------------------------------------------------------------------
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # --- 2a. Block dotfiles -----------------------------------------------------
+  # Refuses /.env, /.git/config, /.htpasswd and friends if one is ever uploaded
+  # by accident. The negative lookahead keeps /.well-known/ reachable, which
+  # matters: Let's Encrypt HTTP-01 renewal and app-association files live there,
+  # so a blanket dotfile block would silently break SSL renewal.
+  RewriteRule (^|/)\.(?!well-known/) - [F,L]
+
+  # --- 2b. Never rewrite the PHP lead API -------------------------------------
+  # THIS IS THE RULE THAT PROTECTS LEAD CAPTURE. The fallback below sends every
+  # unmatched URL to index.html; without this exclusion it would swallow
+  # /api/leads.php, and the enquiry form would receive an HTML document where it
+  # expects JSON. The form fails silently, the site looks perfectly healthy, and
+  # every enquiry is lost. Matching stops here so Apache hands /api/* to PHP.
+  #
+  # The pattern has no leading slash on purpose: RewriteRule patterns in a
+  # per-directory .htaccess are relative to the directory the file sits in, so
+  # this keeps working if the site is ever deployed under a subdirectory.
+  RewriteRule ^api/ - [L]
+
+  # --- 2c. Tag the long-cache paths -------------------------------------------
+  # mod_rewrite is the portable way to set an env var by URL PATH (<FilesMatch>
+  # can only match filenames). These rules substitute nothing and deliberately
+  # carry no [L] — they only tag the request so the Header directives in
+  # section 3 can key off it, then fall through to the rules below.
+  #
+  # ORDER MATTERS: this must come BEFORE the "serve real files" rule. That rule
+  # ends in [L], which stops rewrite processing — so tagging placed after it
+  # would never run for the very files it is meant to tag, and /static/** would
+  # silently lose its immutable caching.
+  RewriteRule ^static/ - [E=LONG_CACHE:1]
+  RewriteRule ^images/ - [E=LONG_CACHE:1]
+
+  # --- 2d. Serve anything that really exists ----------------------------------
+  # Real files (bundles, images, robots.txt, sitemap.xml) and real directories
+  # are served straight from disk rather than being replaced by index.html.
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # --- 2e. Everything else is a client-side route -----------------------------
+  # /about, /expertise, /industries, /contact, /admin/lms/lead/<id> and the 404
+  # catch-all are owned by React Router, not by files on disk. Serving
+  # index.html for them is what makes a direct visit — or a refresh — work.
+  # QSA preserves the query string so ?utm_source=... survives to the app.
+  RewriteRule ^ index.html [QSA,L]
+</IfModule>
+
+
+# ------------------------------------------------------------------------------
+# 3. Caching
+# ------------------------------------------------------------------------------
+<IfModule mod_headers.c>
+  # /static/** is content-addressed by CRA (main.<hash>.js), so a changed file
+  # always gets a new URL — it is safe to cache forever and skip revalidation.
+  #
+  # /images/** is version-stable rather than hashed: the filenames encode their
+  # width (hero-home-1920.webp) and are only replaced deliberately. If you ever
+  # swap an image's CONTENT, ship it under a new filename — an immutable
+  # response will not be re-fetched for a year.
+  Header set Cache-Control "public, max-age=31536000, immutable" env=LONG_CACHE
+
+  # index.html must never be cached: it carries the hashed bundle filenames, so
+  # a stale copy pins visitors to a previous deploy's JavaScript. This also
+  # covers the SPA fallback, which serves index.html for every client route.
+  <FilesMatch "\.html$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+
+  # The API sets its own `Cache-Control: no-store` in leads.php (a cached list
+  # response would leak stale — or unauthenticated — lead data, and a cached 401
+  # would pin the admin panel broken). Restated here so an intermediate proxy
+  # cannot be talked out of it by an upstream default.
+  <FilesMatch "\.php$">
+    Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+  </FilesMatch>
+</IfModule>
+
+# Fallback for hosts that ship mod_expires but not mod_headers. Expires is
+# coarser (no `immutable`) but still keeps repeat visits off the network.
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css                "access plus 1 year"
+  ExpiresByType application/javascript  "access plus 1 year"
+  ExpiresByType text/javascript         "access plus 1 year"
+  ExpiresByType image/webp              "access plus 1 year"
+  ExpiresByType image/jpeg              "access plus 1 year"
+  ExpiresByType image/png               "access plus 1 year"
+  ExpiresByType image/svg+xml           "access plus 1 year"
+  ExpiresByType image/x-icon            "access plus 1 year"
+  ExpiresByType font/woff2              "access plus 1 year"
+  ExpiresByType text/html               "access plus 0 seconds"
+</IfModule>
+
+
+# ------------------------------------------------------------------------------
+# 4. Compression
+# ------------------------------------------------------------------------------
+# The JavaScript bundle is roughly a third of its size gzipped, which is the
+# single largest transfer win available at the hosting layer. Images are already
+# compressed formats and are deliberately left out.
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html
+  AddOutputFilterByType DEFLATE text/css
+  AddOutputFilterByType DEFLATE text/plain
+  AddOutputFilterByType DEFLATE text/xml
+  AddOutputFilterByType DEFLATE application/javascript
+  AddOutputFilterByType DEFLATE text/javascript
+  AddOutputFilterByType DEFLATE application/json
+  AddOutputFilterByType DEFLATE application/xml
+  AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>

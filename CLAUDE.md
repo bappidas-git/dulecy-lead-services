@@ -96,7 +96,14 @@ pass the untransformed `siteConfig.logo*` values to SEO schemas.
 - `src/admin/` — the admin panel (components, pages, context, utils).
 - `public/` — `index.html` (static SEO layer + splash), `manifest.json`,
   `robots.txt`, `sitemap.xml`, generated icons, `images/` (self-hosted photos
-  and icons), and `api/`.
+  and icons), `.htaccess`, and `api/`.
+- `public/.htaccess` — the Apache config, copied into `build/` by the build. SPA
+  rewrite **excluding `^api/`** (a blanket fallback would hand `index.html` to
+  `/api/leads.php` and lose every enquiry silently), immutable caching for
+  `/static/**` + `/images/**`, `no-cache` on `index.html`, `Options -Indexes`,
+  and a dotfile block that spares `/.well-known/` so ACME renewal keeps working.
+  Rule order matters: the `LONG_CACHE` tagging must precede the file-exists rule,
+  which ends in `[L]`.
 - `public/api/` — `leads.php` (the shared lead store) + `config.example.php`.
 - `scripts/` — `generate-icons.js`, `generate-og.js`, `generate-images.js`.
 - `mockup/` — the design contract. `prompts/` — the rebuild record. Neither is
