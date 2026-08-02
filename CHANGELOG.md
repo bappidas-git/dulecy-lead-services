@@ -183,6 +183,28 @@ lead-storage pipeline unchanged.
 
 ### 14 — Production readiness & final QA
 
-Not yet run — see `prompts/14-production-readiness-final-qa.md` for the
-remaining scope (hosting config and `.htaccess`, end-to-end lead test, the full
-QA matrix, sign-off).
+**Added**
+- `public/.htaccess` — the Apache configuration, copied into `build/` by
+  `npm run build` so a normal upload installs it. Carries the SPA rewrite with
+  an `^api/` exclusion (a blanket fallback would serve `index.html` to
+  `/api/leads.php` and lose every enquiry silently), immutable caching for
+  `/static/**` and `/images/**`, `no-cache` for `index.html`, `Options -Indexes`
+  and a dotfile block that deliberately spares `/.well-known/` so Let's Encrypt
+  renewal keeps working. Every rule is commented with the reason it exists.
+- A first-launch **go-live checklist** in the admin Deployment guide: rotate the
+  admin password and leads key, align or delete `api/config.php`, rebuild,
+  upload, confirm `action=health` returns JSON, run a real test lead, verify
+  deep-link refresh, force the `https` + `www` canonical host, submit the
+  sitemap.
+
+**Changed**
+- The Deployment guide no longer tells operators to hand-write `.htaccess`; it
+  now documents the shipped file and warns that FTP clients routinely skip
+  dotfiles. `README.md` gained the matching pointer.
+
+**Fixed**
+- Ordering bug in the first draft of `public/.htaccess`: the `LONG_CACHE`
+  tagging rules sat *after* the "serve real files" rule, which ends in `[L]` and
+  stops rewrite processing — so `/static/**` and `/images/**` would never have
+  been tagged and the immutable `Cache-Control` header would never have applied.
+  Caught by QA before merge; the tagging now runs first.

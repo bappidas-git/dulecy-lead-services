@@ -192,8 +192,18 @@ Rotation runbook: [CUSTOMIZATION_GUIDE.md](CUSTOMIZATION_GUIDE.md#8-rotating-adm
   series-wide conventions (historical record — do not edit)
 
 Deployment steps (hosting requirements, SPA rewrite rules, asset caching,
-post-deploy checks) live in the admin panel's own **Guidelines → Deployment**
-tab (`/admin/guideline`), which is the copy the site operator sees.
+post-deploy checks and the **first-launch go-live checklist**) live in the admin
+panel's own **Guidelines → Deployment** tab (`/admin/guideline`), which is the
+copy the site operator sees.
+
+The Apache configuration is committed as **`public/.htaccess`** and copied into
+`build/` by `npm run build`, so a normal upload installs it — there is nothing to
+hand-write on the server. It carries the SPA rewrite (with the `^api/` exclusion
+that keeps `/api/leads.php` reachable), long-lived immutable caching for
+`/static/**` and `/images/**`, `no-cache` for `index.html`, and basic hardening.
+Two things to watch when uploading: many FTP clients hide dotfiles and will skip
+it silently, and hosts that ignore `.htaccess` need the same rules pasted into
+the vhost config instead.
 
 ## License
 

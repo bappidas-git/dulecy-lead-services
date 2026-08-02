@@ -1,2 +1,10 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Server-side config must keep LF endings regardless of the checkout platform.
+# These files are uploaded verbatim to a Linux host: Apache parses .htaccess
+# line by line, and a stray CR can end up inside a directive's last value or
+# flag list. Checking them out with CRLF on Windows and uploading that copy is
+# an easy way to break rewrites in a way that is very hard to spot.
+.htaccess text eol=lf
+*.php text eol=lf
