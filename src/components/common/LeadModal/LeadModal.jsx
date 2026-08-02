@@ -85,6 +85,11 @@ const LeadModal = ({ isOpen, onClose, source = 'general', serviceInterest = '' }
       top: body.style.top,
       width: body.style.width,
     };
+    // The route the offset above was measured on. `ModalContext` closes the
+    // modal on navigation, so normally this still matches on release — but a
+    // back/forward gesture can also change the route out from under an open
+    // modal, and then `scrollY` describes a page that is no longer rendered.
+    const lockedRoute = window.location.pathname + window.location.search;
 
     body.style.overflow = 'hidden';
     body.style.position = 'fixed';
@@ -97,7 +102,15 @@ const LeadModal = ({ isOpen, onClose, source = 'general', serviceInterest = '' }
       body.style.position = previous.position;
       body.style.top = previous.top;
       body.style.width = previous.width;
-      window.scrollTo(0, scrollY);
+
+      // Only put the visitor back where they were if "where they were" still
+      // exists. Replaying the offset onto a different — and usually shorter —
+      // route drops them wherever it clamps to, which on /contact is the
+      // bottom of the document: the footer. There, ScrollManager owns the
+      // position and has already put them at the top.
+      if (window.location.pathname + window.location.search === lockedRoute) {
+        window.scrollTo(0, scrollY);
+      }
       scheduleRefresh();
     };
   }, [isOpen]);
