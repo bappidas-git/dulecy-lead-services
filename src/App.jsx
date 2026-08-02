@@ -10,7 +10,7 @@
    (`MobileMenu`) and the global enquiry modal (`LeadModal`).
    ============================================ */
 
-import React, { Suspense, lazy, useEffect, memo } from 'react';
+import React, { Suspense, lazy, useEffect, useLayoutEffect, memo } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { CircularProgress, Skeleton, Box } from '@mui/material';
 
@@ -207,6 +207,71 @@ const jumpToTop = () => {
   }
 };
 
+// `useLayoutEffect` is the whole point of the reset below, but React warns
+// when it runs without a DOM. The app is client-only (CRA), so this guard is
+// purely so the module stays importable from a Node test renderer.
+const useIsomorphicLayoutEffect =
+  typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+
+// How long to keep holding the incoming route at the top (ms). Long enough
+// to cover a lazy chunk mounting plus its fonts and images laying out; short
+// enough that it is over before anyone reaches for the scrollbar.
+const SETTLE_MS = 1000;
+
+// Events that mean the *visitor* wants to move. A programmatic scroll — ours,
+// or the browser re-clamping the offset when the document shrinks — fires
+// `scroll` but none of these, so they are what tells the settle pass below to
+// stop re-asserting the top and get out of the way.
+const USER_SCROLL_EVENTS = ['wheel', 'touchstart', 'keydown', 'pointerdown'];
+
+/**
+ * Hold the document at the top until the incoming route has settled.
+ *
+ * A route commits before its lazy chunk's images and fonts have laid out, and
+ * `<Suspense>` can commit its fallback in a separate, shorter commit first —
+ * so the document height keeps changing for several frames after the
+ * navigation. Every one of those changes makes the browser re-clamp the
+ * scroll offset, and on a short route the clamp lands in the footer. Watch
+ * the document box and re-assert the top on each change, until the visitor
+ * actually reaches for the page (or the settle window closes).
+ *
+ * @returns {Function} cancel — stops the pass; use as effect cleanup.
+ */
+const pinToTopUntilSettled = () => {
+  if (typeof window === 'undefined') return () => {};
+
+  let observer = null;
+  let timer = 0;
+  let stopped = false;
+
+  const stop = () => {
+    if (stopped) return;
+    stopped = true;
+    if (observer) observer.disconnect();
+    window.clearTimeout(timer);
+    USER_SCROLL_EVENTS.forEach((type) =>
+      window.removeEventListener(type, stop)
+    );
+  };
+
+  if (typeof ResizeObserver === 'function') {
+    // `documentElement` is height:auto, so its box tracks the document — this
+    // fires on exactly the height changes that trigger a re-clamp. It also
+    // fires once on observe, which the scroll check below makes a no-op.
+    observer = new ResizeObserver(() => {
+      if (!stopped && window.scrollY !== 0) jumpToTop();
+    });
+    observer.observe(document.documentElement);
+  }
+
+  timer = window.setTimeout(stop, SETTLE_MS);
+  USER_SCROLL_EVENTS.forEach((type) =>
+    window.addEventListener(type, stop, { passive: true })
+  );
+
+  return stop;
+};
+
 const ScrollManager = () => {
   const location = useLocation();
 
@@ -217,8 +282,25 @@ const ScrollManager = () => {
   // /contact. Keyed on the pathname, that click changed neither dependency,
   // so the effect never re-ran and left them parked exactly where they had
   // clicked from: inside the footer.
-  useEffect(() => {
-    if (!location.hash) jumpToTop();
+  //
+  // A LAYOUT effect, not a passive one. Passive effects flush after the
+  // browser has painted, so the incoming route always got at least one
+  // painted frame at the *outgoing* scroll offset. React clamps nothing —
+  // the browser does: when the new page is shorter than that offset, the
+  // offset is clamped to the new maximum, and on the shortest route on the
+  // site that maximum IS the footer. Arriving on /contact from anywhere
+  // scrolled past ~1900px therefore painted the footer first. On a fast
+  // desktop that is one subliminal frame; on a phone, where React yields for
+  // hundreds of milliseconds while the route chunk mounts, it is the page
+  // visibly "opening in the footer" before snapping to the top. Running it
+  // in the commit phase means the clamped position is never painted at all.
+  //
+  // This also covers the first paint of the session (`location.key` is set on
+  // mount too), which is why App no longer duplicates the reset.
+  useIsomorphicLayoutEffect(() => {
+    if (location.hash) return undefined;
+    jumpToTop();
+    return pinToTopUntilSettled();
   }, [location.key, location.hash]);
 
   // A hash scrolls to its target instead — polling while lazy
@@ -262,17 +344,13 @@ const App = () => {
     }
   }, []);
 
-  // Scroll restoration is manual — ScrollManager owns route scrolling. The
-  // mode itself is claimed in public/index.html and re-asserted by
-  // src/animations/gsapSetup.js; setting it from here would be both too late
-  // to beat the browser's restore and immediately reverted by the next
-  // ScrollTrigger.refresh(). This only covers the first paint, for engines
-  // that ignore `scrollRestoration` altogether.
-  useEffect(() => {
-    if (!window.location.hash) {
-      jumpToTop();
-    }
-  }, []);
+  // Scroll restoration is manual — ScrollManager owns route scrolling, first
+  // paint included. The mode itself is claimed in public/index.html and
+  // re-asserted by src/animations/gsapSetup.js; setting it from here would be
+  // both too late to beat the browser's restore and immediately reverted by
+  // the next ScrollTrigger.refresh(). The first-paint reset that used to live
+  // here is gone: ScrollManager's layout effect runs on mount as well, and
+  // runs before paint rather than after it.
 
   return (
     <BrowserRouter>
