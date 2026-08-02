@@ -44,21 +44,34 @@ const getLeadsChannel = () => {
 };
 
 /**
- * Notify every admin view (this tab and other tabs/windows of the same
- * browser) that the lead store changed, so they reload without waiting for the
- * next server poll.
+ * Notify views in THIS tab that the lead store changed. Safe to fire the moment
+ * a write updates the cache optimistically — every listener here reads that
+ * same cache, so there is nothing to wait for.
  */
 const notifyLeadsChanged = () => {
-  const channel = getLeadsChannel();
-  if (channel) {
-    try {
-      channel.postMessage({ type: "leads-changed", at: Date.now() });
-    } catch (err) {
-      /* ignore — fall back to the DOM event below */
-    }
-  }
   if (typeof window !== "undefined") {
     window.dispatchEvent(new CustomEvent("lp:leads-changed"));
+  }
+};
+
+/**
+ * Notify OTHER tabs/windows of this browser.
+ *
+ * **Call this only after the server write has landed.** A sibling tab reacts to
+ * the broadcast by re-syncing from the server (its own cache is a separate
+ * per-tab copy and cannot know about our write). Broadcasting before the write
+ * is durable makes that sibling fetch a snapshot that predates the change and
+ * render stale data — and because the broadcast has already been consumed,
+ * nothing re-triggers it until that tab's next 15s poll or focus sync. That
+ * race is exactly what made cross-tab updates look broken.
+ */
+const broadcastLeadsChanged = () => {
+  const channel = getLeadsChannel();
+  if (!channel) return;
+  try {
+    channel.postMessage({ type: "leads-changed", at: Date.now() });
+  } catch (err) {
+    /* ignore — sibling tabs still converge on their poll / focus sync */
   }
 };
 
@@ -66,19 +79,49 @@ const notifyLeadsChanged = () => {
  * Subscribe an admin page to lead-store changes: a mutation in this tab
  * (`lp:leads-changed`) or a BroadcastChannel message from another window of the
  * same browser. Returns an unsubscribe function.
+ *
+ * The two channels are NOT equivalent, and treating them as one was a real bug:
+ *
+ * - Same tab (`lp:leads-changed`) — the write already updated `_cache`
+ *   optimistically, so the handler can re-read it immediately. No round-trip.
+ * - Another tab (BroadcastChannel) — `_cache` is per-JS-context, so THIS tab's
+ *   copy knows nothing about what the sibling wrote. Calling the handler
+ *   straight away just re-reads our own stale copy and renders the same thing,
+ *   which is exactly what used to happen: a note added in one tab stayed
+ *   invisible in the other until it regained focus or its 15s poll ran. So we
+ *   pull the server's merged record first, then re-render.
+ *
+ * The broadcast path is deliberately NOT gated on `document.visibilityState`
+ * (unlike the pollers, which skip work in background tabs). A broadcast is
+ * proof a sibling tab in this browser just wrote something; a hidden tab that
+ * skipped the sync would keep showing stale data at the instant it is focused,
+ * which is precisely when someone is looking at it.
  */
 export const onLeadsChanged = (handler) => {
   if (typeof window === "undefined") return () => {};
 
   const channel = getLeadsChannel();
+  let cancelled = false;
+
+  // One list request per broadcast: the admin routes are mutually exclusive, so
+  // exactly one page is ever mounted and there is only one subscriber to serve.
   const onMessage = (e) => {
-    if (e?.data?.type === "leads-changed") handler();
+    if (e?.data?.type !== "leads-changed") return;
+    syncLeadsFromServer().then((result) => {
+      // Unsubscribed while the request was in flight — the view is gone.
+      if (cancelled) return;
+      // On a failed sync the cache is untouched, so re-rendering would show the
+      // same stale data. Leave it to the poll/focus sync to recover.
+      if (result?.error) return;
+      handler();
+    });
   };
 
   if (channel) channel.addEventListener("message", onMessage);
   window.addEventListener("lp:leads-changed", handler);
 
   return () => {
+    cancelled = true;
     if (channel) channel.removeEventListener("message", onMessage);
     window.removeEventListener("lp:leads-changed", handler);
   };
@@ -400,7 +443,9 @@ export const updateLeadStatus = (id, status) => {
 
   notifyLeadsChanged();
 
-  // Mirror to the shared server store so other admins/devices see the change.
+  // Mirror to the shared server store so other admins/devices see the change,
+  // and only tell sibling tabs once it is actually there (see
+  // broadcastLeadsChanged).
   callLeadsApi("update", {
     lead_id: id,
     patch: {
@@ -408,7 +453,7 @@ export const updateLeadStatus = (id, status) => {
       activity: updated.activity,
       updated_at: updated.updated_at,
     },
-  });
+  }).then(broadcastLeadsChanged);
 
   return updated;
 };
@@ -438,7 +483,8 @@ export const addLeadNote = (id, noteText) => {
 
   notifyLeadsChanged();
 
-  // Mirror to the shared server store so notes persist across admins.
+  // Mirror to the shared server store so notes persist across admins, and only
+  // tell sibling tabs once it is actually there (see broadcastLeadsChanged).
   callLeadsApi("update", {
     lead_id: id,
     patch: {
@@ -446,7 +492,7 @@ export const addLeadNote = (id, noteText) => {
       activity: updated.activity,
       updated_at: updated.updated_at,
     },
-  });
+  }).then(broadcastLeadsChanged);
 
   return updated;
 };
@@ -457,8 +503,8 @@ export const addLeadNote = (id, noteText) => {
 export const deleteLead = (id) => {
   _cache = _cache.filter((l) => l.lead_id !== id);
   notifyLeadsChanged();
-  // Mirror delete to the shared server store.
-  callLeadsApi("delete", { lead_ids: [id] });
+  // Mirror delete to the shared server store, then tell sibling tabs.
+  callLeadsApi("delete", { lead_ids: [id] }).then(broadcastLeadsChanged);
   return true;
 };
 
@@ -470,7 +516,7 @@ export const deleteLeads = (ids) => {
   _cache = _cache.filter((l) => !idSet.has(l.lead_id));
   notifyLeadsChanged();
   if (ids.length > 0) {
-    callLeadsApi("delete", { lead_ids: ids });
+    callLeadsApi("delete", { lead_ids: ids }).then(broadcastLeadsChanged);
   }
   return true;
 };
@@ -637,7 +683,10 @@ export const importLeadsCSV = async (csvText) => {
         )
       );
     }
+    // Every create has already been awaited above, so the server is up to date
+    // and it is safe to tell sibling tabs to re-sync.
     notifyLeadsChanged();
+    broadcastLeadsChanged();
   }
 
   return { imported, duplicates };
