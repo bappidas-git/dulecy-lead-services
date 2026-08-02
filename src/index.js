@@ -1,5 +1,5 @@
 /* ============================================
-   Entry Point — Dulecy Lead Services
+   Entry Point — Dulcey Lead Services
    Official Website
 
    Performance optimized with:
@@ -21,7 +21,7 @@ import './styles/variables.css';
 import './styles/global.css';
 import './styles/animations.css';
 import './styles/responsive.css';
-import './styles/dulecy.css';
+import './styles/dulcey.css';
 
 // App Component
 import App from './App';
@@ -134,7 +134,7 @@ reportWebVitals(handleWebVitals);
 
 if (process.env.NODE_ENV === 'development') {
   // Log when app is ready
-  console.log('%c Dulecy Lead Services — Official Website ', 'background: #0B0B0C; color: #FFFFFF; padding: 10px 20px; font-size: 14px; font-weight: bold; border-radius: 4px;');
+  console.log('%c Dulcey Lead Services — Official Website ', 'background: #0B0B0C; color: #FFFFFF; padding: 10px 20px; font-size: 14px; font-weight: bold; border-radius: 4px;');
   console.log('%c Development Mode ', 'background: #4CAF50; color: white; padding: 5px 10px; font-size: 12px; border-radius: 4px;');
 }
 

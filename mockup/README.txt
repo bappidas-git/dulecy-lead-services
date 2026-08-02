@@ -1,4 +1,4 @@
-Dulecy Lead Services — Static Website
+Dulcey Lead Services — Static Website
 =====================================
 Files:
   index.html       Home

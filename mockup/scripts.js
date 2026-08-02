@@ -1,4 +1,4 @@
-/* Dulecy Lead Services — scripts.js */
+/* Dulcey Lead Services — scripts.js */
 (function () {
   'use strict';
 

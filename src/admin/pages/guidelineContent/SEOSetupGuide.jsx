@@ -6,7 +6,7 @@ const SEOSetupGuide = ({ styles }) => {
     <div>
       <div className={styles.guideNoteWarning}>
         <strong>Status:</strong> the SEO layer is rewritten for{' '}
-        <code className={styles.guideInlineCode}>dulecy.com</code> in a later step of the rebuild.
+        <code className={styles.guideInlineCode}>dulceyleadservices.com</code> in a later step of the rebuild.
         This page describes the setup as it will ship — the file paths, routes and rules below are
         final; only the copy inside them is still being filled in.
       </div>

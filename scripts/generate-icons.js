@@ -1,7 +1,7 @@
 /* ============================================
    generate-icons.js — Favicons & PWA icons
    --------------------------------------------
-   Regenerates the site's favicon / PWA / Apple-touch icons from the Dulecy
+   Regenerates the site's favicon / PWA / Apple-touch icons from the Dulcey
    *icon* logo (the standalone "D" mark). That asset ships with a white circle
    baked onto a transparent square canvas, so the circle wastes most of the
    frame at 16–32px. We therefore flatten it onto white and trim the white
@@ -64,7 +64,7 @@ async function squareIcon(markBuf, size, widthPct, background) {
 }
 
 async function main() {
-  console.log("Fetching Dulecy icon logo…");
+  console.log("Fetching Dulcey icon logo…");
   const logo = await fetchLogo();
   const mark = await extractMark(logo);
   const m = await sharp(mark).metadata();

@@ -1,12 +1,12 @@
 /* ============================================
-   MUI Theme Configuration — Dulecy Design System
-   Dulecy Lead Services
+   MUI Theme Configuration — Dulcey Design System
+   Dulcey Lead Services
    "Beyond Business Support"
    ============================================ */
 
 import { createTheme, alpha } from '@mui/material/styles';
 
-// Color palette — Dulecy ink / red.
+// Color palette — Dulcey ink / red.
 // Matches the tokens in src/styles/variables.css.
 const colors = {
   primary: {
@@ -21,7 +21,7 @@ const colors = {
     dark: '#A80E1E',
     contrastText: '#FFFFFF',
   },
-  // Dulecy red — primary CTA buttons and key highlights.
+  // Dulcey red — primary CTA buttons and key highlights.
   accent: {
     main: '#D5192E',
     light: '#F0293E',
@@ -39,7 +39,7 @@ const colors = {
     900: '#45040B',
   },
   // Legacy alias — many components still reference `palette.orange.*`.
-  // Mapped to Dulecy red so CTAs render correctly without sweeping renames.
+  // Mapped to Dulcey red so CTAs render correctly without sweeping renames.
   orange: {
     main: '#D5192E',
     light: '#F0293E',
@@ -55,7 +55,7 @@ const colors = {
     800: '#660711',
     900: '#45040B',
   },
-  // Legacy alias — `palette.navy.*` now resolves to the Dulecy ink ramp.
+  // Legacy alias — `palette.navy.*` now resolves to the Dulcey ink ramp.
   navy: {
     main: '#0B0B0C',
     light: '#2A2A2E',
@@ -440,7 +440,7 @@ const theme = createTheme({
             transform: 'translateY(-2px)',
           },
         },
-        // CTA button — Dulecy red gradient with white text.
+        // CTA button — Dulcey red gradient with white text.
         containedPrimary: {
           background: gradients.brand,
           color: colors.accent.contrastText,

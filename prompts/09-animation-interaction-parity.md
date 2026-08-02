@@ -132,6 +132,6 @@ reduced motion), with no ScrollTrigger leaks and a green build.
 
 ## 11. Report & PR (mandatory)
 
-Branch `dulecy/09-animation-parity`; commit, push, open a **draft PR**. Report
+Branch `dulcey/09-animation-parity`; commit, push, open a **draft PR**. Report
 a concise summary (deviations found → fixed, audit table) and the **PR link**
 (or branch + commit SHAs if PR creation is unavailable).

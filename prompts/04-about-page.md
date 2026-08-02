@@ -41,7 +41,7 @@ Sections, in order (all copy verbatim from the mockup):
    (`clamp(34px,7vw,88px)`, line-height 1.05): `Built on experience.` <br>
    `*Defined by trust.*` (serif italic + gradient text); lede paragraph
    ("Business success is rarely determined by one function alone…"); bold
-   closing line `Dulecy Lead Services brings these dimensions together.`
+   closing line `Dulcey Lead Services brings these dimensions together.`
    (`clamp(19px,2.2vw,24px)`, 700). Hero-intro animation; reduced hero bottom
    padding per the mockup's inline style (`clamp(60px,8vw,90px)`).
 2. **Intersection band (dark)** — full-bleed `.section--dark` with:
@@ -137,6 +137,6 @@ animated per spec, with a green build.
 
 ## 11. Report & PR (mandatory)
 
-Branch `dulecy/04-about-page`; commit, push, open a **draft PR**. Report a
+Branch `dulcey/04-about-page`; commit, push, open a **draft PR**. Report a
 concise summary and the **PR link** (or branch + commit SHAs if PR creation is
 unavailable).

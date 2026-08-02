@@ -41,9 +41,9 @@ const generateUUID = () => {
  * Submit lead data to the shared server-side store.
  * @param {Object} leadData - The form data to submit
  * @param {string} leadData.name - Enquirer's full name
- * @param {string} leadData.email - Email address (required as of the Dulecy rebuild)
+ * @param {string} leadData.email - Email address (required as of the Dulcey rebuild)
  * @param {string} [leadData.mobile] - Mobile number, 10 digits (optional as of the
- *   Dulecy rebuild — the server's duplicate check only applies when it is present)
+ *   Dulcey rebuild — the server's duplicate check only applies when it is present)
  * @param {string} [leadData.organization] - Company / institution (optional; added
  *   in Prompt 07. The store is schemaless, so no PHP change was needed)
  * @param {string} leadData.service_interest - Selected interest (legacy key — value is

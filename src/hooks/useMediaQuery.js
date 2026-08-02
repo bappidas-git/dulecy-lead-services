@@ -1,5 +1,5 @@
 /* ============================================
-   useMediaQuery Hook — Dulecy Lead Services
+   useMediaQuery Hook — Dulcey Lead Services
    Custom hook for responsive design
    ============================================ */
 

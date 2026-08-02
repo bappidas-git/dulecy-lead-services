@@ -81,7 +81,7 @@ Build in this order, copy from `mockup/index.html`:
 1. **Hero** — background Unsplash image
    (`https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2400&auto=format&fit=crop`,
    `object-position:center 30%`, opacity .5, parallax −16) under a double
-   white-gradient scrim; floating Dulecy icon logo top-right (`opacity:.07`,
+   white-gradient scrim; floating Dulcey icon logo top-right (`opacity:.07`,
    `floaty` 9s keyframe); badge pill with red `pulse-dot` + text `Beyond
    Business Support`; h1 `.display` (`clamp(36px,8.4vw,104px)`, weight 800,
    tracking −.035em, line-height 1.04): `We don't just offer services.` line
@@ -98,7 +98,7 @@ Build in this order, copy from `mockup/index.html`:
 3. **Who we are** — `.split` layout: aside eyebrow `Who we are`, section-head
    `Built on experience. Defined by trust.`, gradient `.rule` bar
    (useLineReveal); main: two paragraphs (verbatim) + `link-more` `More about
-   Dulecy →` to `/about` (circled-arrow icon style).
+   Dulcey →` to `/about` (circled-arrow icon style).
 4. **Belief band (dark)** — `.section--dark` centered, red radial glow
    top-right (parallax −10); eyebrow `Our approach is grounded in a simple
    belief`; large statement (`clamp(26px,4.4vw,48px)`, 600, −.025em) ending
@@ -188,6 +188,6 @@ with data-driven expertise/industry lists shared for later pages.
 
 ## 11. Report & PR (mandatory)
 
-Branch `dulecy/03-home-page`; commit, push, open a **draft PR**. Report a
+Branch `dulcey/03-home-page`; commit, push, open a **draft PR**. Report a
 concise summary (sections built, hooks/data added, parity notes) and the
 **PR link** (or branch + commit SHAs if PR creation is unavailable).

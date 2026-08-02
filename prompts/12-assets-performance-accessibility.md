@@ -151,7 +151,7 @@ identical to the mockup.
 
 ## 11. Report & PR (mandatory)
 
-Branch `dulecy/12-assets-performance`; commit, push, open a **draft PR**.
+Branch `dulcey/12-assets-performance`; commit, push, open a **draft PR**.
 Report a concise summary (assets migrated, metric tables, a11y fixes,
 sanctioned deviations) and the **PR link** (or branch + commit SHAs if PR
 creation is unavailable).

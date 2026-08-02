@@ -4,8 +4,8 @@
    Builds public/og-image.png (1200×630) — the image shown when the site is
    shared on Facebook, LinkedIn, WhatsApp, Slack, X, Google Discover, etc.
 
-   Composition follows the Dulecy design system: white background, ink
-   (#0B0B0C) headline, a Dulecy-red accent rule, the color logo lockup
+   Composition follows the Dulcey design system: white background, ink
+   (#0B0B0C) headline, a Dulcey-red accent rule, the color logo lockup
    top-left, and the secondary tagline + site URL along the bottom. Text is
    drawn via an SVG layer; the logo is composited on top.
 
@@ -30,7 +30,7 @@ const W = 1200;
 const H = 630;
 const WHITE = "#FFFFFF";
 const INK = "#0B0B0C"; // --ink
-const RED = "#D5192E"; // --red (Dulecy red)
+const RED = "#D5192E"; // --red (Dulcey red)
 const SLATE = "#4A4A4F"; // --grey-2
 const FONT = "Liberation Sans, DejaVu Sans, Arial, Helvetica, sans-serif";
 
@@ -48,18 +48,18 @@ function buildSvg() {
   <!-- red accent rule above the headline -->
   <rect x="80" y="322" width="62" height="6" rx="3" fill="${RED}" />
   <text x="80" y="406" font-family="${FONT}" font-size="66" font-weight="700"
-        letter-spacing="-2" fill="${INK}">Dulecy Lead Services</text>
+        letter-spacing="-2" fill="${INK}">Dulcey Lead Services</text>
   <text x="80" y="484" font-family="${FONT}" font-size="66" font-weight="700"
         letter-spacing="-2" fill="${RED}">Beyond Business Support</text>
   <text x="80" y="574" font-family="${FONT}" font-size="26" font-weight="500"
         fill="${SLATE}">Your Partner in Business Leadership</text>
   <text x="${W - 80}" y="574" text-anchor="end" font-family="${FONT}"
-        font-size="26" font-weight="600" fill="${INK}">www.dulecy.com</text>
+        font-size="26" font-weight="600" fill="${INK}">www.dulceyleadservices.com</text>
 </svg>`);
 }
 
 async function main() {
-  console.log("Fetching Dulecy color logo…");
+  console.log("Fetching Dulcey color logo…");
   const logoRaw = await fetchLogo();
   const logo = await sharp(logoRaw)
     .resize({ width: 400, fit: "inside" })

@@ -1,8 +1,8 @@
 /* ============================================
-   Footer — Dulecy Lead Services
+   Footer — Dulcey Lead Services
    --------------------------------------------
    Dark footer ported 1:1 from `mockup/*.html` (.site-footer):
-   CTA row → brand / Explore / Get-in-touch columns → giant DULECY
+   CTA row → brand / Explore / Get-in-touch columns → giant DULCEY
    outline watermark → legal row. Every contact value comes from
    `siteConfig`; the Explore column maps over the shared NAV_LINKS.
    ============================================ */
@@ -117,7 +117,7 @@ const Footer = () => {
         </div>
 
         <div className={styles.watermark} aria-hidden="true">
-          DULECY
+          DULCEY
         </div>
 
         <div className={styles.legal}>

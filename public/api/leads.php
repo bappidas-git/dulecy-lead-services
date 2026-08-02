@@ -1,6 +1,6 @@
 <?php
 /* ============================================
-   Lead Storage API — Dulecy Lead Services
+   Lead Storage API — Dulcey Lead Services
    Server-side shared storage for leads so the
    admin panel can see leads submitted from any
    browser/device (localStorage is per-device).

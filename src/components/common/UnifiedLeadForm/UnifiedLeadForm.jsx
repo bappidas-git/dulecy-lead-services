@@ -10,7 +10,7 @@
 
    Field → lead-record mapping (record keys are NEVER renamed):
      FULL NAME *   → name
-     EMAIL *       → email          (required as of the Dulecy rebuild)
+     EMAIL *       → email          (required as of the Dulcey rebuild)
      PHONE         → mobile         (optional; Indian format when filled)
      ORGANIZATION  → organization   (new optional key, added in Prompt 07)
      SUPPORT WITH *→ service_interest (an expertise title, or "Something else")

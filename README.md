@@ -1,6 +1,6 @@
-# Dulecy Lead Services — Official Website
+# Dulcey Lead Services — Official Website
 
-A multi-page **business-consulting website** for **Dulecy Lead Services** —
+A multi-page **business-consulting website** for **Dulcey Lead Services** —
 "Beyond Business Support" — a professional business support and consulting
 organization working with businesses, institutions, entrepreneurs, and
 professionals. Five public pages present the organization, its ten areas of
@@ -20,7 +20,7 @@ Built and maintained by **Assam Digital**.
 - **React 18** (CRA / `react-scripts` 5, concurrent features, lazy routes)
 - **React Router v7** — five public routes + `/admin/*` + a catch-all 404
 - **Material UI v5** + **Emotion** (admin panel, form controls, theming)
-- **CSS Modules** + CSS custom properties (the Dulecy design tokens)
+- **CSS Modules** + CSS custom properties (the Dulcey design tokens)
 - **GSAP + ScrollTrigger** (`@gsap/react`) for every public scroll animation
 - **Iconify** (`mdi:*` icons), **SweetAlert2** (lazy-loaded dialogs)
 - **PHP** server-side lead store (`public/api/leads.php`)
@@ -102,7 +102,7 @@ public bundle.
 │   ├── data/               # siteConfig · navigation · expertiseData · industriesData
 │   ├── hooks/              # useMediaQuery
 │   ├── pages/              # Home · About · Expertise · Industries · Contact · NotFound
-│   ├── styles/             # variables.css (tokens), global, dulecy, responsive
+│   ├── styles/             # variables.css (tokens), global, dulcey, responsive
 │   ├── theme/              # MUI theme (mirrors the CSS tokens)
 │   └── utils/              # webhookSubmit, seo, validators, hashScroll, swalHelper
 ├── .env / .env.example     # Environment variables (`.env` IS committed)
@@ -207,4 +207,4 @@ the vhost config instead.
 
 ## License
 
-Proprietary — `UNLICENSED`. © Dulecy Lead Services. All rights reserved.
+Proprietary — `UNLICENSED`. © Dulcey Lead Services. All rights reserved.

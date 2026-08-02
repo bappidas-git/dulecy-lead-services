@@ -1,11 +1,11 @@
-# Prompt 08 — Admin Panel: Dulecy Identity, Columns, Statuses & Guides
+# Prompt 08 — Admin Panel: Dulcey Identity, Columns, Statuses & Guides
 
 ## 1. Objective
 
-Convert the admin panel (`/admin/*`) into a professional **Dulecy** back
-office: Dulecy branding on login/topbar, lead tables and detail views that
+Convert the admin panel (`/admin/*`) into a professional **Dulcey** back
+office: Dulcey branding on login/topbar, lead tables and detail views that
 reflect the new field shape (`organization` in, `state` out; 10 expertise
-interest options), Dulecy-appropriate status labels, updated CSV
+interest options), Dulcey-appropriate status labels, updated CSV
 export/import, and fully rewritten Guidelines content — **without touching the
 sync architecture**.
 
@@ -28,10 +28,10 @@ sync architecture**.
   display-only. Dashboard "Conversion Rate" counts terminal `completed`.
 - Prompt 07 changed the lead payload: `organization` added, `state` no longer
   populated, `mobile` optional, `email` required, `service_interest` now holds
-  one of the 10 Dulecy expertise titles (or `Something else`).
+  one of the 10 Dulcey expertise titles (or `Something else`).
 - `Guideline.jsx` contains a hardcoded gate password (`Nilachal@Guide2026`)
   that must be rotated; guideline tab content is Nilachal-specific prose that
-  must be rewritten for Dulecy.
+  must be rewritten for Dulcey.
 
 ## 3. Files/Folders to Inspect First
 
@@ -46,14 +46,14 @@ sync architecture**.
 
 ### 4.1 Identity & chrome
 
-- `AdminLogin`: Dulecy logo, title "Dulecy Lead Services — Admin", Dulecy
+- `AdminLogin`: Dulcey logo, title "Dulcey Lead Services — Admin", Dulcey
   copy; keep env-driven auth (`REACT_APP_ADMIN_USERNAME`/`_PASSWORD`)
   untouched.
-- `AdminTopbar`: Dulecy color logo, nav Dashboard · Leads · Guidelines, user
+- `AdminTopbar`: Dulcey color logo, nav Dashboard · Leads · Guidelines, user
   chip + logout — restyle details to the admin tokens (ink text, red accents,
   white surfaces, `#E7E7EA` borders). Typography Archivo.
 - Sweep all admin `.module.css` files for leftover literal navy/green hex
-  values; replace with `--admin-*`/Dulecy tokens.
+  values; replace with `--admin-*`/Dulcey tokens.
 
 ### 4.2 Lead data surfaces — `organization` in, `state` out
 
@@ -92,21 +92,21 @@ In `leadStatus.js` update **labels only**, mapped for a consulting pipeline:
 `new` → New · `contacted` → Contacted · `consultation_booked` → **Proposal
 Sent** · `procedure_scheduled` → Follow-Up · `completed` → Converted ·
 `not_interested` → Not Interested. Adjust chip colors if needed to fit the
-Dulecy palette (status colors are functional and may keep their hues).
+Dulcey palette (status colors are functional and may keep their hues).
 `describeStatusChange`/activity strings keep using labels, so old activity
 entries still render.
 
 ### 4.5 Guidelines hub
 
-- Rotate the gate password constant to a new Dulecy value (e.g.
-  `Dulecy@Guide2026` or stronger) and note it in the PR summary.
+- Rotate the gate password constant to a new Dulcey value (e.g.
+  `Dulcey@Guide2026` or stronger) and note it in the PR summary.
 - Rewrite the four tabs for this project's reality:
   1. **Lead Storage** — the shared PHP JSON store, key handshake
      (`REACT_APP_LEADS_ADMIN_KEY` ↔ `ADMIN_API_KEY`, config.php override →
      env → committed fallback), health diagnostic, 15 s poll +
      BroadcastChannel, duplicate rules, the new `organization` field, "no
      localStorage" rule.
-  2. **SEO Setup** — dulecy.com specifics (placeholder until Prompt 10 lands;
+  2. **SEO Setup** — dulceyleadservices.com specifics (placeholder until Prompt 10 lands;
      write it against the planned five-route SEO so it doesn't need a second
      rewrite).
   3. **Deployment** — build + upload flow, `config.php` key alignment
@@ -125,7 +125,7 @@ name stable unless the element disappears.
 
 ## 6. Validation Checklist
 
-- [ ] Login with new creds → Dulecy-branded panel; zero Nilachal strings
+- [ ] Login with new creds → Dulcey-branded panel; zero Nilachal strings
   anywhere in `/admin/*` UI (`grep -ri nilachal src/admin` → 0).
 - [ ] Submit a fresh lead from the site: appears in Dashboard recent +
   `/admin/lms` within 15 s with Organization populated; a second browser tab
@@ -161,13 +161,13 @@ expectations and state the limitation in the PR.
 
 ## 10. Completion Criteria
 
-The admin panel is fully Dulecy-branded, reflects the new lead shape end to
+The admin panel is fully Dulcey-branded, reflects the new lead shape end to
 end (tables, detail, filters, CSV), keeps perfect sync behavior, and contains
 no Nilachal content or credentials.
 
 ## 11. Report & PR (mandatory)
 
-Branch `dulecy/08-admin-panel`; commit, push, open a **draft PR**. Report a
+Branch `dulcey/08-admin-panel`; commit, push, open a **draft PR**. Report a
 concise summary (columns/labels changed, password rotation, sync verification
 results) and the **PR link** (or branch + commit SHAs if PR creation is
 unavailable).

@@ -1,6 +1,6 @@
 /* ============================================
    Web Vitals Performance Monitoring
-   Dulecy Lead Services
+   Dulcey Lead Services
 
    Measures Core Web Vitals:
    - CLS (Cumulative Layout Shift)

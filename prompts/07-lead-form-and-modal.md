@@ -2,7 +2,7 @@
 
 ## 1. Objective
 
-Rebuild the enquiry experience to the Dulecy mockup: the **form fields/styling**
+Rebuild the enquiry experience to the Dulcey mockup: the **form fields/styling**
 (`.lead-form`), the **centered modal** that replaces the old side drawer, and
 the **inline success state** — while keeping the entire server lead pipeline
 (`webhookSubmit` → `public/api/leads.php` → admin panel) contract-compatible.
@@ -37,7 +37,7 @@ changes**.
 - Add optional `organization` (empty string default) to the submitted payload —
   a coordinated, additive contract update. Admin panel learns to display it in
   Prompt 08.
-- Stop populating `state` (Dulecy has no state field). The key is **not**
+- Stop populating `state` (Dulcey has no state field). The key is **not**
   renamed or reused; new leads simply omit it / send `""`.
 - `mobile` optional: server-side duplicate prevention still applies whenever a
   phone is provided (the PHP already skips empty mobiles); duplicate email is
@@ -181,12 +181,12 @@ in the PR.
 ## 10. Completion Criteria
 
 Every enquiry entry point (header, menu, footer, all page CTAs, contact
-panel, expertise prefill) uses the pixel-faithful Dulecy form; submissions
+panel, expertise prefill) uses the pixel-faithful Dulcey form; submissions
 store the new field shape on the server with duplicates handled; the modal
 fully replaces the drawer; build green.
 
 ## 11. Report & PR (mandatory)
 
-Branch `dulecy/07-lead-form-modal`; commit, push, open a **draft PR**. Report
+Branch `dulcey/07-lead-form-modal`; commit, push, open a **draft PR**. Report
 a concise summary (field mapping recap, contract confirmation, E2E result)
 and the **PR link** (or branch + commit SHAs if PR creation is unavailable).

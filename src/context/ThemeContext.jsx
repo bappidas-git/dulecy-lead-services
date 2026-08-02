@@ -1,5 +1,5 @@
 /* ============================================
-   Theme Context — Dulecy Lead Services
+   Theme Context — Dulcey Lead Services
    Handles theme preferences (light/dark mode)
    ============================================ */
 

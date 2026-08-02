@@ -6,7 +6,7 @@ Close out the rebuild: hosting/deployment configuration for an
 Apache/PHP-style host (SPA rewrites that protect `/api`), a full end-to-end
 lead test, the complete QA matrix against `/mockup`, the final
 zero-Nilachal verification, and a written go-live checklist. This prompt
-produces the evidence that the site is ready for `https://www.dulecy.com`.
+produces the evidence that the site is ready for `https://www.dulceyleadservices.com`.
 
 ## 2. Background
 
@@ -160,7 +160,7 @@ folders and git history, and the QA report documents all of it.
 
 ## 11. Report & PR (mandatory)
 
-Branch `dulecy/14-production-qa`; commit, push, open a **draft PR** whose body
+Branch `dulcey/14-production-qa`; commit, push, open a **draft PR** whose body
 is the QA report. Finish with a concise summary (readiness verdict, open
 follow-ups if any) and the **PR link** (or branch + commit SHAs if PR
 creation is unavailable).

@@ -1,5 +1,5 @@
 # ==============================================================================
-# Dulecy Lead Services — Apache configuration
+# Dulcey Lead Services — Apache configuration
 #
 # This file lives in public/ so `npm run build` copies it verbatim into build/.
 # Upload it with the rest of build/ and it becomes the web-root .htaccess.

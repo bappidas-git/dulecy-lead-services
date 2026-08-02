@@ -1,5 +1,5 @@
 /* ============================================
-   Validators — Dulecy Lead Services
+   Validators — Dulcey Lead Services
    --------------------------------------------
    Field-level validation for the single enquiry form
    (`UnifiedLeadForm`), which is the only consumer. Each helper returns
@@ -45,7 +45,7 @@ const getMobileErrorMessage = (mobile) => {
 
 /**
  * Get validation error message for an OPTIONAL mobile number.
- * The Dulecy enquiry form makes PHONE optional (email is the required
+ * The Dulcey enquiry form makes PHONE optional (email is the required
  * contact channel), so an empty value is valid — but anything typed must
  * still be a real Indian mobile number.
  * @param {string} mobile - Mobile number (may be empty)
