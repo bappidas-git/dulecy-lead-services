@@ -184,18 +184,48 @@ const lazyRoute = (element) => (
 // Route changes jump to the top; a hash instead scrolls to its target,
 // polling until the element exists (pages/sections may be lazy).
 // ===========================================
+
+/**
+ * Jump to the top with no animation.
+ *
+ * `html { scroll-behavior: smooth }` (src/styles/global.css) applies to
+ * programmatic scrolls too, so a plain `scrollTo(0, 0)` animates the reset —
+ * gliding the visitor down through the whole outgoing page instead of
+ * placing them at the top of the new one. GSAP neutralises that with an
+ * inline `scroll-behavior: auto`, but only once ScrollTrigger has built its
+ * first scroller, which has not happened on the first navigation of a
+ * session. `behavior: 'instant'` is the explicit opt-out; engines that
+ * predate the enum reject the dictionary, so fall back to the positional
+ * form there.
+ */
+const jumpToTop = () => {
+  if (typeof window === 'undefined') return;
+  try {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  } catch (err) {
+    window.scrollTo(0, 0);
+  }
+};
+
 const ScrollManager = () => {
   const location = useLocation();
 
+  // Keyed on `location.key` — the identity of the history entry — rather
+  // than the pathname. Every navigation mints a new key, including one to
+  // the route already on screen, so the footer's / mobile menu's / header's
+  // "Contact" link still resets the scroll when the visitor is already on
+  // /contact. Keyed on the pathname, that click changed neither dependency,
+  // so the effect never re-ran and left them parked exactly where they had
+  // clicked from: inside the footer.
   useEffect(() => {
-    if (!location.hash) window.scrollTo(0, 0);
-  }, [location.pathname, location.hash]);
+    if (!location.hash) jumpToTop();
+  }, [location.key, location.hash]);
 
   // A hash scrolls to its target instead — polling while lazy
   // pages/sections mount, and cancelling any pending retry on unmount.
   useEffect(
     () => scrollToHash(hashToId(location.hash)),
-    [location.pathname, location.hash]
+    [location.key, location.hash]
   );
 
   return null;
@@ -232,13 +262,15 @@ const App = () => {
     }
   }, []);
 
-  // Scroll restoration is manual — ScrollManager owns route scrolling.
+  // Scroll restoration is manual — ScrollManager owns route scrolling. The
+  // mode itself is claimed in public/index.html and re-asserted by
+  // src/animations/gsapSetup.js; setting it from here would be both too late
+  // to beat the browser's restore and immediately reverted by the next
+  // ScrollTrigger.refresh(). This only covers the first paint, for engines
+  // that ignore `scrollRestoration` altogether.
   useEffect(() => {
-    if ('scrollRestoration' in window.history) {
-      window.history.scrollRestoration = 'manual';
-    }
     if (!window.location.hash) {
-      window.scrollTo(0, 0);
+      jumpToTop();
     }
   }, []);
 
