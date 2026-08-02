@@ -13,10 +13,10 @@ ScrollTrigger.
 
 **Two sources of truth for this codebase:**
 
-| Question | Source |
-|---|---|
+| Question                                 | Source                                                                                                                                                                                             |
+| ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | What must the site look like / say / do? | `/mockup` — five static HTML pages + `styles.css` + `scripts.js`. Copy, colors, spacing, and interaction values are taken **verbatim** from these files. It is the design contract; never edit it. |
-| How are leads stored, synced, displayed? | `public/api/leads.php` + `src/utils/webhookSubmit.js` + `src/admin/**`. Their contracts are reused, never rewritten — see **DO NOT MODIFY**. |
+| How are leads stored, synced, displayed? | `public/api/leads.php` + `src/utils/webhookSubmit.js` + `src/admin/**`. Their contracts are reused, never rewritten — see **DO NOT MODIFY**.                                                       |
 
 > **Rebuild complete.** This repository was converted from an unrelated legacy
 > one-page site into the Dulecy Lead Services website via the ordered prompt
@@ -44,9 +44,9 @@ never hard-code a contact or company fact in a component, script, or schema.
   `seoConfig.organization.sameAs` is `[]`; empty entries are dropped/hidden).
 - **Logos** (Cloudinary — use these everywhere, never any older brand assets):
   - Color (light backgrounds) — `siteConfig.logo`:
-    `https://res.cloudinary.com/dn9gyaiik/image/upload/v1785484838/Dulecy-Logo_qr2ka7.png`
+    `https://res.cloudinary.com/dn9gyaiik/image/upload/v1785682949/Dulcey-Logo_tmkfku.png`
   - White (dark backgrounds) — `siteConfig.logoWhite`:
-    `https://res.cloudinary.com/dn9gyaiik/image/upload/v1785484839/Dulecy-Logo-White_uxpsb6.png`
+    `https://res.cloudinary.com/dn9gyaiik/image/upload/v1785682948/Dulcey-Logo-White_pthxu2.png`
   - Icon / "D" mark — `siteConfig.logoIcon`:
     `https://res.cloudinary.com/dn9gyaiik/image/upload/v1785484838/Dulecy-Logo-Icon_hylrpw.png`
 
@@ -118,13 +118,13 @@ Leads live server-side in `public/api/leads.php` — a single JSON store at
 
 **Action API** (everything on the one file):
 
-| Action | Method | Auth | Body / result |
-|---|---|---|---|
-| `create` | POST | public | `{ lead: {...} }` → `{ success }` or `{ success, duplicate: true }` |
-| `list` (also the bare GET) | GET | admin | `{ success, leads: [...] }` |
-| `update` | POST | admin | `{ lead_id, patch }` → `{ success }` |
-| `delete` | POST | admin | `{ lead_ids: [...] }` → `{ success, removed }` |
-| `health` | GET | public | Diagnostic — no lead data, no key material |
+| Action                     | Method | Auth   | Body / result                                                       |
+| -------------------------- | ------ | ------ | ------------------------------------------------------------------- |
+| `create`                   | POST   | public | `{ lead: {...} }` → `{ success }` or `{ success, duplicate: true }` |
+| `list` (also the bare GET) | GET    | admin  | `{ success, leads: [...] }`                                         |
+| `update`                   | POST   | admin  | `{ lead_id, patch }` → `{ success }`                                |
+| `delete`                   | POST   | admin  | `{ lead_ids: [...] }` → `{ success, removed }`                      |
+| `health`                   | GET    | public | Diagnostic — no lead data, no key material                          |
 
 **Auth model.** Admin actions require a key sent as the `X-Admin-Key` header,
 with an `admin_key` query-param **and** JSON-body fallback for proxies that
@@ -138,7 +138,7 @@ a private secret. Resolution order on the server, first non-empty wins:
 
 The fallback matches `REACT_APP_LEADS_ADMIN_KEY` in the committed `.env`, so
 sync works out of the box. **Rotation is coupled**: a `config.php` or env var
-*overrides* the fallback, and if it does not equal the key the deployed build
+_overrides_ the fallback, and if it does not equal the key the deployed build
 was compiled with, every admin call 401s while public submissions keep saving
 invisibly. Change both sides together and rebuild.
 
@@ -169,7 +169,7 @@ invisibly. Change both sides together and rebuild.
   The two notification channels are **not** interchangeable, and `onLeadsChanged`
   handles them differently on purpose. The same-tab `lp:leads-changed` event
   follows a local write that already updated the cache, so it re-reads directly.
-  A BroadcastChannel message comes from a *different* JS context whose write
+  A BroadcastChannel message comes from a _different_ JS context whose write
   this tab's cache knows nothing about, so it **re-syncs from the server before
   re-rendering** — calling the handler alone would only re-read a stale copy.
   That path is intentionally not visibility-gated (the pollers are), because a
@@ -186,15 +186,15 @@ the global `LeadModal`. There is no forked copy.
 
 **Field → lead-record key** (record keys are never renamed):
 
-| Visible field | Record key | Required | Notes |
-|---|---|---|---|
-| FULL NAME | `name` | ✅ | max 50 chars |
-| EMAIL | `email` | ✅ | required as of the Dulecy rebuild |
-| PHONE | `mobile` | — | optional; normalized to 10 digits (a pasted `+91` or leading `0` is forgiven) |
-| ORGANIZATION | `organization` | — | **new optional key** (Prompt 07); the PHP store is schemaless, so no server change was needed |
-| WHAT DO YOU NEED SUPPORT WITH? | `service_interest` | ✅ | the ten `expertiseData` titles + "Something else" — **legacy key, new values** |
-| MESSAGE | `message` | — | max 500 chars |
-| *(not collected)* | `state` | — | **retired but reserved** — sent empty, never renamed or reused, so the record shape stays stable for the admin table and CSV |
+| Visible field                  | Record key         | Required | Notes                                                                                                                        |
+| ------------------------------ | ------------------ | -------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| FULL NAME                      | `name`             | ✅       | max 50 chars                                                                                                                 |
+| EMAIL                          | `email`            | ✅       | required as of the Dulecy rebuild                                                                                            |
+| PHONE                          | `mobile`           | —        | optional; normalized to 10 digits (a pasted `+91` or leading `0` is forgiven)                                                |
+| ORGANIZATION                   | `organization`     | —        | **new optional key** (Prompt 07); the PHP store is schemaless, so no server change was needed                                |
+| WHAT DO YOU NEED SUPPORT WITH? | `service_interest` | ✅       | the ten `expertiseData` titles + "Something else" — **legacy key, new values**                                               |
+| MESSAGE                        | `message`          | —        | max 500 chars                                                                                                                |
+| _(not collected)_              | `state`            | —        | **retired but reserved** — sent empty, never renamed or reused, so the record shape stays stable for the admin table and CSV |
 
 `webhookSubmit.js` enriches every submission with `lead_id` (UUID v4),
 `status: 'new'`, `submitted_at` / `updated_at`, `page_url`, `user_agent`, the
@@ -246,14 +246,14 @@ keys (in `src/admin/utils/leadStatus.js`) are **never renamed**. A lead counts
 as converted once its status reaches the terminal `completed` key — that is what
 the dashboard Conversion Rate measures.
 
-| Persisted key | Label | Color |
-|---|---|---|
-| `new` | New | blue |
-| `contacted` | Contacted | teal |
-| `consultation_booked` | Proposal Sent | amber |
-| `procedure_scheduled` | Follow-Up | violet |
-| `completed` | Converted | green |
-| `not_interested` | Not Interested | grey |
+| Persisted key         | Label          | Color  |
+| --------------------- | -------------- | ------ |
+| `new`                 | New            | blue   |
+| `contacted`           | Contacted      | teal   |
+| `consultation_booked` | Proposal Sent  | amber  |
+| `procedure_scheduled` | Follow-Up      | violet |
+| `completed`           | Converted      | green  |
+| `not_interested`      | Not Interested | grey   |
 
 `formatActivityAction()` re-maps any quoted raw key in an older activity entry
 to its current label, so the timeline never shows an internal key.
@@ -266,19 +266,19 @@ headlines, thin 1px rules, and generous vertical rhythm. Source of truth:
 `src/styles/variables.css` (mirroring `mockup/styles.css`'s `:root`), mirrored
 again in `src/theme/muiTheme.js`.
 
-| Token | Value | Use |
-|-------|-------|-----|
-| `--ink` | `#0B0B0C` | Headlines, header/footer, body text |
-| `--grey-1` | `#2A2A2E` | Large body copy |
-| `--grey-2` | `#4A4A4F` | Lede paragraphs, secondary text |
-| `--grey-3` | `#6B6B70` | Small body copy |
-| `--grey-4` | `#8B8B92` | Muted / meta text |
-| `--line` | `#E7E7EA` | Thin 1px borders and rules |
-| `--bg-grey` | `#F5F5F6` | Alternating section background, form panel |
-| `--red` | `#D5192E` | Dulecy red — eyebrows, links, key highlights |
-| `--red-hi` | `#F0293E` | Brighter red for dark backgrounds (footer icons) |
-| `--grad` | `linear-gradient(135deg,#E8293E 0%,#A80E1E 100%)` | Primary pill button |
-| `--grad-text` | `linear-gradient(120deg,#E8293E,#A80E1E)` | Gradient headline words |
+| Token         | Value                                             | Use                                              |
+| ------------- | ------------------------------------------------- | ------------------------------------------------ |
+| `--ink`       | `#0B0B0C`                                         | Headlines, header/footer, body text              |
+| `--grey-1`    | `#2A2A2E`                                         | Large body copy                                  |
+| `--grey-2`    | `#4A4A4F`                                         | Lede paragraphs, secondary text                  |
+| `--grey-3`    | `#6B6B70`                                         | Small body copy                                  |
+| `--grey-4`    | `#8B8B92`                                         | Muted / meta text                                |
+| `--line`      | `#E7E7EA`                                         | Thin 1px borders and rules                       |
+| `--bg-grey`   | `#F5F5F6`                                         | Alternating section background, form panel       |
+| `--red`       | `#D5192E`                                         | Dulecy red — eyebrows, links, key highlights     |
+| `--red-hi`    | `#F0293E`                                         | Brighter red for dark backgrounds (footer icons) |
+| `--grad`      | `linear-gradient(135deg,#E8293E 0%,#A80E1E 100%)` | Primary pill button                              |
+| `--grad-text` | `linear-gradient(120deg,#E8293E,#A80E1E)`         | Gradient headline words                          |
 
 Legacy alias names (`--color-primary`, `--color-accent`, `--accent-gold*`,
 `--accent-amber*`, …) are kept in `variables.css` mapped onto the Dulecy values
@@ -318,13 +318,13 @@ background tabs), and `prefersReducedMotion()`.
 Mockup-exact parameters — these numbers come from `mockup/scripts.js` and must
 not drift:
 
-| Hook | Mockup attribute | Motion | Duration / ease | ScrollTrigger start |
-|---|---|---|---|---|
-| `useReveal` | `data-reveal` | `y 32 → 0`, opacity `0 → 1` | 0.9s `power3.out` | `top 88%`, once |
-| `useStaggerReveal` | `data-stagger` | children `y 26 → 0`, stagger `0.09` | 0.8s `power3.out` | `top 86%`, once |
-| `useLineReveal` | `data-line` | `scaleX 0 → 1` from the left edge | 1.1s `power3.inOut` | `top 92%`, once |
-| `useParallax` | `data-parallax="<amt>"` | `yPercent +amt/2 → −amt/2` | scrub `0.4` | `top bottom` → `bottom top` |
-| `useHeroIntro` | `data-hero` | children `y 36 → 0`, stagger `0.12`, delay `0.1` | 1s `power3.out` | none — fires on mount |
+| Hook               | Mockup attribute        | Motion                                           | Duration / ease     | ScrollTrigger start         |
+| ------------------ | ----------------------- | ------------------------------------------------ | ------------------- | --------------------------- |
+| `useReveal`        | `data-reveal`           | `y 32 → 0`, opacity `0 → 1`                      | 0.9s `power3.out`   | `top 88%`, once             |
+| `useStaggerReveal` | `data-stagger`          | children `y 26 → 0`, stagger `0.09`              | 0.8s `power3.out`   | `top 86%`, once             |
+| `useLineReveal`    | `data-line`             | `scaleX 0 → 1` from the left edge                | 1.1s `power3.inOut` | `top 92%`, once             |
+| `useParallax`      | `data-parallax="<amt>"` | `yPercent +amt/2 → −amt/2`                       | scrub `0.4`         | `top bottom` → `bottom top` |
+| `useHeroIntro`     | `data-hero`             | children `y 36 → 0`, stagger `0.12`, delay `0.1` | 1s `power3.out`     | none — fires on mount       |
 
 Each hook returns a `ref` to attach to its target, guards `window`, calls
 `scheduleRefresh()` so lazy-mounted routes measure correctly, and **no-ops to

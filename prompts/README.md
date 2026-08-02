@@ -11,29 +11,29 @@ constraints, and completion criteria, so it can be executed independently.
 
 ## The two sources of truth
 
-| Question | Source of truth |
-|---|---|
-| What must the site **look like / say / do**? | `/mockup` (5 static HTML pages + `styles.css` + `scripts.js`). Copy text, colors, spacing, and interactions **verbatim** from these files. |
+| Question                                             | Source of truth                                                                                                                                         |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| What must the site **look like / say / do**?         | `/mockup` (5 static HTML pages + `styles.css` + `scripts.js`). Copy text, colors, spacing, and interactions **verbatim** from these files.              |
 | How must **leads** be stored, synced, and displayed? | The existing Lead Management System: `public/api/leads.php` + `src/utils/webhookSubmit.js` + `src/admin/**`. Its contracts are reused, never rewritten. |
 
 ## Execution order
 
-| # | File | Phase |
-|---|------|-------|
-| 01 | `01-brand-foundation-and-config.md` | Brand identity, env/credentials rotation, design tokens, fonts |
-| 02 | `02-routing-shell-header-footer.md` | Multi-page routing skeleton, Header, mobile menu, Footer |
-| 03 | `03-home-page.md` | Home page (`/`) pixel-match build |
-| 04 | `04-about-page.md` | About page (`/about`) pixel-match build |
-| 05 | `05-expertise-page.md` | Expertise page (`/expertise`) accordion + deep links |
-| 06 | `06-industries-and-contact-pages.md` | Who We Serve (`/industries`) + Contact (`/contact`) |
-| 07 | `07-lead-form-and-modal.md` | Unified lead form, enquiry modal, submission mapping |
-| 08 | `08-admin-panel-rebrand.md` | Admin panel: Dulecy identity, columns, statuses, guides |
-| 09 | `09-animation-interaction-parity.md` | GSAP/interaction parity sweep vs the mockup |
-| 10 | `10-seo-implementation.md` | Multi-page SEO, schemas, icons/OG, robots, sitemap |
-| 11 | `11-nilachal-purge-and-cleanup.md` | Delete every remaining Nilachal file/reference |
-| 12 | `12-assets-performance-accessibility.md` | Self-host assets, Core Web Vitals, a11y |
-| 13 | `13-documentation-rewrite.md` | README, CLAUDE.md, guides, changelog |
-| 14 | `14-production-readiness-final-qa.md` | Hosting config, E2E lead test, full QA matrix, sign-off |
+| #   | File                                     | Phase                                                          |
+| --- | ---------------------------------------- | -------------------------------------------------------------- |
+| 01  | `01-brand-foundation-and-config.md`      | Brand identity, env/credentials rotation, design tokens, fonts |
+| 02  | `02-routing-shell-header-footer.md`      | Multi-page routing skeleton, Header, mobile menu, Footer       |
+| 03  | `03-home-page.md`                        | Home page (`/`) pixel-match build                              |
+| 04  | `04-about-page.md`                       | About page (`/about`) pixel-match build                        |
+| 05  | `05-expertise-page.md`                   | Expertise page (`/expertise`) accordion + deep links           |
+| 06  | `06-industries-and-contact-pages.md`     | Who We Serve (`/industries`) + Contact (`/contact`)            |
+| 07  | `07-lead-form-and-modal.md`              | Unified lead form, enquiry modal, submission mapping           |
+| 08  | `08-admin-panel-rebrand.md`              | Admin panel: Dulecy identity, columns, statuses, guides        |
+| 09  | `09-animation-interaction-parity.md`     | GSAP/interaction parity sweep vs the mockup                    |
+| 10  | `10-seo-implementation.md`               | Multi-page SEO, schemas, icons/OG, robots, sitemap             |
+| 11  | `11-nilachal-purge-and-cleanup.md`       | Delete every remaining Nilachal file/reference                 |
+| 12  | `12-assets-performance-accessibility.md` | Self-host assets, Core Web Vitals, a11y                        |
+| 13  | `13-documentation-rewrite.md`            | README, CLAUDE.md, guides, changelog                           |
+| 14  | `14-production-readiness-final-qa.md`    | Hosting config, E2E lead test, full QA matrix, sign-off        |
 
 Later prompts assume earlier ones have merged. If a prompt is run out of order,
 its "Files/Folders to Inspect" section tells the executor how to detect the
@@ -88,8 +88,8 @@ actual repository state and adapt.
 - **Email**: `dulceyleadservices@gmail.com` (exact spelling)
 - **Production URL**: `https://www.dulecy.com`
 - **Logos** (Cloudinary):
-  - Color: `https://res.cloudinary.com/dn9gyaiik/image/upload/v1785484838/Dulecy-Logo_qr2ka7.png`
-  - White: `https://res.cloudinary.com/dn9gyaiik/image/upload/v1785484839/Dulecy-Logo-White_uxpsb6.png`
+  - Color: `https://res.cloudinary.com/dn9gyaiik/image/upload/v1785682949/Dulcey-Logo_tmkfku.png`
+  - White: `https://res.cloudinary.com/dn9gyaiik/image/upload/v1785682948/Dulcey-Logo-White_pthxu2.png`
   - Icon: `https://res.cloudinary.com/dn9gyaiik/image/upload/v1785484838/Dulecy-Logo-Icon_hylrpw.png`
 - **Fonts**: Archivo (400/500/600/700/800) + Instrument Serif (regular + italic), Google Fonts
 - **Core tokens**: ink `#0B0B0C` · grey-1 `#2A2A2E` · grey-2 `#4A4A4F` · grey-3 `#6B6B70` ·

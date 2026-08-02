@@ -22,7 +22,7 @@ const sharp = require("sharp");
 
 // Color logo (light backgrounds) — keep in sync with siteConfig.logo.
 const LOGO_URL =
-  "https://res.cloudinary.com/dn9gyaiik/image/upload/v1785484838/Dulecy-Logo_qr2ka7.png";
+  "https://res.cloudinary.com/dn9gyaiik/image/upload/v1785682949/Dulcey-Logo_tmkfku.png";
 
 const OUT = path.resolve(__dirname, "..", "public", "og-image.png");
 
@@ -36,7 +36,8 @@ const FONT = "Liberation Sans, DejaVu Sans, Arial, Helvetica, sans-serif";
 
 async function fetchLogo() {
   const res = await fetch(LOGO_URL);
-  if (!res.ok) throw new Error(`Failed to fetch color logo: HTTP ${res.status}`);
+  if (!res.ok)
+    throw new Error(`Failed to fetch color logo: HTTP ${res.status}`);
   return Buffer.from(await res.arrayBuffer());
 }
 
