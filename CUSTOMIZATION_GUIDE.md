@@ -1,203 +1,308 @@
-# Nilachal Infracon — Maintenance Guide
+# Dulecy Lead Services — Maintenance Guide
 
-How to keep the Nilachal Infracon website up to date: changing copy, branding,
-credentials, and deploying. Written for whoever maintains the site after
-launch.
+How to change the site after launch: copy, expertise areas, sectors, contact
+facts, design tokens, the logo, pages, and credentials. Written for whoever
+maintains the site — each section is a complete recipe, in the order you'd
+actually touch the files.
 
-> **Golden rule:** business facts (name, phone, email, address, logos, CIN,
-> site URL) live in **`src/data/siteConfig.js`** — the single source of truth.
-> Components, the footer, the contact section, and the SEO layer all read from
-> it. Never hardcode a phone number or address in a component.
+> **Golden rule:** business facts (brand name, tagline, phone, email, site URL,
+> logo URLs) live in **`src/data/siteConfig.js`** — the single source of truth.
+> Components, the footer, the enquiry form and the SEO layer all read from it.
+> Never hardcode a phone number or an email address in a component.
+>
+> **Second rule:** the email is spelled **`dulceyleadservices@gmail.com`** —
+> "dulcey", not "dulecy". That is the client's real mailbox. Never "correct" it.
 
-## 1. Changing Site Copy & Content
+Every change below needs `npm run build` and a redeploy to reach the live site.
 
-All structured content lives in `src/data/`. Edit the file, run `npm start` to
-check, then rebuild and redeploy.
+## 1. Where things live
 
-| File | Drives | Notes |
-|------|--------|-------|
-| `siteConfig.js` | Company facts, contact details, logo URLs, maps query | Also feeds SEO schemas + helpers `telHref`/`waHref`/`mailHref`/`fullAddress` |
-| `productsData.js` | North East Buildmart product categories (`#products`) | Category labels also populate the enquiry form's "Interested In" options |
-| `servicesData.js` | Construction & infrastructure services (`#services`) | Service names also populate "Interested In" + the `schema-services` JSON-LD |
-| `statsData.js` | Dark metrics band (counters) | Numbers animate via `useCountUp` |
-| `brandsData.js` | Partner-brand strip (`#brands`) | Logo files are optional — see `public/images/brands/README.md` |
-| `featuresData.js` | Why-choose-us points (`#why-us`) | |
-| `aboutData.js` | Welcome + Mission/Vision/Values/Commitment (`#about`) | |
-| `faqData.js` | FAQ accordion (`#faq`) | **Must stay in sync** with the static `#schema-faq` block in `public/index.html` (Google requires the FAQPage schema to match the visible FAQs) |
-| `locationData.js` | Office + serving states (contact section pills, State dropdown) | Derives contact facts from `siteConfig` |
+| You want to change… | Edit |
+|---|---|
+| A contact fact, the tagline, a logo URL | `src/data/siteConfig.js` |
+| Nav labels / order | `src/data/navigation.js` |
+| The ten expertise areas | `src/data/expertiseData.js` |
+| The seven sectors + the marquee strip | `src/data/industriesData.js` |
+| Page headlines and prose | the section component under `src/pages/<Page>/sections/` |
+| Colors, type scale, spacing | `src/styles/variables.css` (+ `src/theme/muiTheme.js`) |
+| Shared button / display classes | `src/styles/dulecy.css` |
+| Page titles, descriptions, schemas | `src/config/seo.js` (+ `public/index.html`) |
+| Admin credentials, leads API key | `.env` |
 
-Section headlines and short paragraphs that aren't data-driven are hardcoded in
-the section components under `src/components/sections/`.
+`/mockup` is the design contract and `/prompts` is the rebuild record — read
+them, never edit them.
 
-**After editing content that appears in schemas** (`siteConfig`, `faqData`,
-`servicesData`): mirror the change in the static JSON-LD blocks in
-`public/index.html` (see `SEO_GUIDE.md`).
+## 2. Changing site copy
 
-## 2. Brand Colors & Typography
+Structured, repeated content lives in `src/data/`:
 
-Design tokens live in **`src/styles/variables.css`** and are mirrored in
-**`src/theme/muiTheme.js`** (keep the two in sync):
+| File | Drives |
+|------|--------|
+| `siteConfig.js` | Header/footer brand, contact rows, form fallback messages, every SEO schema |
+| `navigation.js` | Desktop nav, mobile menu (with its `01`–`05` numbering), footer "Explore" column |
+| `expertiseData.js` | Home expertise index, the `/expertise` accordion, the enquiry form's options, the `Service` schema |
+| `industriesData.js` | Home sector cards, the `/industries` grid, the home marquee strip |
+
+Everything else — headlines, ledes, statements, CTA labels — is inline in the
+section components, one component + one `.module.css` per section under
+`src/pages/<Page>/sections/`. Find the string with a grep and edit it in place;
+copy is taken verbatim from `/mockup`, so check there before rewording.
+
+## 3. Adding or editing an expertise area
+
+One entry in `src/data/expertiseData.js` feeds four surfaces. Add the object,
+and the accordion, the home index, the form and the schema all pick it up.
+
+```js
+{
+  id: 'e11',                       // accordion DOM id → /expertise#e11
+  num: '11',
+  title: 'Your New Area',          // ALSO becomes an enquiry-form option
+  tagline: 'Short line for the accordion',
+  homeTagline: 'Shorter line',     // optional — home row only, if it differs
+  description: '…',                // the schema's `description`
+  note: '…',
+  closing: '…',
+  tags: ['Tag one', 'Tag two'],
+}
+```
+
+Then work down this list:
+
+1. **Accordion** (`/expertise`) — automatic. `ExpertiseAccordion` maps
+   `expertiseAreas`; item 01 stays open by default and a matching `#id` in the
+   URL wins on load.
+2. **Home index rows** — automatic. `ExpertiseIndexSection` maps the same array
+   and reads the tagline through `homeTaglineFor(area)`, so it shows
+   `homeTagline` when present and `tagline` otherwise.
+3. **Enquiry form options** — automatic. `UnifiedLeadForm` builds its list from
+   `expertiseAreas.map(a => a.title)` plus "Something else". ⚠️ The **title is
+   the value stored** in each lead's `service_interest`. Renaming a title does
+   not migrate existing leads: old leads keep the old string, and the admin
+   "Interested In" filter unions the stored values with the current titles so
+   both remain selectable. Prefer adding over renaming.
+4. **Service schema (runtime)** — automatic. `seoConfig.services` maps
+   `expertiseAreas` into the `ItemList`, and `knowsAbout` from
+   `expertiseTitles`.
+5. **Service schema (static)** — **manual**. Mirror the new item into the
+   `#schema-services` block in `public/index.html`, and add the title to
+   `#schema-organization`'s `knowsAbout`. That block is the no-JS fallback and
+   is hand-written.
+6. **Keywords** — `seoConfig.pages.expertise.keywords` is derived from
+   `expertiseTitles`, so it updates itself.
+
+Deleting an area is the same list in reverse. Check for hardcoded deep links
+(`grep -rn "expertise#e" src/`) before removing an `id`.
+
+## 4. Adding or editing a sector card
+
+Add an entry to `industries` in `src/data/industriesData.js`:
+
+```js
+{
+  num: '08',
+  name: 'Full Name For The /industries Card',
+  description: 'One sentence, shown on the /industries card.',
+  icon: '/images/icons/your-icon-d5192e.png',
+  homeTitle: 'Short Name',                  // home card
+  homeDesc: 'Short line for the home card.',// home card
+}
+```
+
+- The icon is a **self-hosted** PNG in `public/images/icons/`. The committed set
+  are the mockup's icons8 glyphs in Dulecy red (`d5192e` on light backgrounds,
+  `f0293e` for the footer's ink background). To add one, drop the file in that
+  folder — or add its source to the `ICONS` list in
+  `scripts/generate-images.js` and run `npm run generate:images`.
+- `/industries` and the home page render from the same entry with different
+  copy (`name`/`description` vs `homeTitle`/`homeDesc`) — fill in all four.
+- The marquee strip under the home hero is the **separate** `marqueeItems`
+  array in the same file; add the sector there too if it should scroll past.
+- `seoConfig.pages.industries.keywords` derives from `industries`, so it follows
+  automatically.
+
+## 5. Changing contact facts
+
+1. Edit `src/data/siteConfig.js` — `phone` (E.164, no spaces), `phoneDisplay`
+   (what users see), `email`, `siteUrl`. The derived `telHref` / `mailHref`
+   update with them, and every component, the enquiry form's fallback messages,
+   and the runtime Organization schema follow.
+2. Mirror the change into the **static** blocks in `public/index.html`:
+   `#schema-organization` → `contactPoint.telephone` (hyphenated, e.g.
+   `+91-70990-02522`) and `contactPoint.email`.
+3. If `siteUrl` changes, also update `public/sitemap.xml` (all five `<loc>`s),
+   `public/robots.txt` (the `Sitemap:` line), and the absolute `og:url` /
+   `canonical` in `public/index.html`. See `SEO_GUIDE.md`.
+4. Social profiles: fill `siteConfig.social` **and**
+   `seoConfig.organization.sameAs` when the client provides them — both are
+   deliberately empty today, and empty entries are dropped rather than rendered.
+
+There is intentionally **no postal address**: the brand publishes none, so the
+site claims none. Don't add one to a schema (see `SEO_GUIDE.md` §4).
+
+## 6. Design tokens & theme
+
+Tokens live in **`src/styles/variables.css`** and are mirrored in
+**`src/theme/muiTheme.js`** — change both together.
 
 | Token | Value | Use |
 |-------|-------|-----|
-| `--color-primary` | `#16324F` | Deep steel navy — headings, header, footer |
-| `--color-primary-dark` | `#0F2438` | Darkest navy — footer bg, hero scrim |
-| `--color-accent` | `#1E7B45` | Nilachal green — CTAs, highlights, links |
-| `--color-accent-dark` | `#176437` | CTA hover |
-| `--color-accent-tint` | `#E8F5EE` | Light green wash for chips/backgrounds |
-| `--color-ink` | `#101C29` | Body headings text |
-| `--color-slate` | `#4A5A6A` | Secondary text |
-| `--color-bg-subtle` | `#F5F7FA` | Alternating section background |
-| `--color-border` | `#E5EAF0` | Thin 1px borders |
+| `--ink` | `#0B0B0C` | Headlines, header/footer, body text |
+| `--grey-1` … `--grey-4` | `#2A2A2E` · `#4A4A4F` · `#6B6B70` · `#8B8B92` | Body copy ramp, from strongest to muted |
+| `--line` | `#E7E7EA` | Thin 1px borders and rules |
+| `--bg-grey` | `#F5F5F6` | Alternating sections, the enquiry panel |
+| `--red` | `#D5192E` | Dulecy red — eyebrows, links, highlights |
+| `--red-hi` | `#F0293E` | Brighter red on dark backgrounds |
+| `--grad` | `linear-gradient(135deg,#E8293E 0%,#A80E1E 100%)` | Primary pill button |
+| `--grad-text` | `linear-gradient(120deg,#E8293E,#A80E1E)` | Gradient headline words |
 
 Notes:
 
-- Green is used **sparingly** (primary CTAs and key highlights only) — that
-  restraint is the design system.
-- Legacy alias names (`--accent-gold*` → navy, `--accent-orange*` /
-  `--accent-amber*` → green) are kept so older `.module.css` references stay
-  valid. Don't delete them.
-- Admin panel colors are the separate `--admin-*` block in `variables.css`.
-- Typography is **Inter** everywhere (weights 300–800), loaded in
-  `public/index.html`.
+- **Red is used sparingly** — CTAs, eyebrows, and key highlights only. That
+  restraint *is* the design system.
+- Legacy alias names (`--color-primary`, `--color-accent`, `--accent-gold*`,
+  `--accent-amber*`, the `--icon-*` / `--card-*` swatches) are kept mapped onto
+  the Dulecy values so older `.module.css` references stay valid. Don't delete
+  them; don't use them in new code.
+- Keep the MUI palette **alias keys** (`palette.orange`, `palette.accent`,
+  `palette.navy`) — components reference them through `sx`.
+- Admin colors are the separate `--admin-*` block at the bottom of
+  `variables.css`.
+- Typography is **Archivo** (400/500/600/700/800) with **Instrument Serif** for
+  italic accent words; both are loaded in `public/index.html`. Changing fonts
+  means editing that `<link>`, `--font-*` in `variables.css`, and `FONT_SANS` /
+  `FONT_SERIF` in `muiTheme.js`.
+- Shared button and display classes (`.btn`, `.btn--primary`, `.btn--outline`,
+  `.eyebrow`, `.display`, `.lede`, `.section-head`, `.rule`, …) are global, in
+  `src/styles/dulecy.css` — edit there, not per component.
 
-## 3. Swapping the Logo
+## 7. Swapping the logo
 
-1. Upload the new logo (color + white variants) to your CDN/Cloudinary.
-2. Update `logo` (light backgrounds) and `logoWhite` (dark backgrounds) in
-   `src/data/siteConfig.js` — the header, footer, mobile drawer, and admin
-   login all read from there.
-3. Update the splash-loader `<img>` and the JSON-LD `logo` URLs in
-   `public/index.html` (they are static and set separately).
-4. Regenerate favicons/PWA icons and the OG image from the new logo:
-   ```bash
-   npm run generate:icons   # favicon.ico/png, logo192/512, apple-touch-icon
-   npm run generate:og      # og-image.png (1200×630)
-   ```
-5. Rebuild and redeploy.
+1. Upload the new color, white, and icon variants to Cloudinary (or any CDN).
+2. Update `logo` / `logoWhite` / `logoIcon` in `src/data/siteConfig.js` — the
+   header, mobile menu, footer, admin topbar and admin login all read from
+   there, resizing through `logoAt()`.
+3. Update the hardcoded URLs outside the data layer:
+   - the splash-loader `<img>` and the JSON-LD `logo` values in
+     `public/index.html`
+   - `LOGO_ICON_URL` in `scripts/generate-icons.js`
+   - `LOGO_URL` in `scripts/generate-og.js`
+4. Regenerate the derived assets:
 
-## 4. Admin Panel Credentials
+```bash
+npm run generate:icons
+```
 
-Set in `.env` (baked in at build time — rebuild after changing):
+```bash
+npm run generate:og
+```
+
+   (`generate:icons` writes `favicon.ico`, `favicon.png`, `apple-touch-icon.png`,
+   `logo192.png`, `logo512.png`; `generate:og` writes `og-image.png` at
+   1200×630. Both fetch the logo over the network.)
+5. If the brand color changed, update `theme_color` in `public/manifest.json`
+   and the `INK` / `RED` constants in `scripts/generate-og.js`.
+6. Rebuild and redeploy.
+
+## 8. Rotating Admin Credentials & the Leads API Key
+
+All four variables live in `.env`, which is **committed** to this repository —
+treat every value in it as published. CRA bakes them in at build time, so any
+change needs a rebuild.
+
+### Admin login
 
 ```env
 REACT_APP_ADMIN_USERNAME="..."
 REACT_APP_ADMIN_PASSWORD="..."   # 16+ chars, unique
 ```
 
-> `.env` is committed in this repo (agency workflow), so treat anything in it
-> as exposed: use strong values and **rotate them before/after go-live**.
+Rebuild, redeploy, and log in again — existing sessions live in `localStorage`
+for 24 hours and are not invalidated by the change.
 
-## 5. Lead Storage (the part that must not break)
+### Leads API key
 
-Every enquiry is stored server-side by `public/api/leads.php` in a JSON file
-(`public/api/data/leads.json` on the server). The admin panel reads/writes only
-the server (15-second poll + BroadcastChannel between same-browser tabs), so
-every device sees the same leads. There is **no localStorage copy**.
+`REACT_APP_LEADS_ADMIN_KEY` (client) must exactly equal the key the server
+resolves. The server checks, in order:
 
-Client configuration (in `.env`):
+1. `ADMIN_API_KEY` defined in `public/api/config.php`
+2. a `LEADS_ADMIN_KEY` / `ADMIN_API_KEY` environment variable
+3. the committed fallback inside `public/api/leads.php`
 
-```env
-REACT_APP_LEADS_API_URL="/api/leads.php"
-REACT_APP_LEADS_ADMIN_KEY="<long random string>"
-```
-
-Server configuration: `REACT_APP_LEADS_ADMIN_KEY` must exactly match the
-server's `ADMIN_API_KEY`. The committed fallback key inside `leads.php` already
-matches the committed `.env`, so it works out of the box — but for production
-you should set your **own private pair**:
+The fallback already matches the committed `.env`, so sync works out of the box
+with **no server-side setup**. To move to your own private pair:
 
 1. On the server, copy `public/api/config.example.php` → `public/api/config.php`
-   and set:
-   ```php
-   define('ADMIN_API_KEY', '<long random string>');
-   ```
-   (Alternatively set a `LEADS_ADMIN_KEY` environment variable in your hosting
-   panel — no file needed.)
+   and set `define('ADMIN_API_KEY', '<long random string>');`
+   (or set a `LEADS_ADMIN_KEY` env var in the hosting panel — no file needed).
 2. Put the **same value** in `.env` as `REACT_APP_LEADS_ADMIN_KEY`.
-3. `npm run build` and redeploy (env values are baked in at build time).
+3. `npm run build` and redeploy.
 
-> **Warning — do steps 1–3 together or not at all.** A `config.php` (or server
-> env var) **overrides** the built-in key. Creating it without rebuilding the
-> client with the matching `REACT_APP_LEADS_ADMIN_KEY` locks the admin panel
-> out: every list/update/delete returns **401** ("Refresh failed: Server
-> returned 401") on every device, while public submissions keep saving
-> invisibly to `api/data/leads.json`. To diagnose, open
-> `https://yourdomain/api/leads.php?action=health` — it reports which key
-> source the server is using (`config` / `env` / `default`) and whether the
-> panel's key matches, without exposing any lead data.
+> **Warning — do steps 1–3 together or not at all.** `config.php` (or the env
+> var) *overrides* the built-in key. Creating one without rebuilding the client
+> with the matching value locks the admin panel out: every list/update/delete
+> returns **401** on every device, while public submissions keep saving
+> invisibly into `api/data/leads.json`. Diagnose at
+> `https://yourdomain/api/leads.php?action=health` — it reports which source the
+> server's key comes from (`config` / `env` / `default`), a short fingerprint,
+> and whether the caller's key matched, without exposing any lead data. The
+> admin panel already surfaces that as an actionable message instead of a bare
+> 401.
 
-**Do not modify** the `leads.php` request/response contract, the lead record
-field keys (`lead_id`, `name`, `mobile`, `email`, `service_interest`, `state`,
-`message`, `source`, `status`, `submitted_at`, `updated_at`, `notes[]`,
-`activity[]`), or the persisted status keys in `leadStatus.js` — the admin
-panel and CSV export bind to them. Labels can change; keys cannot.
+`public/api/config.php` and `public/api/data/` are `.gitignore`d — never commit
+a real private key.
 
-## 6. Deploying
+### Guidelines tab password
 
-### Requirements
+The `/admin/guideline` gate is a constant at the top of
+`src/admin/pages/Guideline.jsx` (`GUIDELINE_PASSWORD`). Change it there and
+rebuild.
 
-- Any **PHP-capable** host (Cloudways, Hostinger, cPanel shared hosting…) —
-  PHP 7.4+ with file write permission. Static-only hosts (Netlify/Vercel) can
-  serve the site, but then `leads.php` must be hosted separately on a PHP host
-  and `REACT_APP_LEADS_API_URL` pointed at its full URL.
+## 9. Adding a page
 
-### Steps
+Say you're adding `/insights`. Five files, in this order:
 
-```bash
-npm install
-npm run build        # outputs to build/
-```
+1. **The page** — `src/pages/Insights/InsightsPage.jsx` (+ `index.js`,
+   `InsightsPage.module.css`, and a `sections/` folder if it needs one). Use the
+   animation hooks from `src/animations` for anything that moves.
+2. **The route** — `src/App.jsx`: add a lazy import and a
+   `<Route path="/insights" element={lazyRoute(<InsightsPage />)} />` **inside**
+   the `PublicLayout` route, above the `*` catch-all.
+3. **The nav** — `src/data/navigation.js`: append
+   `{ to: '/insights', label: 'Insights', num: '06' }`. The desktop nav, the
+   mobile menu and the footer "Explore" column all pick it up.
+4. **SEO** — `src/config/seo.js`: add a `pages.insights` entry (`path`,
+   `breadcrumb: navLabel('/insights')`, `title`, `description`, `keywords`,
+   `robots`, and `services: true` only if the page lists the expertise areas).
+   Then add `'/insights': pages.insights` to `ROUTE_MAP` in
+   `src/components/common/SEO/SEOHead.jsx` — **without this the page falls
+   through to the 404 config and is served `noindex`.**
+5. **The sitemap** — `public/sitemap.xml`: add a `<url>` block with the new
+   `<loc>`, a current `<lastmod>` and a sensible `<priority>`.
 
-1. Upload the **contents of `build/`** to the web root (e.g. `public_html/`).
-   The build already contains `api/leads.php` + `api/config.example.php`
-   (copied from `public/`).
-2. *(Optional)* Create `api/config.php` on the server with your own private
-   `ADMIN_API_KEY` — **only** together with the matching rebuild (section 5).
-   Skipping this step is fine: the built-in key pair works out of the box.
-   Never commit a real private key to git.
-3. Verify `api/data/` is **writable** by PHP — `leads.php` creates it on first
-   run (with an `.htaccess` deny) — and that
-   `https://yourdomain/api/data/leads.json` is **not** downloadable
-   (should return 403). On Nginx, deny the location yourself:
-   `location ^~ /api/data/ { deny all; }`.
-4. Submit a test enquiry, confirm it appears in `/admin`, then delete it.
+Then confirm the deep-link behaviour you need: `ScrollManager` in `App.jsx`
+handles top-of-page on navigation and `#hash` targets (90px header offset)
+automatically.
 
-### SPA redirect rules (required for `/thank-you` and `/admin`)
-
-Client-side routes 404 on direct access unless all paths serve `index.html`:
-
-- **Apache/cPanel** — `.htaccess` in the web root:
-  ```apache
-  RewriteEngine On
-  RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule . /index.html [L]
-  ```
-  (The `!-f` condition keeps `/api/leads.php` reachable.)
-- **Nginx** — `try_files $uri /index.html;` (plus the `/api/` PHP location block).
-- **Netlify** — `_redirects` file: `/*  /index.html  200` (API hosted elsewhere).
-- **Vercel** — automatic for CRA (API hosted elsewhere).
-
-### Post-deploy checklist
-
-- [ ] Site loads at the domain; all sections render
-- [ ] Enquiry form submits → lead visible in `/admin` from another device
-- [ ] Status change in admin persists after refresh
-- [ ] `/thank-you` and `/admin` load on direct URL access (SPA redirect works)
-- [ ] `api/data/leads.json` not publicly downloadable
-- [ ] Run the **post-launch SEO checklist** in `SEO_GUIDE.md` (Search Console
-      verification + sitemap submission)
-
-## 7. Quick Reference
+## 10. Quick reference
 
 | What to change | Where |
 |----------------|-------|
-| Company/contact facts, logos | `src/data/siteConfig.js` (+ static blocks in `public/index.html`) |
-| Products / services / FAQs / stats / brands | `src/data/*.js` |
-| Brand colors | `src/styles/variables.css` + `src/theme/muiTheme.js` |
+| Contact facts, tagline, logos | `src/data/siteConfig.js` (+ static blocks in `public/index.html`) |
+| Nav labels / order | `src/data/navigation.js` |
+| Expertise areas / sectors | `src/data/expertiseData.js`, `src/data/industriesData.js` |
+| Page prose | `src/pages/<Page>/sections/*.jsx` |
+| Brand colors, type, spacing | `src/styles/variables.css` + `src/theme/muiTheme.js` |
+| Buttons / display classes | `src/styles/dulecy.css` |
+| Animation parameters | `src/animations/gsapSetup.js` (presets) — see `CLAUDE.md` |
 | Admin credentials | `.env` (rebuild required) |
 | Leads API endpoint + key | `.env` ↔ `public/api/config.php` |
-| SEO meta/schemas | `src/config/seo.js` + `public/index.html` (see `SEO_GUIDE.md`) |
-| Sitemap/robots | `public/sitemap.xml`, `public/robots.txt` |
-| Favicons / OG image | `npm run generate:icons` / `npm run generate:og` |
+| Guidelines tab password | `src/admin/pages/Guideline.jsx` |
+| Lead status labels | `src/admin/utils/leadStatus.js` (labels only — never the `value` keys) |
+| SEO meta / schemas | `src/config/seo.js` + `public/index.html` (see `SEO_GUIDE.md`) |
+| Sitemap / robots | `public/sitemap.xml`, `public/robots.txt` |
+| Favicons / OG image / photos | `npm run generate:icons` / `:og` / `:images` |
+
+**Deployment** — hosting requirements, the SPA rewrite rules, caching headers
+and the post-deploy checks live in the admin panel's own **Guidelines →
+Deployment** tab (`/admin/guideline`), which is the copy the site operator sees.
