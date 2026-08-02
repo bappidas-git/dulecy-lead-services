@@ -219,21 +219,38 @@ const useIsomorphicLayoutEffect =
 const SETTLE_MS = 1000;
 
 // Events that mean the *visitor* wants to move. A programmatic scroll — ours,
-// or the browser re-clamping the offset when the document shrinks — fires
-// `scroll` but none of these, so they are what tells the settle pass below to
-// stop re-asserting the top and get out of the way.
+// the browser re-clamping the offset when the document shrinks, or a stale
+// offset being written back — fires `scroll` but none of these, so they are
+// what tells the settle pass below to stop re-asserting the top and get out
+// of the way.
+//
+// `scroll` is deliberately NOT in this set. It is the one event every
+// programmatic scroll fires too, so treating it as intent would hand control
+// straight back to whatever the pass exists to guard against.
 const USER_SCROLL_EVENTS = ['wheel', 'touchstart', 'keydown', 'pointerdown'];
 
 /**
  * Hold the document at the top until the incoming route has settled.
  *
- * A route commits before its lazy chunk's images and fonts have laid out, and
- * `<Suspense>` can commit its fallback in a separate, shorter commit first —
- * so the document height keeps changing for several frames after the
- * navigation. Every one of those changes makes the browser re-clamp the
- * scroll offset, and on a short route the clamp lands in the footer. Watch
- * the document box and re-assert the top on each change, until the visitor
- * actually reaches for the page (or the settle window closes).
+ * Two different things move the scroll off the top in the moments after a
+ * navigation, and neither of them is the visitor:
+ *
+ * 1. **The browser re-clamping.** A route commits before its lazy chunk's
+ *    images and fonts have laid out, and `<Suspense>` can commit a shorter
+ *    fallback in a separate commit first — so the document height keeps
+ *    changing for several frames afterwards. Every change re-clamps the
+ *    offset, and on a short route the clamp lands in the footer.
+ * 2. **A stale offset being written back.** The enquiry modal's scroll lock
+ *    restores the offset it captured when it opened, and GSAP's
+ *    ScrollTrigger re-applies the position it recorded around a `refresh()`.
+ *    Both are one-shot writes of a number measured on a *different* page,
+ *    and neither changes the document height, so watching the box alone
+ *    cannot catch them.
+ *
+ * So watch both: the document box (via ResizeObserver) *and* the scroll
+ * position itself. Anything that moves us off the top without the visitor
+ * asking is undone. Guarding the position rather than each known culprit is
+ * the point — it holds for the next one too.
  *
  * @returns {Function} cancel — stops the pass; use as effect cleanup.
  */
@@ -244,11 +261,18 @@ const pinToTopUntilSettled = () => {
   let timer = 0;
   let stopped = false;
 
+  // Undoing our own scroll is a no-op, so the `scroll` this fires simply
+  // re-enters once and finds nothing to do — it cannot loop.
+  const reassert = () => {
+    if (!stopped && window.scrollY !== 0) jumpToTop();
+  };
+
   const stop = () => {
     if (stopped) return;
     stopped = true;
     if (observer) observer.disconnect();
     window.clearTimeout(timer);
+    window.removeEventListener('scroll', reassert);
     USER_SCROLL_EVENTS.forEach((type) =>
       window.removeEventListener(type, stop)
     );
@@ -257,12 +281,13 @@ const pinToTopUntilSettled = () => {
   if (typeof ResizeObserver === 'function') {
     // `documentElement` is height:auto, so its box tracks the document — this
     // fires on exactly the height changes that trigger a re-clamp. It also
-    // fires once on observe, which the scroll check below makes a no-op.
-    observer = new ResizeObserver(() => {
-      if (!stopped && window.scrollY !== 0) jumpToTop();
-    });
+    // covers a scroll lock lifting: `position: fixed` on the body collapses
+    // the document to zero height, so releasing it is a height change too.
+    observer = new ResizeObserver(reassert);
     observer.observe(document.documentElement);
   }
+
+  window.addEventListener('scroll', reassert, { passive: true });
 
   timer = window.setTimeout(stop, SETTLE_MS);
   USER_SCROLL_EVENTS.forEach((type) =>

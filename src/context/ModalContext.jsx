@@ -11,13 +11,21 @@
    focus handling belong to `LeadModal` itself.
    ============================================ */
 
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+} from 'react';
+import { useLocation } from 'react-router-dom';
 
 const ModalContext = createContext(null);
 
 export const ModalProvider = ({ children }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalConfig, setModalConfig] = useState({ source: 'general' });
+  const location = useLocation();
 
   /**
    * Open the enquiry modal.
@@ -33,6 +41,20 @@ export const ModalProvider = ({ children }) => {
   const closeLeadModal = useCallback(() => {
     setIsModalOpen(false);
   }, []);
+
+  // A navigation always dismisses the modal. Nothing that opens it also
+  // navigates (every CTA is a plain button), so this only ever fires for a
+  // route change the visitor made *around* an open modal — a back/forward
+  // gesture, or a link reached behind the overlay.
+  //
+  // Left open, it outlives the page it was opened from and takes its scroll
+  // lock with it: the body stays `position: fixed` at the old page's offset,
+  // which makes the document unscrollable, so ScrollManager's reset onto the
+  // new route silently does nothing. Keyed on `location.key` so a click
+  // through to the route already on screen counts too.
+  useEffect(() => {
+    closeLeadModal();
+  }, [location.key, closeLeadModal]);
 
   const value = {
     isModalOpen,
