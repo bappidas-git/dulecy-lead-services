@@ -1,4 +1,4 @@
-# Dulecy Lead Services — Maintenance Guide
+# Dulcey Lead Services — Maintenance Guide
 
 How to change the site after launch: copy, expertise areas, sectors, contact
 facts, design tokens, the logo, pages, and credentials. Written for whoever
@@ -10,8 +10,11 @@ actually touch the files.
 > Components, the footer, the enquiry form and the SEO layer all read from it.
 > Never hardcode a phone number or an email address in a component.
 >
-> **Second rule:** the email is spelled **`dulceyleadservices@gmail.com`** —
-> "dulcey", not "dulecy". That is the client's real mailbox. Never "correct" it.
+> **Second rule:** the brand is spelled **Dulcey** everywhere — except
+> `siteConfig.logoIcon`, whose Cloudinary path still reads
+> `Dulecy-Logo-Icon_hylrpw.png`. That is the asset's immutable public_id, not a
+> brand string; rewriting it 404s the favicon source. The admin username
+> `dulecyadmin` is likewise left alone so the rebrand doesn't lock anyone out.
 
 Every change below needs `npm run build` and a redeploy to reach the live site.
 
@@ -25,7 +28,7 @@ Every change below needs `npm run build` and a redeploy to reach the live site.
 | The seven sectors + the marquee strip | `src/data/industriesData.js` |
 | Page headlines and prose | the section component under `src/pages/<Page>/sections/` |
 | Colors, type scale, spacing | `src/styles/variables.css` (+ `src/theme/muiTheme.js`) |
-| Shared button / display classes | `src/styles/dulecy.css` |
+| Shared button / display classes | `src/styles/dulcey.css` |
 | Page titles, descriptions, schemas | `src/config/seo.js` (+ `public/index.html`) |
 | Admin credentials, leads API key | `.env` |
 
@@ -110,7 +113,7 @@ Add an entry to `industries` in `src/data/industriesData.js`:
 ```
 
 - The icon is a **self-hosted** PNG in `public/images/icons/`. The committed set
-  are the mockup's icons8 glyphs in Dulecy red (`d5192e` on light backgrounds,
+  are the mockup's icons8 glyphs in Dulcey red (`d5192e` on light backgrounds,
   `f0293e` for the footer's ink background). To add one, drop the file in that
   folder — or add its source to the `ICONS` list in
   `scripts/generate-images.js` and run `npm run generate:images`.
@@ -151,7 +154,7 @@ Tokens live in **`src/styles/variables.css`** and are mirrored in
 | `--grey-1` … `--grey-4` | `#2A2A2E` · `#4A4A4F` · `#6B6B70` · `#8B8B92` | Body copy ramp, from strongest to muted |
 | `--line` | `#E7E7EA` | Thin 1px borders and rules |
 | `--bg-grey` | `#F5F5F6` | Alternating sections, the enquiry panel |
-| `--red` | `#D5192E` | Dulecy red — eyebrows, links, highlights |
+| `--red` | `#D5192E` | Dulcey red — eyebrows, links, highlights |
 | `--red-hi` | `#F0293E` | Brighter red on dark backgrounds |
 | `--grad` | `linear-gradient(135deg,#E8293E 0%,#A80E1E 100%)` | Primary pill button |
 | `--grad-text` | `linear-gradient(120deg,#E8293E,#A80E1E)` | Gradient headline words |
@@ -162,7 +165,7 @@ Notes:
   restraint *is* the design system.
 - Legacy alias names (`--color-primary`, `--color-accent`, `--accent-gold*`,
   `--accent-amber*`, the `--icon-*` / `--card-*` swatches) are kept mapped onto
-  the Dulecy values so older `.module.css` references stay valid. Don't delete
+  the Dulcey values so older `.module.css` references stay valid. Don't delete
   them; don't use them in new code.
 - Keep the MUI palette **alias keys** (`palette.orange`, `palette.accent`,
   `palette.navy`) — components reference them through `sx`.
@@ -174,7 +177,7 @@ Notes:
   `FONT_SERIF` in `muiTheme.js`.
 - Shared button and display classes (`.btn`, `.btn--primary`, `.btn--outline`,
   `.eyebrow`, `.display`, `.lede`, `.section-head`, `.rule`, …) are global, in
-  `src/styles/dulecy.css` — edit there, not per component.
+  `src/styles/dulcey.css` — edit there, not per component.
 
 ## 7. Swapping the logo
 
@@ -293,7 +296,7 @@ automatically.
 | Expertise areas / sectors | `src/data/expertiseData.js`, `src/data/industriesData.js` |
 | Page prose | `src/pages/<Page>/sections/*.jsx` |
 | Brand colors, type, spacing | `src/styles/variables.css` + `src/theme/muiTheme.js` |
-| Buttons / display classes | `src/styles/dulecy.css` |
+| Buttons / display classes | `src/styles/dulcey.css` |
 | Animation parameters | `src/animations/gsapSetup.js` (presets) — see `CLAUDE.md` |
 | Admin credentials | `.env` (rebuild required) |
 | Leads API endpoint + key | `.env` ↔ `public/api/config.php` |

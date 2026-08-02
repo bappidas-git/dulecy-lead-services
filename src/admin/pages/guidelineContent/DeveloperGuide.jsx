@@ -92,7 +92,7 @@ const DeveloperGuide = ({ styles }) => {
 │   ├── hooks/                # useMediaQuery
 │   ├── pages/                # Home, About, Expertise, Industries, Contact,
 │   │                         # NotFound — each with its own sections/ folder
-│   ├── styles/               # variables.css (tokens), global, dulecy, responsive
+│   ├── styles/               # variables.css (tokens), global, dulcey, responsive
 │   ├── theme/                # muiTheme.js — mirrors the CSS tokens for MUI
 │   └── utils/                # webhookSubmit, validators, seo, swalHelper, hashScroll
 ├── .env                      # Build-time config (admin creds, leads API + key)
@@ -178,7 +178,7 @@ const DeveloperGuide = ({ styles }) => {
             </tr>
             <tr>
               <td className={styles.guideTableCell}><code className={styles.guideInlineCode}>--red</code></td>
-              <td className={styles.guideTableCell}>#D5192E — Dulecy red</td>
+              <td className={styles.guideTableCell}>#D5192E — Dulcey red</td>
               <td className={styles.guideTableCell}>Primary CTAs and key highlights only — used sparingly</td>
             </tr>
             <tr>

@@ -1,12 +1,12 @@
-# Prompt 10 — SEO Implementation for `https://www.dulecy.com`
+# Prompt 10 — SEO Implementation for `https://www.dulceyleadservices.com`
 
 ## 1. Objective
 
-Rebuild the dual-layer SEO system for the five-route Dulecy site: per-route
+Rebuild the dual-layer SEO system for the five-route Dulcey site: per-route
 titles/descriptions/canonicals/robots, Open Graph + Twitter cards, JSON-LD
 structured data generated from the data layer, static `public/index.html`
 fallback, `robots.txt`, `sitemap.xml`, and regenerated favicons/PWA
-icons/OG image from the Dulecy logo.
+icons/OG image from the Dulcey logo.
 
 ## 2. Background
 
@@ -21,13 +21,13 @@ icons/OG image from the Dulecy logo.
 - The old site was a one-pager with Nilachal schemas
   (`schema-organization`, `schema-localbusiness`, `schema-faq`,
   `schema-breadcrumb`, `schema-webpage`, plus `schema-services` injected by a
-  section). The Dulecy site is **five indexable routes** and has **no FAQ
+  section). The Dulcey site is **five indexable routes** and has **no FAQ
   section and no postal address** — the schema set changes accordingly.
 - Icon/OG generation scripts exist (`scripts/generate-icons.js`,
   `scripts/generate-og.js`, dev deps `sharp` + `png-to-ico`) and download a
   source logo URL, writing into `public/`.
-- Canonical Dulecy facts: name Dulecy Lead Services; tagline Beyond Business
-  Support; url `https://www.dulecy.com`; phone `+91 70990 02522`; email
+- Canonical Dulcey facts: name Dulcey Lead Services; tagline Beyond Business
+  Support; url `https://www.dulceyleadservices.com`; phone `+91 70990 02522`; email
   `dulceyleadservices@gmail.com`; logos on Cloudinary (color / white / icon —
   see `src/data/siteConfig.js` after Prompt 01). `/thank-you` no longer
   exists (Prompt 07).
@@ -42,17 +42,17 @@ icons/OG image from the Dulecy logo.
   `scripts/generate-og.js`, `SEO_GUIDE.md` (structure only — rewritten in
   Prompt 13).
 - Mockup `<title>` values (use as the title-pattern reference):
-  `Dulecy Lead Services — Beyond Business Support` / `About — Dulecy Lead
-  Services` / `Our Expertise — Dulecy Lead Services` / `Who We Serve — Dulecy
-  Lead Services` / `Contact — Dulecy Lead Services`.
+  `Dulcey Lead Services — Beyond Business Support` / `About — Dulcey Lead
+  Services` / `Our Expertise — Dulcey Lead Services` / `Who We Serve — Dulcey
+  Lead Services` / `Contact — Dulcey Lead Services`.
 
 ## 4. Exact Implementation Instructions
 
 ### 4.1 `src/config/seo.js` rewrite
 
-- Site level: `siteName: 'Dulecy Lead Services'`, `siteUrl` from siteConfig,
-  `titleTemplate: '%s — Dulecy Lead Services'`, default title
-  `Dulecy Lead Services — Beyond Business Support`, locale `en_IN`, default
+- Site level: `siteName: 'Dulcey Lead Services'`, `siteUrl` from siteConfig,
+  `titleTemplate: '%s — Dulcey Lead Services'`, default title
+  `Dulcey Lead Services — Beyond Business Support`, locale `en_IN`, default
   image `${siteUrl}/og-image.png`.
 - `pages` map for `home`, `about`, `expertise`, `industries`, `contact`
   (+ `admin`, `notFound` noindex): each with title (mockup titles above),
@@ -90,8 +90,8 @@ icons/OG image from the Dulecy logo.
 
 ### 4.3 Static layer — `public/index.html`
 
-Rewrite the head for Dulecy: title/description/keywords/author; OG + Twitter
-tags for the home page; canonical `https://www.dulecy.com/`; remove all geo.*
+Rewrite the head for Dulcey: title/description/keywords/author; OG + Twitter
+tags for the home page; canonical `https://www.dulceyleadservices.com/`; remove all geo.*
 meta and Nilachal comments; replace the five JSON-LD blocks with the new set
 (`schema-organization`, `schema-website`, `schema-webpage` for home,
 `schema-breadcrumb` home-only, `schema-services` with the 10 services) — ids
@@ -102,17 +102,17 @@ Keep: font links, splash loader, `#root`, noscript. Set
 ### 4.4 Crawl files
 
 - `public/robots.txt`: allow all, `Disallow: /admin`, `Sitemap:
-  https://www.dulecy.com/sitemap.xml`.
+  https://www.dulceyleadservices.com/sitemap.xml`.
 - `public/sitemap.xml`: exactly five URLs (`/`, `/about`, `/expertise`,
   `/industries`, `/contact`) with sensible `changefreq`/`priority` and a
   current `lastmod`.
 
 ### 4.5 Icons, PWA, OG image
 
-- Update both scripts' source URL(s): favicon/PWA icons from the Dulecy
-  **icon** logo; OG image composition from the Dulecy color logo with brand
+- Update both scripts' source URL(s): favicon/PWA icons from the Dulcey
+  **icon** logo; OG image composition from the Dulcey color logo with brand
   colors — ink `#0B0B0C` / white background per the script's existing design,
-  updated text to "Dulecy Lead Services — Beyond Business Support".
+  updated text to "Dulcey Lead Services — Beyond Business Support".
 - Run `npm run generate:icons` and `npm run generate:og`; commit the
   regenerated `favicon.ico`, `favicon.png`, `apple-touch-icon.png`,
   `logo192.png`, `logo512.png`, `og-image.png`. Verify `manifest.json` icon
@@ -133,7 +133,7 @@ explain *what must stay in sync with what*.
   (or `npx structured-data-testing-tool` if offline) — zero errors; **no**
   FAQPage, **no** LocalBusiness, **no** invented address/coordinates.
 - [ ] View-source of the built `index.html` (static layer) already carries
-  valid Dulecy meta + schemas for crawlers without JS.
+  valid Dulcey meta + schemas for crawlers without JS.
 - [ ] `robots.txt` + `sitemap.xml` valid; sitemap URLs all 200 in the built
   app (serve `build/` with rewrites).
 - [ ] New icons render (browser tab, `apple-touch-icon`, manifest icons); OG
@@ -162,12 +162,12 @@ titles); Lighthouse SEO category ≥ 95 on `/` and one subpage.
 
 ## 10. Completion Criteria
 
-Every public route ships accurate, validated, Dulecy-branded metadata and
+Every public route ships accurate, validated, Dulcey-branded metadata and
 schemas from both layers; crawl files and icons are correct for
-`https://www.dulecy.com`; build green.
+`https://www.dulceyleadservices.com`; build green.
 
 ## 11. Report & PR (mandatory)
 
-Branch `dulecy/10-seo`; commit, push, open a **draft PR**. Report a concise
+Branch `dulcey/10-seo`; commit, push, open a **draft PR**. Report a concise
 summary (schema set, validator results, generated assets) and the **PR link**
 (or branch + commit SHAs if PR creation is unavailable).

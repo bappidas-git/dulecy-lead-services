@@ -1,5 +1,5 @@
 /* ============================================
-   SEO Utility Functions — Dulecy Lead Services
+   SEO Utility Functions — Dulcey Lead Services
    --------------------------------------------
    The runtime half of the dual-layer SEO system: pure schema generators
    plus the DOM helpers that rewrite the head on client-side navigation.

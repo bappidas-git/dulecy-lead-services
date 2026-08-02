@@ -13,7 +13,7 @@
    The `value` keys are the canonical workflow keys persisted on each lead
    and sent in sync/export payloads. DO NOT rename them — only the human
    `label` (and its color) is shown in the UI. The labels below map the
-   frozen keys onto Dulecy's consulting pipeline; the colors stay functional
+   frozen keys onto Dulcey's consulting pipeline; the colors stay functional
    (one distinct hue per stage) rather than brand-tinted, so a status is
    readable at a glance in the table.
    ============================================ */

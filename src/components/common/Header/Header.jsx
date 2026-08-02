@@ -1,5 +1,5 @@
 /* ============================================
-   Header — Dulecy Lead Services
+   Header — Dulcey Lead Services
    --------------------------------------------
    Fixed glass header ported 1:1 from `mockup/*.html` (.site-header):
    68px row, logo → desktop nav (≥920px) with a gradient active

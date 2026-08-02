@@ -2,9 +2,9 @@
    Home / Who we are — ported 1:1 from `mockup/index.html`
    --------------------------------------------
    Split section: the heading + wiped-in rule on the left, two
-   paragraphs and the "More about Dulecy" link on the right. Every
+   paragraphs and the "More about Dulcey" link on the right. Every
    class it needs is already a shared primitive (layout module +
-   `dulecy.css` typography), so this section carries no module of its
+   `dulcey.css` typography), so this section carries no module of its
    own — only the mockup's per-element reveal delays.
    ============================================ */
 
@@ -50,7 +50,7 @@ const WhoWeAreSection = () => {
             professional environments.
           </p>
           <Link className="link-more" to="/about" ref={linkRef}>
-            More about Dulecy <i aria-hidden="true">&rarr;</i>
+            More about Dulcey <i aria-hidden="true">&rarr;</i>
           </Link>
         </div>
       </div>

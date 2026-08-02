@@ -1,6 +1,6 @@
-# SEO Guide — Dulecy Lead Services
+# SEO Guide — Dulcey Lead Services
 
-Target site: **`https://www.dulecy.com`** — five indexable routes plus a
+Target site: **`https://www.dulceyleadservices.com`** — five indexable routes plus a
 `noindex` admin panel and 404.
 
 ## 1. Architecture
@@ -45,13 +45,13 @@ characters.
 
 | Route | `pages` key | Title | Notes |
 |---|---|---|---|
-| `/` | `home` | Dulecy Lead Services — Beyond Business Support | `services: true` |
-| `/about` | `about` | About — Dulecy Lead Services | |
-| `/expertise` | `expertise` | Our Expertise — Dulecy Lead Services | `services: true`; keywords derived from `expertiseTitles` |
-| `/industries` | `industries` | Who We Serve — Dulecy Lead Services | keywords derived from `industries` |
-| `/contact` | `contact` | Contact — Dulecy Lead Services | description includes `phoneDisplay` |
-| `/admin*` | `admin` | Admin Panel — Dulecy Lead Services | `noindex, nofollow`; all public schemas stripped |
-| anything else | `notFound` | Page Not Found — Dulecy Lead Services | `noindex, nofollow` |
+| `/` | `home` | Dulcey Lead Services — Beyond Business Support | `services: true` |
+| `/about` | `about` | About — Dulcey Lead Services | |
+| `/expertise` | `expertise` | Our Expertise — Dulcey Lead Services | `services: true`; keywords derived from `expertiseTitles` |
+| `/industries` | `industries` | Who We Serve — Dulcey Lead Services | keywords derived from `industries` |
+| `/contact` | `contact` | Contact — Dulcey Lead Services | description includes `phoneDisplay` |
+| `/admin*` | `admin` | Admin Panel — Dulcey Lead Services | `noindex, nofollow`; all public schemas stripped |
+| anything else | `notFound` | Page Not Found — Dulcey Lead Services | `noindex, nofollow` |
 
 Mechanics worth knowing:
 
@@ -78,17 +78,17 @@ never runs JS sees exactly what a browser does.
 
 | Tag | Value |
 |-----|-------|
-| `<title>` | `Dulecy Lead Services — Beyond Business Support` |
+| `<title>` | `Dulcey Lead Services — Beyond Business Support` |
 | `meta description` | ≤160 chars, from `defaultDescription` |
 | `meta keywords` | brand + the home keyword set |
-| `meta author` | `Dulecy Lead Services` |
+| `meta author` | `Dulcey Lead Services` |
 | `meta robots` / `googlebot` | `index, follow` |
-| `canonical` / `og:url` / `twitter:url` | `https://www.dulecy.com/` |
+| `canonical` / `og:url` / `twitter:url` | `https://www.dulceyleadservices.com/` |
 | `og:type` | `website` |
 | `og:title` / `og:description` | same as `<title>` / `meta description` |
-| `og:image` | `https://www.dulecy.com/og-image.png` (absolute) |
+| `og:image` | `https://www.dulceyleadservices.com/og-image.png` (absolute) |
 | `og:image:width` / `:height` | `1200` / `630` |
-| `og:site_name` | `Dulecy Lead Services` |
+| `og:site_name` | `Dulcey Lead Services` |
 | `og:locale` | `en_IN` |
 | `twitter:card` | `summary_large_image` |
 | `theme-color` / `msapplication-TileColor` | `#0B0B0C` (`--ink`) |
@@ -160,11 +160,11 @@ changes.
 
 | `<loc>` | `changefreq` | `priority` |
 |---|---|---|
-| `https://www.dulecy.com/` | monthly | 1.0 |
-| `https://www.dulecy.com/expertise` | monthly | 0.9 |
-| `https://www.dulecy.com/about` | yearly | 0.8 |
-| `https://www.dulecy.com/industries` | yearly | 0.8 |
-| `https://www.dulecy.com/contact` | yearly | 0.7 |
+| `https://www.dulceyleadservices.com/` | monthly | 1.0 |
+| `https://www.dulceyleadservices.com/expertise` | monthly | 0.9 |
+| `https://www.dulceyleadservices.com/about` | yearly | 0.8 |
+| `https://www.dulceyleadservices.com/industries` | yearly | 0.8 |
+| `https://www.dulceyleadservices.com/contact` | yearly | 0.7 |
 
 **Exclude** `/admin/*` and `/api/*`.
 
@@ -175,12 +175,12 @@ User-agent: *
 Allow: /
 Disallow: /admin
 
-Sitemap: https://www.dulecy.com/sitemap.xml
+Sitemap: https://www.dulceyleadservices.com/sitemap.xml
 ```
 
 ## 6. Favicons, PWA icons & the OG image
 
-Generated from the Dulecy logo by committed scripts (dev deps `sharp` and
+Generated from the Dulcey logo by committed scripts (dev deps `sharp` and
 `png-to-ico`). Re-run them whenever the logo changes; both fetch from Cloudinary,
 so they need network access.
 
@@ -200,8 +200,8 @@ npm run generate:og
 - `scripts/generate-og.js` composes the color logo, an ink headline, a red
   accent rule, the secondary tagline and the site URL into
   `public/og-image.png` (1200×630).
-- `public/manifest.json` lists those real files, with name **Dulecy Lead
-  Services**, `short_name` **Dulecy**, `theme_color` `#0B0B0C`,
+- `public/manifest.json` lists those real files, with name **Dulcey Lead
+  Services**, `short_name` **Dulcey**, `theme_color` `#0B0B0C`,
   `background_color` `#FFFFFF`.
 
 Page photography is separate: `npm run generate:images` refreshes the
@@ -223,14 +223,14 @@ self-hosted hero/band images and sector icons in `public/images/`.
 
 ## 8. Post-launch checklist
 
-Once the site is live on `https://www.dulecy.com`:
+Once the site is live on `https://www.dulceyleadservices.com`:
 
 ```
 - [ ] Deploy: view-source and confirm the live <head> matches public/index.html
 - [ ] Client-side nav: visit all five routes, confirm <title>, description and
         canonical change per route (and that /admin is noindex with no schemas)
 - [ ] Google Search Console — add & verify the domain property
-- [ ] GSC — submit https://www.dulecy.com/sitemap.xml
+- [ ] GSC — submit https://www.dulceyleadservices.com/sitemap.xml
 - [ ] GSC — URL Inspection on / and /expertise → Request Indexing
 - [ ] Bing Webmaster Tools — add the site, submit the sitemap
 - [ ] Rich Results Test on / and /expertise: Organization, WebSite, WebPage,

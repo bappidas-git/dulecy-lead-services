@@ -3,7 +3,7 @@
 ## 1. Objective
 
 Delete every file, component, data module, asset, dependency, and string that
-belonged to the Nilachal Infracon site and is no longer used by the Dulecy
+belonged to the Nilachal Infracon site and is no longer used by the Dulcey
 build — leaving `src/` and `public/` clean, with **zero** Nilachal references
 outside `/mockup`, `/prompts`, and git history.
 
@@ -26,7 +26,7 @@ authority, not this list):
 - **Old pages** — `src/pages/ThankYou/` (route removed in Prompt 07).
 - **Old data files** — `productsData.js`, `servicesData.js`, `statsData.js`,
   `brandsData.js`, `featuresData.js`, `aboutData.js`, `faqData.js`,
-  `locationData.js` (Dulecy uses `siteConfig`, `navigation`, `expertiseData`,
+  `locationData.js` (Dulcey uses `siteConfig`, `navigation`, `expertiseData`,
   `industriesData`).
 - **Old assets** — `public/images/brands/` (partner-brand strip images/README).
 - **siteConfig leftovers** — `whatsapp`, `whatsappMessage`, `waHref`,
@@ -34,7 +34,7 @@ authority, not this list):
   that still have consumers).
 - **Legacy CSS aliases** — the navy/green alias variable families in
   `variables.css` kept alive for old modules; once those modules are gone,
-  collapse to the clean Dulecy token set (update any straggler references).
+  collapse to the clean Dulcey token set (update any straggler references).
 - **Docs are NOT in scope** — `README.md`, `CLAUDE.md`, `CHANGELOG.md`,
   `CUSTOMIZATION_GUIDE.md`, `SEO_GUIDE.md` still mention Nilachal and are
   rewritten in Prompt 13. Exclude them from this prompt's grep gate.
@@ -70,11 +70,11 @@ authority, not this list):
    `src/`, `public/`, `scripts/`: run
    `grep -rniE "nilachal|infracon|buildmart|nagaon|assam|8638543526|nilachalinfracon" src public scripts package.json .env .env.example`
    and drive it to **zero hits** (docs excluded per Background; `assam` may
-   appear only if a legitimate Dulecy string contains it — it should not).
+   appear only if a legitimate Dulcey string contains it — it should not).
    Also grep the old logo slugs (`nilachal-logo`) and the old admin username.
 5. **Dead-code pass** — remove now-unused exports from `validators.js`,
    `webhookSubmit.js` comments referring to Pabbly/old flows, unused
-   animation hooks (`useCountUp` if nothing counts up on Dulecy pages — check
+   animation hooks (`useCountUp` if nothing counts up on Dulcey pages — check
    first), and any `SectionLoader` variants no longer referenced.
 6. **Sanity build & route walk** — after deletions: `npm run build`, then load
    every route (5 public + NotFound + `/admin/*` incl. login, dashboard, lms,
@@ -126,11 +126,11 @@ branch to prove no phantom dependency.
 
 ## 10. Completion Criteria
 
-The repository contains only code the Dulecy site uses; the grep gate is
+The repository contains only code the Dulcey site uses; the grep gate is
 zero; the build is green and every user-facing flow still works.
 
 ## 11. Report & PR (mandatory)
 
-Branch `dulecy/11-purge-cleanup`; commit, push, open a **draft PR**. Report a
+Branch `dulcey/11-purge-cleanup`; commit, push, open a **draft PR**. Report a
 concise summary (deleted paths, pruned deps, bundle delta, grep-gate proof)
 and the **PR link** (or branch + commit SHAs if PR creation is unavailable).

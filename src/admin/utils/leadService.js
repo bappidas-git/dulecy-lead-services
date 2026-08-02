@@ -226,7 +226,7 @@ const describeSyncFailure = async (url, status) => {
 const normalizeLead = (lead) => ({
   ...lead,
   status: lead.status || "new",
-  // `organization` arrived with the Dulecy form; leads stored before it (and
+  // `organization` arrived with the Dulcey form; leads stored before it (and
   // CSV imports without the column) have no such key. Defaulting it here keeps
   // one cache shape so every table/detail/export reads `lead.organization`
   // without optional chaining.
@@ -335,7 +335,7 @@ export const getLeads = (filters = {}) => {
   let leads = [..._cache];
 
   // Search filter — name, email, mobile, organization, interest
-  // (service_interest), and legacy `state` on pre-Dulecy records.
+  // (service_interest), and legacy `state` on pre-Dulcey records.
   if (filters.search) {
     const q = filters.search.toLowerCase();
     leads = leads.filter(
@@ -599,7 +599,7 @@ export const importLeadsCSV = async (csvText) => {
   const mobileIdx = headers.findIndex((h) => h === "mobile");
   const emailIdx = headers.findIndex((h) => h === "email");
   const existingMobiles = new Set(_cache.map((l) => l.mobile).filter(Boolean));
-  // Mobile is optional on the Dulecy form, so a mobile-only dedupe lets every
+  // Mobile is optional on the Dulcey form, so a mobile-only dedupe lets every
   // phone-less lead re-import as a copy of itself. Email is required, so it is
   // the fallback key — matching the server's rule for the field it does have.
   const existingEmails = new Set(
@@ -620,7 +620,7 @@ export const importLeadsCSV = async (csvText) => {
     "interested in": "service_interest",
     "service interest": "service_interest",
     organization: "organization",
-    // Pre-Dulecy exports carried a State column instead of Organization —
+    // Pre-Dulcey exports carried a State column instead of Organization —
     // still mapped so an old CSV round-trips into the same (unused) key.
     state: "state",
     source: "source",

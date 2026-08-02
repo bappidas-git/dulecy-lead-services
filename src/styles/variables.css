@@ -1,11 +1,11 @@
 /* ============================================
-   CSS Variables — Dulecy Design System
-   Dulecy Lead Services
+   CSS Variables — Dulcey Design System
+   Dulcey Lead Services
    "Beyond Business Support"
    ============================================ */
 
 :root {
-  /* ========== Dulecy Brand Tokens (master palette) ==========
+  /* ========== Dulcey Brand Tokens (master palette) ==========
      Mirrors mockup/styles.css `:root` — the design system's source of
      truth. Use these names in new code. */
   --ink: #0B0B0C;
@@ -20,27 +20,27 @@
   --grad: linear-gradient(135deg, #E8293E 0%, #A80E1E 100%);
   --grad-text: linear-gradient(120deg, #E8293E, #A80E1E);
 
-  /* ========== Semantic aliases (legacy names → Dulecy values) ==========
-     `global.css` still references these names; they resolve to the Dulecy
+  /* ========== Semantic aliases (legacy names → Dulcey values) ==========
+     `global.css` still references these names; they resolve to the Dulcey
      palette above. Prefer the master tokens in new code. */
   --color-primary: #0B0B0C;        /* Ink — headings, header, footer */
   --color-primary-dark: #0B0B0C;   /* Ink — footer bg, hero scrim */
-  --color-accent: #D5192E;         /* Dulecy red — CTAs, highlights, links */
+  --color-accent: #D5192E;         /* Dulcey red — CTAs, highlights, links */
   --color-accent-dark: #A80E1E;    /* CTA hover */
   --color-text: #0B0B0C;           /* Body text on light */
 
-  /* ========== Primary Colors (legacy names → Dulecy ink) ========== */
+  /* ========== Primary Colors (legacy names → Dulcey ink) ========== */
   --primary-dark: #0B0B0C;
   --primary-dark-alt: #0B0B0C;
 
   /* ========== Accent (legacy `--accent-gold*`) — remapped to ink ==========
      Older stylesheets used `--accent-gold` for structural accents.
-     We map them to Dulecy ink so existing CSS references stay valid
+     We map them to Dulcey ink so existing CSS references stay valid
      and the page reads as near-black. */
   --accent-gold: #0B0B0C;
   --accent-gold-gradient: linear-gradient(135deg, #0B0B0C 0%, #2A2A2E 100%);
 
-  /* Dulecy red CTA gradient (legacy `--accent-amber*` name). */
+  /* Dulcey red CTA gradient (legacy `--accent-amber*` name). */
   --accent-amber-gradient: linear-gradient(135deg, #E8293E 0%, #A80E1E 100%);
 
   /* ========== Neutral Colors ========== */
@@ -243,8 +243,8 @@
 }
 
 /* ========== Admin Panel Colors ==========
-   The admin panel shares the Dulecy design system: ink (--admin-primary),
-   Dulecy red (--admin-accent), an off-white app background, white cards with
+   The admin panel shares the Dulcey design system: ink (--admin-primary),
+   Dulcey red (--admin-accent), an off-white app background, white cards with
    thin 1px borders, and the single soft elevation token. Red is used
    sparingly (primary CTAs + key highlights). */
 :root {

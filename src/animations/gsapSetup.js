@@ -1,5 +1,5 @@
 /* ============================================
-   GSAP Animation Foundation — Dulecy Lead Services
+   GSAP Animation Foundation — Dulcey Lead Services
    Shared GSAP + ScrollTrigger setup used by every
    public page section (prompts 02–09).
 
@@ -63,7 +63,7 @@ export const START = {
 /* ============================================
    Mockup-parity presets
    --------------------------------------------
-   The Dulecy pages animate with the exact values `mockup/scripts.js` used
+   The Dulcey pages animate with the exact values `mockup/scripts.js` used
    for its `data-*` attributes, so those numbers live here once instead of
    being re-typed in every section. Spread a preset into the matching hook
    and override only what differs (usually `delay`, the mockup's optional

@@ -3,7 +3,7 @@
 ## 1. Objective
 
 Replace every project document written for Nilachal Infracon with accurate
-Dulecy Lead Services documentation that reflects the rebuilt codebase — so a
+Dulcey Lead Services documentation that reflects the rebuilt codebase — so a
 new developer (or a future Claude Code session) can work from the docs alone.
 
 ## 2. Background
@@ -13,7 +13,7 @@ new developer (or a future Claude Code session) can work from the docs alone.
   the most important file to get right), `CHANGELOG.md` (old rebuild
   history), `CUSTOMIZATION_GUIDE.md`, `SEO_GUIDE.md`. Prompt 11 deliberately
   excluded them from the purge.
-- By now the codebase is: five public routes + admin, Dulecy design tokens,
+- By now the codebase is: five public routes + admin, Dulcey design tokens,
   data layer (`siteConfig`, `navigation`, `expertiseData`, `industriesData`),
   GSAP animation foundation (+ `useHeroIntro`, `useLineReveal`), lead modal +
   unified form with the `organization` field, PHP JSON lead store with
@@ -36,8 +36,8 @@ new developer (or a future Claude Code session) can work from the docs alone.
 
 ### 4.1 `README.md`
 
-Rewrite for Dulecy: what the site is (multi-page business-consulting site for
-Dulecy Lead Services matching `/mockup`); tech stack; quick start (`npm ci`,
+Rewrite for Dulcey: what the site is (multi-page business-consulting site for
+Dulcey Lead Services matching `/mockup`); tech stack; quick start (`npm ci`,
 `npm start`, `npm run build`, icon/OG scripts); **route table** (5 public +
 admin routes + NotFound); project structure tree (post-purge reality); env
 variable reference table (`REACT_APP_ADMIN_USERNAME`, `REACT_APP_ADMIN_PASSWORD`,
@@ -49,16 +49,15 @@ pairing); lead-store overview + local PHP testing tip
 
 ### 4.2 `CLAUDE.md` (project instructions — highest care)
 
-Mirror the old file's proven structure, fully re-grounded in Dulecy:
+Mirror the old file's proven structure, fully re-grounded in Dulcey:
 
-- **Overview** — Dulecy Lead Services, five-page site, mockup provenance
+- **Overview** — Dulcey Lead Services, five-page site, mockup provenance
   (`/mockup` = design contract; `/prompts` = rebuild record; "rebuild
   complete" note).
 - **Business Facts** (single source of truth block): brand name, tagline +
   secondary tagline, phone `+91 70990 02522`, email
-  `dulceyleadservices@gmail.com` **with an explicit "intentional spelling —
-  never correct it" warning**, site URL `https://www.dulecy.com`, the three
-  Cloudinary logo URLs.
+  `dulceyleadservices@gmail.com`, site URL `https://www.dulceyleadservices.com`,
+  the three Cloudinary logo URLs.
 - **Project Structure** — accurate current tree with one-line purposes.
 - **Lead Storage & Sync** — the full contract prose (action API, key
   resolution order and rotation coupling, header + fallback auth,
@@ -68,8 +67,8 @@ Mirror the old file's proven structure, fully re-grounded in Dulecy:
   (new, optional) and the retired-but-reserved `state` key; prefill flow
   (`openLeadModal(source, { service_interest })`); inline success behavior.
 - **Admin Panel** — shell/pages, the frozen status-key table with current
-  Dulecy labels, guideline hub + its password's location.
-- **Design System** — Dulecy token table (ink/greys/line/bg-grey/red/red-hi/
+  Dulcey labels, guideline hub + its password's location.
+- **Design System** — Dulcey token table (ink/greys/line/bg-grey/red/red-hi/
   gradients), Archivo + Instrument Serif, 1280px container, 68px header,
   920px menu breakpoint, pill buttons.
 - **Animations** — foundation + hooks with the mockup-exact parameter table
@@ -83,7 +82,7 @@ Mirror the old file's proven structure, fully re-grounded in Dulecy:
 
 ### 4.3 `CHANGELOG.md`
 
-Start fresh: `[2.0.0]` — "Dulecy Lead Services rebuild" with a dated summary
+Start fresh: `[2.0.0]` — "Dulcey Lead Services rebuild" with a dated summary
 of the migration (one bullet block per prompt phase 01–14, concise). Remove
 the Nilachal `[1.0.0]` narrative (git history preserves it); state that
 explicitly at the top ("history prior to 2.0.0 lives in git").
@@ -101,7 +100,7 @@ SEO config + sitemap), admin credential/key rotation runbook.
 Rewrite for the Prompt 10 system: layer diagram, per-page config location,
 schema list + validators, icon/OG regeneration steps, robots/sitemap
 maintenance, post-launch checklist (Search Console, submit sitemap, verify
-canonicals/OG, monitor CWV) targeted at `https://www.dulecy.com`.
+canonicals/OG, monitor CWV) targeted at `https://www.dulceyleadservices.com`.
 
 ## 5. Coding Standards
 
@@ -146,13 +145,13 @@ resolve.
 
 ## 10. Completion Criteria
 
-All five root documents accurately describe the Dulecy codebase, contain no
+All five root documents accurately describe the Dulcey codebase, contain no
 Nilachal references, and are sufficient to onboard a developer or a future
 Claude Code session without reading the git history.
 
 ## 11. Report & PR (mandatory)
 
-Branch `dulecy/13-documentation`; commit, push, open a **draft PR**. Report a
+Branch `dulcey/13-documentation`; commit, push, open a **draft PR**. Report a
 concise summary (docs rewritten, discrepancies found while verifying against
 code) and the **PR link** (or branch + commit SHAs if PR creation is
 unavailable).

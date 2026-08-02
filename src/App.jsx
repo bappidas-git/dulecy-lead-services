@@ -1,5 +1,5 @@
 /* ============================================
-   App Component — Dulecy Lead Services
+   App Component — Dulcey Lead Services
    --------------------------------------------
    Five-route public site (Home · About · Expertise · Who We Serve ·
    Contact) sharing one shell via `PublicLayout`, plus the `/admin/*`
@@ -389,7 +389,7 @@ const App = () => {
             <ScrollManager />
 
             <Routes>
-              {/* Public site — one shared Dulecy shell */}
+              {/* Public site — one shared Dulcey shell */}
               <Route element={<PublicLayout />}>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/about" element={lazyRoute(<AboutPage />)} />

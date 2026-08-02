@@ -2,7 +2,7 @@
    Home / Hero — ported 1:1 from `mockup/index.html`
    --------------------------------------------
    Parallaxed Unsplash backdrop under a double white scrim, a floating
-   Dulecy icon, then the badge → headline → lede → CTAs → four pillars,
+   Dulcey icon, then the badge → headline → lede → CTAs → four pillars,
    all staggered in on load by `useHeroIntro` (the mockup's `data-hero`
    elements, marked with the same attribute here).
    ============================================ */

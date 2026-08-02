@@ -1,8 +1,8 @@
-# Dulecy Lead Services — Official Website
+# Dulcey Lead Services — Official Website
 
 ## Overview
 
-A **multi-page business-consulting website** for **Dulecy Lead Services** — a
+A **multi-page business-consulting website** for **Dulcey Lead Services** — a
 professional business support and consulting organization working with
 businesses, institutions, entrepreneurs, and professionals. Five public pages
 (Home · About · Expertise · Who We Serve · Contact) share one shell, backed by
@@ -19,7 +19,7 @@ ScrollTrigger.
 | How are leads stored, synced, displayed? | `public/api/leads.php` + `src/utils/webhookSubmit.js` + `src/admin/**`. Their contracts are reused, never rewritten — see **DO NOT MODIFY**.                                                       |
 
 > **Rebuild complete.** This repository was converted from an unrelated legacy
-> one-page site into the Dulecy Lead Services website via the ordered prompt
+> one-page site into the Dulcey Lead Services website via the ordered prompt
 > series in `prompts/` (kept as the rebuild record — see `prompts/README.md`).
 > Treat the codebase described below as the final state; do not edit `/prompts`.
 
@@ -28,16 +28,12 @@ ScrollTrigger.
 Single source of truth: **`src/data/siteConfig.js`**. Import from there —
 never hard-code a contact or company fact in a component, script, or schema.
 
-- **Brand / legal name**: Dulecy Lead Services
+- **Brand / legal name**: Dulcey Lead Services
 - **Tagline**: "Beyond Business Support"
 - **Secondary tagline**: "Your Partner in Business Leadership"
 - **Phone**: `+91 70990 02522` · `tel:+917099002522` (`telHref`)
 - **Email**: `dulceyleadservices@gmail.com` (`mailHref`)
-  > ⚠️ **Intentional spelling.** The mailbox is spelled **"dulcey"** while the
-  > brand and domain are spelled **"dulecy"**. This is the client's real
-  > address, taken verbatim from the mockup. **Never "correct" it** — not in
-  > components, not in docs, not in schemas, not in a find-and-replace.
-- **Site URL**: `https://www.dulecy.com`
+- **Site URL**: `https://www.dulceyleadservices.com`
 - **Postal address**: none. The brand material publishes no address, and the
   site deliberately claims none — do not invent one (see **SEO**).
 - **Social profiles**: none yet (`siteConfig.social` is `{}`,
@@ -49,6 +45,10 @@ never hard-code a contact or company fact in a component, script, or schema.
     `https://res.cloudinary.com/dn9gyaiik/image/upload/v1785682948/Dulcey-Logo-White_pthxu2.png`
   - Icon / "D" mark — `siteConfig.logoIcon`:
     `https://res.cloudinary.com/dn9gyaiik/image/upload/v1785484838/Dulecy-Logo-Icon_hylrpw.png`
+    > ⚠️ **Legacy public_id.** This one URL still reads `Dulecy-Logo-Icon`.
+    > That string is Cloudinary's immutable delivery path for the asset, not a
+    > brand string — "correcting" it to `Dulcey-` 404s the favicon source.
+    > Leave it until the mark is re-uploaded under a new public_id.
 
 `logoAt(url, { w, h })` returns a Cloudinary-resized display URL (`f_auto`,
 `q_auto:best`) — pass **2× the CSS box**. Use it for rendered `<img>` tags;
@@ -89,7 +89,7 @@ pass the untransformed `siteConfig.logo*` values to SEO schemas.
   `src/animations/index.js`).
 - `src/context/` — `ModalContext` (enquiry modal state), `ThemeContext`.
 - `src/hooks/` — `useMediaQuery`.
-- `src/styles/` — `variables.css` (design tokens), `global.css`, `dulecy.css`
+- `src/styles/` — `variables.css` (design tokens), `global.css`, `dulcey.css`
   (shared `.btn` / display-typography primitives), `animations.css`,
   `responsive.css`, `layout.module.css`.
 - `src/theme/muiTheme.js` — the MUI mirror of the CSS tokens.
@@ -154,7 +154,7 @@ invisibly. Change both sides together and rebuild.
   `describeSyncFailure()` turns a bare 401 into an actionable message from it.
 - **Dedupe on create**: by `lead_id` (idempotent re-submits) and by trimmed
   mobile number (cross-device duplicate prevention, only when a mobile is
-  present — it is optional on the Dulecy form). A duplicate answers
+  present — it is optional on the Dulcey form). A duplicate answers
   `{ success: true, duplicate: true }`, never an error.
 - **Append-only merges**: `notes` and `activity` patches are union-merged
   (deduped by id/timestamp, sorted chronologically) so a stale array from one
@@ -189,7 +189,7 @@ the global `LeadModal`. There is no forked copy.
 | Visible field                  | Record key         | Required | Notes                                                                                                                        |
 | ------------------------------ | ------------------ | -------- | ---------------------------------------------------------------------------------------------------------------------------- |
 | FULL NAME                      | `name`             | ✅       | max 50 chars                                                                                                                 |
-| EMAIL                          | `email`            | ✅       | required as of the Dulecy rebuild                                                                                            |
+| EMAIL                          | `email`            | ✅       | required as of the Dulcey rebuild                                                                                            |
 | PHONE                          | `mobile`           | —        | optional; normalized to 10 digits (a pasted `+91` or leading `0` is forgiven)                                                |
 | ORGANIZATION                   | `organization`     | —        | **new optional key** (Prompt 07); the PHP store is schemaless, so no server change was needed                                |
 | WHAT DO YOU NEED SUPPORT WITH? | `service_interest` | ✅       | the ten `expertiseData` titles + "Something else" — **legacy key, new values**                                               |
@@ -218,13 +218,13 @@ the option **only if it matches a real one**. The `/expertise` accordion's
 ## Admin Panel
 
 `/admin/*` is **Dashboard + Lead Management + Guidelines**, styled with the
-Dulecy design system via the `--admin-*` tokens in `variables.css`. Auth is
+Dulcey design system via the `--admin-*` tokens in `variables.css`. Auth is
 `AdminAuthContext` + `ProtectedRoute` against `REACT_APP_ADMIN_USERNAME` /
 `REACT_APP_ADMIN_PASSWORD`, with a 24-hour session in `localStorage`.
 
 - **Shell** — `AdminLayout` (lazy routes + a `syncLeadsFromServer()` warm-up)
-  and `AdminTopbar` (Dulecy logo; nav = Dashboard · Leads · Guidelines; user
-  chip + logout). `AdminLogin` is the centered Dulecy login card, mounted via
+  and `AdminTopbar` (Dulcey logo; nav = Dashboard · Leads · Guidelines; user
+  chip + logout). `AdminLogin` is the centered Dulcey login card, mounted via
   `AdminLoginRoute`; `AdminProtectedShell` wraps the rest. The whole tree is
   lazy so it never enters the public bundle.
 - **Dashboard** (`/admin/dashboard`) — stat tiles (Total Enquiries · New Today ·
@@ -260,7 +260,7 @@ to its current label, so the timeline never shows an internal key.
 
 ## Design System
 
-The Dulecy system is **editorial minimalism**: near-black ink on white, one
+The Dulcey system is **editorial minimalism**: near-black ink on white, one
 saturated red used only for CTAs and eyebrows, giant tight-tracked display
 headlines, thin 1px rules, and generous vertical rhythm. Source of truth:
 `src/styles/variables.css` (mirroring `mockup/styles.css`'s `:root`), mirrored
@@ -275,13 +275,13 @@ again in `src/theme/muiTheme.js`.
 | `--grey-4`    | `#8B8B92`                                         | Muted / meta text                                |
 | `--line`      | `#E7E7EA`                                         | Thin 1px borders and rules                       |
 | `--bg-grey`   | `#F5F5F6`                                         | Alternating section background, form panel       |
-| `--red`       | `#D5192E`                                         | Dulecy red — eyebrows, links, key highlights     |
+| `--red`       | `#D5192E`                                         | Dulcey red — eyebrows, links, key highlights     |
 | `--red-hi`    | `#F0293E`                                         | Brighter red for dark backgrounds (footer icons) |
 | `--grad`      | `linear-gradient(135deg,#E8293E 0%,#A80E1E 100%)` | Primary pill button                              |
 | `--grad-text` | `linear-gradient(120deg,#E8293E,#A80E1E)`         | Gradient headline words                          |
 
 Legacy alias names (`--color-primary`, `--color-accent`, `--accent-gold*`,
-`--accent-amber*`, …) are kept in `variables.css` mapped onto the Dulecy values
+`--accent-amber*`, …) are kept in `variables.css` mapped onto the Dulcey values
 so older `.module.css` references stay valid — prefer the master tokens above in
 new code. Admin `--admin-*` tokens keep their own block (ink `--admin-primary`,
 red `--admin-accent`, `#F5F5F6` app bg, white cards, `#E7E7EA` borders, the soft
@@ -296,7 +296,7 @@ padding; **fixed 68px header**; the desktop nav takes over at **920px** (below
 that, the burger opens the full-screen `MobileMenu`); hash scrolling leaves
 `HEADER_OFFSET = 90px`.
 
-**Buttons** are the global primitives in `src/styles/dulecy.css` — `.btn` (999px
+**Buttons** are the global primitives in `src/styles/dulcey.css` — `.btn` (999px
 pill), `.btn--primary` (`--grad` fill, lifts 3px on hover), `.btn--outline`
 (1.5px ink border, inverts on hover). Shared display classes live there too:
 `.eyebrow`, `.serif`, `.grad-text`, `.display`, `.lede`, `.section-head`,
@@ -391,7 +391,7 @@ Step-by-step recipes: `CUSTOMIZATION_GUIDE.md`.
 - `README.md` — Overview, quick start, routes, env reference
 - `CUSTOMIZATION_GUIDE.md` — Maintenance recipes
 - `SEO_GUIDE.md` — SEO architecture + post-launch checklist
-- `CHANGELOG.md` — Release history (`[2.0.0]` = the Dulecy rebuild)
+- `CHANGELOG.md` — Release history (`[2.0.0]` = the Dulcey rebuild)
 - `prompts/README.md` — The rebuild prompt series and its conventions
 - `/admin/guideline` — The operator-facing guides (Lead Storage · SEO Setup ·
   Deployment · For Developers), including the deployment runbook
@@ -423,5 +423,10 @@ client and the PHP endpoint.
   display-only.
 - **`/mockup` and `/prompts`** — the design contract and the historical plan.
   Read them; never edit them. Cleanup greps must exclude both.
-- **The email spelling** `dulceyleadservices@gmail.com` — see **Business
-  Facts**.
+- **The `logoIcon` Cloudinary public_id** `Dulecy-Logo-Icon_hylrpw.png` — a
+  live delivery path that predates the "Dulcey" spelling. See **Business
+  Facts**; never fold it into a brand find-and-replace.
+- **The admin username** `dulecyadmin` (`.env`, `.env.example`, and the
+  `adminAuth.js` fallback) — deliberately left on the old spelling so the
+  rebrand does not invalidate operator logins. Rotate it on purpose, not as a
+  side effect.

@@ -522,7 +522,7 @@ REACT_APP_LEADS_ADMIN_KEY="a-long-random-string-you-generated"`}
               <td className={styles.guideTableCell}>
                 Force HTTPS and one canonical host at the hosting level (redirect{' '}
                 <code className={styles.guideInlineCode}>http://</code> and the bare domain to{' '}
-                <code className={styles.guideInlineCode}>https://www.dulecy.com</code>)
+                <code className={styles.guideInlineCode}>https://www.dulceyleadservices.com</code>)
               </td>
               <td className={styles.guideTableCell}>
                 All three variants land on the <code className={styles.guideInlineCode}>www</code>{' '}
@@ -540,7 +540,7 @@ REACT_APP_LEADS_ADMIN_KEY="a-long-random-string-you-generated"`}
               </td>
               <td className={styles.guideTableCell}>
                 Verify the property first, then submit{' '}
-                <code className={styles.guideInlineCode}>https://www.dulecy.com/sitemap.xml</code>{' '}
+                <code className={styles.guideInlineCode}>https://www.dulceyleadservices.com/sitemap.xml</code>{' '}
                 — it should report the five public URLs and no errors.
               </td>
             </tr>

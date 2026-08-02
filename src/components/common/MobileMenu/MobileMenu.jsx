@@ -1,5 +1,5 @@
 /* ============================================
-   MobileMenu — Dulecy Lead Services
+   MobileMenu — Dulcey Lead Services
    --------------------------------------------
    Full-screen overlay menu ported from `mockup/*.html` (.mobile-menu):
    numbered 01–05 links over the same NAV_LINKS the desktop nav uses,

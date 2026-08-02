@@ -10,13 +10,13 @@ Prompts 03–06.
 
 ## 2. Background
 
-- Prompt 01 installed the Dulecy tokens (`--ink`, `--red`, `--grad`, Archivo,
+- Prompt 01 installed the Dulcey tokens (`--ink`, `--red`, `--grad`, Archivo,
   etc.) — use them, never raw hex.
 - The current `src/App.jsx` renders one `HomePageContent` composed of 9 Nilachal
   sections with hash-anchor scrolling, plus `/thank-you` and `/admin/*` routes,
   a mobile bottom nav (`MobileNavigation`), a swipe drawer (`MobileDrawer`), a
   WhatsApp FAB, a scroll-progress bar, and a back-to-top button. **None of those
-  mobile/floating extras exist in the Dulecy mockup** — the mockup uses a burger
+  mobile/floating extras exist in the Dulcey mockup** — the mockup uses a burger
   → full-screen overlay menu and nothing else floating.
 - Mockup shell anatomy (source of truth: any page in `/mockup`, e.g.
   `mockup/index.html` lines 16–42 and 134–171, with classes in
@@ -44,9 +44,9 @@ Prompts 03–06.
     paragraph, uppercase red-hi tagline "Your Partner in Business Leadership"),
     "Explore" nav column (links prefixed by a 14×1.5px red dash), "Get in
     touch" column with two bordered contact cards (Call us / Email us, icon
-    tiles `rgba(213,25,46,.15)`); giant outline watermark **DULECY**
+    tiles `rgba(213,25,46,.15)`); giant outline watermark **DULCEY**
     (`-webkit-text-stroke:1px rgba(255,255,255,.09)`, transparent fill,
-    `clamp(48px,14vw,190px)`); legal row `© 2026 Dulecy Lead Services. All
+    `clamp(48px,14vw,190px)`); legal row `© 2026 Dulcey Lead Services. All
     rights reserved.` + serif "Beyond Business Support."
 - The header CTA and footer CTAs open the enquiry UI. Until Prompt 07 replaces
   it, they call the **existing** `openLeadDrawer` from `src/context/ModalContext.jsx`
@@ -113,7 +113,7 @@ Port per anatomy above. All contact values from `siteConfig`
 the mockup: "A professional business support and consulting organization —
 helping businesses, institutions, entrepreneurs, and professionals build for
 sustainable growth."; Explore column reuses `NAV_LINKS`; watermark text
-`DULECY`; icon images in contact cards may temporarily use the mockup's
+`DULCEY`; icon images in contact cards may temporarily use the mockup's
 icons8 URLs (Prompt 12 self-hosts them).
 
 ### 4.5 Buttons
@@ -131,7 +131,7 @@ CSS Modules per component (BEM-ish class names fine); tokens via
 `var(--ink)`/`var(--red)`/`var(--grad)` etc.; copy text verbatim (curly
 apostrophes, `→` arrows as `<span aria-hidden="true">→</span>` per mockup);
 keep `aria-label`s from the mockup (`aria-label="Main"`, `"Mobile"`, `"Menu"`,
-`"Dulecy Lead Services — Home"`); functional components + hooks; no new deps.
+`"Dulcey Lead Services — Home"`); functional components + hooks; no new deps.
 
 ## 6. Validation Checklist
 
@@ -141,7 +141,7 @@ keep `aria-label`s from the mockup (`aria-label="Main"`, `"Mobile"`, `"Menu"`,
 - [ ] Burger → overlay menu behaves: opens, numbers 01–05, link closes it, body
   scroll locked, Escape closes.
 - [ ] Footer matches mockup: CTA row, 3 columns, watermark, legal row; phone
-  and email are Dulecy's and clickable.
+  and email are Dulcey's and clickable.
 - [ ] No bottom mobile nav, WhatsApp FAB, scroll-progress bar, or back-to-top
   button renders on any page.
 - [ ] "Let's Talk" (header, menu foot, footer CTA) opens the existing enquiry
@@ -169,12 +169,12 @@ skip-link works); refresh directly on `/about` (dev server) renders that page.
 
 ## 10. Completion Criteria
 
-The app is a five-route site sharing one pixel-faithful Dulecy shell
+The app is a five-route site sharing one pixel-faithful Dulcey shell
 (header/menu/footer) with working enquiry CTAs, green build, and no orphaned
 floating UI from the Nilachal era rendering anywhere.
 
 ## 11. Report & PR (mandatory)
 
-Branch `dulecy/02-routing-shell`; commit, push, open a **draft PR**. Report a
+Branch `dulcey/02-routing-shell`; commit, push, open a **draft PR**. Report a
 concise summary (routes added, shell parity notes, anything deferred) and the
 **PR link** (or branch + commit SHAs if PR creation is unavailable).

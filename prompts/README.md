@@ -1,8 +1,8 @@
-# Dulecy Lead Services — Rebuild Prompt Series
+# Dulcey Lead Services — Rebuild Prompt Series
 
 This folder is the **complete execution plan** for converting this repository from
 the legacy **Nilachal Infracon** one-page website into the production website for
-**Dulecy Lead Services** — matching the static mockup in `/mockup` exactly.
+**Dulcey Lead Services** — matching the static mockup in `/mockup` exactly.
 
 Each numbered `.md` file is **one self-contained Claude Code task**. Run them in
 order, one per session/PR. Every prompt carries its own objective, background,
@@ -27,7 +27,7 @@ constraints, and completion criteria, so it can be executed independently.
 | 05  | `05-expertise-page.md`                   | Expertise page (`/expertise`) accordion + deep links           |
 | 06  | `06-industries-and-contact-pages.md`     | Who We Serve (`/industries`) + Contact (`/contact`)            |
 | 07  | `07-lead-form-and-modal.md`              | Unified lead form, enquiry modal, submission mapping           |
-| 08  | `08-admin-panel-rebrand.md`              | Admin panel: Dulecy identity, columns, statuses, guides        |
+| 08  | `08-admin-panel-rebrand.md`              | Admin panel: Dulcey identity, columns, statuses, guides        |
 | 09  | `09-animation-interaction-parity.md`     | GSAP/interaction parity sweep vs the mockup                    |
 | 10  | `10-seo-implementation.md`               | Multi-page SEO, schemas, icons/OG, robots, sitemap             |
 | 11  | `11-nilachal-purge-and-cleanup.md`       | Delete every remaining Nilachal file/reference                 |
@@ -42,7 +42,7 @@ actual repository state and adapt.
 ## Series-wide conventions (apply to every prompt)
 
 1. **Branch & PR per prompt** — do the work on a dedicated feature branch
-   (suggested: `dulecy/NN-short-name`), commit with clear messages, push, and
+   (suggested: `dulcey/NN-short-name`), commit with clear messages, push, and
    open a **draft pull request**. Finish every run by reporting a **concise
    implementation summary and the PR link** (or, if PR creation is unavailable,
    the branch name + commit SHAs). This is mandatory in every prompt.
@@ -53,7 +53,7 @@ actual repository state and adapt.
    - Lead record keys are never renamed: `lead_id`, `name`, `mobile`, `email`,
      `service_interest`, `state`, `message`, `source`, `status`, `submitted_at`,
      `updated_at`, `notes[]`, `activity[]` (+ `page_url`, `user_agent`, `utm_*`).
-     The Dulecy rebuild **adds** one optional key, `organization`, and stops
+     The Dulcey rebuild **adds** one optional key, `organization`, and stops
      populating `state` — it renames nothing.
    - Status keys are never renamed: `new`, `contacted`, `consultation_booked`,
      `procedure_scheduled`, `completed`, `not_interested` (labels/colors are
@@ -66,9 +66,8 @@ actual repository state and adapt.
      BroadcastChannel `lp_leads_channel`) is untouched. **No localStorage copy
      of lead data, ever.**
 4. **Copy is sacred** — all user-visible text comes verbatim from `/mockup`
-   (including the email `dulceyleadservices@gmail.com`, which is intentionally
-   spelled "dulcey"; never "correct" it). Preserve typographic characters
-   (’ — & ↗ ✕ ✓) exactly.
+   (including the email `dulceyleadservices@gmail.com`). Preserve typographic
+   characters (’ — & ↗ ✕ ✓) exactly.
 5. **Design tokens only** — after prompt 01, no hard-coded brand colors in
    components; use the CSS variables in `src/styles/variables.css` and the MUI
    theme.
@@ -80,13 +79,13 @@ actual repository state and adapt.
    stack already in place (React 18, react-router v7, MUI v5, CSS Modules,
    GSAP + ScrollTrigger).
 
-## Dulecy quick reference (canonical values)
+## Dulcey quick reference (canonical values)
 
-- **Brand**: Dulecy Lead Services
+- **Brand**: Dulcey Lead Services
 - **Tagline**: "Beyond Business Support" · secondary: "Your Partner in Business Leadership"
 - **Phone**: `+91 70990 02522` → `tel:+917099002522`
 - **Email**: `dulceyleadservices@gmail.com` (exact spelling)
-- **Production URL**: `https://www.dulecy.com`
+- **Production URL**: `https://www.dulceyleadservices.com`
 - **Logos** (Cloudinary):
   - Color: `https://res.cloudinary.com/dn9gyaiik/image/upload/v1785682949/Dulcey-Logo_tmkfku.png`
   - White: `https://res.cloudinary.com/dn9gyaiik/image/upload/v1785682948/Dulcey-Logo-White_pthxu2.png`

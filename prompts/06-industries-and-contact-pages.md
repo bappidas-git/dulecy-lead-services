@@ -6,7 +6,7 @@ Replace the last two stubs with full React ports of `mockup/industries.html`
 and `mockup/contact.html`. The Contact page embeds the **existing**
 `UnifiedLeadForm` (still Nilachal-styled) inside the mockup's form panel so
 lead capture keeps working; Prompt 07 then rebuilds the form itself to the
-Dulecy spec.
+Dulcey spec.
 
 ## 2. Background
 
@@ -142,6 +142,6 @@ Prompt 07), lead submission from `/contact` works, and the build is green.
 
 ## 11. Report & PR (mandatory)
 
-Branch `dulecy/06-industries-contact`; commit, push, open a **draft PR**.
+Branch `dulcey/06-industries-contact`; commit, push, open a **draft PR**.
 Report a concise summary and the **PR link** (or branch + commit SHAs if PR
 creation is unavailable).

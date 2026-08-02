@@ -2,7 +2,7 @@
    NotFoundPage — branded catch-all
    --------------------------------------------
    Rendered by the `*` route inside the shared shell, so an unknown
-   URL still gets the Dulecy header, menu and footer.
+   URL still gets the Dulcey header, menu and footer.
    ============================================ */
 
 import React from 'react';

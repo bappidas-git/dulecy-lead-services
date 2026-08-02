@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to the **Dulecy Lead Services** website. The site was built
+All notable changes to the **Dulcey Lead Services** website. The site was built
 through the ordered prompt series in [`prompts/`](prompts/README.md) — one
 prompt per branch/PR — and the entries below summarise each phase under the
 `2.0.0` release.
@@ -12,9 +12,55 @@ prompt per branch/PR — and the entries below summarise each phase under the
 
 The format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
-## [2.0.0] — 2026-08-02 — Dulecy Lead Services rebuild
+## [2.1.0] — 2026-08-02 — Brand spelling correction: Dulecy → Dulcey
 
-Converted the repository into the production website for **Dulecy Lead
+The client's brand name is **Dulcey**, not "Dulecy" — the rebuild had carried
+the wrong spelling throughout. Corrected everywhere, and the site URL moved to
+the brand's actual domain.
+
+### Changed
+
+- **Brand name** — every occurrence of `Dulecy` / `dulecy` / `DULECY` rewritten
+  to `Dulcey` / `dulcey` / `DULCEY` across `src/`, `public/`, `scripts/`,
+  `/mockup`, `/prompts`, and all documentation (80 files). This includes
+  `siteConfig.legalName` / `brandName`, page titles, meta descriptions, the
+  five JSON-LD blocks in `public/index.html`, `manifest.json`, the footer
+  watermark, and the admin panel.
+- **Site URL** — `https://www.dulecy.com` → `https://www.dulceyleadservices.com`
+  in `siteConfig.siteUrl`, and therefore in every canonical, OG/Twitter URL and
+  schema `url` derived from it, plus `public/sitemap.xml`, `public/robots.txt`
+  and the static head in `public/index.html`.
+- **Logo assets** — `siteConfig.logo` and `siteConfig.logoWhite` re-pointed to
+  the new Dulcey-spelled artwork (`v1785682949/Dulcey-Logo_tmkfku.png` and
+  `v1785682948/Dulcey-Logo-White_pthxu2.png`). The previous commit had updated
+  `/mockup` and the generator scripts but left `siteConfig.js` on the superseded
+  `_qr2ka7` / `_uxpsb6` uploads, so the header, footer, admin topbar and login
+  card were still serving the old logos.
+- **`src/styles/dulecy.css` → `src/styles/dulcey.css`** (import in
+  `src/index.js` and the module comments that reference it updated).
+- **`public/og-image.png`** regenerated — the wordmark, headline and site URL
+  are drawn into the PNG, so the old spelling was baked in.
+- **`package.json`** `name` → `dulcey-lead-services-website`, description and
+  the `dulecy` keyword.
+
+### Unchanged (deliberately)
+
+- **`siteConfig.logoIcon`** keeps the public_id `Dulecy-Logo-Icon_hylrpw.png`.
+  That string is Cloudinary's immutable delivery path for the "D" mark, not a
+  brand string — rewriting it would 404 the favicon/PWA icon source. The
+  generated icons in `public/` are unaffected and were not regenerated.
+- **Admin credentials** — `dulecyadmin` and the `Dulecy@Admin2026` fallback in
+  `src/admin/utils/adminAuth.js` are left as-is so the rebrand does not
+  invalidate operator logins. Rotate them deliberately, not as a side effect.
+- **Lead record field keys, status `value` keys, and the `leads.php` contract**
+  — untouched; only comments in those files changed.
+- **`dulceyleadservices@gmail.com`** — already the correct spelling, so the
+  "intentional misspelling" caveat that used to guard it has been removed from
+  `CLAUDE.md`, `CUSTOMIZATION_GUIDE.md` and the prompt docs.
+
+## [2.0.0] — 2026-08-02 — Dulcey Lead Services rebuild
+
+Converted the repository into the production website for **Dulcey Lead
 Services**, matching the static design source in `/mockup` — five public pages,
 a new enquiry flow, and a rebranded admin panel — while reusing the existing
 lead-storage pipeline unchanged.
@@ -22,11 +68,11 @@ lead-storage pipeline unchanged.
 ### 01 — Brand foundation & configuration
 
 **Changed**
-- `src/data/siteConfig.js` re-pointed to Dulecy: brand/legal name, tagline
+- `src/data/siteConfig.js` re-pointed to Dulcey: brand/legal name, tagline
   "Beyond Business Support" + `taglineSecondary`, phone `+91 70990 02522`,
-  `dulceyleadservices@gmail.com` (intentional spelling), `https://www.dulecy.com`,
+  `dulceyleadservices@gmail.com`, `https://www.dulceyleadservices.com`,
   and the three Cloudinary logos (adds `logoIcon`).
-- `src/styles/variables.css` gained the mockup's Dulecy token block (ink, the
+- `src/styles/variables.css` gained the mockup's Dulcey token block (ink, the
   grey ramp, `--line`, `--bg-grey`, `--red`, `--red-hi`, the two gradients) and
   re-pointed every legacy alias family — including `--admin-*` — onto it;
   `src/theme/muiTheme.js` mirrors it.
@@ -102,14 +148,14 @@ lead-storage pipeline unchanged.
 
 **Changed**
 - Login, topbar, dashboard and the guideline gate read the logo and brand name
-  from `siteConfig`; admin `.module.css` files swept onto the Dulecy tokens.
+  from `siteConfig`; admin `.module.css` files swept onto the Dulcey tokens.
 - Lead surfaces reshaped around the Prompt 07 payload: an **Organization**
   column replaces State in Lead Management, Lead Detail and the dashboard
   tables, with a new "Interested In" filter and organization folded into search.
 - Status **labels** re-mapped onto the consulting pipeline — notably
   `consultation_booked` → "Proposal Sent" and `procedure_scheduled` →
   "Follow-Up". The persisted `value` keys are unchanged.
-- The four Guidelines tabs rewritten for Dulecy.
+- The four Guidelines tabs rewritten for Dulcey.
 
 ### 09 — Animation & interaction parity
 
@@ -133,7 +179,7 @@ lead-storage pipeline unchanged.
   `/expertise#eNN`), keeping the same-id injection contract with the static
   blocks in `public/index.html`.
 - `robots.txt` and a five-URL `sitemap.xml`; regenerated favicons, PWA icons and
-  the OG image from the Dulecy logo.
+  the OG image from the Dulcey logo.
 
 **Removed**
 - `FAQPage`, `LocalBusiness`, `PostalAddress`, geo coordinates, opening hours
@@ -177,7 +223,7 @@ lead-storage pipeline unchanged.
 
 **Changed**
 - Rewrote `README.md`, `CLAUDE.md`, `CHANGELOG.md`, `CUSTOMIZATION_GUIDE.md` and
-  `SEO_GUIDE.md` for the Dulecy codebase — routes, data layer, animation
+  `SEO_GUIDE.md` for the Dulcey codebase — routes, data layer, animation
   parameters, the lead-storage contract, the design tokens and the SEO system
   all verified against the code rather than carried over. No source changes.
 

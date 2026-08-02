@@ -1,7 +1,7 @@
 {
-  "name": "dulecy-lead-services-website",
+  "name": "dulcey-lead-services-website",
   "version": "1.0.0",
-  "description": "Dulecy Lead Services — multi-page business-consulting website (React 18 + MUI + GSAP) with lead management admin panel.",
+  "description": "Dulcey Lead Services — multi-page business-consulting website (React 18 + MUI + GSAP) with lead management admin panel.",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.11.3",
@@ -54,7 +54,7 @@
   "author": "Assam Digital",
   "license": "UNLICENSED",
   "keywords": [
-    "dulecy",
+    "dulcey",
     "lead-services",
     "business-consulting",
     "hr",

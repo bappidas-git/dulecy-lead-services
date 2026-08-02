@@ -15,8 +15,8 @@ import DeploymentGuide from "./guidelineContent/DeploymentGuide";
 import DeveloperGuide from "./guidelineContent/DeveloperGuide";
 
 // Second gate in front of the setup docs (the admin login is the first).
-// Rotated for the Dulecy rebuild — the previous value is dead.
-const GUIDELINE_PASSWORD = "Dulecy@Guide2026";
+// Rotated for the Dulcey rebuild — the previous value is dead.
+const GUIDELINE_PASSWORD = "Dulcey@Guide2026";
 const SESSION_KEY = "guideline_unlocked";
 
 const TABS = [

@@ -1,5 +1,5 @@
 /* ============================================
-   Dashboard Page — Dulecy Lead Services enquiry overview
+   Dashboard Page — Dulcey Lead Services enquiry overview
    ============================================ */
 
 import React, { useState, useEffect } from 'react';

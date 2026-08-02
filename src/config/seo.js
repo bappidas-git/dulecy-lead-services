@@ -1,8 +1,8 @@
 /* ============================================
-   SEO Configuration — Dulecy Lead Services
+   SEO Configuration — Dulcey Lead Services
    --------------------------------------------
    Central configuration for every SEO setting, page title/description and
-   schema input used by the five-route Dulecy site.
+   schema input used by the five-route Dulcey site.
 
    Everything here is generated from the single sources of truth so the
    metadata can never drift from the visible site:
@@ -28,7 +28,7 @@ import { expertiseAreas, expertiseTitles } from '../data/expertiseData';
 import { industries } from '../data/industriesData';
 import { NAV_LINKS } from '../data/navigation';
 
-const SITE_URL = siteConfig.siteUrl; // https://www.dulecy.com
+const SITE_URL = siteConfig.siteUrl; // https://www.dulceyleadservices.com
 
 /** Absolute URL for a route path ('/' → siteUrl + '/'). */
 const absolute = (path) => `${SITE_URL}${path}`;
@@ -51,7 +51,7 @@ export const seoConfig = {
   defaultTitle: `${siteConfig.brandName} — ${siteConfig.tagline}`,
   titleTemplate: `%s — ${siteConfig.brandName}`,
   defaultDescription:
-    'Dulecy Lead Services works with businesses, institutions and entrepreneurs to navigate complexity, strengthen organizational capability and grow sustainably.',
+    'Dulcey Lead Services works with businesses, institutions and entrepreneurs to navigate complexity, strengthen organizational capability and grow sustainably.',
   defaultImage: `${SITE_URL}/og-image.png`,
   locale: 'en_IN',
   language: 'en',
@@ -112,7 +112,7 @@ export const seoConfig = {
       path: '/',
       title: `${siteConfig.brandName} — ${siteConfig.tagline}`,
       description:
-        'Dulecy Lead Services works with businesses, institutions and entrepreneurs to navigate complexity, strengthen organizational capability and grow sustainably.',
+        'Dulcey Lead Services works with businesses, institutions and entrepreneurs to navigate complexity, strengthen organizational capability and grow sustainably.',
       keywords: keywords(
         siteConfig.tagline,
         'business solutions',
@@ -129,9 +129,9 @@ export const seoConfig = {
       breadcrumb: navLabel('/about'),
       title: `About — ${siteConfig.brandName}`,
       description:
-        'Built on experience, defined by trust — Dulecy Lead Services brings people, processes, information, operations and leadership together, with depth in pharma.',
+        'Built on experience, defined by trust — Dulcey Lead Services brings people, processes, information, operations and leadership together, with depth in pharma.',
       keywords: keywords(
-        'about Dulecy',
+        'about Dulcey',
         'business consulting India',
         'organizational capability',
         'pharmaceutical business experience',
@@ -184,7 +184,7 @@ export const seoConfig = {
       path: '/404',
       title: `Page Not Found — ${siteConfig.brandName}`,
       description:
-        'The page you are looking for does not exist. Return to Dulecy Lead Services to explore our expertise, the sectors we serve, or start a conversation.',
+        'The page you are looking for does not exist. Return to Dulcey Lead Services to explore our expertise, the sectors we serve, or start a conversation.',
       robots: 'noindex, nofollow',
       noindex: true,
     },

@@ -149,6 +149,6 @@ prefilled enquiry flow works, and the build is green.
 
 ## 11. Report & PR (mandatory)
 
-Branch `dulecy/05-expertise-page`; commit, push, open a **draft PR**. Report a
+Branch `dulcey/05-expertise-page`; commit, push, open a **draft PR**. Report a
 concise summary and the **PR link** (or branch + commit SHAs if PR creation is
 unavailable).

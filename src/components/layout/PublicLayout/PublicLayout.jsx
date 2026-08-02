@@ -1,5 +1,5 @@
 /* ============================================
-   PublicLayout — the shared Dulecy shell
+   PublicLayout — the shared Dulcey shell
    --------------------------------------------
    Every public route renders inside this layout (skip link → fixed
    Header → full-screen MobileMenu → <main id="main-content"> → dark
