@@ -1,212 +1,246 @@
-# SEO Guide — Nilachal Infracon
+# SEO Guide — Dulecy Lead Services
 
-## 1. Overview
+Target site: **`https://www.dulecy.com`** — five indexable routes plus a
+`noindex` admin panel and 404.
 
-The site's SEO is **dual-layer**:
+## 1. Architecture
 
-1. **Static layer** — `public/index.html` carries the meta tags, Open Graph /
-   Twitter cards, and five JSON-LD `<script>` blocks. These are the fallback
-   that crawlers which don't execute JavaScript (and social scrapers) read.
-2. **Runtime layer** — `src/components/common/SEO/SEOHead.jsx` calls the
-   utilities in `src/utils/seo.js`, which read `src/config/seo.js` and inject
-   JSON-LD using the **same element ids** as the static blocks, replacing them
-   at runtime and updating the title / description / canonical per route.
+The system is **dual-layer**. Both layers describe the same page; the runtime
+layer replaces the static one *in place*, by element id, so nothing is ever
+duplicated.
 
-Everything is generated from the **single sources of business truth** so the
-schemas can never drift from the visible site:
-
-| Source of truth | Feeds |
-|-----------------|-------|
-| `src/data/siteConfig.js` | company/contact facts, logo, site URL, maps query |
-| `src/data/locationData.js` | the 8 Northeast states (`areaServed`) |
-| `src/data/faqData.js` | the FAQ section **and** the FAQPage schema (must match) |
-| `src/data/servicesData.js` | the Service ItemList schema |
-
-**Golden rule:** update the data files, not the schemas. When you change a fact
-in `siteConfig.js` or a Q&A in `faqData.js`, update the matching **static**
-block in `public/index.html` too (the runtime layer picks it up automatically).
-
-Target queries this site is built to rank for: *Nilachal Infracon*, *North East
-Buildmart*, *building materials Nagaon*, *construction materials Assam*,
-*building materials supplier Northeast India*, *construction company Nagaon
-Assam*.
-
----
-
-## 2. Meta Tags Checklist
-
-All meta tags live in `public/index.html` under the `<!-- SEO Meta Tags -->`
-section; the runtime values come from `src/config/seo.js`.
-
-| Tag | Where | Value |
-|-----|-------|-------|
-| `<title>` | `index.html` + `seo.js` `pages.home.title` | `Nilachal Infracon — Building Materials & Construction, Northeast India` |
-| `meta description` | `index.html` + `seo.js` `defaultDescription` | ≤160 chars, mentions North East Buildmart + Nagaon/Assam + CTA |
-| `meta keywords` | `index.html` + `seo.js` `pages.home.keywords` | brand + category + geo terms |
-| `meta author` | `index.html` | `Nilachal Infracon Private Limited` |
-| `meta robots` | `index.html` | `index, follow` |
-| `canonical` | `index.html` | `https://www.nilachalinfracon.com/` |
-
-**Restricted pages:** `SEOHead` sets `noindex, nofollow` at runtime for
-`/thank-you` and everything under `/admin` (`seo.js` → `pages.thankYou` /
-`pages.admin`) and strips the public schemas from admin routes.
-
-**Geo tags** (below the author meta):
-
-```html
-<meta name="geo.region" content="IN-AS" />
-<meta name="geo.placename" content="Nagaon" />
-<meta name="geo.position" content="26.3489;92.6820" />
-<meta name="ICBM" content="26.3489, 92.6820" />
+```
+src/data/siteConfig.js ──┐
+src/data/expertiseData.js├──► src/config/seo.js ──► src/utils/seo.js ──► SEOHead
+src/data/industriesData.js│      (page configs        (pure schema        (rewrites
+src/data/navigation.js ──┘        + schema inputs)     generators +        <head> on
+                                                       DOM writers)       every route
+                                                                          change)
+                                       │
+                                       └──► public/index.html
+                                            (the same tags + the same
+                                             5 schema ids, hand-written,
+                                             as the no-JS fallback)
 ```
 
-> The geo coordinates are approximate for the Nagaon / Lawkhowa Road area
-> (town centre ≈ `26.3504, 92.6796`). Refine them — and the `openingHours` in
-> `seo.js` `localBusiness` (currently a Mon–Sat 09:00–19:00 placeholder) — once
-> the client confirms the exact store location and hours.
+| Layer | File | Role |
+|---|---|---|
+| Static | `public/index.html` | Meta, OG/Twitter, canonical, and five JSON-LD blocks for the **home page**. What a crawler or social scraper that never runs JS sees. |
+| Runtime | `src/components/common/SEO/SEOHead.jsx` | Resolves `location.pathname` → a `seoConfig.pages` entry, rewrites title / description / keywords / robots / canonical / OG / Twitter, and re-injects the JSON-LD by the same ids. |
+| Config | `src/config/seo.js` | Every page's title, description, keywords, canonical path, robots, breadcrumb name, and the Organization + Service schema inputs. |
+| Generators | `src/utils/seo.js` | Pure `config in → schema object out` functions, plus `injectSchema` / `removeSchema` / `updatePageSEO`. |
 
----
+**Golden rule:** edit the **data files**, not the schemas. `seo.js` derives
+everything from `siteConfig` (facts), `expertiseData` (the `knowsAbout` list and
+the ten `Service` items), `industriesData` (keywords) and `navigation`
+(breadcrumb names). When a change affects the **home page**, mirror it into the
+static blocks in `public/index.html` — that file is hand-written.
 
-## 3. Open Graph & Twitter Cards
+## 2. Per-page configuration
 
-Located in `public/index.html` under `<!-- Open Graph / Facebook -->` and
-`<!-- Twitter Card -->`. Keep the two consistent.
+Every route's metadata is one entry in `seoConfig.pages`
+(`src/config/seo.js`). Titles are the mockup `<title>` values verbatim;
+descriptions are written from each page's own visible copy at ~150–160
+characters.
+
+| Route | `pages` key | Title | Notes |
+|---|---|---|---|
+| `/` | `home` | Dulecy Lead Services — Beyond Business Support | `services: true` |
+| `/about` | `about` | About — Dulecy Lead Services | |
+| `/expertise` | `expertise` | Our Expertise — Dulecy Lead Services | `services: true`; keywords derived from `expertiseTitles` |
+| `/industries` | `industries` | Who We Serve — Dulecy Lead Services | keywords derived from `industries` |
+| `/contact` | `contact` | Contact — Dulecy Lead Services | description includes `phoneDisplay` |
+| `/admin*` | `admin` | Admin Panel — Dulecy Lead Services | `noindex, nofollow`; all public schemas stripped |
+| anything else | `notFound` | Page Not Found — Dulecy Lead Services | `noindex, nofollow` |
+
+Mechanics worth knowing:
+
+- **Canonicals** are absolute and always the indexable path. `resolvePage()`
+  normalises trailing slashes, so `/about/` and `/about` never emit competing
+  canonicals.
+- **`noindex` routes carry no URL tags.** `og:url`, `twitter:url` and the
+  canonical `<link>` are *removed* (not just left stale) so `/admin` never
+  inherits the previous route's URL.
+- **Adding a route needs two edits**: a `pages` entry *and* a line in
+  `ROUTE_MAP` inside `SEOHead.jsx`. Miss the second and the page silently falls
+  through to the 404 config and is served `noindex`.
+
+Site-level values — `siteName`, `defaultTitle`, `titleTemplate`,
+`defaultDescription`, `defaultImage` (`/og-image.png`), `locale` (`en_IN`),
+`language` (`en`) — sit at the top of the same file.
+
+## 3. Meta, Open Graph & Twitter
+
+The static home-page set lives in `public/index.html` under the
+`SEO Meta Tags`, `Open Graph / Facebook`, `Twitter Card` and `Canonical URL`
+comment blocks. It must match `seoConfig.pages.home`, so that a crawler which
+never runs JS sees exactly what a browser does.
 
 | Tag | Value |
 |-----|-------|
+| `<title>` | `Dulecy Lead Services — Beyond Business Support` |
+| `meta description` | ≤160 chars, from `defaultDescription` |
+| `meta keywords` | brand + the home keyword set |
+| `meta author` | `Dulecy Lead Services` |
+| `meta robots` / `googlebot` | `index, follow` |
+| `canonical` / `og:url` / `twitter:url` | `https://www.dulecy.com/` |
 | `og:type` | `website` |
-| `og:url` / `canonical` | `https://www.nilachalinfracon.com/` |
-| `og:title` | same as `<title>` |
-| `og:description` | same as `meta description` |
-| `og:image` | `https://www.nilachalinfracon.com/og-image.png` (absolute) |
+| `og:title` / `og:description` | same as `<title>` / `meta description` |
+| `og:image` | `https://www.dulecy.com/og-image.png` (absolute) |
 | `og:image:width` / `:height` | `1200` / `630` |
-| `og:image:alt` | `Nilachal Infracon — Building the Future of Northeast India` |
-| `og:site_name` | `Nilachal Infracon` |
+| `og:site_name` | `Dulecy Lead Services` |
 | `og:locale` | `en_IN` |
 | `twitter:card` | `summary_large_image` |
+| `theme-color` / `msapplication-TileColor` | `#0B0B0C` (`--ink`) |
 
-The runtime layer keeps `og:image` / `twitter:image` in sync via
-`seo.js` `defaultImage`. **OG image requirements:** 1200×630, < 300 KB, absolute
-URL (social scrapers don't run JS or resolve relative paths).
+**OG image requirements:** 1200×630, under ~300 KB, and an **absolute** URL —
+social scrapers don't run JS or resolve relative paths.
 
----
+There are deliberately **no geo tags** (`geo.region`, `geo.position`, `ICBM`):
+the organization publishes no postal address, so there is no location to claim.
 
-## 4. Schema Markup (JSON-LD)
+## 4. Schema markup (JSON-LD)
 
-Five schemas, static (`public/index.html`) + runtime (`src/utils/seo.js`
-generators reading `src/config/seo.js`), sharing element ids:
+Five schemas, each existing twice — hand-written in `public/index.html` and
+generated at runtime by `src/utils/seo.js` — sharing one element id:
 
-| id | Schema | Generator | Config |
-|----|--------|-----------|--------|
-| `schema-organization` | `Organization` | `generateOrganizationSchema()` | `organization` |
-| `schema-localbusiness` | `["LocalBusiness","HomeAndConstructionBusiness"]` | `generateLocalBusinessSchema()` | `localBusiness` |
-| `schema-faq` | `FAQPage` | `generateFAQSchema()` | `faqs` (← `faqData`) |
-| `schema-breadcrumb` | `BreadcrumbList` | `generateBreadcrumbSchema()` | — (single Home crumb) |
-| `schema-webpage` | `WebPage` / `WebSite` | `generateWebPageSchema()` | `pages.home` |
+| Element id | Schema | Generator | Emitted on |
+|----|--------|-----------|------------|
+| `schema-organization` | `Organization` | `generateOrganizationSchema()` | every public route |
+| `schema-website` | `WebSite` | `generateWebSiteSchema()` | every public route |
+| `schema-webpage` | `WebPage` | `generateWebPageSchema()` | every public route |
+| `schema-breadcrumb` | `BreadcrumbList` | `generateBreadcrumbSchema()` | every public route |
+| `schema-services` | `ItemList` of ten `Service` | `generateServiceSchema()` | `/` and `/expertise` only (`page.services`) |
 
-A sixth, `schema-services` (`ItemList` of `Service`), is injected by
-`ServicesSection` from `servicesData` — provider is the organization,
-`areaServed` is the 8 NE states.
+- `Organization` carries `name`, `legalName`, `url`, `logo`, `description`,
+  `slogan`, a `contactPoint` (phone + email) and `knowsAbout` (the ten expertise
+  titles). `sameAs` is omitted while empty.
+- `BreadcrumbList` is `Home` on `/`, and `Home → <nav label>` elsewhere — the
+  crumb name comes from `navigation.js`, so it always matches the visible nav.
+- Each `Service` deep-links to its accordion panel (`/expertise#e01` …`#e10`)
+  and lists the organization as `provider`.
+- `injectPageSchemas()` **removes** `schema-services` when navigating to a page
+  that doesn't declare it, so a stale `ItemList` never lingers.
+  `removePublicSchemas()` strips all five under `/admin`.
 
-### FAQPage must mirror the visible FAQ
+### The rule: no schema without a visible counterpart
 
-Google requires the FAQPage schema to match the on-page FAQ **exactly**. Both
-the FAQ section and the schema read `src/data/faqData.js`, so they stay in sync
-automatically — but the **static** block in `public/index.html` is hand-written:
-if you edit `faqData.js`, mirror the change in `#schema-faq`. (Quick check:
-paste both into the Rich Results Test and confirm the questions line up.)
+The following are **deliberately absent**, and must stay absent:
+
+| Not emitted | Why |
+|---|---|
+| `FAQPage` | The site has no visible FAQ section. Google requires the schema to mirror on-page Q&A exactly. |
+| `LocalBusiness` / `PostalAddress` | There is no public postal address. Inventing one to qualify is a structured-data guidelines violation. |
+| `geo` coordinates, `openingHours` | Same reason — no verifiable physical location. |
+| `AggregateRating` / `Review` | No collected reviews. |
+
+If the client later publishes a real address, hours, or profiles, add the
+visible content **first**, then the schema.
 
 ### Editing schemas
 
-Change the **data files** (`siteConfig.js`, `faqData.js`, `servicesData.js`,
-`locationData.js`); the runtime generators regenerate everything. The generators
-take schema types and catalog names **from config** — never hard-code a
-`@type`. `localBusiness.type` is an array and `additionalType` points at a
-building-materials type hint (productontology.org).
+Change the data files; the generators rebuild everything. Never hard-code a
+`@type` in a component. Then mirror the home-page result into
+`public/index.html` and re-validate:
 
----
+- **Rich Results Test** — <https://search.google.com/test/rich-results>
+- **Schema Markup Validator** — <https://validator.schema.org/>
 
-## 5. Sitemap & Robots
+Quick check that the two layers agree: load a page, then compare
+`document.getElementById('schema-organization').textContent` against the block
+in `public/index.html`.
+
+## 5. Sitemap & robots
 
 ### `public/sitemap.xml`
 
-Single-page site — one URL. Bump `lastmod` on meaningful content changes:
+Exactly the five indexable routes. Keep it in sync with the `<Route>` table in
+`src/App.jsx` and `seoConfig.pages`; bump `lastmod` on meaningful content
+changes.
 
-```xml
-<url>
-  <loc>https://www.nilachalinfracon.com/</loc>
-  <lastmod>2026-07-26</lastmod>
-  <changefreq>monthly</changefreq>
-  <priority>1.0</priority>
-</url>
-```
+| `<loc>` | `changefreq` | `priority` |
+|---|---|---|
+| `https://www.dulecy.com/` | monthly | 1.0 |
+| `https://www.dulecy.com/expertise` | monthly | 0.9 |
+| `https://www.dulecy.com/about` | yearly | 0.8 |
+| `https://www.dulecy.com/industries` | yearly | 0.8 |
+| `https://www.dulecy.com/contact` | yearly | 0.7 |
 
-**Exclude** `/admin/*`, `/thank-you`, `/api/*` from the sitemap.
+**Exclude** `/admin/*` and `/api/*`.
 
 ### `public/robots.txt`
 
 ```
 User-agent: *
 Allow: /
-Disallow: /admin/
-Disallow: /thank-you
+Disallow: /admin
 
-Sitemap: https://www.nilachalinfracon.com/sitemap.xml
+Sitemap: https://www.dulecy.com/sitemap.xml
 ```
 
----
+## 6. Favicons, PWA icons & the OG image
 
-## 6. Favicons, PWA Icons & OG Image
-
-These assets are generated from the Nilachal logo by committed scripts (dev
-deps: `sharp`, `png-to-ico`). Re-run them if the logo changes.
+Generated from the Dulecy logo by committed scripts (dev deps `sharp` and
+`png-to-ico`). Re-run them whenever the logo changes; both fetch from Cloudinary,
+so they need network access.
 
 ```bash
-npm run generate:icons   # → public/favicon.ico, favicon.png,
-                         #   apple-touch-icon.png, logo192.png, logo512.png
-npm run generate:og      # → public/og-image.png (1200×630)
+npm run generate:icons
 ```
 
-- `scripts/generate-icons.js` crops the logo's **emblem** (the illustration
-  above the wordmark, which stays legible at small sizes), then renders the
-  favicon set and maskable-safe 192/512 PWA icons on white.
-- `scripts/generate-og.js` composes the white logo + headline on the navy
-  brand background into the social share image.
-- `public/manifest.json` lists the real icon files (`favicon.ico`,
-  `logo192.png`, `logo512.png` — `any maskable`), name **Nilachal Infracon**,
-  `theme_color #16324F`, `background_color #FFFFFF`.
+```bash
+npm run generate:og
+```
 
----
+- `scripts/generate-icons.js` flattens the **icon** logo (the standalone "D"
+  mark) onto white and trims the surrounding circle — what stays legible at
+  16px — then writes `favicon.png` (32×32), `favicon.ico` (16/32/48),
+  `apple-touch-icon.png` (180×180) and the maskable-safe `logo192.png` /
+  `logo512.png`.
+- `scripts/generate-og.js` composes the color logo, an ink headline, a red
+  accent rule, the secondary tagline and the site URL into
+  `public/og-image.png` (1200×630).
+- `public/manifest.json` lists those real files, with name **Dulecy Lead
+  Services**, `short_name` **Dulecy**, `theme_color` `#0B0B0C`,
+  `background_color` `#FFFFFF`.
 
-## 7. Performance SEO (already handled)
+Page photography is separate: `npm run generate:images` refreshes the
+self-hosted hero/band images and sector icons in `public/images/`.
 
-- Lazy-loaded, code-split sections (`React.lazy()`), skeleton loaders (low CLS).
-- Inter font preloaded with async swap; preconnect to font + Iconify hosts.
-- Images always declare `width`/`height`/`alt` and `loading="lazy"`.
-- Core Web Vitals tracked via `src/reportWebVitals.js`.
-- Single `<h1>` (hero), `<h2>` per section, `<h3>` for card/pillar titles.
+## 7. Performance SEO (already in place)
 
----
+- Every route except `/` is code-split, and the whole `/admin` tree is behind
+  its own `lazy()` boundary, so it never ships in the public bundle.
+- Fonts are preconnected and preloaded with an async swap; the home hero image
+  is preloaded for LCP (home route only, via the inline script in
+  `index.html`).
+- Hero/band photos are self-hosted WebP at 1920w/960w with a JPEG fallback;
+  Cloudinary logos are requested at 2× their CSS box through `logoAt()`.
+- One `<h1>` per page, `<h2>` per section, `<h3>` for cards — verified in the
+  Prompt 12 accessibility sweep (axe: zero violations; Lighthouse
+  Accessibility 100).
+- Core Web Vitals are reported through `src/reportWebVitals.js`.
 
-## 8. Post-Launch Checklist
+## 8. Post-launch checklist
 
-Once the site is live on `https://www.nilachalinfracon.com`:
+Once the site is live on `https://www.dulecy.com`:
 
 ```
-- [ ] Deploy: confirm the live head matches public/index.html (view-source)
+- [ ] Deploy: view-source and confirm the live <head> matches public/index.html
+- [ ] Client-side nav: visit all five routes, confirm <title>, description and
+        canonical change per route (and that /admin is noindex with no schemas)
 - [ ] Google Search Console — add & verify the domain property
-- [ ] GSC — submit https://www.nilachalinfracon.com/sitemap.xml
-- [ ] GSC — "URL Inspection" on / → Request Indexing
+- [ ] GSC — submit https://www.dulecy.com/sitemap.xml
+- [ ] GSC — URL Inspection on / and /expertise → Request Indexing
 - [ ] Bing Webmaster Tools — add the site, submit the sitemap
-- [ ] Rich Results Test (https://search.google.com/test/rich-results) on /:
-        confirms Organization, LocalBusiness, FAQPage, Breadcrumb parse
-- [ ] Schema Markup Validator (https://validator.schema.org/) on /
+- [ ] Rich Results Test on / and /expertise: Organization, WebSite, WebPage,
+        BreadcrumbList and the Service ItemList all parse without errors
+- [ ] Schema Markup Validator on all five routes
 - [ ] Facebook Sharing Debugger + LinkedIn Post Inspector → OG image renders
 - [ ] X/Twitter Card Validator → summary_large_image renders
-- [ ] Lighthouse SEO audit ≥ 95; verify title/description/canonical/robots
-- [ ] Confirm FAQPage questions == the visible FAQ section (Google guideline)
-- [ ] Google Business Profile — create/claim the Nagaon listing (NAP must match
-        siteConfig: name, address, phone) and link the website
-- [ ] Fill organization.sameAs in seo.js + the OG tags once social profiles exist
-- [ ] Confirm real business hours + exact store geo; update seo.js localBusiness
+- [ ] Lighthouse SEO ≥ 95 on every route
+- [ ] Monitor Core Web Vitals (LCP / INP / CLS) in GSC and PageSpeed Insights
+- [ ] Fill organization.sameAs in src/config/seo.js + siteConfig.social once the
+        client provides real social profiles
+- [ ] Do NOT add LocalBusiness/FAQPage unless the matching visible content ships
 ```
