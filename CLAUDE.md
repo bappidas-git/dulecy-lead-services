@@ -166,6 +166,14 @@ invisibly. Change both sides together and rebuild.
   and **BroadcastChannel** `lp_leads_channel` (plus a `lp:leads-changed` window
   event) for same-browser tabs. Writes update the cache optimistically and
   mirror to the server.
+  The two notification channels are **not** interchangeable, and `onLeadsChanged`
+  handles them differently on purpose. The same-tab `lp:leads-changed` event
+  follows a local write that already updated the cache, so it re-reads directly.
+  A BroadcastChannel message comes from a *different* JS context whose write
+  this tab's cache knows nothing about, so it **re-syncs from the server before
+  re-rendering** — calling the handler alone would only re-read a stale copy.
+  That path is intentionally not visibility-gated (the pollers are), because a
+  broadcast proves a sibling tab just wrote.
 
 Client configuration: `REACT_APP_LEADS_API_URL` + `REACT_APP_LEADS_ADMIN_KEY`
 in `.env` (committed — rotate before launch). CRA bakes them in at build time.

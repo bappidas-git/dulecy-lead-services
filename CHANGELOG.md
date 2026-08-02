@@ -203,6 +203,24 @@ lead-storage pipeline unchanged.
   dotfiles. `README.md` gained the matching pointer.
 
 **Fixed**
+- **Cross-tab admin sync never actually converged.** Two bugs stacked on top of
+  each other, both surfaced by the Prompt 14 QA pass:
+  1. `onLeadsChanged` treated the same-tab event and the BroadcastChannel
+     message identically, calling the handler straight away. But `_cache` is
+     per-JS-context, so a tab receiving a broadcast just re-read its own stale
+     copy and rendered the same thing. The broadcast path now re-syncs from the
+     server first, and is deliberately not visibility-gated.
+  2. `notifyLeadsChanged()` fired *before* `callLeadsApi()` sent the write, so
+     even a correct listener fetched a server snapshot that predated the change
+     — and, the broadcast already consumed, stayed stale until its next poll.
+     Notification is now split: `notifyLeadsChanged()` for this tab (the cache
+     is already updated optimistically) and `broadcastLeadsChanged()` for
+     siblings, fired only once the server write resolves.
+
+  A note or status change made in one tab now appears in another within one
+  request, verified with both tabs hidden and never focused so neither the 15 s
+  poll nor the focus sync could mask the result. No localStorage copy of leads
+  was introduced; the server remains the single source of truth.
 - Ordering bug in the first draft of `public/.htaccess`: the `LONG_CACHE`
   tagging rules sat *after* the "serve real files" rule, which ends in `[L]` and
   stops rewrite processing — so `/static/**` and `/images/**` would never have
