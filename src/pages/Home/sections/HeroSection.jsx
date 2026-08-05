@@ -74,7 +74,7 @@ const HeroSection = () => {
         <h1 className="display" data-hero>
           We don&rsquo;t just offer services.
           <br />
-          We deliver <em className="serif grad-text">impact</em>.
+          We deliver <em className={`grad-text ${styles.impact}`}>impact</em>.
         </h1>
 
         <p className={`lede ${styles.lede}`} data-hero>

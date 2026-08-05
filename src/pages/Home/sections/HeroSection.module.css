@@ -92,6 +92,15 @@
   }
 }
 
+/* Deliberate departure from the mockup, which sets "impact" in the
+   Instrument Serif italic accent (`.serif`). Here the word keeps only the
+   red `.grad-text` fill and otherwise renders exactly like the rest of the
+   headline — the <em> default italic is the one thing left to undo, since
+   family, weight, and tracking already inherit from `.display`. */
+.impact {
+  font-style: normal;
+}
+
 /* The hero lede is narrower than the shared `.lede` default. */
 .lede {
   max-width: 640px;
