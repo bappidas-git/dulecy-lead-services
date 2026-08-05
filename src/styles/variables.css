@@ -90,9 +90,20 @@
   --shadow-button-hover: 0 14px 34px rgba(213, 25, 46, 0.38);
 
   /* ========== Typography ========== */
-  --font-primary: 'Archivo', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-heading: 'Archivo', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-body: 'Archivo', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  /* 'Inter' leads the three sans stacks but can only ever render ONE
+     character. The Google Fonts request (src/styles/global.css and
+     public/index.html) is subset with `text=.`, so Google ships a 1.6 KB file
+     whose @font-face rules carry `unicode-range: U+2e` — the full stop and
+     nothing else. Archivo draws that glyph as a hard square, which reads as a
+     defect at display sizes; Inter draws a circle of the same visual weight.
+     Every other character falls straight through to Archivo, and because an
+     @font-face family shadows an installed font of the same name, a visitor
+     who happens to have Inter installed still gets Archivo body text.
+     Keep 'Inter' first — moving or dropping it brings the square dot back. */
+  --font-primary: 'Inter', 'Archivo', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-heading: 'Inter', 'Archivo', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Inter', 'Archivo', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  /* Instrument Serif already draws a round full stop — left untouched. */
   --font-serif: 'Instrument Serif', serif;
   --font-mono: 'SF Mono', 'Fira Code', 'Consolas', monospace;
 

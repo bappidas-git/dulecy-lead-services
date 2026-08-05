@@ -291,6 +291,22 @@ red `--admin-accent`, `#F5F5F6` app bg, white cards, `#E7E7EA` borders, the soft
 Serif** (regular + italic) for the italic accent words, both from Google Fonts
 (preloaded in `public/index.html`).
 
+**The round full stop.** Archivo draws its period as a hard square, which reads
+as a rendering defect in the display headlines. The three sans stacks therefore
+lead with **`'Inter'`**, loaded from a `text=.` Google Fonts request that
+subsets it to a single 1.6 KB glyph whose `@font-face` rules carry
+`unicode-range: U+2e`. Inter renders the full stop — a circle of the same visual
+weight — and every other character falls through to Archivo untouched; because
+an `@font-face` family shadows an installed font of the same name, a visitor
+with Inter installed still gets Archivo body text. It is declared in five
+places that must stay in step: the `--font-primary` / `--font-heading` /
+`--font-body` tokens in `variables.css`, `FONT_SANS` in `muiTheme.js`, the
+`@import` in `global.css`, the preload + `<noscript>` links and the four splash
+`font-family` rules in `public/index.html`, and the preload list in
+`src/index.js`. **`'Inter'` must stay first in every sans stack** — reordering
+or removing it silently restores the square dot. `--font-serif` is deliberately
+left alone: Instrument Serif's period is already round.
+
 **Layout** — 1280px max content width with `clamp(20px, 4vw, 44px)` side
 padding; **fixed 68px header**; the desktop nav takes over at **920px** (below
 that, the burger opens the full-screen `MobileMenu`); hash scrolling leaves
