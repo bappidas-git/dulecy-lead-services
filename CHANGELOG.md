@@ -12,6 +12,27 @@ prompt per branch/PR — and the entries below summarise each phase under the
 
 The format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.1.1] — 2026-08-06 — Round full stop
+
+Archivo draws its period as a hard square. At display sizes — "offer services**.**
+We deliver _impact_**.**" in the home hero — it reads as a rendering defect
+rather than a typographic choice. Fixed site-wide without changing the typeface.
+
+### Changed
+
+- **Full stop is now round everywhere.** A Google Fonts request subset with
+  `text=.` ships a single 1.6 KB Inter glyph whose `@font-face` rules carry
+  `unicode-range: U+2e`. Putting `'Inter'` at the head of the sans stacks
+  overrides Archivo's square period and nothing else — every other character
+  still falls through to Archivo, so headline, body, and admin type are
+  pixel-identical apart from the dot. Verified at 375 / 760 / 1280 px.
+- Declared in `--font-primary` / `--font-heading` / `--font-body`
+  (`src/styles/variables.css`), `FONT_SANS` (`src/theme/muiTheme.js`), the
+  `@import` in `src/styles/global.css`, the preload + `<noscript>` links and the
+  four splash-screen `font-family` rules in `public/index.html`, and the preload
+  list in `src/index.js`.
+- `--font-serif` left untouched — Instrument Serif's period is already round.
+
 ## [2.1.0] — 2026-08-02 — Brand spelling correction: Dulecy → Dulcey
 
 The client's brand name is **Dulcey**, not "Dulecy" — the rebuild had carried

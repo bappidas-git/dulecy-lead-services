@@ -160,7 +160,9 @@ const DeveloperGuide = ({ styles }) => {
           Colors, type and spacing are CSS custom properties in{' '}
           <code className={styles.guideInlineCode}>src/styles/variables.css</code>, mirrored in{' '}
           <code className={styles.guideInlineCode}>src/theme/muiTheme.js</code> so MUI components
-          match. Typography is <strong>Archivo</strong> throughout.
+          match. Typography is <strong>Archivo</strong> throughout, with a one-glyph{' '}
+          <strong>Inter</strong> subset layered in front of it so the full stop renders round
+          instead of square.
         </p>
         <table className={styles.guideTable}>
           <thead className={styles.guideTableHead}>

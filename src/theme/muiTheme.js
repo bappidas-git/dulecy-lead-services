@@ -161,7 +161,10 @@ const breakpoints = {
 
 // Typography configuration — Archivo everywhere, Instrument Serif for the
 // italic display accents used in the mockup.
-const FONT_SANS = "'Archivo', system-ui, sans-serif";
+// The leading 'Inter' is not a second typeface: it is loaded as a one-glyph
+// subset scoped to `unicode-range: U+2e` so the full stop renders round
+// instead of Archivo's square. Mirrors --font-primary in variables.css.
+const FONT_SANS = "'Inter', 'Archivo', system-ui, sans-serif";
 const FONT_SERIF = "'Instrument Serif', serif";
 
 const typography = {

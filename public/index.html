@@ -163,6 +163,26 @@
       />
     </noscript>
 
+    <!-- Round full stop. `text=.` subsets Inter to a single glyph (~1.6 KB)
+         and Google emits `unicode-range: U+2e` on every @font-face, so this
+         replaces Archivo's square period site-wide and nothing else. It is
+         what puts 'Inter' at the head of the sans stacks in variables.css. -->
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&text=.&display=swap"
+      as="style"
+      onload="
+        this.onload = null;
+        this.rel = 'stylesheet';
+      "
+    />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&text=.&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
+
     <!-- =========================================
          LCP image preload — home route only
          --------------------------------------------
@@ -491,7 +511,9 @@
       }
 
       body {
-        font-family: "Archivo", system-ui, sans-serif;
+        /* 'Inter' here is the one-glyph U+2e subset loaded above — round full
+           stop over Archivo. See the preload comment in <head>. */
+        font-family: "Inter", "Archivo", system-ui, sans-serif;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         text-rendering: optimizeLegibility;
@@ -584,7 +606,7 @@
 
       .loader-tagline {
         margin: 0;
-        font-family: "Archivo", system-ui, sans-serif;
+        font-family: "Inter", "Archivo", system-ui, sans-serif;
         font-size: 13px;
         font-weight: 500;
         color: rgba(255, 255, 255, 0.72);
@@ -617,7 +639,7 @@
       /* Loading Status Text */
       .loader-status {
         margin: 0;
-        font-family: "Archivo", system-ui, sans-serif;
+        font-family: "Inter", "Archivo", system-ui, sans-serif;
         font-size: 12px;
         font-weight: 400;
         color: rgba(255, 255, 255, 0.5);
@@ -768,7 +790,7 @@
           text-align: center;
           background: #0b0b0c;
           color: #ffffff;
-          font-family: Archivo, system-ui, sans-serif;
+          font-family: Inter, Archivo, system-ui, sans-serif;
         "
       >
         <h1 style="color: #f0293e; margin-bottom: 10px">JavaScript Required</h1>

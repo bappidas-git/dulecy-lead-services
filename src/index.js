@@ -35,12 +35,21 @@ import reportWebVitals from './reportWebVitals';
 
 // Preload critical resources
 const preloadResources = () => {
-  // Preload fonts if not already done in HTML
-  const fontLink = document.createElement('link');
-  fontLink.rel = 'preload';
-  fontLink.as = 'style';
-  fontLink.href = 'https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap';
-  document.head.appendChild(fontLink);
+  // Preload fonts if not already done in HTML. The second entry is the
+  // one-glyph Inter subset (`text=.`) that swaps Archivo's square full stop
+  // for a round one — see the note on --font-primary in variables.css.
+  const fontHrefs = [
+    'https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap',
+    'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&text=.&display=swap',
+  ];
+
+  fontHrefs.forEach((href) => {
+    const fontLink = document.createElement('link');
+    fontLink.rel = 'preload';
+    fontLink.as = 'style';
+    fontLink.href = href;
+    document.head.appendChild(fontLink);
+  });
 };
 
 // Enable passive event listeners for better scroll performance
