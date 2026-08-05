@@ -12,6 +12,35 @@ prompt per branch/PR — and the entries below summarise each phase under the
 
 The format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.1.2] — 2026-08-06 — Open ampersand
+
+Archivo draws its ampersand as a closed, rotated-8 form with no diagonal leg. It
+reads as a stylistic tic rather than an `&` — most visibly in "Schools **&**
+Colleges", "HR **&** People Management", and the stroke-only "**&** Priorities"
+word in the About band. Fixed site-wide by widening the existing Inter subset by
+one glyph, without changing the typeface.
+
+### Changed
+
+- **Ampersand is now the conventional open `&` everywhere.** The Google Fonts
+  request that already carried the round full stop is now subset with
+  `text=.%26`, so Google ships a 2.2 KB Inter file (up from 1.6 KB) whose
+  `@font-face` rules carry `unicode-range: U+26, U+2e`. `'Inter'` was already at
+  the head of the sans stacks, so no stack, class, or markup changed — every
+  other character still falls through to Archivo. Verified at 375 / 760 /
+  1280 px.
+- Updated in the same five places the full stop is declared: the `@import` in
+  `src/styles/global.css`, the preload + `<noscript>` links in
+  `public/index.html`, and the preload list in `src/index.js` (URLs), plus the
+  explanatory comments on `--font-primary` (`src/styles/variables.css`) and
+  `FONT_SANS` (`src/theme/muiTheme.js`).
+- The `%26` must stay percent-encoded — a bare `&` terminates the `text` query
+  param, which silently drops the ampersand from the subset while leaving the
+  period working.
+- `--font-serif` left untouched. Instrument Serif's italic ampersand is a
+  deliberate calligraphic form, so `/expertise`'s serif-italic hero line
+  ("people, processes & performance.") keeps it.
+
 ## [2.1.1] — 2026-08-06 — Round full stop
 
 Archivo draws its period as a hard square. At display sizes — "offer services**.**

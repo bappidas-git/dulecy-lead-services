@@ -161,9 +161,11 @@ const breakpoints = {
 
 // Typography configuration — Archivo everywhere, Instrument Serif for the
 // italic display accents used in the mockup.
-// The leading 'Inter' is not a second typeface: it is loaded as a one-glyph
-// subset scoped to `unicode-range: U+2e` so the full stop renders round
-// instead of Archivo's square. Mirrors --font-primary in variables.css.
+// The leading 'Inter' is not a second typeface: it is loaded as a two-glyph
+// subset scoped to `unicode-range: U+26, U+2e` so the full stop renders round
+// instead of Archivo's square and the ampersand renders as a conventional open
+// `&` instead of Archivo's closed rotated-8. Mirrors --font-primary in
+// variables.css.
 const FONT_SANS = "'Inter', 'Archivo', system-ui, sans-serif";
 const FONT_SERIF = "'Instrument Serif', serif";
 

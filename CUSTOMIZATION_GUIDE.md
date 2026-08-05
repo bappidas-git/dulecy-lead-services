@@ -176,11 +176,13 @@ Notes:
   means editing that `<link>`, `--font-*` in `variables.css`, and `FONT_SANS` /
   `FONT_SERIF` in `muiTheme.js`.
 - The sans stacks lead with **`'Inter'`**, which is _not_ a second typeface: a
-  `text=.` Google Fonts request subsets it to one glyph carrying
-  `unicode-range: U+2e`, so it overrides Archivo's square full stop with a round
-  one and nothing else. Keep it first in `--font-primary` / `--font-heading` /
+  `text=.%26` Google Fonts request subsets it to two glyphs carrying
+  `unicode-range: U+26, U+2e`, so it overrides Archivo's square full stop with a
+  round one and Archivo's closed rotated-8 ampersand with a conventional open
+  `&` — and nothing else. Keep it first in `--font-primary` / `--font-heading` /
   `--font-body` and in `FONT_SANS`; dropping it or reordering the stack brings
-  the square dot back.
+  both Archivo glyphs back. Keep the `%26` percent-encoded in the URL: a bare
+  `&` ends the `text` param and silently drops the ampersand from the subset.
 - Shared button and display classes (`.btn`, `.btn--primary`, `.btn--outline`,
   `.eyebrow`, `.display`, `.lede`, `.section-head`, `.rule`, …) are global, in
   `src/styles/dulcey.css` — edit there, not per component.

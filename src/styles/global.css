@@ -5,11 +5,14 @@
 
 /* ========== CSS Reset & Base Styles ========== */
 @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap');
-/* Round full stop. `text=.` makes Google subset Inter down to a single glyph
-   (~1.6 KB) and emit `unicode-range: U+2e`, so this overrides Archivo's square
-   period everywhere and touches no other character. Paired with the 'Inter'
-   entry at the head of the sans stacks in variables.css — see the note there. */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&text=.&display=swap');
+/* Round full stop + open ampersand. `text=.%26` makes Google subset Inter down
+   to two glyphs (~2.2 KB) and emit `unicode-range: U+26, U+2e`, so this
+   overrides Archivo's square period and its closed rotated-8 ampersand
+   everywhere and touches no other character. The `%26` must stay encoded — a
+   bare `&` would end the `text` param and silently drop the ampersand back to
+   Archivo. Paired with the 'Inter' entry at the head of the sans stacks in
+   variables.css — see the note there. */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&text=.%26&display=swap');
 
 *,
 *::before,
