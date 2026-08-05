@@ -90,16 +90,18 @@
   --shadow-button-hover: 0 14px 34px rgba(213, 25, 46, 0.38);
 
   /* ========== Typography ========== */
-  /* 'Inter' leads the three sans stacks but can only ever render ONE
-     character. The Google Fonts request (src/styles/global.css and
-     public/index.html) is subset with `text=.`, so Google ships a 1.6 KB file
-     whose @font-face rules carry `unicode-range: U+2e` — the full stop and
-     nothing else. Archivo draws that glyph as a hard square, which reads as a
-     defect at display sizes; Inter draws a circle of the same visual weight.
+  /* 'Inter' leads the three sans stacks but can only ever render TWO
+     characters. The Google Fonts request (src/styles/global.css and
+     public/index.html) is subset with `text=.%26`, so Google ships a 2.2 KB
+     file whose @font-face rules carry `unicode-range: U+26, U+2e` — the
+     ampersand and the full stop, nothing else. Archivo draws the period as a
+     hard square and the ampersand as a closed rotated-8 with no diagonal leg;
+     both read as defects at display sizes. Inter draws a circle of the same
+     visual weight and the conventional open `&`.
      Every other character falls straight through to Archivo, and because an
      @font-face family shadows an installed font of the same name, a visitor
      who happens to have Inter installed still gets Archivo body text.
-     Keep 'Inter' first — moving or dropping it brings the square dot back. */
+     Keep 'Inter' first — moving or dropping it brings both glyphs back. */
   --font-primary: 'Inter', 'Archivo', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-heading: 'Inter', 'Archivo', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   --font-body: 'Inter', 'Archivo', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;

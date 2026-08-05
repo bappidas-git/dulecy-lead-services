@@ -36,11 +36,12 @@ import reportWebVitals from './reportWebVitals';
 // Preload critical resources
 const preloadResources = () => {
   // Preload fonts if not already done in HTML. The second entry is the
-  // one-glyph Inter subset (`text=.`) that swaps Archivo's square full stop
-  // for a round one — see the note on --font-primary in variables.css.
+  // two-glyph Inter subset (`text=.%26`) that swaps Archivo's square full stop
+  // and closed ampersand for a round dot and an open `&` — see the note on
+  // --font-primary in variables.css. Keep the `%26` encoded.
   const fontHrefs = [
     'https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap',
-    'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&text=.&display=swap',
+    'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&text=.%26&display=swap',
   ];
 
   fontHrefs.forEach((href) => {
