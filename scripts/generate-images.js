@@ -37,8 +37,13 @@ const ICONS_DIR = path.join(IMAGES_DIR, 'icons');
 const PHOTOS = [
   {
     name: 'hero-home',
-    id: 'photo-1486406146926-c627a92ad1ab',
-    note: 'Home hero backdrop (opacity .5, object-position center 30%)',
+    id: 'photo-1521791136064-7986c2920216',
+    note:
+      'Home hero backdrop — two people shaking hands, framed at forearm level ' +
+      'so neither head is in shot (opacity .5, object-position center 30%; ' +
+      'phones re-crop it to a band — see HeroSection.module.css). ' +
+      'Deliberate departure from `mockup/index.html`, which uses the ' +
+      'architectural photo-1486406146926-c627a92ad1ab here.',
   },
   {
     name: 'about-band',
