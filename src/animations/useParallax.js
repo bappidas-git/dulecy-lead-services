@@ -50,8 +50,22 @@ export default function useParallax(options = {}) {
         return;
       }
 
+      // `trigger: 'parent'` means "scrub against the section I am layered
+      // over". A `<picture>` format-negotiation wrapper sits in between on
+      // every photo backdrop, and `display: contents` leaves it with no box —
+      // ScrollTrigger would measure a 0×0 rect, treat the range as already
+      // complete, and pin the tween at its END value forever. Walk past any
+      // such ancestor to the first one that actually has a box.
+      const boxedAncestor = (node) => {
+        let p = node.parentElement;
+        while (p && window.getComputedStyle(p).display === 'contents') {
+          p = p.parentElement;
+        }
+        return p;
+      };
+
       const triggerEl =
-        trigger === 'parent' ? el.parentElement || el : el;
+        trigger === 'parent' ? boxedAncestor(el) || el : el;
 
       gsap.fromTo(
         el,
