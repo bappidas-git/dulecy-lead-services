@@ -1,6 +1,7 @@
 /* ============================================
-   Home / Marquee — values ported verbatim from
-   `mockup/styles.css` (.marquee*, @keyframes marquee).
+   Home / Marquee — values ported from `mockup/styles.css`
+   (.marquee*, @keyframes marquee), with the scroll direction
+   reversed to left-to-right (see the keyframes note below).
    The −1deg rotation overflows the viewport by design;
    `html`/`body` already clip the x-axis.
    ============================================ */
@@ -37,13 +38,19 @@
   font-style: normal;
 }
 
+/* Deliberate deviation from the mockup, which runs `0 → -50%` (right-to-left).
+   Reversing the endpoints scrolls the band left-to-right at every breakpoint —
+   there is no per-device override, this one rule drives the whole strip. The
+   loop stays seamless because the track holds two identical groups: the start
+   frame parks the second group's left edge at the viewport edge, and the end
+   frame parks the first group's, so the restart is invisible. */
 @keyframes marquee {
   from {
-    transform: translateX(0);
+    transform: translateX(-50%);
   }
 
   to {
-    transform: translateX(-50%);
+    transform: translateX(0);
   }
 }
 
