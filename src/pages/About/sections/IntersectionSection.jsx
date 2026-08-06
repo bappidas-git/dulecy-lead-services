@@ -4,8 +4,8 @@
    The page's signature dark band: a parallaxed Unsplash backdrop
    (`data-parallax="-22"`) under the dual ink gradient, a red glow
    drifting up from the bottom-left corner (`-10`), then the four
-   stacked display words — alternating solid / outline-stroke, each
-   closed by a red punctuation mark — beside the numbered list.
+   stacked display words — solid white, each closed by a red
+   punctuation mark — beside the numbered list.
    ============================================ */
 
 import React from 'react';
@@ -25,12 +25,11 @@ const BAND_BG = '/images/about-band.jpg';
 const BAND_BG_SRCSET =
   '/images/about-band-960.webp 960w, /images/about-band-1920.webp 1920w';
 
-// `outline` marks the words drawn as stroke-only text.
 const WORDS = [
-  { word: 'People', mark: ',', outline: false },
-  { word: 'Processes', mark: ',', outline: true },
-  { word: 'Performance', mark: ',', outline: false },
-  { word: '& Priorities', mark: '.', outline: true },
+  { word: 'People', mark: ',' },
+  { word: 'Processes', mark: ',' },
+  { word: 'Performance', mark: ',' },
+  { word: '& Priorities', mark: '.' },
 ];
 
 const DIMENSIONS = [
@@ -77,10 +76,7 @@ const IntersectionSection = () => {
 
             <div className={styles.stackWords} ref={wordsRef}>
               {WORDS.map((entry) => (
-                <span
-                  key={entry.word}
-                  className={entry.outline ? styles.outline : undefined}
-                >
+                <span key={entry.word}>
                   {entry.word}
                   <i>{entry.mark}</i>
                 </span>
