@@ -163,6 +163,26 @@
   font-weight: 600;
 }
 
+/* Deliberate departure from the mockup, which uses one flat size at every
+   width. On desktop the row reads undersized against the hero's display
+   headline and lede, so it is scaled up from the 920px nav-takeover
+   breakpoint. The mockup values above stay untouched below it — the phone
+   and tablet layout is unchanged. */
+@media (min-width: 920px) {
+  .pillars > div {
+    padding: 28px 28px 0 0;
+    gap: 14px;
+  }
+
+  .pillars b {
+    font-size: 14px;
+  }
+
+  .pillars span {
+    font-size: 18px;
+  }
+}
+
 /* Intentional improvement on the mockup, which leaves `floaty` and
    `pulseDot` looping under reduced motion. Both stop at their neutral frame:
    the icon sits still, the badge dot stays solid red. Matches the same block
