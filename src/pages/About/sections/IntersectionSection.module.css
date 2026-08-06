@@ -4,6 +4,12 @@
    the per-instance inline styles in `mockup/about.html`
    (backdrop crop + opacity, scrim gradients, glow
    placement, column flex, kicker).
+
+   One deliberate deviation from the mockup: the alternating
+   stroke-only words are drawn solid white like the rest. The
+   1.5px stroke lost too much of the letterform against the
+   parallaxed backdrop to read at small sizes — do not restore
+   it from `mockup/styles.css`.
    ============================================ */
 
 /* No `will-change` here: the mockup declares it on `.hero__bg` only, and this
@@ -126,18 +132,10 @@
   line-height: 1.05;
 }
 
-/* Stroke-only words. The -webkit- prefix is the working implementation
-   in Chromium, WebKit and Firefox alike — there is no unprefixed form. */
-.stackWords > span.outline {
-  color: transparent;
-  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.8);
-}
-
-/* Trailing punctuation stays solid red, never stroked. */
+/* Trailing punctuation stays solid red. */
 .stackWords i {
   color: var(--red);
   font-style: normal;
-  -webkit-text-stroke: 0;
 }
 
 /* ========== Right column ========== */
