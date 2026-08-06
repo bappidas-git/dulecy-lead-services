@@ -3,7 +3,7 @@
    --------------------------------------------
    Centred ink band with a red radial glow drifting behind it
    (`data-parallax="-10"`, scrubbed against the band). The statement
-   closes on a serif-italic red sentence.
+   closes on a red sentence set in the same face as the white copy.
    ============================================ */
 
 import React from 'react';
@@ -35,9 +35,7 @@ const BeliefSection = () => {
         <p className={styles.statement} ref={statementRef}>
           The right professional partnership should do more than address
           today&rsquo;s requirement.{' '}
-          <em className="serif">
-            It should strengthen the organization for what comes next.
-          </em>
+          <em>It should strengthen the organization for what comes next.</em>
         </p>
       </div>
     </section>

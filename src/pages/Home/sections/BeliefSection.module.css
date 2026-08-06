@@ -35,6 +35,14 @@
   text-wrap: balance;
 }
 
+/* The closing sentence stays red, but is set in the same face, weight and
+   upright slant as the white copy around it — no serif italic. `font-style`
+   has to be reset explicitly because browsers italicise `<em>` by default,
+   and Archivo is loaded without an italic axis (that would synthesise an
+   oblique). Unqualified, so it holds at every breakpoint. */
 .statement em {
   color: var(--red-hi);
+  font-family: inherit;
+  font-style: normal;
+  font-weight: inherit;
 }
