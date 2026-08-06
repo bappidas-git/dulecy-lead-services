@@ -5,6 +5,11 @@
    Dulcey icon, then the badge → headline → lede → CTAs → four pillars,
    all staggered in on load by `useHeroIntro` (the mockup's `data-hero`
    elements, marked with the same attribute here).
+
+   The backdrop photo is a deliberate departure from `mockup/index.html`,
+   which uses an architectural shot here: it is now a handshake framed at
+   forearm level, with neither head in shot. See the phone art-direction
+   block in the stylesheet — the full-bleed crop is unreadable on a phone.
    ============================================ */
 
 import React from 'react';
@@ -47,7 +52,7 @@ const HeroSection = () => {
           alt=""
           aria-hidden="true"
           width="1920"
-          height="1280"
+          height="1282"
           fetchpriority="high"
           decoding="async"
         />

@@ -31,6 +31,36 @@
   will-change: transform;
 }
 
+/* Phone-only art direction for the handshake backdrop.
+
+   `.bg` above stretches the photo over 136% of the hero. On a phone the hero
+   is far taller than it is wide (~375×885), so `cover` scales the 3:2 photo to
+   that height and only ~21% of its width survives the crop — the handshake
+   collapses into an unreadable close-up of knuckles. Because the crop width is
+   `heroWidth × photoHeight / heroHeight`, no `object-position` or
+   re-cropped source can widen it; only a shorter box can.
+
+   So below 700px — the width at which the crop stops containing the full
+   clasp — the backdrop becomes a band across the top of the hero instead of a
+   full-bleed fill. At 52% height the crop keeps ~54% of the photo's width,
+   which holds the whole handshake plus both cuffs. The mask dissolves the
+   bottom edge so the band has no seam against the scrim, and the -6% overscan
+   leaves room for `useParallax`'s ±8% travel to stay covered. */
+@media (max-width: 700px) {
+  .bg {
+    top: -6%;
+    height: 52%;
+    object-position: center center;
+    -webkit-mask-image: linear-gradient(
+      180deg,
+      #000 0%,
+      #000 80%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(180deg, #000 0%, #000 80%, transparent 100%);
+  }
+}
+
 .scrim {
   position: absolute;
   inset: 0;
