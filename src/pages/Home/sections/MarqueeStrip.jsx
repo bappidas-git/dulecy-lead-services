@@ -2,8 +2,10 @@
    Home / Marquee — ported 1:1 from `mockup/index.html`
    --------------------------------------------
    Slightly rotated ink band of the sectors we serve. The group is
-   rendered twice and the track slides −50% over 36s, so the loop is
-   seamless. Purely decorative — the same names are readable content in
+   rendered twice and the track slides from −50% to 0 over 36s, so the
+   band travels left-to-right and the loop stays seamless. The two
+   groups must stay identical for that to hold.
+   Purely decorative — the same names are readable content in
    the "Who we serve" cards below, so the whole strip is aria-hidden.
    ============================================ */
 
