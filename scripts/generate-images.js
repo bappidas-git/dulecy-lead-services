@@ -13,8 +13,8 @@
      <name>-1920.webp / <name>-960.webp   → what browsers actually load
      <name>.jpg                            → universal fallback (1920w)
    Quality is tuned to keep every large variant under ~250 KB while
-   staying visually identical to the mockup — the photos sit under heavy
-   scrims at 0.38–0.65 opacity, so they are extremely forgiving.
+   staying visually identical to the mockup — every photo sits under a white
+   scrim that blends away most compression noise, so they are forgiving.
 
    Icons: the mockup's icons8 PNGs at 100px, downloaded verbatim (byte
    copies) so the rendered glyph is pixel-identical. Two red variants are
@@ -40,8 +40,8 @@ const PHOTOS = [
     id: 'photo-1521791136064-7986c2920216',
     note:
       'Home hero backdrop — two people shaking hands, framed at forearm level ' +
-      'so neither head is in shot (opacity .5, object-position center 30%; ' +
-      'phones re-crop it to a band — see HeroSection.module.css). ' +
+      'so neither head is in shot (opacity .92 under a light scrim; below ' +
+      '920px it re-crops to a band — see HeroSection.module.css). ' +
       'Deliberate departure from `mockup/index.html`, which uses the ' +
       'architectural photo-1486406146926-c627a92ad1ab here.',
   },
@@ -74,8 +74,9 @@ const ICONS = [
 
 const WIDTHS = [1920, 960];
 // q74/effort6 keeps the heaviest photo (hero-industries) at ~229 KB — inside
-// the 250 KB budget with margin. Every photo renders under a scrim at
-// 0.38–0.65 opacity, so the quality drop is not perceptible; verified by
+// the 250 KB budget with margin. Every photo renders under a white scrim that
+// caps its contribution well below full strength (the home hero peaks around
+// 57%, the others lower), so the quality drop is not perceptible; verified by
 // before/after screenshot diff.
 const WEBP_QUALITY = 74;
 const WEBP_EFFORT = 6;

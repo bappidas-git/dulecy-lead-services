@@ -18,49 +18,70 @@
   display: contents;
 }
 
+/* The mockup's box is `top:-18%; height:136%`, sized purely to give the
+   parallax room. But the box height is also what sets the crop: `cover` on a
+   box taller than the 3:2 photo scales to the height, so only
+   `heroWidth × photoHeight / boxHeight` of the photo's width survives. At 136%
+   that is ~70% at 1440px and ~54% at 1024px — the left cuff falls outside the
+   frame and the handshake reads as one large hand.
+
+   -10%/120% is the shortest box that still covers `useParallax`'s travel
+   (±8% of the element's OWN height, so the top overscan `t` must satisfy
+   t ≥ 0.08 × (1 + 2t) → t ≥ 9.52%). It widens the crop to ~79% / ~61%, which
+   holds the whole clasp. */
 .bg {
   position: absolute;
-  top: -18%;
+  top: -10%;
   left: 0;
   width: 100%;
-  height: 136%;
+  height: 120%;
   object-fit: cover;
-  object-position: center 30%;
-  opacity: 0.5;
+  object-position: center 34%;
+  opacity: 0.92;
   pointer-events: none;
   will-change: transform;
 }
 
-/* Phone-only art direction for the handshake backdrop.
+/* Below the 920px nav breakpoint the hero is far taller than it is wide, so
+   the full-bleed crop collapses to 44–56% of the photo's width — an
+   unreadable close-up of knuckles. The same `boxHeight` relation is the only
+   lever, and it points the other way here: a box at roughly the photo's own
+   3:2 keeps essentially ALL of its width. `min(66vw, 520px)` holds that ratio
+   from 360px up and caps out at the breakpoint, so the backdrop becomes a
+   band across the top of the hero showing the entire handshake, both cuffs
+   included, and the headline below it sits on clean white.
 
-   `.bg` above stretches the photo over 136% of the hero. On a phone the hero
-   is far taller than it is wide (~375×885), so `cover` scales the 3:2 photo to
-   that height and only ~21% of its width survives the crop — the handshake
-   collapses into an unreadable close-up of knuckles. Because the crop width is
-   `heroWidth × photoHeight / heroHeight`, no `object-position` or
-   re-cropped source can widen it; only a shorter box can.
-
-   So below 700px — the width at which the crop stops containing the full
-   clasp — the backdrop becomes a band across the top of the hero instead of a
-   full-bleed fill. At 52% height the crop keeps ~54% of the photo's width,
-   which holds the whole handshake plus both cuffs. The mask dissolves the
-   bottom edge so the band has no seam against the scrim, and the -6% overscan
-   leaves room for `useParallax`'s ±8% travel to stay covered. */
-@media (max-width: 700px) {
+   The mask dissolves the bottom edge so the band has no seam against the
+   scrim; the -10% overscan matches the parallax travel as above. */
+@media (max-width: 919px) {
   .bg {
-    top: -6%;
-    height: 52%;
-    object-position: center center;
+    --band: min(66vw, 520px);
+
+    top: calc(var(--band) * -0.1);
+    height: var(--band);
+    object-position: center 45%;
     -webkit-mask-image: linear-gradient(
       180deg,
       #000 0%,
-      #000 80%,
+      #000 74%,
       transparent 100%
     );
-    mask-image: linear-gradient(180deg, #000 0%, #000 80%, transparent 100%);
+    mask-image: linear-gradient(180deg, #000 0%, #000 74%, transparent 100%);
   }
 }
 
+/* The scrim is what actually decides how much photo you see: the backdrop
+   contributes `opacity × (1 − scrimAlpha)` of each pixel. The mockup's stack
+   lands between 0.88 and 0.99 alpha, which left the photo at under 6% — the
+   architectural shot it was written for is a texture, but a handshake has to
+   be legible as one.
+
+   These stops keep the wash where the text is and lift it where it is not.
+   The vertical gradient opens the middle band; the horizontal one holds the
+   left column white through the 640px lede (`--grey-2` on white is the one
+   piece of hero copy that needs a real contrast budget) and clears the right,
+   where only the ink headline and the pillars run. Peak photo presence is
+   ~57% at the right edge and ~10% behind the lede. */
 .scrim {
   position: absolute;
   inset: 0;
@@ -68,15 +89,38 @@
   background:
     linear-gradient(
       180deg,
-      rgba(255, 255, 255, 0.92) 0%,
-      rgba(255, 255, 255, 0.82) 45%,
-      rgba(255, 255, 255, 0.96) 100%
+      rgba(255, 255, 255, 0.8) 0%,
+      rgba(255, 255, 255, 0.34) 48%,
+      rgba(255, 255, 255, 0.88) 100%
     ),
     linear-gradient(
       90deg,
-      rgba(255, 255, 255, 0.9) 0%,
-      rgba(255, 255, 255, 0.35) 70%
+      rgba(255, 255, 255, 0.88) 0%,
+      rgba(255, 255, 255, 0.7) 30%,
+      rgba(255, 255, 255, 0.06) 76%
     );
+}
+
+/* Under the band the layout is one full-width column, so there is no left
+   column to protect and the wash has to be vertical instead: clear over the
+   band, solid by ~42% where the headline starts. The horizontal gradient
+   stays only as a faint left-to-right lift. */
+@media (max-width: 919px) {
+  .scrim {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.28) 0%,
+        rgba(255, 255, 255, 0.34) 20%,
+        rgba(255, 255, 255, 0.9) 42%,
+        rgba(255, 255, 255, 0.96) 100%
+      ),
+      linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.34) 0%,
+        rgba(255, 255, 255, 0.06) 60%
+      );
+  }
 }
 
 .inner {

@@ -8,8 +8,10 @@
 
    The backdrop photo is a deliberate departure from `mockup/index.html`,
    which uses an architectural shot here: it is now a handshake framed at
-   forearm level, with neither head in shot. See the phone art-direction
-   block in the stylesheet — the full-bleed crop is unreadable on a phone.
+   forearm level, with neither head in shot. A photo with a subject needs to
+   read as that subject, so the scrim alphas and the crop geometry depart from
+   the mockup too — see the annotated `.bg` / `.scrim` blocks in the
+   stylesheet.
    ============================================ */
 
 import React from 'react';
