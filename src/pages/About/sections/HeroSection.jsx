@@ -37,7 +37,8 @@ const HeroSection = () => {
         </p>
 
         <p className={styles.closing} data-hero>
-          {siteConfig.brandName} brings these dimensions together.
+          <b className="brand">{siteConfig.brandName}</b> brings these dimensions
+          together.
         </p>
       </div>
     </section>

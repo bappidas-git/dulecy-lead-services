@@ -85,9 +85,10 @@ const HeroSection = () => {
         </h1>
 
         <p className={`lede ${styles.lede}`} data-hero>
-          {siteConfig.brandName} works with businesses, institutions,
-          entrepreneurs, and professionals to navigate complexity, strengthen
-          organizational capability, and build for sustainable growth.
+          <b className="brand">{siteConfig.brandName}</b> works with businesses,
+          institutions, entrepreneurs, and professionals to navigate complexity,
+          strengthen organizational capability, and build for sustainable
+          growth.
         </p>
 
         <div className={styles.cta} data-hero>

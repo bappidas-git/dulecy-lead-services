@@ -143,6 +143,27 @@
   text-wrap: pretty;
 }
 
+/* ========== The company name inside running copy ==========
+   Wherever "Dulcey Lead Services" appears as the subject of a sentence
+   (the Home hero lede, the About hero closing) it should read as the brand,
+   not as another grey word in the paragraph — so it carries a weight step
+   and a small size step above the copy around it.
+
+   Both steps are RELATIVE (`em` / inherited color), which is what makes this
+   correct on every device without a single media query: each host paragraph
+   already sizes itself with `clamp()`, so the brand tracks it from the 360px
+   phone up to the 104px-headline desktop, and keeps its host's color so the
+   primitive stays safe on a light or a dark background.
+
+   `line-height` is pinned so the taller inline box always stays inside the
+   parent's strut — otherwise the one line holding the brand name would grow
+   a couple of px and break the paragraph's rhythm. */
+.brand {
+  font-weight: 800;
+  font-size: 1.06em;
+  line-height: 1;
+}
+
 /* ========== "More about …" link with the circled arrow ========== */
 .link-more {
   display: inline-flex;
