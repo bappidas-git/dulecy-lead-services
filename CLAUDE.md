@@ -365,6 +365,23 @@ overriding `.phrase`'s `clamp(22px, 3.6vw, 38px)`, which is mockup-verbatim.
 The CTA sections, the Contact pull-quote, the footer accents, and the
 remaining in-body `<em>`s still use `.serif`.
 
+**About's "distinctive perspective" head is comma-joined and hard-broken.**
+`mockup/about.html` sets "Depth in pharma. Breadth across sectors." as one
+full-stopped run and lets `text-wrap: balance` pick the breaks (three ragged
+lines at desktop). `PerspectiveSection` replaces the middle full stop with a
+comma and an unconditional `<br />`, so each clause owns a line at every
+width — the same device as the Home hero's "We don't just offer services,".
+Holding that needs the type to fit the **column**, not the viewport: the
+aside is only ~40% of the content width while the row is two-column, but
+full width once it stacks, so `.aside` is declared
+`container-type: inline-size` and `.head` reads
+`min(clamp(28px, 4vw, 46px), 8.6cqi)`. The mockup clamp stays the ceiling
+and the `cqi` term only ever shrinks it — "Breadth across sectors." sets at
+11.3× its font-size, so 8.6cqi always lands inside the column with ~3% to
+spare (verified 2 lines from a 240px column to 1100px, and at 320–1920px
+viewports). The bare `clamp()` above it is the fallback for browsers without
+container-query units. Do not re-tune either value in isolation.
+
 **Layout** — 1280px max content width with `clamp(20px, 4vw, 44px)` side
 padding; **fixed 68px header**; the desktop nav takes over at **920px** (below
 that, the burger opens the full-screen `MobileMenu`); hash scrolling leaves
