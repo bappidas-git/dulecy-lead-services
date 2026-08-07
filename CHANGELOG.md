@@ -12,6 +12,62 @@ prompt per branch/PR — and the entries below summarise each phase under the
 
 The format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.3.0] — 2026-08-07 — Sharp wordmark
+
+`[2.2.0]` shipped the wordmark from the only artwork then available — a blurred
+raster lifted out of a PDF — and recorded the soft "Beyond Business Support"
+line as a known limitation. The client has now supplied the real files
+(3750×906 PNGs with a true alpha channel), so that limitation is resolved: the
+tagline and the ™ are crisp at every size the site draws them.
+
+### Changed
+
+- **New masters, new filenames.** `dulcey-wordmark-1351.png` (ink `#0B0B0C`)
+  and `dulcey-wordmark-white-1351.png`, 1351×200 / 6.76:1, ~21 KB each, PNG-8
+  with a 128-colour palette. The `-1351` suffix is the width, matching the
+  convention the rest of `/images/**` uses (`hero-home-1920.webp`).
+  The 2.2.0 files are **deleted rather than overwritten**: they had already
+  merged to `main` and `/images/**` answers `immutable, max-age=31536000`, so
+  reusing the path would have pinned returning visitors to the blurred render
+  for a year.
+- **Alpha normalised to full opacity.** The supplied art paints its letterform
+  interiors at alpha 222, which composites to `#212121` on white and `#DFDFDF`
+  on the ink footer — a visible wash against the site's real ink. Both masters
+  are rescaled `×255/222` and clamped, so the solid body reaches 255 while the
+  antialiased edge ramp stays proportional. RGB is pinned to `--ink` `#0B0B0C`
+  / pure white on every pixel, transparent ones included, so the downscale
+  cannot pull a stray colour into the edges.
+- **Cut from the shared alpha bounding box** `x179 y248 3419×506` — identical in
+  both source files, so the ink and white variants stay pixel-interchangeable.
+  Trimming the transparent padding takes the lockup from the raw 4.14:1 to
+  6.76:1, within 4% of the 2.2.0 aspect, so the responsive sizing tuned for it
+  still holds. Downscaled to height 200 with lanczos3.
+- **Aspect-dependent values updated** for 6.49:1 → 6.76:1: `LOGO_SIZE` is now
+  `{ width: 1351, height: 200 }`, and the rendered-width figures in the
+  `Header` / `Footer` / `AdminLogin` comments (270px at 40px tall, 351px at
+  52px, 230px at 34px, 196px at 29px).
+- **`.mobileMenuLogo` in the admin topbar** gained the `max-width: 100%` +
+  `object-fit: contain` floor every other logo surface already carried.
+- **References repointed** — `siteConfig.logo` / `logoWhite`, `LOGO_FILE` in
+  `scripts/generate-og.js`, and the two absolute JSON-LD `logo` URLs in
+  `public/index.html`. `public/og-image.png` regenerated.
+
+### Verified
+
+- No horizontal overflow and the header row holds 68px at 280 / 361 / 431 /
+  1280 px; the logo steps 29 → 34 → 40px across the 360px/430px breakpoints
+  with 16px minimum clearance to the burger at the tightest width.
+- Footer draws the white variant on `rgb(11,11,12)` and fits its 391px brand
+  column; admin login draws the ink variant on white and letterboxes cleanly
+  inside a 240px content box at 320px wide.
+
+### Unchanged
+
+- **`logoIcon` is still the old "D" monogram on Cloudinary**, so the splash
+  screen and the generated favicons still do not match the wordmark. That needs
+  new icon artwork from the client; `npm run generate:icons` regenerates them
+  once it lands.
+
 ## [2.2.0] — 2026-08-07 — New wordmark
 
 The brand mark changed. The old lockup — a "D" monogram with a bar-chart arrow
@@ -53,7 +109,7 @@ Both versions are self-hosted with a transparent background.
 - **`npm run generate:og` reads the wordmark off disk** rather than fetching it,
   so it no longer needs the network; `public/og-image.png` regenerated.
 
-### Known limitation
+### Known limitation — resolved in [2.3.0]
 
 - **The "Beyond Business Support" line in the lockup is soft.** The only
   artwork supplied was a blurred raster embedded in a PDF (a 1945×356 ink map

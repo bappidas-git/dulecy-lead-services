@@ -198,9 +198,12 @@ Notes:
    there. Set `LOGO_SIZE` to the new file's intrinsic pixel size in the same
    pass; every `<img>` uses it for `width`/`height`.
 3. If the aspect ratio changed, re-check the rendered width at 320px. The
-   current lockup is 6.49:1, which is why the header steps down at 430px/360px
+   current lockup is 6.76:1, which is why the header steps down at 430px/360px
    (`Header.module.css`), the footer clamps its height (`Footer.module.css`),
    and the admin login draws it at 40px (`AdminLogin.module.css`).
+   Check the alpha, too: supplied artwork has arrived painted at ~87% opacity,
+   which renders grey rather than `--ink` / white. Normalise the alpha channel
+   so the solid interior hits 255 before shipping it.
 4. Update the hardcoded URLs outside the data layer:
    - the splash-loader `<img>` (icon mark) and the JSON-LD `logo` values
      (absolute URLs) in `public/index.html`

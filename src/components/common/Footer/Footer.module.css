@@ -95,7 +95,7 @@
   min-width: 260px;
 }
 
-/* The lockup is 6.49:1, so 52px tall is ~337px wide — wider than the brand
+/* The lockup is 6.76:1, so 52px tall is ~351px wide — wider than the brand
    column's 260px floor on a phone. Scale with the viewport between 38px and
    52px, and keep `max-width` + `object-fit` as a floor so it letterboxes
    rather than distorting if the column ever gets narrower still. */

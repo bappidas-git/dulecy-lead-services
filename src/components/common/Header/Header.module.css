@@ -155,7 +155,7 @@
   }
 }
 
-/* The wordmark is a wide 6.49:1 lockup, so at 40px tall it draws 260px — on a
+/* The wordmark is a wide 6.76:1 lockup, so at 40px tall it draws 270px — on a
    narrow phone that crowds the burger and pushes the header row over. Step the
    height down instead of letting the logo shrink-to-fit and go soft. */
 @media (max-width: 430px) {

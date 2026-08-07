@@ -29,7 +29,7 @@ const LOGO_FILE = path.resolve(
   "public",
   "images",
   "logo",
-  "dulcey-wordmark.png"
+  "dulcey-wordmark-1351.png"
 );
 
 const OUT = path.resolve(__dirname, "..", "public", "og-image.png");

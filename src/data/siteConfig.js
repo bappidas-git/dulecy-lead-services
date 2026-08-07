@@ -22,12 +22,17 @@ export const siteConfig = {
   // The wordmark lockup, self-hosted under `public/images/logo/`. Both PNGs
   // carry a real alpha channel — the background is transparent, so the mark
   // sits on white, grey, and ink surfaces without a plate behind it. They are
-  // one 1298x200 master each rather than a per-surface render; at 22 KB with
+  // one 1351x200 master each rather than a per-surface render; at 21 KB with
   // `/images/**` served immutable, that is cheaper than the round trips.
   // Site-root paths, so they resolve from any route — wrap in `absoluteUrl()`
   // wherever a schema or meta tag needs a fully qualified URL.
-  logo: '/images/logo/dulcey-wordmark.png',
-  logoWhite: '/images/logo/dulcey-wordmark-white.png',
+  //
+  // The `-1351` suffix is the width, matching the convention the rest of
+  // `/images/**` uses (`hero-home-1920.webp`). Those files answer `immutable`
+  // for a year, so re-cutting the artwork means a NEW filename — overwriting
+  // in place would leave every returning visitor on the previous render.
+  logo: '/images/logo/dulcey-wordmark-1351.png',
+  logoWhite: '/images/logo/dulcey-wordmark-white-1351.png',
   // The "D" mark. Its Cloudinary public_id still carries the old spelling —
   // that is the asset's immutable delivery path, not a brand string.
   logoIcon: `${CLOUDINARY_BASE}/v1785484838/Dulecy-Logo-Icon_hylrpw.png`,
@@ -54,10 +59,10 @@ export const mailHref = `mailto:${siteConfig.email}`;
  * Intrinsic pixel size of the two wordmark PNGs.
  *
  * Every `<img>` that draws the lockup sets these as its `width`/`height`
- * attributes so the browser reserves the right 6.49:1 box before the file
+ * attributes so the browser reserves the right 6.76:1 box before the file
  * lands. CSS then sets the rendered height and leaves `width: auto`.
  */
-export const LOGO_SIZE = { width: 1298, height: 200 };
+export const LOGO_SIZE = { width: 1351, height: 200 };
 
 /**
  * Absolute URL for a site-root path, left alone if it is already absolute.

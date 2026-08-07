@@ -26,8 +26,8 @@ const Header = ({ isMenuOpen = false, onToggleMenu, menuId = 'mobile-menu' }) =>
           className={styles.logo}
           aria-label={`${siteConfig.brandName} — Home`}
         >
-          {/* Drawn 40px tall (32px on narrow phones — see the module CSS);
-              the intrinsic size reserves the 6.49:1 box against layout shift. */}
+          {/* Drawn 40px tall (34px/29px on narrow phones — see the module CSS);
+              the intrinsic size reserves the 6.76:1 box against layout shift. */}
           <img
             src={siteConfig.logo}
             alt={siteConfig.brandName}
