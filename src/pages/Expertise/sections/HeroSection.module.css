@@ -32,9 +32,8 @@
    thing left to undo.
 
    This also moves the site's last serif-italic ampersand into the sans stack,
-   where the subsetted 'Inter' at the front of it draws the open `&` (and the
-   round full stop) in place of Archivo's closed rotated-8 — see the
-   Typography note in CLAUDE.md. */
+   where the subsetted 'Inter' at the front of it draws the open `&` in place
+   of Archivo's closed rotated-8 — see the Typography note in CLAUDE.md. */
 .accent {
   font-style: normal;
 }

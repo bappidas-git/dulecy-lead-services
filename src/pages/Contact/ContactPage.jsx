@@ -41,10 +41,12 @@ const ContactPage = () => {
               reply within a day
             </div>
 
+            {/* Closes on the word, not on a mark — see the home hero's
+                "impact". */}
             <h1 className={`display ${styles.head}`} data-hero>
               Let&rsquo;s build{' '}
               <em className={`grad-text ${styles.accent}`}>
-                what comes next.
+                what comes next
               </em>
             </h1>
 
