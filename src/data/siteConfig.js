@@ -35,7 +35,17 @@ export const siteConfig = {
   logoWhite: '/images/logo/dulcey-wordmark-white-1351.png',
   // The "D" mark. Its Cloudinary public_id still carries the old spelling —
   // that is the asset's immutable delivery path, not a brand string.
+  // Favicon / PWA-icon / splash lineage only — `scripts/generate-icons.js` and
+  // the `public/index.html` splash both hard-code this same URL.
   logoIcon: `${CLOUDINARY_BASE}/v1785484838/Dulecy-Logo-Icon_hylrpw.png`,
+  // The "DLS" initialism mark, self-hosted alongside the wordmark and carrying
+  // the same real alpha channel (peak 255 as supplied — the wordmark's
+  // alpha-normalisation pass does not apply). Trimmed to the artwork's own
+  // bounding box, so a CSS `width` maps straight onto the visible mark with no
+  // dead padding to compensate for. Drawn by the Home hero's floating
+  // watermark; the `-860` suffix is the width, and `/images/**` answers
+  // `immutable`, so re-cutting the artwork means a NEW filename.
+  logoMark: '/images/logo/dls-mark-860.png',
   social: {}, // fill when the client provides profiles; components must hide empty entries
   // Studio credit rendered in the footer's legal row. External site, so the
   // footer opens it in a new tab.
@@ -65,6 +75,15 @@ export const mailHref = `mailto:${siteConfig.email}`;
 export const LOGO_SIZE = { width: 1351, height: 200 };
 
 /**
+ * Intrinsic pixel size of the "DLS" mark PNG.
+ *
+ * Same contract as `LOGO_SIZE`: the `<img>` sets these as its `width`/`height`
+ * attributes so the browser reserves the right 1.87:1 box before the file
+ * lands, and CSS sets the rendered width with `height: auto`.
+ */
+export const MARK_SIZE = { width: 860, height: 460 };
+
+/**
  * Absolute URL for a site-root path, left alone if it is already absolute.
  *
  * The logos moved from Cloudinary to `public/images/`, so the values in
@@ -86,11 +105,17 @@ export const absoluteUrl = (pathOrUrl) =>
  * clean, and `w`/`h` should be passed at **2× the CSS box** so it stays crisp
  * on retina.
  *
- * Only `logoIcon` still lives on Cloudinary — the wordmark is self-hosted and
- * ships at one size — so a non-Cloudinary URL is returned untouched rather
- * than silently no-op'ing through a `.replace()` that never matches.
+ * Only `logoIcon` still lives on Cloudinary — the wordmark and the "DLS" mark
+ * are self-hosted and ship at one size each — so a non-Cloudinary URL is
+ * returned untouched rather than silently no-op'ing through a `.replace()`
+ * that never matches.
  *
- * @example logoAt(siteConfig.logoIcon, { w: 760 })  // home hero watermark
+ * **Currently has no caller.** Its one consumer was the Home hero watermark,
+ * which now draws the self-hosted `logoMark` instead. Kept because `logoIcon`
+ * is still live (the favicon/PWA pipeline and the `index.html` splash both
+ * hard-code that same Cloudinary URL) and this is the only way to size it.
+ *
+ * @example logoAt(siteConfig.logoIcon, { w: 760 })
  */
 export const logoAt = (url, { w, h } = {}) => {
   if (!url.includes('/image/upload/')) return url;

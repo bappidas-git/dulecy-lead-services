@@ -12,6 +12,69 @@ prompt per branch/PR — and the entries below summarise each phase under the
 
 The format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.4.0] — 2026-08-08 — DLS hero watermark
+
+The Home hero floated the old "D" monogram — the same Cloudinary asset the
+favicon pipeline eats. The client supplied the "DLS" initialism mark, so that
+watermark now draws it, self-hosted alongside the wordmark.
+
+### Added
+
+- **`public/images/logo/dls-mark-860.png`** — 860×460 (1.87:1), 16.3 KB PNG-8,
+  flat `#ED1C24` on a real alpha channel. Cut from the client's 3646×2045
+  export by trimming its uniform ~104px transparent padding down to the artwork
+  bounding box, then resampling to 860w (lanczos3). Trimming is what lets a CSS
+  `width` map straight onto the visible mark instead of onto padding.
+- **`siteConfig.logoMark` + `MARK_SIZE`** — the same contract the wordmark uses:
+  a root-relative path plus the intrinsic size, so the `<img>` reserves the
+  right box before the file lands and CSS drives only the width.
+- The supplied artwork already peaked at **alpha 255**, so `[2.3.0]`'s
+  `×255/222` normalisation pass does not apply here. Verified before shipping
+  rather than assumed.
+
+### Changed
+
+- **The hero watermark's width ramp: `26vw / 380px` → `30vw / 430px`.** The
+  monogram is square; this lockup is 1.87:1, so at the mockup's width it would
+  draw 203px tall — about half the monogram's height — and read as a stray line
+  rather than a mark. 430px is also the ceiling the 860px master supports at 2×,
+  so it never upscales: measured 0.5 at 1440px and 1920px, 0.27 at 768px, 0.22
+  at 375px.
+- **Its opacity now splits at the existing 920px breakpoint: `0.07` below,
+  `0.04` above.** The monogram is a thin outlined D on a white disc, most of
+  which is invisible against the page; DLS is three solid slab glyphs at 59% ink
+  coverage — so the same alpha does very different things to the two marks, and
+  the right value moves with the mark's size and with what sits behind it.
+  Above 920px the mark is 2.3× wider over the lighter full-bleed scrim, and 0.07
+  laid down ~4.7× the monogram's integrated darkening: it stopped reading as a
+  watermark and read as a second headline behind the first. 0.04 brings that to
+  ~2.7× with a peak darkening of 7/255 against the monogram's 18/255. Below
+  920px the mark is at its 190px floor inside the photo band, where the backdrop
+  re-crops and the scrim thins — 0.04 disappeared into the handshake entirely,
+  so the mockup's 0.07 stays. Both values were picked off rendered ladders
+  composited over the hero's real photo-plus-scrim stack at 1440px and 375px,
+  not off the numbers alone. The split lands on the same breakpoint the backdrop
+  already switches on, because it is that switch it is compensating for.
+- **`siteConfig.logoIcon` is now a favicon/PWA/splash asset only.** It keeps its
+  legacy `Dulecy-Logo-Icon_hylrpw.png` public_id and both hard-coded copies
+  (`scripts/generate-icons.js`, the `public/index.html` splash) are untouched —
+  but nothing in `src/` renders it any more.
+- **`logoAt()` is kept with no caller**, and says so in its own doc comment. Its
+  one consumer was this watermark. `logoIcon` is still live in the icon
+  pipeline and this remains the only way to size it, so removing the helper
+  would cost more than the six lines it saves.
+
+### Verified
+
+Geometry measured from the live DOM at 320 / 375 / 768 / 919 / 920 / 1440 /
+1920px: no horizontal overflow at any width, no upscaling past 1:1, aspect held
+at 1.870, the opacity flipping on exactly the intended side of the breakpoint
+(0.07 at 919px, 0.04 at 920px), and the mark overlapping the badge pill at
+375px exactly as the monogram already did — at a lower alpha than before above
+920px, and the same 0.07 below it. `npm run build` with `CI=true` compiles with
+no warnings. The `floaty` keyframes and the `prefers-reduced-motion` stop are
+unchanged.
+
 ## [2.3.1] — 2026-08-08 — Even gradient accents
 
 `[2.3.0]`'s companion PR (#44) set `box-decoration-break: clone` on
