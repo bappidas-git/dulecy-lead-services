@@ -192,7 +192,9 @@ Notes:
 1. Drop the new wordmark files into `public/images/logo/` — an ink version and
    a white one, both with a transparent background. **Use a new filename**:
    `/images/**` is served `immutable`, so overwriting in place leaves returning
-   visitors on the old file for a year. The icon mark still lives on Cloudinary.
+   visitors on the old file for a year. The "DLS" mark lives beside them
+   (`dls-mark-860.png`); the old "D" monogram still lives on Cloudinary and now
+   only feeds the favicons and the splash.
 2. Update `logo` / `logoWhite` / `logoIcon` in `src/data/siteConfig.js` — the
    header, mobile menu, footer, admin topbar and admin login all read from
    there. Set `LOGO_SIZE` to the new file's intrinsic pixel size in the same
@@ -204,12 +206,21 @@ Notes:
    Check the alpha, too: supplied artwork has arrived painted at ~87% opacity,
    which renders grey rather than `--ink` / white. Normalise the alpha channel
    so the solid interior hits 255 before shipping it.
-4. Update the hardcoded URLs outside the data layer:
+4. Swapping the **"DLS" mark** is its own pass: new file into
+   `public/images/logo/` (new filename again), then `logoMark` and `MARK_SIZE`
+   in `siteConfig.js`. Trim the artwork to its own bounding box first — the
+   client's exports arrive with transparent padding, and the hero's `.float`
+   width is written against the visible mark, not the canvas. Its only surface
+   is the Home hero watermark, and `.float` in `HeroSection.module.css` is
+   tuned to this mark's 1.87:1 aspect and ink coverage: a mark with a different
+   shape or weight needs that width ramp and opacity re-checked against the
+   rendered hero, not carried over. Nothing else on the site draws it.
+5. Update the hardcoded URLs outside the data layer:
    - the splash-loader `<img>` (icon mark) and the JSON-LD `logo` values
      (absolute URLs) in `public/index.html`
    - `LOGO_ICON_URL` in `scripts/generate-icons.js`
    - `LOGO_FILE` in `scripts/generate-og.js`, then re-run `npm run generate:og`
-4. Regenerate the derived assets:
+6. Regenerate the derived assets:
 
 ```bash
 npm run generate:icons
@@ -222,9 +233,9 @@ npm run generate:og
    (`generate:icons` writes `favicon.ico`, `favicon.png`, `apple-touch-icon.png`,
    `logo192.png`, `logo512.png`; `generate:og` writes `og-image.png` at
    1200×630. Both fetch the logo over the network.)
-5. If the brand color changed, update `theme_color` in `public/manifest.json`
+7. If the brand color changed, update `theme_color` in `public/manifest.json`
    and the `INK` / `RED` constants in `scripts/generate-og.js`.
-6. Rebuild and redeploy.
+8. Rebuild and redeploy.
 
 ## 8. Rotating Admin Credentials & the Leads API Key
 

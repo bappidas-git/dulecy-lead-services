@@ -188,15 +188,46 @@
   align-items: center;
 }
 
-/* ========== Floating icon logo ========== */
+/* ========== Floating mark ==========
+   The watermark is the self-hosted "DLS" mark, replacing the "D" monogram the
+   mockup floats here. The offsets stay the mockup's; the width does not,
+   because the two marks are not interchangeable. The monogram is square, this
+   lockup is 1.87:1, so at the mockup's `26vw / 380px` it would draw only 203px
+   tall — barely half the monogram's height — and read as a stray line rather
+   than a mark. `30vw / 430px` restores a comparable footprint while staying
+   inside the shipped 860px master, so it never upscales (measured 0.5 at
+   1440/1920px, 0.27 at 768px, 0.22 at 375px), and it clears the viewport at
+   320px.
+
+   `height: auto` is explicit: the intrinsic box comes from the `width`/`height`
+   attributes (`MARK_SIZE`), and only the width is driven from here. */
 .float {
   position: absolute;
   right: clamp(-40px, 2vw, 60px);
   top: 110px;
-  width: clamp(180px, 26vw, 380px);
+  width: clamp(190px, 30vw, 430px);
+  height: auto;
   opacity: 0.07;
   animation: floaty 9s ease-in-out infinite;
   pointer-events: none;
+}
+
+/* The one value that has to move with the viewport, for the same reason the
+   width did. The monogram is a thin outlined D on a white disc — most of its
+   box never touches the page — while DLS is three solid slab glyphs at 59% ink
+   coverage. Below the 920px nav breakpoint the mark is at its 190px floor and
+   sits inside the photo band, where the mockup's 0.07 is what it takes to read
+   at all: at 0.04 it disappeared into the handshake entirely. Above it the mark
+   is 2.3x wider over a much lighter scrim, and the same 0.07 lays down ~4.7x
+   the monogram's integrated darkening — it stops being a watermark and reads as
+   a second headline behind the first. 0.04 brings that to ~2.7x with a peak
+   darkening of 7/255 against the monogram's 18/255. Both values were picked off
+   rendered ladders composited over the hero's real photo-plus-scrim stack at
+   375px and 1440px, not from the numbers alone. */
+@media (min-width: 920px) {
+  .float {
+    opacity: 0.04;
+  }
 }
 
 @keyframes floaty {

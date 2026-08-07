@@ -2,7 +2,7 @@
    Home / Hero — ported 1:1 from `mockup/index.html`
    --------------------------------------------
    Parallaxed Unsplash backdrop under a double white scrim, a floating
-   Dulcey icon, then the badge → headline → lede → CTAs → four pillars,
+   Dulcey "DLS" mark, then the badge → headline → lede → CTAs → four pillars,
    all staggered in on load by `useHeroIntro` (the mockup's `data-hero`
    elements, marked with the same attribute here).
 
@@ -17,7 +17,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useModal } from '../../../context/ModalContext';
-import { siteConfig, logoAt } from '../../../data/siteConfig';
+import { siteConfig, MARK_SIZE } from '../../../data/siteConfig';
 import { useHeroIntro, useParallax, parallaxPreset } from '../../../animations';
 import layout from '../../../styles/layout.module.css';
 import styles from './HeroSection.module.css';
@@ -62,15 +62,17 @@ const HeroSection = () => {
       <div className={styles.scrim} aria-hidden="true" />
 
       <div ref={heroRef} className={`${layout.container} ${styles.inner}`}>
-        {/* Decorative floating mark — drawn up to 380px wide, requested at
-            2× for retina. */}
+        {/* Decorative floating mark — the self-hosted "DLS" initialism, drawn
+            up to 430px wide and shipped at 860px so it stays crisp at 2×.
+            `MARK_SIZE` reserves the 1.87:1 box; the stylesheet sets the
+            rendered width and leaves the height auto. */}
         <img
           className={styles.float}
-          src={logoAt(siteConfig.logoIcon, { w: 760 })}
+          src={siteConfig.logoMark}
           alt=""
           aria-hidden="true"
-          width="760"
-          height="761"
+          width={MARK_SIZE.width}
+          height={MARK_SIZE.height}
           decoding="async"
         />
 

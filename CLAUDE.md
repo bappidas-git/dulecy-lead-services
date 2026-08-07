@@ -49,6 +49,12 @@ never hard-code a contact or company fact in a component, script, or schema.
     > That string is Cloudinary's immutable delivery path for the asset, not a
     > brand string — "correcting" it to `Dulcey-` 404s the favicon source.
     > Leave it until the mark is re-uploaded under a new public_id.
+    >
+    > This is now a **favicon/PWA/splash asset only**. Nothing in `src/`
+    > renders it: `scripts/generate-icons.js` and the `public/index.html`
+    > splash each hard-code the same URL, and the Home hero's watermark — its
+    > last consumer in the app — moved to `logoMark` below.
+  - "DLS" mark — `siteConfig.logoMark`: `/images/logo/dls-mark-860.png`
 
 **The wordmark is self-hosted and transparent.** Both PNGs are one 1351×200
 master (6.76:1) with a real alpha channel — no white plate — so the same mark
@@ -75,10 +81,30 @@ attributes rather than retyping the numbers, and keep `max-width: 100%` +
 > normalisation to any future drop rather than shipping the raw export — see
 > `CHANGELOG.md` `[2.3.0]`.
 
+**The "DLS" mark is self-hosted too, and trimmed to its own artwork.**
+`dls-mark-860.png` is 860×460 (1.87:1), ~16 KB, full-alpha `#ED1C24` — the
+supplied file already peaked at alpha 255, so the wordmark's normalisation pass
+above does **not** apply to it. The transparent padding the client's export
+carried was cropped away, so a CSS `width` maps straight onto the visible mark
+with no dead margin to compensate for; keep that true of any re-cut. Reuse
+`MARK_SIZE` for the `width`/`height` attributes. Its one surface is the Home
+hero watermark, and it is **not** interchangeable with the "D" monogram it
+replaced: the mockup's `26vw / 380px` ramp widens to `30vw / 430px` for the
+1.87:1 aspect, and the opacity splits at the **same 920px breakpoint the
+backdrop already switches on** — `0.07` below (small mark inside the photo
+band, where less vanishes) and `0.04` above (2.3× wider over the lighter
+full-bleed scrim, where 0.07 reads as a second headline). See the annotated
+`.float` block in `HeroSection.module.css`. The `-860` suffix is the width and
+`/images/**` is immutable, so re-cutting it means a new filename and a matching
+`MARK_SIZE` bump.
+
 `logoAt(url, { w, h })` returns a Cloudinary-resized display URL (`f_auto`,
-`q_auto:best`) — pass **2× the CSS box**. Only `logoIcon` still needs it; it
-returns a non-Cloudinary URL untouched. Wrap logo paths in `absoluteUrl()`
-wherever a schema or meta tag needs a fully qualified URL.
+`q_auto:best`) — pass **2× the CSS box**; it returns a non-Cloudinary URL
+untouched. It currently has **no caller**: `logoIcon` was its only subject and
+nothing in `src/` draws that asset any more. Kept because `logoIcon` is still
+live in the icon/splash pipeline and this is the only way to size it. Wrap logo
+paths in `absoluteUrl()` wherever a schema or meta tag needs a fully qualified
+URL.
 
 ## Project Structure
 
