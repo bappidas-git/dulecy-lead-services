@@ -18,7 +18,7 @@ import {
 import layout from '../../../styles/layout.module.css';
 import styles from './CommitmentSection.module.css';
 
-// Each phrase closes on a red serif-italic fragment.
+// Each phrase closes on a red fragment set in the same headline sans.
 const PHRASES = [
   { lead: 'The business behind', accent: 'the brief.' },
   { lead: 'The people behind', accent: 'the organization.' },
@@ -48,7 +48,7 @@ const CommitmentSection = () => {
           {PHRASES.map((phrase) => (
             <span className={styles.phrase} key={phrase.accent}>
               {phrase.lead}{' '}
-              <em className={`serif ${styles.accent}`}>{phrase.accent}</em>
+              <em className={styles.accent}>{phrase.accent}</em>
             </span>
           ))}
         </div>

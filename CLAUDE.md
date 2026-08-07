@@ -351,8 +351,19 @@ the `.grad-text` fill, so the red text matches the black text it sits with in
 family, weight, size, and tracking at every viewport — a local
 `font-style: normal` rule in each hero's module (`.accent`, or `.impact` on
 Home) undoes the `<em>` default italic. It is a deliberate, consistent
-departure from `/mockup`; the CTA sections, the Contact pull-quote, and the
-remaining in-body accents still use `.serif`.
+departure from `/mockup`.
+
+**About's closing commitment lines follow the same rule.** The four "The …
+behind _the …_" phrases in `CommitmentSection` drop `.serif` too, so each red
+fragment matches the black lead-in it shares a line with — here the fill is the
+flat `--red`, not `.grad-text`, and dropping `.serif` also restores the `750`
+weight it was overriding with `400`. Because the sans sets wider than
+Instrument Serif italic, the longer phrases wrap to two lines below ~418px
+(all four are single lines at 420px and up) where the serif kept them on one;
+that is expected, never overflows the viewport, and must not be "fixed" by
+overriding `.phrase`'s `clamp(22px, 3.6vw, 38px)`, which is mockup-verbatim.
+The CTA sections, the Contact pull-quote, the footer accents, and the
+remaining in-body `<em>`s still use `.serif`.
 
 **Layout** — 1280px max content width with `clamp(20px, 4vw, 44px)` side
 padding; **fixed 68px header**; the desktop nav takes over at **920px** (below
