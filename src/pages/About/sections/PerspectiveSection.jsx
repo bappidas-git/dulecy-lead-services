@@ -33,12 +33,20 @@ const PerspectiveSection = () => {
   return (
     <section className={layout.section}>
       <div className={`${layout.container} ${layout.split}`}>
-        <div className={layout.splitAside}>
+        <div className={`${layout.splitAside} ${styles.aside}`}>
           <p className="eyebrow" ref={eyebrowRef}>
             A distinctive perspective
           </p>
+          {/* Deliberate departure from `mockup/about.html`, which sets both
+              clauses as one full-stopped run and lets `text-wrap: balance`
+              pick the breaks (three ragged lines at desktop). The comma
+              carries the first clause into the second, and each clause holds
+              its own line at every width — the break is a single
+              unconditional <br />, not a breakpoint-gated one. */}
           <h2 className={`section-head ${styles.head}`} ref={headRef}>
-            Depth in pharma. Breadth across sectors.
+            Depth in pharma,
+            <br />
+            Breadth across sectors.
           </h2>
           <div className="rule" ref={ruleRef} />
         </div>
