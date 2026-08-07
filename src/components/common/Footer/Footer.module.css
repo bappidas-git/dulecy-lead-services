@@ -248,7 +248,14 @@
 /* ========== Watermark + legal ========== */
 .watermark {
   margin-top: clamp(36px, 5vw, 60px);
-  font-size: clamp(48px, 14vw, 190px);
+  /* The mockup sized this for the six-letter `DULCEY`, which draws 4.18x its
+     font-size wide; the `DLS` monogram draws only 2.01x. Left at the mockup's
+     `clamp(48px, 14vw, 190px)` the mark collapsed to ~31% of the content row
+     instead of the ~63% the design intends. Each stop is therefore scaled by
+     4.18 / 2.01 = 2.08, which reproduces the original width at every viewport
+     — the floor and ceiling still engage at ~345px and ~1362px, so no
+     breakpoint moves. Rescale again if the wordmark ever changes length. */
+  font-size: clamp(100px, 29vw, 396px);
   font-weight: 800;
   letter-spacing: -0.02em;
   line-height: 0.78;
