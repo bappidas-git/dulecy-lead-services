@@ -393,6 +393,23 @@ spare (verified 2 lines from a 240px column to 1100px, and at 320–1920px
 viewports). The bare `clamp()` above it is the fallback for browsers without
 container-query units. Do not re-tune either value in isolation.
 
+**A gradient accent repeats its ramp on every line it wraps to.** `.grad-text`
+carries `box-decoration-break: clone` (both prefixed and unprefixed), and that
+declaration is load-bearing. The fills sit on inline `<em>`s inside display
+headlines, so under the default `slice` the browser paints `--grad-text` once
+across the *unfragmented* box and then cuts that one painting up line by line —
+a wrapped accent gets a fraction of the ramp per line instead of the ramp.
+`/contact`'s "what comes next" breaks after "what", which took the first 30%
+(still ≈`#E8293E`) while "comes next" took the rest down to `#A80E1E`: one
+bright line stacked on one dark one, reading as two different reds rather than
+one sweep. `/expertise`'s "people, processes & performance" (2 lines from
+768px, 3 at 375px) and `/industries`' "Flexible where business needs evolve."
+did the same. `clone` gives each line the whole ramp, so the lines match one
+another at any width, and a single-line accent — the home hero's "impact" — is
+one fragment that renders identically either way. It changes painting only:
+toggling it moves no box. Keep the `-webkit-` prefix (Safari, and Chrome before
+130), and do not drop either declaration when editing the class.
+
 **Layout** — 1280px max content width with `clamp(20px, 4vw, 44px)` side
 padding; **fixed 68px header**; the desktop nav takes over at **920px** (below
 that, the burger opens the full-screen `MobileMenu`); hash scrolling leaves

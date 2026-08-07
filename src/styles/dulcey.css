@@ -84,11 +84,25 @@
   font-weight: 400;
 }
 
+/* `box-decoration-break` here is load-bearing, not boilerplate. Every one of
+   these fills sits on an inline <em> inside a display headline, and the
+   default `slice` paints the ramp once across the *unfragmented* box and then
+   cuts that single painting up line by line. So a wrapped accent gets a
+   fraction of the ramp per line instead of the ramp: /contact's "what comes
+   next" breaks after "what", which took the first 30% (still ~#E8293E) while
+   "comes next" took the remaining 70% down to #A80E1E — one bright line above
+   one dark one, reading as two different reds rather than one sweep.
+   `clone` gives every line the whole ramp, so the lines match each other at
+   any width; a single-line accent (the home hero's "impact") is a single
+   fragment and renders identically either way. Keep the -webkit- prefix:
+   Safari and Chrome before 130 only understand the prefixed form. */
 .grad-text {
   background: var(--grad-text);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
 
 .display {
