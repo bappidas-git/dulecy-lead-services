@@ -78,10 +78,15 @@ const HeroSection = () => {
           <span className={styles.dot} aria-hidden="true" /> {siteConfig.tagline}
         </div>
 
+        {/* Deliberate departure from `mockup/index.html`, which stops both
+            clauses with a full stop. The comma carries the first line into the
+            second, and the headline closes on the word "impact" itself rather
+            than on a mark — at every width, since this is one string wrapped by
+            a single unconditional <br />. */}
         <h1 className="display" data-hero>
-          We don&rsquo;t just offer services.
+          We don&rsquo;t just offer services,
           <br />
-          We deliver <em className={`grad-text ${styles.impact}`}>impact</em>.
+          We deliver <em className={`grad-text ${styles.impact}`}>impact</em>
         </h1>
 
         <p className={`lede ${styles.lede}`} data-hero>
