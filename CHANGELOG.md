@@ -12,6 +12,60 @@ prompt per branch/PR — and the entries below summarise each phase under the
 
 The format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.2.0] — 2026-08-07 — New wordmark
+
+The brand mark changed. The old lockup — a "D" monogram with a bar-chart arrow
+beside a serif "DULCEY / LEAD SERVICES" — is replaced by the supplied
+sans-serif wordmark, "Dulcey Lead Services™" over "Beyond Business Support".
+Both versions are self-hosted with a transparent background.
+
+### Changed
+
+- **`siteConfig.logo` / `logoWhite` now point at `public/images/logo/`** rather
+  than Cloudinary: `dulcey-wordmark.png` (ink `#0B0B0C`) and
+  `dulcey-wordmark-white.png`. One 1298×200 master each, 22 KB, PNG-8 with a
+  128-colour palette — a quarter the size of the full-depth encoding and
+  visually identical, since the mark is one colour at varying alpha.
+- **Real alpha, no white plate.** The background is genuinely transparent, so
+  the same file sits on white, `--bg-grey`, and ink. The footer draws the white
+  variant on the dark panel.
+- **`logoIcon` still lives on Cloudinary** and is unchanged — it drives the
+  splash screen and the generated favicons. It is the *old* "D" monogram, so
+  the splash and the favicon no longer match the new wordmark; regenerate them
+  once the client supplies the new icon artwork.
+- **Responsive sizing, because the lockup is much wider.** At 6.49:1 it draws
+  ~71% wider than the old 3.79:1 mark at the same height. The header steps
+  40px → 34px → 29px at 430px / 360px; the footer uses
+  `clamp(38px, 8.5vw, 52px)`; the admin login card drops 48px → 40px. Every
+  surface also carries `max-width: 100%` + `object-fit: contain`, so the mark
+  letterboxes rather than distorting if a column ever gets narrower still.
+  Verified with no horizontal overflow at 280 / 320 / 360 / 431 / 768 / 1280 px.
+- **`LOGO_SIZE`** (`{ width: 1298, height: 200 }`) is exported from
+  `siteConfig` and used for every `width`/`height` attribute, so the 6.49:1 box
+  is reserved before the file lands.
+- **`absoluteUrl()`** added to `siteConfig`. The logo values are root-relative
+  now, and `seoConfig.organization.logo` — which a crawler reads — has to be
+  fully qualified. The two static JSON-LD blocks in `public/index.html` were
+  updated to the same absolute URL.
+- **`logoAt()` returns non-Cloudinary URLs untouched** instead of silently
+  no-op'ing through a `.replace()` that can never match. The wordmark call
+  sites now reference `siteConfig.logo*` directly.
+- **`npm run generate:og` reads the wordmark off disk** rather than fetching it,
+  so it no longer needs the network; `public/og-image.png` regenerated.
+
+### Known limitation
+
+- **The "Beyond Business Support" line in the lockup is soft.** The only
+  artwork supplied was a blurred raster embedded in a PDF (a 1945×356 ink map
+  whose peak ink varies with stroke size — 242 on the wordmark, 167 on the
+  tagline, 94 on the ™). In that source the tagline's letterforms have already
+  merged: a horizontal profile across its x-height never dips between letters,
+  only at the word spaces. That is unrecoverable by processing — local-max
+  normalisation just blooms the merged letters into blobs. The large wordmark
+  itself resamples cleanly. Replace with a vector original when one is
+  available; **ship it under a new filename**, since `/images/**` is served
+  `immutable`.
+
 ## [2.1.2] — 2026-08-06 — Open ampersand
 
 Archivo draws its ampersand as a closed, rotated-8 form with no diagonal leg. It

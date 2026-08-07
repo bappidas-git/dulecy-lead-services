@@ -29,9 +29,13 @@
   margin: 0 auto var(--space-4);
 }
 
+/* 40px, not 48px: the 6.49:1 wordmark draws 260px wide there, which still
+   clears the card's content box once the mobile padding kicks in. */
 .loginLogo img {
-  height: 48px;
+  height: 40px;
   width: auto;
+  max-width: 100%;
+  object-fit: contain;
   display: block;
   margin: 0 auto;
 }

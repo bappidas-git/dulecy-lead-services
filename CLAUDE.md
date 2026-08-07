@@ -38,11 +38,11 @@ never hard-code a contact or company fact in a component, script, or schema.
   site deliberately claims none — do not invent one (see **SEO**).
 - **Social profiles**: none yet (`siteConfig.social` is `{}`,
   `seoConfig.organization.sameAs` is `[]`; empty entries are dropped/hidden).
-- **Logos** (Cloudinary — use these everywhere, never any older brand assets):
-  - Color (light backgrounds) — `siteConfig.logo`:
-    `https://res.cloudinary.com/dn9gyaiik/image/upload/v1785682949/Dulcey-Logo_tmkfku.png`
+- **Logos** — use these everywhere, never any older brand assets:
+  - Ink (light backgrounds) — `siteConfig.logo`:
+    `/images/logo/dulcey-wordmark.png`
   - White (dark backgrounds) — `siteConfig.logoWhite`:
-    `https://res.cloudinary.com/dn9gyaiik/image/upload/v1785682948/Dulcey-Logo-White_pthxu2.png`
+    `/images/logo/dulcey-wordmark-white.png`
   - Icon / "D" mark — `siteConfig.logoIcon`:
     `https://res.cloudinary.com/dn9gyaiik/image/upload/v1785484838/Dulecy-Logo-Icon_hylrpw.png`
     > ⚠️ **Legacy public_id.** This one URL still reads `Dulecy-Logo-Icon`.
@@ -50,9 +50,24 @@ never hard-code a contact or company fact in a component, script, or schema.
     > brand string — "correcting" it to `Dulcey-` 404s the favicon source.
     > Leave it until the mark is re-uploaded under a new public_id.
 
+**The wordmark is self-hosted and transparent.** Both PNGs are one 1298×200
+master (6.49:1) with a real alpha channel — no white plate — so the same mark
+sits on white, `--bg-grey`, and ink. They are **not** interchangeable with the
+older 3.79:1 Cloudinary lockup: at a given height this one draws ~71% wider,
+which is why the header steps down at 430px/360px and the footer uses
+`clamp(38px, 8.5vw, 52px)`. Reuse `LOGO_SIZE` for the `width`/`height`
+attributes rather than retyping the numbers, and keep `max-width: 100%` +
+`object-fit: contain` on any new surface that draws it.
+
+> ⚠️ The lockup's small "Beyond Business Support" line is soft — the only
+> artwork supplied for it was a blurred raster in which those letterforms had
+> already merged (see `CHANGELOG.md` `[2.2.0]`). Swap in a vector original when
+> the client provides one; regenerating from the same source will not fix it.
+
 `logoAt(url, { w, h })` returns a Cloudinary-resized display URL (`f_auto`,
-`q_auto:best`) — pass **2× the CSS box**. Use it for rendered `<img>` tags;
-pass the untransformed `siteConfig.logo*` values to SEO schemas.
+`q_auto:best`) — pass **2× the CSS box**. Only `logoIcon` still needs it; it
+returns a non-Cloudinary URL untouched. Wrap logo paths in `absoluteUrl()`
+wherever a schema or meta tag needs a fully qualified URL.
 
 ## Project Structure
 

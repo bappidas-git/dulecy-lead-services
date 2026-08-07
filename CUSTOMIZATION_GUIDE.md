@@ -189,15 +189,23 @@ Notes:
 
 ## 7. Swapping the logo
 
-1. Upload the new color, white, and icon variants to Cloudinary (or any CDN).
+1. Drop the new wordmark files into `public/images/logo/` — an ink version and
+   a white one, both with a transparent background. **Use a new filename**:
+   `/images/**` is served `immutable`, so overwriting in place leaves returning
+   visitors on the old file for a year. The icon mark still lives on Cloudinary.
 2. Update `logo` / `logoWhite` / `logoIcon` in `src/data/siteConfig.js` — the
    header, mobile menu, footer, admin topbar and admin login all read from
-   there, resizing through `logoAt()`.
-3. Update the hardcoded URLs outside the data layer:
-   - the splash-loader `<img>` and the JSON-LD `logo` values in
-     `public/index.html`
+   there. Set `LOGO_SIZE` to the new file's intrinsic pixel size in the same
+   pass; every `<img>` uses it for `width`/`height`.
+3. If the aspect ratio changed, re-check the rendered width at 320px. The
+   current lockup is 6.49:1, which is why the header steps down at 430px/360px
+   (`Header.module.css`), the footer clamps its height (`Footer.module.css`),
+   and the admin login draws it at 40px (`AdminLogin.module.css`).
+4. Update the hardcoded URLs outside the data layer:
+   - the splash-loader `<img>` (icon mark) and the JSON-LD `logo` values
+     (absolute URLs) in `public/index.html`
    - `LOGO_ICON_URL` in `scripts/generate-icons.js`
-   - `LOGO_URL` in `scripts/generate-og.js`
+   - `LOGO_FILE` in `scripts/generate-og.js`, then re-run `npm run generate:og`
 4. Regenerate the derived assets:
 
 ```bash

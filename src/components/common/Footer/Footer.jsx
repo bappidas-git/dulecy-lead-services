@@ -10,7 +10,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useModal } from '../../../context/ModalContext';
-import { siteConfig, telHref, mailHref, logoAt } from '../../../data/siteConfig';
+import {
+  siteConfig,
+  telHref,
+  mailHref,
+  LOGO_SIZE,
+} from '../../../data/siteConfig';
 import { NAV_LINKS } from '../../../data/navigation';
 import styles from './Footer.module.css';
 
@@ -44,12 +49,13 @@ const Footer = () => {
         <div className={styles.cols}>
           <div className={styles.brand}>
             <Link to="/" aria-label={`${siteConfig.brandName} — Home`}>
-              {/* Drawn 52px tall; requested at 2× for retina. */}
+              {/* The footer sits on ink, so this is the white lockup — same
+                  transparent mark, painted white instead of --ink. */}
               <img
-                src={logoAt(siteConfig.logoWhite, { h: 128 })}
+                src={siteConfig.logoWhite}
                 alt={siteConfig.brandName}
-                width="485"
-                height="128"
+                width={LOGO_SIZE.width}
+                height={LOGO_SIZE.height}
                 loading="lazy"
                 decoding="async"
               />

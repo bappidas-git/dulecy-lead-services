@@ -31,6 +31,9 @@
 
 .modalLogo {
   height: 40px;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
   margin: 0 auto 24px auto;
 }
 
