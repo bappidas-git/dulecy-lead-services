@@ -43,7 +43,9 @@ const ContactPage = () => {
 
             <h1 className={`display ${styles.head}`} data-hero>
               Let&rsquo;s build{' '}
-              <em className="serif grad-text">what comes next.</em>
+              <em className={`grad-text ${styles.accent}`}>
+                what comes next.
+              </em>
             </h1>
 
             <p className={`lede ${styles.lede}`} data-hero>
