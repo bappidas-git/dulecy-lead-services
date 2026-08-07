@@ -144,7 +144,7 @@ const colors = {
 const gradients = {
   brand: 'linear-gradient(135deg, #E8293E 0%, #A80E1E 100%)',
   brandReverse: 'linear-gradient(135deg, #A80E1E 0%, #E8293E 100%)',
-  text: 'linear-gradient(120deg, #E8293E, #A80E1E)',
+  text: 'linear-gradient(180deg, #E8293E, #A80E1E)',
 };
 
 // Breakpoints matching CSS variables
