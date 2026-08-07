@@ -23,10 +23,13 @@ const HeroSection = () => {
           About us
         </p>
 
+        {/* Both clauses close on the word, not on a mark — see the home hero's
+            "impact". The unconditional <br /> is what separates them, so the
+            two lines hold at every width without the full stops. */}
         <h1 className={`display display--md ${styles.head}`} data-hero>
-          Built on experience.
+          Built on experience
           <br />
-          <em className={`grad-text ${styles.accent}`}>Defined by trust.</em>
+          <em className={`grad-text ${styles.accent}`}>Defined by trust</em>
         </h1>
 
         <p className={`lede ${styles.lede}`} data-hero>

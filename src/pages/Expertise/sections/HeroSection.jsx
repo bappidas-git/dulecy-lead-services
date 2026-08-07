@@ -23,10 +23,11 @@ const HeroSection = () => {
           Our expertise
         </p>
 
+        {/* Closes on the word, not on a mark — see the home hero's "impact". */}
         <h1 className={`display display--sm ${styles.head}`} data-hero>
           Experience that connects{' '}
           <em className={`grad-text ${styles.accent}`}>
-            people, processes &amp; performance.
+            people, processes &amp; performance
           </em>
         </h1>
 

@@ -339,19 +339,30 @@ falls back to Archivo while the period keeps working.
 `--font-serif` is deliberately left alone: Instrument Serif's period is already
 round, and its italic ampersand is a calligraphic form chosen on purpose. No
 visible copy currently relies on that ampersand — `/expertise`'s hero line
-"people, processes & performance." was the last one, and it now renders in the
+"people, processes & performance" was the last one, and it now renders in the
 headline sans (see below), so that `&` comes from the Inter subset. Any future
 serif copy that needs an ampersand still gets Instrument Serif's form.
 
 **Every hero sets its red accent line in the headline sans.** Home
-("impact"), About ("Defined by trust."), `/expertise` ("people, processes &
-performance."), `/industries` ("Your industry."), and `/contact` ("what comes
-next.") all drop the mockup's `.serif` italic from that `<em>` and keep only
+("impact"), About ("Defined by trust"), `/expertise` ("people, processes &
+performance"), `/industries` ("Your industry"), and `/contact` ("what comes
+next") all drop the mockup's `.serif` italic from that `<em>` and keep only
 the `.grad-text` fill, so the red text matches the black text it sits with in
 family, weight, size, and tracking at every viewport — a local
 `font-style: normal` rule in each hero's module (`.accent`, or `.impact` on
 Home) undoes the `<em>` default italic. It is a deliberate, consistent
 departure from `/mockup`.
+
+**No hero headline ends on a full stop.** The mockup full-stops every hero
+clause; all five pages drop that mark and close on the word instead, the way
+Home's "impact" always has — About ("Built on experience" / "Defined by
+trust"), `/expertise` ("… people, processes & performance"), `/industries`
+("Our expertise" / "Your industry"), `/contact` ("Let's build what comes
+next"). This is copy-level only: nothing about the type sizing changed, and on
+the two-clause heroes the unconditional `<br />` — not the punctuation — is
+what holds a clause per line at every width. Section heads and body copy inside
+the pages keep their sentence punctuation; the rule is about the `<h1>` display
+lines. Another deliberate departure from `/mockup`.
 
 **About's closing commitment lines follow the same rule.** The four "The …
 behind _the …_" phrases in `CommitmentSection` drop `.serif` too, so each red
