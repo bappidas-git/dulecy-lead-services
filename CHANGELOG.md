@@ -12,6 +12,40 @@ prompt per branch/PR — and the entries below summarise each phase under the
 
 The format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.3.1] — 2026-08-08 — Even gradient accents
+
+`[2.3.0]`'s companion PR (#44) set `box-decoration-break: clone` on
+`.grad-text` so a wrapped red accent stopped showing one bright line above one
+dark one. It fixed the banding but not the cause: the ramp was still
+horizontal, so it was still as long as whatever line fragment it painted.
+
+### Changed
+
+- **`--grad-text` is now `linear-gradient(180deg, …)`** — vertical, where
+  `mockup/styles.css` sets `120deg`. A deliberate departure, mirrored in
+  `muiTheme.js`'s `gradients.text`. `--grad` (buttons, cards) stays at `135deg`;
+  those boxes never fragment, so they were never affected.
+- **Why the axis and not the `box-decoration-break` value.** `.grad-text` sits
+  on inline `<em>`s inside display headlines, so it fragments — one box per
+  wrapped line — and a CSS gradient's ramp is exactly as long as the box it
+  paints. With a horizontal component, neither value works: `slice` splits one
+  ramp across the lines by share, and `clone` gives each line the whole ramp but
+  over its own width. On `/expertise` at 1440px that meant "people," (280px) ran
+  the ramp over 286px while "processes & performance" (958px) ran it over 873px
+  — **3× the rate**. "people," fell from `#E3273B` to `#AD1021` inside a single
+  word, then "processes" directly beneath it snapped back to `#E6283D`.
+- **Vertical removes the width term entirely.** The ramp length becomes the
+  inline box height, identical for every fragment of a headline at every
+  viewport. Measured on all 8 accents across `/`, `/about`, `/expertise`,
+  `/industries` and `/contact` at 320 / 375 / 768 / 1440px — including the
+  3-line `/expertise` wrap at 320px and the 2-line `/contact` wrap — every
+  fragment of a headline now paints the same ramp with no variation along the
+  line (at 1440px both `/expertise` lines run `#E7283D` → `#A90F1F` over 87px).
+- **`box-decoration-break: clone` is kept but demoted.** A vertical ramp renders
+  identically under both values, so the fix no longer depends on that property
+  being supported anywhere; the declaration stays only to keep a future padded
+  or bordered accent consistent.
+
 ## [2.3.0] — 2026-08-07 — Sharp wordmark
 
 `[2.2.0]` shipped the wordmark from the only artwork then available — a blurred

@@ -304,7 +304,7 @@ again in `src/theme/muiTheme.js`.
 | `--red`       | `#D5192E`                                         | Dulcey red — eyebrows, links, key highlights     |
 | `--red-hi`    | `#F0293E`                                         | Brighter red for dark backgrounds (footer icons) |
 | `--grad`      | `linear-gradient(135deg,#E8293E 0%,#A80E1E 100%)` | Primary pill button                              |
-| `--grad-text` | `linear-gradient(120deg,#E8293E,#A80E1E)`         | Gradient headline words                          |
+| `--grad-text` | `linear-gradient(180deg,#E8293E,#A80E1E)`         | Gradient headline words (vertical — see below)   |
 
 Legacy alias names (`--color-primary`, `--color-accent`, `--accent-gold*`,
 `--accent-amber*`, …) are kept in `variables.css` mapped onto the Dulcey values
@@ -393,22 +393,34 @@ spare (verified 2 lines from a 240px column to 1100px, and at 320–1920px
 viewports). The bare `clamp()` above it is the fallback for browsers without
 container-query units. Do not re-tune either value in isolation.
 
-**A gradient accent repeats its ramp on every line it wraps to.** `.grad-text`
-carries `box-decoration-break: clone` (both prefixed and unprefixed), and that
-declaration is load-bearing. The fills sit on inline `<em>`s inside display
-headlines, so under the default `slice` the browser paints `--grad-text` once
-across the *unfragmented* box and then cuts that one painting up line by line —
-a wrapped accent gets a fraction of the ramp per line instead of the ramp.
-`/contact`'s "what comes next" breaks after "what", which took the first 30%
-(still ≈`#E8293E`) while "comes next" took the rest down to `#A80E1E`: one
-bright line stacked on one dark one, reading as two different reds rather than
-one sweep. `/expertise`'s "people, processes & performance" (2 lines from
-768px, 3 at 375px) and `/industries`' "Flexible where business needs evolve."
-did the same. `clone` gives each line the whole ramp, so the lines match one
-another at any width, and a single-line accent — the home hero's "impact" — is
-one fragment that renders identically either way. It changes painting only:
-toggling it moves no box. Keep the `-webkit-` prefix (Safari, and Chrome before
-130), and do not drop either declaration when editing the class.
+**`--grad-text` runs down the line, not across it — that is what keeps a
+wrapped accent even.** The mockup sets it to `120deg`; the site sets `180deg`,
+a deliberate departure. `.grad-text` fills sit on inline `<em>`s inside display
+headlines, so they fragment — one box per line the copy wraps to — and a CSS
+gradient's ramp is exactly as long as the box it paints. With any horizontal
+component each line therefore gets its own ramp length, and **neither
+`box-decoration-break` value survives that**: under `slice` the ramp is painted
+once across the unfragmented box and cut up, so each line shows only its share
+(`/contact`'s "what comes next" breaks after "what", which took the first 30%,
+still ≈`#E8293E`, while "comes next" took the rest down to `#A80E1E` — one
+bright line stacked on one dark one); under `clone` each line gets the whole
+ramp but over its own width, so on `/expertise` at 1440px "people," (280px) ran
+it over 286px while "processes & performance" (958px) ran it over 873px —
+**3× the rate**. "people," fell from `#E3273B` to `#AD1021` inside one
+word, then "processes" directly beneath it snapped back to `#E6283D`.
+
+Vertical removes the variable: the ramp length is the inline box height, which
+is identical for every fragment of a given headline at every viewport. All 8
+accents across the five routes were measured at 320 / 375 / 768 / 1440px —
+including the 3-line `/expertise` wrap at 320px and the 2-line `/contact` wrap
+— and every fragment of a headline now paints the same ramp with no variation
+along the line (at 1440px both `/expertise` lines run `#E7283D` → `#A90F1F`
+over 87px). It is also the one axis that renders identically under **both**
+`box-decoration-break` values, so nothing depends on that property being
+supported; `clone` stays only to keep a future padded or bordered accent
+consistent, and keeps the `-webkit-` prefix (Safari, and Chrome before 130).
+`--grad` stays diagonal at `135deg` — it fills buttons and cards, which never
+fragment. Do not reintroduce a horizontal component to `--grad-text`.
 
 **Layout** — 1280px max content width with `clamp(20px, 4vw, 44px)` side
 padding; **fixed 68px header**; the desktop nav takes over at **920px** (below

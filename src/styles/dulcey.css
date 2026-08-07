@@ -84,18 +84,31 @@
   font-weight: 400;
 }
 
-/* `box-decoration-break` here is load-bearing, not boilerplate. Every one of
-   these fills sits on an inline <em> inside a display headline, and the
-   default `slice` paints the ramp once across the *unfragmented* box and then
-   cuts that single painting up line by line. So a wrapped accent gets a
-   fraction of the ramp per line instead of the ramp: /contact's "what comes
-   next" breaks after "what", which took the first 30% (still ~#E8293E) while
-   "comes next" took the remaining 70% down to #A80E1E — one bright line above
-   one dark one, reading as two different reds rather than one sweep.
-   `clone` gives every line the whole ramp, so the lines match each other at
-   any width; a single-line accent (the home hero's "impact") is a single
-   fragment and renders identically either way. Keep the -webkit- prefix:
-   Safari and Chrome before 130 only understand the prefixed form. */
+/* The ramp runs *down* the line, not across it, and that is the whole point.
+   Every one of these fills sits on an inline <em> inside a display headline,
+   so it fragments: one box per line it wraps to. A CSS gradient's ramp is as
+   long as the box it paints, so with any horizontal component each line gets
+   its own ramp length — and neither `box-decoration-break` value survives it:
+
+     · `slice` paints one ramp across the unfragmented box and cuts it up, so
+       each line shows only its share. /contact's "what comes next" breaks
+       after "what", which took the first 30% (still ~#E8293E) while "comes
+       next" took the rest down to #A80E1E — one bright line above one dark.
+     · `clone` gives each line the whole ramp, but over its own width. On
+       /expertise "people, processes & performance" broke into a 179px line
+       and a 613px one, so the ramp ran 3x faster on the short one: "people,"
+       darkened to #AD1021 across a single word, then "processes" directly
+       beneath it snapped back to #E6283D.
+
+   A vertical ramp removes the variable. Its length is the inline box height —
+   the same for every fragment of a given headline, at every viewport and on
+   every device — so all lines paint an identical ramp no matter how the copy
+   wraps. It is also the one axis that renders the same under both
+   `box-decoration-break` values, so nothing here depends on that property
+   being supported; `clone` stays only to keep any future padding or border on
+   an accent consistent, and keeps the -webkit- prefix for Safari and Chrome
+   before 130. `--grad` (buttons, cards) stays diagonal — those never
+   fragment. */
 .grad-text {
   background: var(--grad-text);
   -webkit-background-clip: text;

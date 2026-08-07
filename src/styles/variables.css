@@ -18,7 +18,12 @@
   --red: #D5192E;
   --red-hi: #F0293E;
   --grad: linear-gradient(135deg, #E8293E 0%, #A80E1E 100%);
-  --grad-text: linear-gradient(120deg, #E8293E, #A80E1E);
+  /* Vertical on purpose — the mockup's 120deg is a deliberate departure here.
+     `.grad-text` fills wrap, and a ramp with any horizontal component is as
+     long as the line fragment it paints, so every line gets a different rate.
+     See the `.grad-text` note in dulcey.css. `--grad` stays diagonal: it fills
+     buttons and cards, which never fragment. */
+  --grad-text: linear-gradient(180deg, #E8293E, #A80E1E);
 
   /* ========== Semantic aliases (legacy names → Dulcey values) ==========
      `global.css` still references these names; they resolve to the Dulcey
