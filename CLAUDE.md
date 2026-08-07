@@ -343,14 +343,14 @@ visible copy currently relies on that ampersand — `/expertise`'s hero line
 headline sans (see below), so that `&` comes from the Inter subset. Any future
 serif copy that needs an ampersand still gets Instrument Serif's form.
 
-**The heroes set their red accent line in the headline sans.** Home
+**Every hero sets its red accent line in the headline sans.** Home
 ("impact"), About ("Defined by trust."), `/expertise` ("people, processes &
-performance.") and `/industries` ("Your industry.") all drop the mockup's
-`.serif` italic from that `<em>` and keep only the `.grad-text` fill, so the
-red line matches the black line above it in family, weight, size, and tracking
-at every viewport — a local `font-style: normal` rule in each hero's module
-(`.accent`, or `.impact` on Home) undoes the `<em>` default italic. It is a
-deliberate, consistent
+performance."), `/industries` ("Your industry."), and `/contact` ("what comes
+next.") all drop the mockup's `.serif` italic from that `<em>` and keep only
+the `.grad-text` fill, so the red text matches the black text it sits with in
+family, weight, size, and tracking at every viewport — a local
+`font-style: normal` rule in each hero's module (`.accent`, or `.impact` on
+Home) undoes the `<em>` default italic. It is a deliberate, consistent
 departure from `/mockup`; the CTA sections, the Contact pull-quote, and the
 remaining in-body accents still use `.serif`.
 
