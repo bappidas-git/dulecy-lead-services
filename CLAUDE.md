@@ -40,9 +40,9 @@ never hard-code a contact or company fact in a component, script, or schema.
   `seoConfig.organization.sameAs` is `[]`; empty entries are dropped/hidden).
 - **Logos** — use these everywhere, never any older brand assets:
   - Ink (light backgrounds) — `siteConfig.logo`:
-    `/images/logo/dulcey-wordmark.png`
+    `/images/logo/dulcey-wordmark-1351.png`
   - White (dark backgrounds) — `siteConfig.logoWhite`:
-    `/images/logo/dulcey-wordmark-white.png`
+    `/images/logo/dulcey-wordmark-white-1351.png`
   - Icon / "D" mark — `siteConfig.logoIcon`:
     `https://res.cloudinary.com/dn9gyaiik/image/upload/v1785484838/Dulecy-Logo-Icon_hylrpw.png`
     > ⚠️ **Legacy public_id.** This one URL still reads `Dulecy-Logo-Icon`.
@@ -50,19 +50,30 @@ never hard-code a contact or company fact in a component, script, or schema.
     > brand string — "correcting" it to `Dulcey-` 404s the favicon source.
     > Leave it until the mark is re-uploaded under a new public_id.
 
-**The wordmark is self-hosted and transparent.** Both PNGs are one 1298×200
-master (6.49:1) with a real alpha channel — no white plate — so the same mark
+**The wordmark is self-hosted and transparent.** Both PNGs are one 1351×200
+master (6.76:1) with a real alpha channel — no white plate — so the same mark
 sits on white, `--bg-grey`, and ink. They are **not** interchangeable with the
-older 3.79:1 Cloudinary lockup: at a given height this one draws ~71% wider,
+older 3.79:1 Cloudinary lockup: at a given height this one draws ~78% wider,
 which is why the header steps down at 430px/360px and the footer uses
 `clamp(38px, 8.5vw, 52px)`. Reuse `LOGO_SIZE` for the `width`/`height`
 attributes rather than retyping the numbers, and keep `max-width: 100%` +
 `object-fit: contain` on any new surface that draws it.
 
-> ⚠️ The lockup's small "Beyond Business Support" line is soft — the only
-> artwork supplied for it was a blurred raster in which those letterforms had
-> already merged (see `CHANGELOG.md` `[2.2.0]`). Swap in a vector original when
-> the client provides one; regenerating from the same source will not fix it.
+> ⚠️ **Re-cutting the artwork means a new filename.** `/images/**` answers
+> `public, max-age=31536000, immutable` (see `public/.htaccess`), so overwriting
+> a logo in place leaves every returning visitor on the previous render for a
+> year. The `-1351` suffix is the width, matching the convention the rest of
+> `/images/**` already uses (`hero-home-1920.webp`). Bump it — and update
+> `LOGO_SIZE`, `LOGO_FILE` in `scripts/generate-og.js`, and the two absolute
+> JSON-LD `logo` URLs in `public/index.html` — in the same pass.
+
+> ⚠️ **Supplied logo artwork paints its interiors at partial alpha.** The
+> client's files peak at alpha 222, which renders `#212121` on white and
+> `#DFDFDF` on the ink footer instead of true ink and true white. The shipped
+> masters are alpha-normalised (`×255/222`, clamped) so the solid body reaches
+> full opacity while the antialiased edge ramp stays proportional. Re-apply that
+> normalisation to any future drop rather than shipping the raw export — see
+> `CHANGELOG.md` `[2.3.0]`.
 
 `logoAt(url, { w, h })` returns a Cloudinary-resized display URL (`f_auto`,
 `q_auto:best`) — pass **2× the CSS box**. Only `logoIcon` still needs it; it

@@ -204,9 +204,14 @@
   align-items: center;
 }
 
+/* 28px → ~189px wide at 6.76:1, which clears the drawer. The `max-width` +
+   `object-fit` pair is the same floor every other surface keeps, so a narrower
+   drawer letterboxes the lockup rather than distorting it. */
 .mobileMenuLogo {
   height: 28px;
   width: auto;
+  max-width: 100%;
+  object-fit: contain;
 }
 
 .mobileNav {
