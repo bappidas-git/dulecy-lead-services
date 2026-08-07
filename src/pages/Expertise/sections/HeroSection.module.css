@@ -23,6 +23,22 @@
   max-width: 1050px;
 }
 
+/* Deliberate departure from the mockup, which sets this closing clause in the
+   Instrument Serif italic accent (`.serif`) — the same departure the home and
+   About heroes already make. The clause keeps only the red `.grad-text` fill
+   and otherwise renders exactly like "Experience that connects" before it:
+   family, weight, size, and tracking all inherit from `.display--sm`, so it
+   tracks that clamp at every viewport. The <em> default italic is the one
+   thing left to undo.
+
+   This also moves the site's last serif-italic ampersand into the sans stack,
+   where the subsetted 'Inter' at the front of it draws the open `&` (and the
+   round full stop) in place of Archivo's closed rotated-8 — see the
+   Typography note in CLAUDE.md. */
+.accent {
+  font-style: normal;
+}
+
 .lede {
   max-width: 700px;
 }

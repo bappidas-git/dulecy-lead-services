@@ -337,9 +337,22 @@ both Archivo glyphs. In the URL the ampersand **must stay percent-encoded as
 falls back to Archivo while the period keeps working.
 
 `--font-serif` is deliberately left alone: Instrument Serif's period is already
-round, and its italic ampersand is a calligraphic form chosen on purpose. The
-one serif-italic ampersand on the site — `/expertise`'s hero line "people,
-processes & performance." — therefore keeps Instrument Serif's `&`.
+round, and its italic ampersand is a calligraphic form chosen on purpose. No
+visible copy currently relies on that ampersand — `/expertise`'s hero line
+"people, processes & performance." was the last one, and it now renders in the
+headline sans (see below), so that `&` comes from the Inter subset. Any future
+serif copy that needs an ampersand still gets Instrument Serif's form.
+
+**The heroes set their red accent line in the headline sans.** Home
+("impact"), About ("Defined by trust."), `/expertise` ("people, processes &
+performance.") and `/industries` ("Your industry.") all drop the mockup's
+`.serif` italic from that `<em>` and keep only the `.grad-text` fill, so the
+red line matches the black line above it in family, weight, size, and tracking
+at every viewport — a local `font-style: normal` rule in each hero's module
+(`.accent`, or `.impact` on Home) undoes the `<em>` default italic. It is a
+deliberate, consistent
+departure from `/mockup`; the CTA sections, the Contact pull-quote, and the
+remaining in-body accents still use `.serif`.
 
 **Layout** — 1280px max content width with `clamp(20px, 4vw, 44px)` side
 padding; **fixed 68px header**; the desktop nav takes over at **920px** (below
