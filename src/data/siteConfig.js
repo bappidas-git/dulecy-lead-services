@@ -19,8 +19,15 @@ export const siteConfig = {
   // No postal address: the brand material publishes none, and the site
   // deliberately claims none in its schemas either.
   siteUrl: 'https://www.dulceyleadservices.com',
-  logo: `${CLOUDINARY_BASE}/v1785682949/Dulcey-Logo_tmkfku.png`,
-  logoWhite: `${CLOUDINARY_BASE}/v1785682948/Dulcey-Logo-White_pthxu2.png`,
+  // The wordmark lockup, self-hosted under `public/images/logo/`. Both PNGs
+  // carry a real alpha channel — the background is transparent, so the mark
+  // sits on white, grey, and ink surfaces without a plate behind it. They are
+  // one 1298x200 master each rather than a per-surface render; at 22 KB with
+  // `/images/**` served immutable, that is cheaper than the round trips.
+  // Site-root paths, so they resolve from any route — wrap in `absoluteUrl()`
+  // wherever a schema or meta tag needs a fully qualified URL.
+  logo: '/images/logo/dulcey-wordmark.png',
+  logoWhite: '/images/logo/dulcey-wordmark-white.png',
   // The "D" mark. Its Cloudinary public_id still carries the old spelling —
   // that is the asset's immutable delivery path, not a brand string.
   logoIcon: `${CLOUDINARY_BASE}/v1785484838/Dulecy-Logo-Icon_hylrpw.png`,
@@ -44,21 +51,44 @@ export const telHref = `tel:${siteConfig.phone}`;
 export const mailHref = `mailto:${siteConfig.email}`;
 
 /**
- * Display URL for a Cloudinary logo, capped to the size that surface
+ * Intrinsic pixel size of the two wordmark PNGs.
+ *
+ * Every `<img>` that draws the lockup sets these as its `width`/`height`
+ * attributes so the browser reserves the right 6.49:1 box before the file
+ * lands. CSS then sets the rendered height and leaves `width: auto`.
+ */
+export const LOGO_SIZE = { width: 1298, height: 200 };
+
+/**
+ * Absolute URL for a site-root path, left alone if it is already absolute.
+ *
+ * The logos moved from Cloudinary to `public/images/`, so the values in
+ * `siteConfig` are now root-relative. Schemas, Open Graph tags, and anything
+ * else a crawler reads need the fully qualified form.
+ *
+ * @example absoluteUrl(siteConfig.logo)  // https://www.dulceyleadservices.com/images/logo/…
+ */
+export const absoluteUrl = (pathOrUrl) =>
+  /^https?:\/\//i.test(pathOrUrl)
+    ? pathOrUrl
+    : `${siteConfig.siteUrl}${pathOrUrl.startsWith('/') ? '' : '/'}${pathOrUrl}`;
+
+/**
+ * Display URL for a Cloudinary asset, capped to the size that surface
  * actually renders (Prompt 12).
  *
- * The originals are 1800×475 / 1000×1001 PNGs — 500 KB across the three of
- * them — while the header draws the logo 40px tall. `f_auto` negotiates
- * WebP/AVIF, `q_auto:best` keeps a brand mark's edges clean, and `w`/`h`
- * should be passed at **2× the CSS box** so it stays crisp on retina.
+ * `f_auto` negotiates WebP/AVIF, `q_auto:best` keeps a brand mark's edges
+ * clean, and `w`/`h` should be passed at **2× the CSS box** so it stays crisp
+ * on retina.
  *
- * The logos stay on Cloudinary; this only asks for fewer pixels. Pass the
- * untransformed `siteConfig.logo*` values to SEO schemas — crawlers should
- * keep seeing the full-resolution originals.
+ * Only `logoIcon` still lives on Cloudinary — the wordmark is self-hosted and
+ * ships at one size — so a non-Cloudinary URL is returned untouched rather
+ * than silently no-op'ing through a `.replace()` that never matches.
  *
- * @example logoAt(siteConfig.logo, { h: 96 })  // header, 40px tall
+ * @example logoAt(siteConfig.logoIcon, { w: 760 })  // home hero watermark
  */
 export const logoAt = (url, { w, h } = {}) => {
+  if (!url.includes('/image/upload/')) return url;
   const size = [w && `w_${w}`, h && `h_${h}`].filter(Boolean).join(',');
   const transform = ['f_auto', 'q_auto:best', size].filter(Boolean).join(',');
   return url.replace('/image/upload/', `/image/upload/${transform}/`);

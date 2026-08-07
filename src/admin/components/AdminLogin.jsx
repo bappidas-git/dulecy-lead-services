@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { TextField, Checkbox, CircularProgress } from '@mui/material';
 import { useAdminAuth } from '../context/AdminAuthContext';
-import { siteConfig, logoAt } from '../../data/siteConfig';
+import { siteConfig, LOGO_SIZE } from '../../data/siteConfig';
 import styles from './AdminLogin.module.css';
 
 const AdminLogin = () => {
@@ -41,12 +41,12 @@ const AdminLogin = () => {
       <div className={styles.loginCard}>
         <div className={styles.loginHeader}>
           <div className={styles.loginLogo}>
-            {/* Colour logo — the card behind it is white. */}
+            {/* Ink lockup — the card behind it is white. */}
             <img
-              src={logoAt(siteConfig.logo, { h: 96 })}
+              src={siteConfig.logo}
               alt={siteConfig.brandName}
-              width="364"
-              height="96"
+              width={LOGO_SIZE.width}
+              height={LOGO_SIZE.height}
             />
           </div>
           <h1 className={styles.loginTitle}>{siteConfig.brandName}</h1>

@@ -20,9 +20,17 @@ const fs = require("fs");
 const path = require("path");
 const sharp = require("sharp");
 
-// Color logo (light backgrounds) — keep in sync with siteConfig.logo.
-const LOGO_URL =
-  "https://res.cloudinary.com/dn9gyaiik/image/upload/v1785682949/Dulcey-Logo_tmkfku.png";
+// Ink lockup (light backgrounds) — keep in sync with siteConfig.logo. Now read
+// off disk rather than fetched: the wordmark is self-hosted, so `npm run
+// generate:og` no longer needs the network.
+const LOGO_FILE = path.resolve(
+  __dirname,
+  "..",
+  "public",
+  "images",
+  "logo",
+  "dulcey-wordmark.png"
+);
 
 const OUT = path.resolve(__dirname, "..", "public", "og-image.png");
 
@@ -34,11 +42,10 @@ const RED = "#D5192E"; // --red (Dulcey red)
 const SLATE = "#4A4A4F"; // --grey-2
 const FONT = "Liberation Sans, DejaVu Sans, Arial, Helvetica, sans-serif";
 
-async function fetchLogo() {
-  const res = await fetch(LOGO_URL);
-  if (!res.ok)
-    throw new Error(`Failed to fetch color logo: HTTP ${res.status}`);
-  return Buffer.from(await res.arrayBuffer());
+function readLogo() {
+  if (!fs.existsSync(LOGO_FILE))
+    throw new Error(`Logo not found at ${LOGO_FILE}`);
+  return fs.readFileSync(LOGO_FILE);
 }
 
 function buildSvg() {
@@ -59,15 +66,17 @@ function buildSvg() {
 }
 
 async function main() {
-  console.log("Fetching Dulcey color logo…");
-  const logoRaw = await fetchLogo();
+  console.log("Reading Dulcey wordmark…");
+  const logoRaw = readLogo();
   const logo = await sharp(logoRaw)
-    .resize({ width: 400, fit: "inside" })
+    .resize({ width: 440, fit: "inside" })
     .png()
     .toBuffer();
   const { height: logoH } = await sharp(logo).metadata();
 
-  const base = sharp(buildSvg()).png();
+  // The wordmark is transparent, so flatten the SVG plate first — compositing
+  // a transparent mark straight onto the base is what keeps the edges clean.
+  const base = sharp(buildSvg()).flatten({ background: WHITE }).png();
   const composed = await base
     .composite([{ input: logo, left: 80, top: Math.round(160 - logoH / 2) }])
     .png({ compressionLevel: 9, palette: true })

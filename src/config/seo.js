@@ -23,7 +23,7 @@
    hours, aggregate ratings, and FAQPage (the site has no visible FAQ).
    ============================================ */
 
-import { siteConfig } from '../data/siteConfig';
+import { siteConfig, absoluteUrl } from '../data/siteConfig';
 import { expertiseAreas, expertiseTitles } from '../data/expertiseData';
 import { industries } from '../data/industriesData';
 import { NAV_LINKS } from '../data/navigation';
@@ -68,7 +68,9 @@ export const seoConfig = {
     name: siteConfig.brandName,
     legalName: siteConfig.legalName,
     url: SITE_URL,
-    logo: siteConfig.logo, // color logo (light backgrounds)
+    // The ink lockup (light backgrounds). The logos are self-hosted now, so
+    // the config value is a root-relative path — a crawler needs it absolute.
+    logo: absoluteUrl(siteConfig.logo),
     // The footer brand paragraph, verbatim.
     description:
       'A professional business support and consulting organization — helping businesses, institutions, entrepreneurs, and professionals build for sustainable growth.',

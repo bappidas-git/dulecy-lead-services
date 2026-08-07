@@ -6,12 +6,12 @@ import React, { useState, useRef, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { Icon } from '@iconify/react';
 import { useAdminAuth } from '../context/AdminAuthContext';
-import { siteConfig, logoAt } from '../../data/siteConfig';
+import { siteConfig, LOGO_SIZE } from '../../data/siteConfig';
 import styles from './AdminTopbar.module.css';
 
-// Colour logo — the topbar and the mobile menu are both white surfaces.
-// Drawn 32px tall (24px on mobile); requested at 2x for retina.
-const BRAND_LOGO = logoAt(siteConfig.logo, { h: 64 });
+// Ink lockup — the topbar and the mobile menu are both white surfaces.
+// Drawn 32px tall in the bar, 28px in the mobile menu.
+const BRAND_LOGO = siteConfig.logo;
 
 const navItems = [
   { label: 'Dashboard', path: '/admin/dashboard', icon: 'mdi:view-dashboard' },
@@ -66,8 +66,8 @@ const AdminTopbar = () => {
           src={BRAND_LOGO}
           alt={siteConfig.brandName}
           className={styles.logo}
-          width="242"
-          height="64"
+          width={LOGO_SIZE.width}
+          height={LOGO_SIZE.height}
         />
         <span className={styles.divider} />
         <span className={styles.wordmark}>Admin Panel</span>
@@ -121,8 +121,8 @@ const AdminTopbar = () => {
                 src={BRAND_LOGO}
                 alt={siteConfig.brandName}
                 className={styles.mobileMenuLogo}
-                width="242"
-                height="64"
+                width={LOGO_SIZE.width}
+                height={LOGO_SIZE.height}
               />
             </div>
 

@@ -11,7 +11,7 @@
 import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useModal } from '../../../context/ModalContext';
-import { siteConfig, logoAt } from '../../../data/siteConfig';
+import { siteConfig, LOGO_SIZE } from '../../../data/siteConfig';
 import { NAV_LINKS } from '../../../data/navigation';
 import styles from './Header.module.css';
 
@@ -26,12 +26,13 @@ const Header = ({ isMenuOpen = false, onToggleMenu, menuId = 'mobile-menu' }) =>
           className={styles.logo}
           aria-label={`${siteConfig.brandName} — Home`}
         >
-          {/* Drawn 40px tall; requested at 2× for retina. */}
+          {/* Drawn 40px tall (32px on narrow phones — see the module CSS);
+              the intrinsic size reserves the 6.49:1 box against layout shift. */}
           <img
-            src={logoAt(siteConfig.logo, { h: 96 })}
+            src={siteConfig.logo}
             alt={siteConfig.brandName}
-            width="364"
-            height="96"
+            width={LOGO_SIZE.width}
+            height={LOGO_SIZE.height}
             decoding="async"
           />
         </Link>

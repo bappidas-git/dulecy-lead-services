@@ -7,7 +7,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextField, IconButton } from "@mui/material";
 import { Icon } from "@iconify/react";
-import { siteConfig, logoAt } from "../../data/siteConfig";
+import { siteConfig, LOGO_SIZE } from "../../data/siteConfig";
 import styles from "./Guideline.module.css";
 import LeadStorageGuide from "./guidelineContent/LeadStorageGuide";
 import SEOSetupGuide from "./guidelineContent/SEOSetupGuide";
@@ -79,11 +79,11 @@ const Guideline = () => {
       <div className={styles.modalOverlay}>
         <div className={styles.modalCard}>
           <img
-            src={logoAt(siteConfig.logo, { h: 80 })}
+            src={siteConfig.logo}
             alt={siteConfig.brandName}
             className={styles.modalLogo}
-            width="303"
-            height="80"
+            width={LOGO_SIZE.width}
+            height={LOGO_SIZE.height}
           />
           <h2 className={styles.modalTitle}>Restricted Access</h2>
           <p className={styles.modalSubtitle}>
