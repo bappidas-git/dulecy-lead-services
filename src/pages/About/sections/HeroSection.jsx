@@ -26,7 +26,7 @@ const HeroSection = () => {
         <h1 className={`display display--md ${styles.head}`} data-hero>
           Built on experience.
           <br />
-          <em className="serif grad-text">Defined by trust.</em>
+          <em className={`grad-text ${styles.accent}`}>Defined by trust.</em>
         </h1>
 
         <p className={`lede ${styles.lede}`} data-hero>
