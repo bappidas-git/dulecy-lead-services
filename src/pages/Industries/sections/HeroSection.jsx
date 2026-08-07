@@ -2,7 +2,7 @@
    Who We Serve / Hero — ported 1:1 from `mockup/industries.html`
    --------------------------------------------
    Parallaxed Unsplash backdrop under the page's own double white
-   scrim, then eyebrow → headline with the serif-italic gradient line →
+   scrim, then eyebrow → headline with the red gradient second line →
    lede. The mockup's `data-hero` elements stagger in on load via
    `useHeroIntro`, and carry the same attribute here. Bottom padding is
    shorter than the default hero — the sector grid opens right below.
@@ -50,7 +50,7 @@ const HeroSection = () => {
         <h1 className={`display display--md ${styles.head}`} data-hero>
           Our expertise.
           <br />
-          <em className="serif grad-text">Your industry.</em>
+          <em className={`grad-text ${styles.accent}`}>Your industry.</em>
         </h1>
 
         <p className={`lede ${styles.lede}`} data-hero>

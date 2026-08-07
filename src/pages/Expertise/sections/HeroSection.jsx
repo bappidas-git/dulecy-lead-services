@@ -2,8 +2,8 @@
    Expertise / Hero — ported 1:1 from `mockup/expertise.html`
    --------------------------------------------
    Light, type-only hero with reduced bottom padding (the accordion
-   follows immediately): eyebrow → headline with the serif-italic
-   gradient close → lede → the dashed "Tap any area to expand" helper.
+   follows immediately): eyebrow → headline with the red gradient
+   close → lede → the dashed "Tap any area to expand" helper.
    The mockup's `data-hero` elements stagger in on load via
    `useHeroIntro`, and carry the same attribute here.
    ============================================ */
@@ -25,7 +25,7 @@ const HeroSection = () => {
 
         <h1 className={`display display--sm ${styles.head}`} data-hero>
           Experience that connects{' '}
-          <em className="serif grad-text">
+          <em className={`grad-text ${styles.accent}`}>
             people, processes &amp; performance.
           </em>
         </h1>

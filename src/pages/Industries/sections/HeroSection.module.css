@@ -61,6 +61,16 @@
   max-width: 900px;
 }
 
+/* Deliberate departure from the mockup, which sets this second line in the
+   Instrument Serif italic accent (`.serif`) — the same departure the home and
+   About heroes already make. The line keeps only the red `.grad-text` fill and
+   otherwise renders exactly like "Our expertise." above it: family, weight,
+   size, and tracking all inherit from `.display--md`, so it tracks that clamp
+   at every viewport. The <em> default italic is the one thing left to undo. */
+.accent {
+  font-style: normal;
+}
+
 .lede {
   max-width: 660px;
 }
