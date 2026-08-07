@@ -23,6 +23,7 @@
 }
 
 /* ========== Stacked phrases ========== */
+/* `.phrase` sizes both halves of each line; `.accent` only recolors. */
 .phrases {
   margin-top: clamp(30px, 4vw, 44px);
   display: flex;
@@ -38,8 +39,17 @@
   line-height: 1.2;
 }
 
+/* Deliberate departure from the mockup, which sets these four closing
+   fragments in the Instrument Serif italic accent (`.serif`) — the same
+   departure the five heroes make. The fragment keeps only the red `--red`
+   fill and otherwise renders exactly like the black lead-in beside it:
+   family, weight, size, and tracking all inherit from `.phrase`, whose single
+   `clamp(22px, 3.6vw, 38px)` is the only thing sizing either half at any
+   viewport. Dropping `.serif` also restores the 750 weight it was overriding
+   with 400. The <em> default italic is the one thing left to undo. */
 .accent {
   color: var(--red);
+  font-style: normal;
 }
 
 .actions {
