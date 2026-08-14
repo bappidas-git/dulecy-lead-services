@@ -1,13 +1,25 @@
 /* ============================================
-   Who We Serve / Hero — values ported verbatim from
-   `mockup/styles.css` (.hero, .hero__bg, .hero__scrim,
-   .hero__inner) plus the per-instance inline styles in
-   `mockup/industries.html` (background opacity /
-   object-position, the two scrim gradients, reduced
-   bottom padding, headline margin / max-width).
+   Who We Serve / Hero — values ported from
+   `mockup/styles.css` (.hero, .hero__inner) plus the
+   per-instance inline styles in `mockup/industries.html`
+   (reduced bottom padding, headline margin / max-width,
+   lede max-width).
+
+   The backdrop and scrim no longer follow the mockup's, which tints the
+   photo evenly and fades it out by 75% of the width. They follow the home
+   hero's treatment instead — see the annotated blocks below, which record
+   where this hero's numbers differ from that one's and why.
    ============================================ */
 
+/* `--copy-top` is the hero's top padding — the mockup's value, unchanged —
+   lifted into a custom property because the mobile scrim needs the same
+   number: it has to be opaque by the time the first line of copy starts, and
+   that line starts exactly here. Declaring it once means the two cannot
+   drift. It lives on `.hero` rather than on `.inner` so `.scrim`, a sibling,
+   can read it. Same arrangement as the expertise hero. */
 .hero {
+  --copy-top: clamp(140px, 18vh, 190px);
+
   position: relative;
   overflow: hidden;
 }
@@ -18,19 +30,56 @@
   display: contents;
 }
 
+/* -10%/120% replaces the mockup's -18%/136%, the same substitution the home
+   and expertise heroes make and for the same reason: the box height is what
+   sets the crop, so the shortest box that still covers `useParallax`'s travel
+   (±8% of the element's OWN height, so the top overscan t must satisfy
+   t ≥ 0.08 × (1 + 2t) → t ≥ 9.52%) is the one that keeps the most photo.
+
+   This photo is 1.875:1 — wider than either of the others — so `cover` scales
+   it to the width at every desktop size and the whole frame's width always
+   survives; only height is cropped. The box is 1.2 × a hero that measures
+   553px at 1440px, so the window keeps 86% of the photo's height there and
+   65% at 1920px. `center 45%` is what that window rides on: biased just above
+   centre, it holds the hand (which spans 33–75% of the frame) whole at every
+   width, and at its tightest clips only the last half-percent of the KPI
+   ring's bottom arc.
+
+   Opacity is .9, matching the expertise hero rather than the mockup's .65 —
+   the scrim below, not the opacity, is what governs how much photo reads
+   here, and .65 would flatten the right-hand reveal the scrim exists to
+   create. */
 .bg {
   position: absolute;
-  top: -18%;
+  top: -10%;
   left: 0;
   width: 100%;
-  height: 136%;
+  height: 120%;
   object-fit: cover;
-  object-position: center 40%;
-  opacity: 0.65;
+  object-position: center 45%;
+  opacity: 0.9;
   pointer-events: none;
   will-change: transform;
 }
 
+/* The backdrop contributes `opacity × (1 − scrimAlpha)` of each pixel, so the
+   scrim is what actually decides how much photo you see. The mockup's is an
+   even tint that is gone by 75%; this one is the home hero's shape —
+   near-solid white across the left column where every piece of copy lives,
+   then a ramp that clears completely by the right edge, so the photo reads as
+   one subject emerging from the page rather than as a wash behind everything.
+   The composition is already built for it: the hand and its dark suit cuff
+   enter from the right, exactly where the scrim opens.
+
+   The vertical stops are the home hero's. The horizontal ramp holds a longer
+   shelf before it falls, and 960px — not 1440px — is the width that sets it.
+   The copy here is short (two display lines that end by 48%), but the 660px
+   lede does not shrink with the viewport, and at 960px the container has not
+   yet hit its 1280px cap, so that lede's first line runs to 72.4% of the
+   width — its widest anywhere, against 53.9% at 1440px. It is `--grey-2` at
+   normal size, so it owes AA 4.5:1, and at 72.4% it is over the suit. Holding
+   .82 out to 68% and starting the plunge at 86% keeps it on ~91% white there
+   while still clearing the last tenth of the width entirely. */
 .scrim {
   position: absolute;
   inset: 0;
@@ -38,20 +87,109 @@
   background:
     linear-gradient(
       180deg,
-      rgba(255, 255, 255, 0.88) 0%,
-      rgba(255, 255, 255, 0.6) 50%,
-      rgba(255, 255, 255, 1) 100%
+      rgba(255, 255, 255, 0.8) 0%,
+      rgba(255, 255, 255, 0.32) 47%,
+      rgba(255, 255, 255, 0.87) 100%
     ),
     linear-gradient(
       90deg,
-      rgba(255, 255, 255, 0.85) 0%,
-      rgba(255, 255, 255, 0.15) 75%
+      rgba(255, 255, 255, 0.98) 0%,
+      rgba(255, 255, 255, 0.94) 34%,
+      rgba(255, 255, 255, 0.82) 68%,
+      rgba(255, 255, 255, 0.32) 86%,
+      rgba(255, 255, 255, 0.04) 96%,
+      rgba(255, 255, 255, 0) 100%
     );
+}
+
+/* Below the 920px nav breakpoint the hero is taller than it is wide, so a
+   full-bleed `cover` collapses to a fraction of the photo's width — here, a
+   close-up of two fingers. The fix is the home and expertise heroes': give
+   the backdrop its own box at roughly the photo's own aspect so essentially
+   all of its width survives, and let it read as a band across the top with
+   the copy resolving onto clean white below.
+
+   `--band` lives on `.hero` rather than on `.bg` because the scrim consumes
+   it too (below) — a custom property only cascades to descendants, and these
+   two are siblings.
+
+   `min(53vw, 300px)` is the third different pair of numbers for the third
+   photo, because the ratio and the hero both differ. 53vw is 1/1.875 — the
+   photo's own aspect — so below the cap the band frames the entire master
+   with nothing cropped on either axis (375px wide gives a 199px band against
+   the exact-fit 200px). The cap does the same job it does on the expertise
+   hero: this hero's height barely moves across the mobile range (438px at
+   375px wide, 467px at 768px) because the copy reflows, so an uncapped 53vw
+   would be 45% of the hero at 375px but 88% at 768px. Held at 300px it stays
+   between 45% and 64%, and above the cap the box is wider than the photo, so
+   `cover` still keeps the full width and crops height only — 73% of it at
+   768px, which drops ceiling and desk edge and holds the hand whole.
+
+   The -10% overscan matches the parallax travel as above, and the mask
+   dissolves the bottom edge so the band has no seam against the scrim. */
+@media (max-width: 919px) {
+  .hero {
+    --band: min(53vw, 300px);
+  }
+
+  .bg {
+    top: calc(var(--band) * -0.1);
+    height: var(--band);
+    object-position: center 48%;
+    -webkit-mask-image: linear-gradient(
+      180deg,
+      #000 0%,
+      #000 72%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(180deg, #000 0%, #000 72%, transparent 100%);
+  }
+}
+
+/* Under the band the layout is one full-width column, so there is no left
+   column to protect and the legibility wash has to be vertical: light over
+   the band, opaque from the first line of copy down.
+
+   Neither stop is a percentage of the hero, and that is the point — the same
+   reasoning as the expertise hero. The hero's height is set by how the copy
+   reflows, the band's by the viewport width, and the copy's start by
+   `--copy-top`; those three drift apart across the mobile range, so a
+   percentage that sits just under the band at 375px sits halfway up it at
+   768px. Each stop is therefore expressed in whichever of the three actually
+   governs it, and .9 lands exactly on `--copy-top`.
+
+   That last stop is what makes the eyebrow safe: 11px red on no plate of its
+   own, so AA wants 4.5:1. Pinned to `--copy-top` it clears that at every
+   width in the range.
+
+   The horizontal gradient carries the same left-to-right reveal as the
+   desktop scrim so the treatment reads as one idea at every width. Its left
+   stop is 0.78 rather than 0.98 — enough to empty that side without
+   bleaching the band away, and nothing but the band sits under it, since the
+   copy all starts below. */
+@media (max-width: 919px) {
+  .scrim {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.2) 0%,
+        rgba(255, 255, 255, 0.28) calc(var(--band) * 0.4),
+        rgba(255, 255, 255, 0.9) var(--copy-top),
+        rgba(255, 255, 255, 0.96) 100%
+      ),
+      linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.78) 0%,
+        rgba(255, 255, 255, 0.52) 30%,
+        rgba(255, 255, 255, 0.12) 64%,
+        rgba(255, 255, 255, 0) 100%
+      );
+  }
 }
 
 .inner {
   position: relative;
-  padding-top: clamp(140px, 18vh, 190px);
+  padding-top: var(--copy-top);
   /* Shorter than the default hero — the sector grid follows immediately. */
   padding-bottom: clamp(50px, 7vw, 80px);
 }

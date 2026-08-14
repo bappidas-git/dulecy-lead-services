@@ -84,9 +84,26 @@ const PHOTOS = [
     note: 'About dark intersection band (opacity .38)',
   },
   {
-    name: 'hero-industries',
-    id: 'photo-1449824913935-59a10b8d2000',
-    note: 'Who We Serve hero backdrop (opacity .65, object-position center 40%)',
+    name: 'hero-industries-v2',
+    url: 'https://res.cloudinary.com/dzokcuzo/image/upload/v1786720389/iStock-2272021169.jpg',
+    // The client-supplied master is 2370x1264 (1.875:1) and ships uncropped.
+    // The composition is already the one a left-heavy scrim is written
+    // against, and mirrored from the other two: the hand and its dark suit
+    // cuff enter from the RIGHT, the glowing KPI ring sits centre-left, and
+    // the left ~15% is defocused office that the near-solid white column
+    // covers anyway — there is nothing to re-frame. At 1920w the variant is
+    // 1920x1024, taller than any desktop hero box draws it, so no render
+    // upscales it.
+    note:
+      'Who We Serve hero backdrop — a hand in a dark suit pointing at a ' +
+      'glowing KPI dashboard ring (opacity .9 under a left-heavy scrim that ' +
+      'clears toward the right, matching the home and expertise heroes; ' +
+      'below 920px it re-crops to a band — see ' +
+      'Industries/sections/HeroSection.module.css). Supersedes the Unsplash ' +
+      'photo-1449824913935-59a10b8d2000 that shipped as `hero-industries`; ' +
+      'that basename is retired rather than reused because `/images/**` ' +
+      'answers `immutable` (see public/.htaccess), exactly as `hero-home` ' +
+      'was retired for `hero-home-v2`.',
   },
 ];
 
@@ -106,11 +123,12 @@ const ICONS = [
 ];
 
 const WIDTHS = [1920, 960];
-// q74/effort6 keeps the heaviest photo (hero-industries) at ~229 KB — inside
-// the 250 KB budget with margin. Every photo renders under a white scrim that
-// caps its contribution well below full strength (the home hero peaks around
-// 57%, the others lower), so the quality drop is not perceptible; verified by
-// before/after screenshot diff.
+// q74/effort6 keeps the heaviest photo at ~107 KB (about-band) — inside the
+// 250 KB budget with a wide margin now that the 229 KB `hero-industries`
+// landscape has been retired for a 51 KB replacement. Every photo renders
+// under a white scrim that caps its contribution well below full strength
+// (the home hero peaks around 57%, the others lower), so the quality drop is
+// not perceptible; verified by before/after screenshot diff.
 const WEBP_QUALITY = 74;
 const WEBP_EFFORT = 6;
 const JPEG_QUALITY = 74;
