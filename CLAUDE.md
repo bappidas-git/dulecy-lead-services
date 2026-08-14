@@ -32,6 +32,11 @@ never hard-code a contact or company fact in a component, script, or schema.
 - **Tagline**: "Beyond Business Support"
 - **Secondary tagline**: "Your Partner in Business Leadership"
 - **Phone**: `+91 70990 02522` · `tel:+917099002522` (`telHref`)
+- **Landline**: `0361 34924379` · `tel:+9136134924379` (`telLandlineHref`) —
+  published in the local STD form (`landlineDisplay`) and dialled in E.164
+  (`landline`, leading `0` dropped for `+91`) so the link works from abroad.
+  Rendered only in the footer's "Get in touch" column, as its own card between
+  Call us and Email us.
 - **Email**: `dulceyleadservices@gmail.com` (`mailHref`)
 - **Site URL**: `https://www.dulceyleadservices.com`
 - **Postal address**: none. The brand material publishes no address, and the
@@ -126,7 +131,8 @@ URL.
 - `src/components/common/` — `Header`, `MobileMenu` (full-screen overlay),
   `Footer`, `LeadModal`, `UnifiedLeadForm`, `SEO/SEOHead`.
 - `src/data/` — the content layer:
-  - `siteConfig.js` — **business truth** + `telHref` / `mailHref` / `logoAt`
+  - `siteConfig.js` — **business truth** + `telHref` / `telLandlineHref` /
+    `mailHref` / `logoAt`
   - `navigation.js` — `NAV_LINKS`; the desktop nav, mobile menu, and footer
     "Explore" column all map over this one list
   - `expertiseData.js` — the ten areas (`expertiseAreas`, `expertiseTitles`,

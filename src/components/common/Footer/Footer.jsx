@@ -13,6 +13,7 @@ import { useModal } from '../../../context/ModalContext';
 import {
   siteConfig,
   telHref,
+  telLandlineHref,
   mailHref,
   LOGO_SIZE,
 } from '../../../data/siteConfig';
@@ -97,6 +98,24 @@ const Footer = () => {
                   <span className={styles.k}>Call us</span>
                   <span className={`${styles.v} ${styles.vPhone}`}>
                     {siteConfig.phoneDisplay}
+                  </span>
+                </span>
+              </a>
+              <a href={telLandlineHref}>
+                <i>
+                  <img
+                    src={ICON_PHONE}
+                    alt=""
+                    width="100"
+                    height="100"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </i>
+                <span>
+                  <span className={styles.k}>Landline</span>
+                  <span className={`${styles.v} ${styles.vPhone}`}>
+                    {siteConfig.landlineDisplay}
                   </span>
                 </span>
               </a>

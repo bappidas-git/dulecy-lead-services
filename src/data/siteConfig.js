@@ -15,6 +15,12 @@ export const siteConfig = {
   taglineSecondary: 'Your Partner in Business Leadership',
   phone: '+917099002522',
   phoneDisplay: '+91 70990 02522',
+  // Landline, published alongside the mobile. `landline` is the E.164 form the
+  // `tel:` href needs (leading STD `0` dropped, `+91` prefixed) so the link
+  // dials from abroad as well as within India; `landlineDisplay` is the local
+  // STD form the client publishes and the one the footer prints.
+  landline: '+9136134924379',
+  landlineDisplay: '0361 34924379',
   email: 'dulceyleadservices@gmail.com',
   // No postal address: the brand material publishes none, and the site
   // deliberately claims none in its schemas either.
@@ -61,6 +67,9 @@ export const siteConfig = {
 
 /** `tel:` href for the primary phone number. */
 export const telHref = `tel:${siteConfig.phone}`;
+
+/** `tel:` href for the landline. */
+export const telLandlineHref = `tel:${siteConfig.landline}`;
 
 /** `mailto:` href for the company email. */
 export const mailHref = `mailto:${siteConfig.email}`;
