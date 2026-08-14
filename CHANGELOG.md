@@ -12,6 +12,53 @@ prompt per branch/PR — and the entries below summarise each phase under the
 
 The format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.5.0] — 2026-08-14 — New Home hero backdrop, left-weighted scrim
+
+The client supplied a new handshake photograph for the Home hero, and asked for
+the existing left-to-right treatment to be pushed further: a heavier white over
+the left, clearing completely toward the right.
+
+### Added
+
+- **`public/images/hero-home-v2.jpg` + `-1920.webp` / `-960.webp`** — 1920×1280
+  / 960×640, 71 KB / 37 KB / 14 KB. Cut from the client's 5000×1900 master by
+  `npm run generate:images`.
+- **`crop` and `url` source fields in `scripts/generate-images.js`.** `url`
+  takes any absolute URL (the other two photos still declare an Unsplash `id`);
+  `crop` is a sharp `extract` region applied to the master once, up front, so
+  both WebP widths and the JPEG fallback are cut from the identical window.
+
+### Changed
+
+- **The Home hero backdrop.** The master is a 2.63:1 panorama — far wider than
+  any box the hero draws it into, so shipping it whole would leave the 1920w
+  variant 730px tall and every desktop render upscaling it ~2×. The generator
+  extracts the 2850×1900 window at x 38–95%, which is **exactly 3:2 — the same
+  aspect the previous backdrop shipped at**, so every crop calculation
+  annotated in `HeroSection.module.css` stays true, and it frames the whole
+  clasp with the near suit on the left and the far sleeve on the right.
+- **The scrim is now lopsided rather than broadly even.** Desktop's horizontal
+  gradient goes `0.88 → 0.70 → 0.06` (over 0–76%) → `0.98 → 0.94 → 0.55 →
+  0.06 → 0` (over 0–100%): near-solid white across the whole left column, a
+  long ramp that only opens past 58%, and a clean zero at the right edge. Below
+  920px the band's horizontal gradient stops being a faint lift and carries the
+  same reveal (`0.34 → 0.06` becomes `0.8 → 0.55 → 0.1 → 0`), so the treatment
+  reads as one idea at every width. The vertical gradients are untouched.
+- Worst-case text contrast over the new stack, measured on the composited
+  pixels at the elements' real boxes: lede `--grey-2` **6.6:1**, headline ink
+  **10.0:1**, the red `impact` accent **4.4:1**, pillars **17.2:1** — all above
+  their WCAG AA thresholds, and the lede is better off than before because the
+  left column is whiter than it used to be.
+
+### Removed
+
+- **`public/images/hero-home.jpg` + its two WebP variants.** Deleted rather
+  than overwritten: `/images/**` answers `immutable, max-age=31536000`, so a
+  same-name swap would leave every returning visitor on the old photograph for
+  a year. Nothing references the basename any more; the three docs that cited
+  `hero-home-1920.webp` as the width-suffix convention now cite
+  `hero-home-v2-1920.webp`.
+
 ## [2.4.0] — 2026-08-08 — DLS hero watermark
 
 The Home hero floated the old "D" monogram — the same Cloudinary asset the

@@ -95,7 +95,7 @@ Options -Indexes
   # always gets a new URL — it is safe to cache forever and skip revalidation.
   #
   # /images/** is version-stable rather than hashed: the filenames encode their
-  # width (hero-home-1920.webp) and are only replaced deliberately. If you ever
+  # width (hero-home-v2-1920.webp) and are only replaced deliberately. If you ever
   # swap an image's CONTENT, ship it under a new filename — an immutable
   # response will not be re-fetched for a year.
   Header set Cache-Control "public, max-age=31536000, immutable" env=LONG_CACHE
