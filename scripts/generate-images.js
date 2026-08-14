@@ -1,7 +1,7 @@
 /* ============================================
    generate-images.js — first-party page imagery
    --------------------------------------------
-   Downloads the three mockup backdrops once and writes optimized,
+   Downloads the three page backdrops once and writes optimized,
    self-hosted variants into `public/images/`, plus the icons8 glyphs the
    mockup uses into `public/images/icons/`.
 
@@ -9,7 +9,8 @@
    (build-time only — uses the existing `sharp` dev dependency, adds no
    runtime dependency)
 
-   Photos: each source is fetched at w=2400 and emitted as
+   Photos: each source is fetched at w=2400 (or verbatim, for a `url` source)
+   and emitted as
      <name>-1920.webp / <name>-960.webp   → what browsers actually load
      <name>.jpg                            → universal fallback (1920w)
    Quality is tuned to keep every large variant under ~250 KB while
@@ -33,17 +34,34 @@ const ICONS_DIR = path.join(IMAGES_DIR, 'icons');
 // Sources
 // ---------------------------------------------
 
-/** The three Unsplash backdrops, keyed by the local basename they get. */
+/** The three page backdrops, keyed by the local basename they get.
+ *
+ *  A photo declares EITHER `id` (an Unsplash photo id, fetched at w=2400)
+ *  OR `url` (any absolute URL, fetched verbatim). `crop` is an optional
+ *  sharp `extract` region applied to the source before resizing. */
 const PHOTOS = [
   {
-    name: 'hero-home',
-    id: 'photo-1521791136064-7986c2920216',
+    name: 'hero-home-v2',
+    url: 'https://res.cloudinary.com/dzokcuzo/image/upload/v1786720393/iStock-1224717790.jpg',
+    // The client-supplied master is a 5000x1900 panorama (2.63:1) — far wider
+    // than any box the hero draws it into, so shipping it whole would mean the
+    // 1920w variant is only 730px tall and every desktop render upscales it
+    // ~2x. This extract takes the 2850x1900 window at x 38-95%, which is
+    // exactly 3:2 — the same aspect the previous backdrop shipped at, so every
+    // crop calculation annotated in `HeroSection.module.css` stays true — and
+    // frames the whole clasp with the near suit on the left and the far sleeve
+    // on the right. The blank left 38% of the master is dead white that the
+    // scrim would have covered anyway.
+    crop: { left: 1900, top: 0, width: 2850, height: 1900 },
     note:
       'Home hero backdrop — two people shaking hands, framed at forearm level ' +
-      'so neither head is in shot (opacity .92 under a light scrim; below ' +
-      '920px it re-crops to a band — see HeroSection.module.css). ' +
-      'Deliberate departure from `mockup/index.html`, which uses the ' +
-      'architectural photo-1486406146926-c627a92ad1ab here.',
+      'so neither head is in shot (opacity .92 under a left-heavy scrim that ' +
+      'clears toward the right; below 920px it re-crops to a band — see ' +
+      'HeroSection.module.css). Supersedes the Unsplash ' +
+      'photo-1521791136064-7986c2920216 that shipped as `hero-home`; that ' +
+      'basename is retired rather than reused because `/images/**` answers ' +
+      '`immutable` (see public/.htaccess). Deliberate departure from ' +
+      '`mockup/index.html`, which uses an architectural shot here.',
   },
   {
     name: 'about-band',
@@ -103,12 +121,28 @@ function ensureDir(dir) {
 // ---------------------------------------------
 
 async function buildPhoto(photo) {
-  const url = `https://images.unsplash.com/${photo.id}?q=80&w=2400&auto=format&fit=crop`;
-  process.stdout.write(`\n${photo.name}  ← ${photo.id}\n`);
+  const url =
+    photo.url ||
+    `https://images.unsplash.com/${photo.id}?q=80&w=2400&auto=format&fit=crop`;
+  process.stdout.write(`\n${photo.name}  ← ${photo.id || photo.url}\n`);
 
-  const source = await fetchBuffer(url);
-  const meta = await sharp(source).metadata();
-  process.stdout.write(`  source        ${meta.width}×${meta.height}  ${kb(source.length)}\n`);
+  const downloaded = await fetchBuffer(url);
+  const downloadedMeta = await sharp(downloaded).metadata();
+  process.stdout.write(
+    `  source        ${downloadedMeta.width}×${downloadedMeta.height}  ${kb(downloaded.length)}\n`,
+  );
+
+  // `crop` re-frames the master once, up front, so both WebP widths and the
+  // JPEG fallback are cut from the identical region.
+  const source = photo.crop
+    ? await sharp(downloaded).extract(photo.crop).toBuffer()
+    : downloaded;
+  if (photo.crop) {
+    const { width, height } = await sharp(source).metadata();
+    process.stdout.write(
+      `  cropped       ${width}×${height}  (left ${photo.crop.left}, top ${photo.crop.top})\n`,
+    );
+  }
 
   for (const width of WIDTHS) {
     const out = path.join(IMAGES_DIR, `${photo.name}-${width}.webp`);

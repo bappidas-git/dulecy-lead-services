@@ -34,7 +34,7 @@ export const siteConfig = {
   // wherever a schema or meta tag needs a fully qualified URL.
   //
   // The `-1351` suffix is the width, matching the convention the rest of
-  // `/images/**` uses (`hero-home-1920.webp`). Those files answer `immutable`
+  // `/images/**` uses (`hero-home-v2-1920.webp`). Those files answer `immutable`
   // for a year, so re-cutting the artwork means a NEW filename — overwriting
   // in place would leave every returning visitor on the previous render.
   logo: '/images/logo/dulcey-wordmark-1351.png',

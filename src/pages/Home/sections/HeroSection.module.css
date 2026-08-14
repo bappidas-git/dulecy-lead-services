@@ -22,8 +22,8 @@
    parallax room. But the box height is also what sets the crop: `cover` on a
    box taller than the 3:2 photo scales to the height, so only
    `heroWidth × photoHeight / boxHeight` of the photo's width survives. At 136%
-   that is ~70% at 1440px and ~54% at 1024px — the left cuff falls outside the
-   frame and the handshake reads as one large hand.
+   that is ~70% at 1440px and ~54% at 1024px — the near sleeve falls outside
+   the frame and the handshake reads as one large hand.
 
    -10%/120% is the shortest box that still covers `useParallax`'s travel
    (±8% of the element's OWN height, so the top overscan `t` must satisfy
@@ -77,11 +77,18 @@
    be legible as one.
 
    These stops keep the wash where the text is and lift it where it is not.
-   The vertical gradient opens the middle band; the horizontal one holds the
-   left column white through the 640px lede (`--grey-2` on white is the one
-   piece of hero copy that needs a real contrast budget) and clears the right,
-   where only the ink headline and the pillars run. Peak photo presence is
-   ~57% at the right edge and ~10% behind the lede. */
+   The vertical gradient opens the middle band; the horizontal one is the one
+   that carries the composition, and it is deliberately lopsided: near-solid
+   white across the whole left column, then a long ramp that clears completely
+   by the right edge, so the photo reads as a single subject emerging from the
+   page rather than as an even tint behind everything.
+
+   The left half is where every piece of hero copy lives — the 640px lede in
+   `--grey-2` is the one that needs a real contrast budget — and it now sits on
+   between 98% and 94% white, i.e. under 2% photo. The ramp only opens past
+   58%, which is beyond the lede's right edge, and the copy that does reach
+   into it (the tail of the display headline, the pillars row) is full-weight
+   ink. Peak photo presence is ~61% at the right edge. */
 .scrim {
   position: absolute;
   inset: 0;
@@ -95,16 +102,27 @@
     ),
     linear-gradient(
       90deg,
-      rgba(255, 255, 255, 0.88) 0%,
-      rgba(255, 255, 255, 0.7) 30%,
-      rgba(255, 255, 255, 0.06) 76%
+      rgba(255, 255, 255, 0.98) 0%,
+      rgba(255, 255, 255, 0.94) 30%,
+      rgba(255, 255, 255, 0.55) 58%,
+      rgba(255, 255, 255, 0.06) 84%,
+      rgba(255, 255, 255, 0) 100%
     );
 }
 
 /* Under the band the layout is one full-width column, so there is no left
-   column to protect and the wash has to be vertical instead: clear over the
-   band, solid by ~42% where the headline starts. The horizontal gradient
-   stays only as a faint left-to-right lift. */
+   column to protect and the legibility wash has to be vertical instead: clear
+   over the band, solid by ~42% where the headline starts.
+
+   The horizontal gradient is no longer a faint lift, though — it carries the
+   same left-to-right reveal as the desktop scrim so the treatment reads as one
+   idea at every width. It has an easier job here: the band is wide enough to
+   show essentially the whole 3:2 frame, so the near suit already sits on the
+   left and the clasp centre-right. Fading the suit out and letting the clasp
+   and the far sleeve come through puts the weight on the right exactly as
+   above. Nothing but the band is under it — the copy all starts below — so the
+   left stop is 0.8 rather than the desktop 0.98: enough to empty that side
+   without bleaching the band into nothing. */
 @media (max-width: 919px) {
   .scrim {
     background:
@@ -117,8 +135,10 @@
       ),
       linear-gradient(
         90deg,
-        rgba(255, 255, 255, 0.34) 0%,
-        rgba(255, 255, 255, 0.06) 60%
+        rgba(255, 255, 255, 0.8) 0%,
+        rgba(255, 255, 255, 0.55) 30%,
+        rgba(255, 255, 255, 0.1) 62%,
+        rgba(255, 255, 255, 0) 100%
       );
   }
 }
