@@ -12,6 +12,82 @@ prompt per branch/PR — and the entries below summarise each phase under the
 
 The format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.7.0] — 2026-08-14 — New Who We Serve hero backdrop, left-weighted scrim
+
+The `/industries` hero already carried a photograph, but an Unsplash landscape
+under an even tint that faded out by 75% of the width — the one hero of the
+three still on the mockup's treatment. The client supplied a replacement, and
+asked for the Home hero's white fade-out, at every width.
+
+### Added
+
+- **`public/images/hero-industries-v2.jpg` + `-1920.webp` / `-960.webp`** —
+  1920×1024 / 960×512, 87 KB / 51 KB / 21 KB, from the client's 2370×1264
+  master via `npm run generate:images`. The master is 1.875:1 and ships
+  uncropped: the composition is already the one a left-heavy scrim is written
+  against, and mirrored from the other two heroes — the hand and its dark suit
+  cuff enter from the **right**, the glowing KPI ring sits centre-left, and the
+  left ~15% is defocused office that the near-solid white column covers anyway.
+  The large variant never upscales on a desktop hero.
+
+### Changed
+
+- **The Who We Serve hero's backdrop and scrim.** The backdrop box drops the
+  mockup's `-18% / 136%` for the `-10% / 120%` the Home and Expertise heroes
+  use — the shortest box that still covers `useParallax`'s travel, and so the
+  one that crops the least — and opacity goes from `.65` to `.9`, since the
+  scrim, not the opacity, is what governs how much photo reads. The scrim
+  itself is no longer an even tint: it is Home's shape, near-solid white
+  across the left column then a ramp that clears completely by the right edge,
+  so the photo reads as one subject emerging from the page.
+- **The hero's top padding is now `--copy-top` on `.hero`.** Same
+  `clamp(140px, 18vh, 190px)` the mockup sets, lifted into a custom property
+  because the mobile scrim needs the identical number — the same change the
+  Expertise hero made in `[2.6.0]`, and for the same reason.
+- **`scripts/generate-images.js`** — the retired Unsplash entry
+  (`photo-1449824913935-59a10b8d2000`) is replaced by the client URL under the
+  **new** `hero-industries-v2` basename. `/images/**` answers
+  `public, max-age=31536000, immutable`, so the old name could not be reused
+  without stranding returning visitors on the previous photo for a year —
+  exactly why `hero-home` became `hero-home-v2` in `[2.5.0]`.
+
+### Removed
+
+- **`public/images/hero-industries.jpg` + its two WebP variants** — nothing
+  references them now, and at 229 KB the 1920w was the heaviest asset in the
+  folder. The replacement is 51 KB, which leaves `about-band` (107 KB) as the
+  new ceiling under the 250 KB budget.
+
+### Notes
+
+- **Desktop scrim.** Vertical stops are the Home hero's; the horizontal ramp
+  is `0.98 → 0.94 → 0.82 → 0.32 → 0.04 → 0`. **960px, not 1440px, sets it.**
+  The copy here is short — two display lines that end by 48% — but the 660px
+  lede does not shrink with the viewport, and at 960px the container has not
+  yet hit its 1280px cap, so that lede's first line runs to **72.4%** of the
+  width against 53.9% at 1440px. It is `--grey-2` at normal size, so it owes
+  AA 4.5:1, and at 72.4% it sits over the suit. Holding `.82` out to 68% and
+  starting the plunge at 86% keeps it on ~91% white there while still clearing
+  the last tenth of the width entirely.
+- **Below 920px** the backdrop re-crops to a band, as on the other two:
+  `min(53vw, 300px)`. `53vw` is `1/1.875` — the photo's own aspect — so below
+  the cap the band frames the entire master with nothing cropped on either
+  axis (375px wide gives a 199px band against the exact-fit 200px). The cap
+  does the job it does on Expertise: this hero's height barely moves across
+  the mobile range (438px at 375px wide, 467px at 768px), so an uncapped
+  `53vw` would be 45% of the hero at 375px but 88% at 768px. Held at 300px it
+  stays between 45% and 64%, and above the cap the box is wider than the
+  photo, so `cover` still keeps the full width and crops height only — 73% of
+  it at 768px, which drops ceiling and desk edge and holds the hand whole.
+- **Worst-case text contrast**, measured on the composited pixels at each
+  element's real per-line box — 1440px / 960px / 375px / 768px: red
+  `.grad-text` accent **4.1 / 4.1 / 4.4 / 4.4:1** at the bright `#E8293E` end
+  of its ramp (display type; AA large wants 3:1), headline ink
+  **18.6 / 18.2 / 19.7 / 19.6:1**, `--grey-2` lede
+  **8.4 / 7.6 / 8.8 / 8.8:1** (AA normal wants 4.5:1), red eyebrow
+  **5.2 / 5.1 / 5.2 / 5.2:1** (11px, no plate of its own). Also spot-checked
+  at 1920px and at 320px, where the hero still has no horizontal overflow.
+
 ## [2.6.0] — 2026-08-14 — Expertise hero backdrop
 
 The `/expertise` hero was type-only. The client supplied a photograph for it —
