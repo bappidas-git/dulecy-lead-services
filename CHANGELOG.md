@@ -12,6 +12,61 @@ prompt per branch/PR — and the entries below summarise each phase under the
 
 The format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.6.0] — 2026-08-14 — Expertise hero backdrop
+
+The `/expertise` hero was type-only. The client supplied a photograph for it —
+a person typing at a laptop under floating candidate/record cards — and asked
+for the Home hero's white fade-out, at every width.
+
+### Added
+
+- **`public/images/hero-expertise.jpg` + `-1920.webp` / `-960.webp`** —
+  1920×1178 / 960×589, 116 KB / 71 KB / 30 KB, from the client's 2211×1356
+  master via `npm run generate:images`. The master is 1.63:1 and needs no
+  re-framing: the figure already sits left with the laptop and cards
+  centre-right, which is the composition a left-heavy scrim is written
+  against, so it ships uncropped and the large variant never upscales.
+- **A photo-name filter on `scripts/generate-images.js`** —
+  `node scripts/generate-images.js hero-expertise` builds just that backdrop
+  and skips the icons. Adding one photo should not re-download and re-encode
+  the other three, whose bytes are already committed. A bare run still
+  rebuilds everything.
+- **A parallaxed backdrop + double white scrim on the Expertise hero.** Same
+  structure as the Home hero — `<picture>` with a WebP `srcSet`, `.bg` under
+  `.scrim`, `useParallax(parallaxPreset(-16))` — and a deliberate departure
+  from `mockup/expertise.html`, which has no image here.
+
+### Changed
+
+- **The hero's top padding is now `--copy-top` on `.hero`.** Same
+  `clamp(140px, 18vh, 190px)` the mockup sets, lifted into a custom property
+  because the mobile scrim needs the identical number: it has to be opaque by
+  the first line of copy, and that line starts exactly there. One declaration,
+  so the two cannot drift.
+
+### Notes
+
+- **Desktop scrim.** Vertical stops are the Home hero's; the horizontal ramp
+  is `0.98 → 0.94 → 0.76 → 0.30 → 0.03 → 0`, a long shelf then a plunge,
+  rather than Home's steady fall from 58%. The accent clause
+  "people, processes & performance" runs to 75% of a 1440px viewport and 81%
+  at 960px — where the container has not yet hit its 1280px cap — straight
+  over the near-black laptop, and red on dark needs more white under it than
+  ink does. The plunge starts at 86%, clear of every glyph at every width.
+- **Below 920px** the backdrop re-crops to a band, as on Home:
+  `min(62vw, 340px)`. The cap is the point — this hero's height barely moves
+  across the mobile range (544px at 375px wide, 552px at 768px), so an
+  uncapped `62vw` would be 43% of the hero at 375px but 86% at 768px. The
+  band's wash is expressed in `--band` and `--copy-top` units rather than
+  percentages of a hero whose height the copy, not the viewport, decides.
+- **Worst-case text contrast**, measured on the composited pixels at each
+  element's real per-line box — 1440px / 960px / 375px / 768px: red accent
+  **4.2 / 3.8 / 7.7 / 7.3:1** (display type; AA large wants 3:1), headline ink
+  **17.1 / 16.6 / 18.2 / 17.9:1**, `--grey-2` lede **7.7 / 5.8 / 8.8 / 8.8:1**,
+  red eyebrow **5.2 / 5.2 / 4.8 / 5.1:1** (12px — AA normal wants 4.5:1), and
+  the `--grey-4` helper **3.3 / 3.4 / 3.4 / 3.4:1**, which is what that colour
+  scores on plain white anyway.
+
 ## [2.5.0] — 2026-08-14 — New Home hero backdrop, left-weighted scrim
 
 The client supplied a new handshake photograph for the Home hero, and asked for

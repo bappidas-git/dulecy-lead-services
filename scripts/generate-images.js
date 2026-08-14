@@ -34,7 +34,7 @@ const ICONS_DIR = path.join(IMAGES_DIR, 'icons');
 // Sources
 // ---------------------------------------------
 
-/** The three page backdrops, keyed by the local basename they get.
+/** The four page backdrops, keyed by the local basename they get.
  *
  *  A photo declares EITHER `id` (an Unsplash photo id, fetched at w=2400)
  *  OR `url` (any absolute URL, fetched verbatim). `crop` is an optional
@@ -62,6 +62,21 @@ const PHOTOS = [
       'basename is retired rather than reused because `/images/**` answers ' +
       '`immutable` (see public/.htaccess). Deliberate departure from ' +
       '`mockup/index.html`, which uses an architectural shot here.',
+  },
+  {
+    name: 'hero-expertise',
+    url: 'https://res.cloudinary.com/dzokcuzo/image/upload/v1786720389/iStock1559948366-mirrored.jpg',
+    // The client-supplied master is 2211x1356 (1.63:1) and needs no re-framing:
+    // the subject already sits left with the laptop and the floating candidate
+    // cards centre-right, which is the composition the hero's left-heavy scrim
+    // is written against. Shipped whole, so the 1920w variant is 1920x1178 and
+    // never upscales on a desktop hero.
+    note:
+      'Expertise hero backdrop — a person typing at a laptop under floating ' +
+      'candidate/record cards (opacity .9 under a left-heavy scrim that clears ' +
+      'toward the right, mirroring the home hero; below 920px it re-crops to a ' +
+      'band — see Expertise/sections/HeroSection.module.css). Deliberate ' +
+      'departure from `mockup/expertise.html`, whose hero is type-only.',
   },
   {
     name: 'about-band',
@@ -182,12 +197,32 @@ async function buildIcon(icon) {
 // Main
 // ---------------------------------------------
 
+// Optional `name` arguments restrict the run to those photos (and skip the
+// icons), e.g. `node scripts/generate-images.js hero-expertise`. Adding one
+// backdrop should not re-download and re-encode the other three, whose bytes
+// are already committed — a bare run still rebuilds everything.
+const only = process.argv.slice(2);
+const selected = only.length
+  ? PHOTOS.filter((p) => only.includes(p.name))
+  : PHOTOS;
+
 (async () => {
+  if (only.length && selected.length !== only.length) {
+    const known = PHOTOS.map((p) => p.name).join(', ');
+    throw new Error(`unknown photo name. Known: ${known}`);
+  }
+
   ensureDir(IMAGES_DIR);
   ensureDir(ICONS_DIR);
 
   process.stdout.write('Photos → public/images/');
-  for (const photo of PHOTOS) await buildPhoto(photo);
+  for (const photo of selected) await buildPhoto(photo);
+
+  if (only.length) {
+    process.stdout.write('\nIcons skipped (photo filter given).\n');
+    process.stdout.write('\nDone.\n');
+    return;
+  }
 
   process.stdout.write('\nIcons → public/images/icons/\n');
   for (const icon of ICONS) await buildIcon(icon);
