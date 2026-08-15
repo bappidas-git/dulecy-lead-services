@@ -201,8 +201,8 @@
          Runs synchronously in <head>, so discovery still happens long
          before the bundle executes.
 
-         Keep the srcset in sync with HERO_BG_SRCSET in
-         src/pages/Home/sections/HeroSection.jsx.
+         Keep the srcset and imagesizes in sync with HERO_BG_SRCSET and
+         HERO_BG_SIZES in src/pages/Home/sections/HeroSection.jsx.
          ========================================= -->
     <script>
       (function () {
@@ -215,7 +215,7 @@
           "imagesrcset",
           "/images/hero-home-v2-960.webp 960w, /images/hero-home-v2-1920.webp 1920w",
         );
-        link.setAttribute("imagesizes", "100vw");
+        link.setAttribute("imagesizes", "(max-width: 919px) 100vw, 45vw");
         link.setAttribute("fetchpriority", "high");
         document.head.appendChild(link);
       })();

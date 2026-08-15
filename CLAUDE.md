@@ -97,9 +97,12 @@ hero watermark, and it is **not** interchangeable with the "D" monogram it
 replaced: the mockup's `26vw / 380px` ramp widens to `30vw / 430px` for the
 1.87:1 aspect, and the opacity splits at the **same 920px breakpoint the
 backdrop already switches on** — `0.07` below (small mark inside the photo
-band, where less vanishes) and `0.04` above (2.3× wider over the lighter
-full-bleed scrim, where 0.07 reads as a second headline). See the annotated
-`.float` block in `HeroSection.module.css`. The `-860` suffix is the width and
+band, where less vanishes) and `0.04` above (2.3× wider over a much lighter
+field, where 0.07 reads as a second headline). Above the breakpoint the
+backdrop is now a right-hand panel rather than full bleed, so most of the
+mark's box sits on plain white; re-measured against that stack, `0.04` reads
+as it always did. See the annotated `.float` block in
+`HeroSection.module.css`. The `-860` suffix is the width and
 `/images/**` is immutable, so re-cutting it means a new filename and a matching
 `MARK_SIZE` bump.
 
