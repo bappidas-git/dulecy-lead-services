@@ -12,6 +12,128 @@ prompt per branch/PR — and the entries below summarise each phase under the
 
 The format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.12.0] — 2026-08-15 — Home hero: the whole frame, never cropped
+
+`[2.11.0]` filled the hero with the handshake using `object-fit: cover`, which
+fills a 0.41-1.55:1 section with a 2.63:1 photograph the only way it can — by
+throwing most of it away. At 1440px it drew the file at 2.2× the hero's width,
+so what reached the page was two hands: no suits, no arms, no second figure, and
+on a phone a single knuckle at 19% strength. The brief here is the other half of
+the same idea — **fit the whole image, on every device** — because a crop that
+tight is not the photograph that was licensed.
+
+So `cover` becomes `contain`, the right-trim that `cover` needed comes off the
+file, and the section is re-laid so a band 38% of its width tall has somewhere
+to sit. Numbers below are photo presence (the share of the photo's own pixel
+that survives the overlay) and worst-pixel contrast, measured on the real
+composite — the shipped file at its computed geometry under the browser-resolved
+gradient stops — sampled at the skin-tone centroid of the hands.
+
+### Changed
+
+- **The backdrop is `object-fit: contain`, full width, at every breakpoint.**
+  Every pixel of the 5000×1900 frame is on the page at every viewport; nothing
+  is cropped anywhere. Its height follows from that — 122px at 320px, 288px at
+  768px, 543px at 1440px, 726px at 1920px — and where that band sits is now the
+  only thing the 920px breakpoint switches.
+
+- **Below 920px the frame is a clear banner above the copy.** It starts 72px
+  down (the fixed 68px header, plus a hair, so none of it is spent under the
+  header's translucent white) and the copy starts below it: `.inner`'s
+  `padding-top` becomes `calc(72px + var(--band) + clamp(32px, 6vw, 56px))`.
+  **There is no overlay at all under 920px** — the veil and the fade are both
+  gone, because nothing sits on the photo to protect. The section grows by what
+  the photo is worth (913 → 1012px at 375px, 853 → 1077px at 768px) instead of
+  the photo shrinking into a section written without one.
+
+- **From 920px up the frame is bottom-anchored 130px above the section's foot**,
+  which is 4-22px above the pillars' 1px rule at every width. That buys two
+  things: the pillars row gets a plain white ground (its red numerals measured
+  1.0-3.2:1 over the old backdrop and now read 5.2:1), and the clasp sits as low
+  in the section as it can, which is what lets the fade clear it.
+  `max(0px, calc(100% - 130px))` keeps that safe past ~2685px, where the frame
+  becomes height-limited and a bare `calc()` would resolve negative and clip the
+  foot.
+
+- **The fade is two steps, because the copy is not a rectangle.** The headline
+  runs out to 63.5-77.6% of the hero; everything below it stops at 47-54%. With
+  the whole frame in view the clasp sits at its native 68.2% — 3px from where
+  the headline ends at 1440px — so one shelf can clear the glyphs or the
+  subject, never both. `.scrim` now carries a short shelf keyed to a new
+  `--lede-edge` (the container gutter + `.lede`'s own `max-width: 640px` + 5px:
+  677 / 686 / 764 / 1004px at 920 / 1024 / 1440 / 1920px, against measured
+  longest lines of 664 / 607 / 685 / 925px), and `.scrim::after` lays the old
+  `--copy-edge` shelf over it, masked off below the headline's foot. The plunge
+  tightens from 10%/20% of the hero to 6%/12%; no glyph sits in it.
+
+- **The mask is keyed to the section's foot, not to a hero-%.** The headline's
+  last line ends a near-constant 423 / 414 / 420 / 420px above it at 920 / 1024
+  / 1440 / 1920px, because everything below the headline is fixed-px rhythm
+  while the hero's height is not. `100% - 400px` therefore stays solid past the
+  last descender at every width with 14-23px to spare. A hero-% boundary drifts
+  against that and takes the accent to 2.56:1 at 1024px when it drifts the
+  wrong way.
+
+- **The two scrim layers are additive, never complementary.** A mask pair that
+  hands off (m and 1−m) dips to 0.72 white mid-ramp and shows the suit through
+  in a band; additive errs whiter, by at most ~0.04 alpha in the left half where
+  both layers are already 0.95+ — under two luma levels there.
+
+- **Photo presence and worst-pixel contrast**, measured on the real composite:
+
+  | Viewport | Presence | Ink `<h1>` | Accent `#E8293E` | Lede `--grey-2` | Pillars red |
+  | -------- | -------- | ---------- | ---------------- | --------------- | ----------- |
+  | 320px    | 100%     | 19.7:1     | 4.36:1           | 8.81:1          | 5.24:1      |
+  | 375px    | 100%     | 19.7:1     | 4.36:1           | 8.81:1          | 5.24:1      |
+  | 768px    | 100%     | 19.7:1     | 4.36:1           | 8.81:1          | 5.24:1      |
+  | 920px    | 12%      | 19.5:1     | 4.25:1           | 6.97:1          | 5.24:1      |
+  | 1024px   | 20%      | 19.3:1     | 3.59:1           | 7.26:1          | 5.24:1      |
+  | 1440px   | 94%      | 18.1:1     | 3.52:1           | 7.20:1          | 5.24:1      |
+  | 1920px   | 61%      | 19.2:1     | 3.72:1           | 7.25:1          | 5.24:1      |
+
+  Below 920px every glyph is on plain white, which is why those rows are the
+  on-white maxima. The accent stays the binding case above it and is now above
+  where `cover` left it (3.49-3.80:1). **The dip at 920-1100px is the honest
+  cost of the brief**: the clasp's native 68.2% falls inside the lede's own
+  640px box there, and no fade can be both behind a glyph and out of its way.
+  It clears as the container caps — 94% by 1440px.
+
+- **The Home hero no longer parallaxes its backdrop.** Scrub parallax needs the
+  photo drawn larger than its box so the travel never exposes an edge, which is
+  exactly what `contain` exists to prevent: ±8% of the element's height would
+  push the frame's top or foot past `overflow: hidden` and crop it. The
+  Expertise and Who We Serve heroes still use `useParallax` — they are `cover`.
+
+- **The floating "DLS" mark drops below the banner under 920px**
+  (`top: calc(72px + var(--band) + 46px)`), where it sits on white behind the
+  copy as the mockup floats it. A 0.07 watermark laid over a photograph is
+  noise. From 920px up it keeps the mockup's `top: 110px` and its 0.04.
+
+### Added
+
+- **`public/images/hero-home-v4-2880.webp` (39 KB) + `hero-home-v4.jpg`
+  (77 KB)** — the same client master, now shipped **whole**: the `crop` comes
+  off `scripts/generate-images.js` entirely. `hero-home-v3`'s 950px right-trim
+  existed to drag the clasp from 68.4% of the file to 84.5%, which is how a
+  `cover` backdrop cleared the copy; `contain` does not crop, so that lever is
+  gone with it and the scrim does the clearing instead. Still one 2880w variant
+  and no `sizes`: `contain` draws the photo at exactly the hero's width, so
+  2880w covers a 1920px viewport at 1.5× DPR and any phone at 3×, and it is
+  4 KB lighter than the crop it replaces despite carrying 950 more px of frame.
+
+### Removed
+
+- **`public/images/hero-home-v3.jpg` + `hero-home-v3-2880.webp`.** Deleted
+  rather than left in place: they were the right-trim for the `cover`
+  treatment and have no remaining consumer. `/images/**` answers `immutable`
+  (see `public/.htaccess`), which is why this ships as `-v4` rather than
+  overwriting `-v3` — exactly why `hero-home` became `hero-home-v2` in
+  `[2.5.0]`.
+
+- **The sub-920px scrim stack** — the vertical legibility veil and the
+  horizontal fade under it. Both existed to make copy readable on top of the
+  photo; below 920px no copy is on the photo any more.
+
 ## [2.11.0] — 2026-08-15 — Home hero: the handshake as a full-bleed backdrop
 
 `[2.9.0]` and `[2.10.0]` shaped the photo as a **feathered panel** held right of
