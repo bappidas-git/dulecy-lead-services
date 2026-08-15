@@ -201,8 +201,16 @@
          Runs synchronously in <head>, so discovery still happens long
          before the bundle executes.
 
-         Keep the srcset and imagesizes in sync with HERO_BG_SRCSET and
-         HERO_BG_SIZES in src/pages/Home/sections/HeroSection.jsx.
+         The hero ships one width and no `sizes` (a full-bleed `cover`
+         backdrop is scaled by the section's height, so a viewport-keyed
+         `sizes` would describe the wrong quantity — see HeroSection.jsx), so
+         this preloads the WebP directly. `type` is what keeps that honest:
+         a browser that cannot decode image/webp skips the preload rather
+         than wasting it, and picks up the JPEG fallback from the <picture>
+         when the bundle mounts.
+
+         Keep the href in sync with HERO_BG_WEBP in
+         src/pages/Home/sections/HeroSection.jsx.
          ========================================= -->
     <script>
       (function () {
@@ -210,12 +218,8 @@
         var link = document.createElement("link");
         link.rel = "preload";
         link.as = "image";
-        link.href = "/images/hero-home-v2.jpg";
-        link.setAttribute(
-          "imagesrcset",
-          "/images/hero-home-v2-960.webp 960w, /images/hero-home-v2-1920.webp 1920w",
-        );
-        link.setAttribute("imagesizes", "(max-width: 919px) 100vw, 35vw");
+        link.type = "image/webp";
+        link.href = "/images/hero-home-v3-2880.webp";
         link.setAttribute("fetchpriority", "high");
         document.head.appendChild(link);
       })();

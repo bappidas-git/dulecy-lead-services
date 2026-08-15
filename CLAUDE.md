@@ -74,7 +74,7 @@ attributes rather than retyping the numbers, and keep `max-width: 100%` +
 > `public, max-age=31536000, immutable` (see `public/.htaccess`), so overwriting
 > a logo in place leaves every returning visitor on the previous render for a
 > year. The `-1351` suffix is the width, matching the convention the rest of
-> `/images/**` already uses (`hero-home-v2-1920.webp`). Bump it — and update
+> `/images/**` already uses (`hero-home-v3-2880.webp`). Bump it — and update
 > `LOGO_SIZE`, `LOGO_FILE` in `scripts/generate-og.js`, and the two absolute
 > JSON-LD `logo` URLs in `public/index.html` — in the same pass.
 
@@ -96,13 +96,15 @@ with no dead margin to compensate for; keep that true of any re-cut. Reuse
 hero watermark, and it is **not** interchangeable with the "D" monogram it
 replaced: the mockup's `26vw / 380px` ramp widens to `30vw / 430px` for the
 1.87:1 aspect, and the opacity splits at the **same 920px breakpoint the
-backdrop already switches on** — `0.07` below (small mark inside the photo
-band, where less vanishes) and `0.04` above (2.3× wider over a much lighter
-field, where 0.07 reads as a second headline). Above the breakpoint the
-backdrop is now a right-hand panel rather than full bleed, so most of the
-mark's box sits on plain white; re-measured against that stack, `0.04` reads
-as it always did. See the annotated `.float` block in
-`HeroSection.module.css`. The `-860` suffix is the width and
+backdrop's scrim already switches on** — `0.07` below (small mark in the clear
+band above the veil, where less vanishes) and `0.04` above (2.3× wider, where
+`0.07` reads as a second headline). The backdrop is full-bleed at every width,
+so the mark's top-right box now sits over clear photo on desktop rather than
+over a light scrim; `0.04` there reads as a faint sheen rather than as a mark,
+which is the right outcome for a watermark stacked on a photographic subject,
+and it is deliberately left unchanged so nothing shifts on the widths where the
+fade clears late and the mark is back over white. See the annotated `.float`
+block in `HeroSection.module.css`. The `-860` suffix is the width and
 `/images/**` is immutable, so re-cutting it means a new filename and a matching
 `MARK_SIZE` bump.
 

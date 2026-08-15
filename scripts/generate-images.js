@@ -38,33 +38,48 @@ const ICONS_DIR = path.join(IMAGES_DIR, 'icons');
  *
  *  A photo declares EITHER `id` (an Unsplash photo id, fetched at w=2400)
  *  OR `url` (any absolute URL, fetched verbatim). `crop` is an optional
- *  sharp `extract` region applied to the source before resizing. */
+ *  sharp `extract` region applied to the source before resizing, and
+ *  `widths` overrides the global `WIDTHS` ladder for that one photo. */
 const PHOTOS = [
   {
-    name: 'hero-home-v2',
+    name: 'hero-home-v3',
     url: 'https://res.cloudinary.com/dzokcuzo/image/upload/v1786720393/iStock-1224717790.jpg',
-    // The client-supplied master is a 5000x1900 panorama (2.63:1) — far wider
-    // than any box the hero draws it into, so shipping it whole would mean the
-    // 1920w variant is only 730px tall and every desktop render upscales it
-    // ~2x. This extract takes the 2850x1900 window at x 38-95%, which is
-    // exactly 3:2 — the same aspect the previous backdrop shipped at, so every
-    // crop calculation annotated in `HeroSection.module.css` stays true — and
-    // frames the whole clasp with the near suit on the left and the far sleeve
-    // on the right. The blank left 38% of the master is dead white that the
-    // scrim would have covered anyway.
-    crop: { left: 1900, top: 0, width: 2850, height: 1900 },
+    // Same client master as `hero-home-v2` (5000x1900, 2.63:1); a different
+    // window, because the hero draws it differently now — full bleed across
+    // the section instead of a panel held right of the copy.
+    //
+    // The extract only trims the RIGHT edge, and it is a composition lever,
+    // not a framing one: `object-position: <q> 50%` pins a subject at fraction
+    // q of the frame onto fraction q of the box at EVERY viewport (the crop
+    // `cover` takes always straddles it symmetrically), so where the clasp
+    // sits on the page is decided here, by where it sits in the file. In the
+    // whole master it is 68.4% across, which lands it under the headline
+    // between 920 and 1440px, where the copy runs widest relative to the hero.
+    // Dropping 950px off the right moves it to 84.5% — clear of the headline
+    // at every width from 920px up (the copy's right edge peaks at 77.6%
+    // there) — and costs only the far sleeve's outer half and the blown-out
+    // margin beyond it, both of which `cover` was already cutting on desktop.
+    // The left stays at 0: that dead white is what the fade's opaque end sits
+    // on, so it is free, and trimming it would drag the clasp back left.
+    crop: { left: 0, top: 0, width: 4050, height: 1900 },
+    // 2880 rather than the global 1920. The hero draws this at
+    // `4050 x heroHeight / 1900` CSS px — 2180 to 2635 across 320-1920px
+    // viewports, near-flat because it is the section's HEIGHT that sets the
+    // scale, not its width — so 1920w would have every device upscale it.
+    // 2880 clears the widest of those with headroom to ~2900px viewports,
+    // and the photo is soft enough that it still encodes to ~48 KB.
+    widths: [2880],
     note:
       'Home hero backdrop — two people shaking hands, framed at forearm level ' +
-      'so neither head is in shot (opacity 1, shaped entirely by a vignette ' +
-      'mask and a scrim that dissolves the frame on whichever side the copy ' +
-      'is on). Above 920px it is a feathered panel held right of the copy, on ' +
-      'this 3:2 uncropped; below it a full-width 16:9 band across the top, ' +
-      'which `object-fit: cover` trims 7.8% off the top and bottom of — the ' +
-      'only render-time crop — see HeroSection.module.css. Supersedes the Unsplash ' +
-      'photo-1521791136064-7986c2920216 that shipped as `hero-home`; that ' +
-      'basename is retired rather than reused because `/images/**` answers ' +
-      '`immutable` (see public/.htaccess). Deliberate departure from ' +
-      '`mockup/index.html`, which uses an architectural shot here.',
+      'so neither head is in shot. Full-bleed `object-fit: cover` across the ' +
+      'whole hero at every width, under a white overlay that fades out left to ' +
+      'right (plus a vertical legibility veil below 920px, where the copy spans ' +
+      'the frame) — see HeroSection.module.css. Supersedes `hero-home-v2`, the ' +
+      'same photo cut 3:2 for the right-hand panel that treatment replaced; ' +
+      'that basename is retired rather than reused because `/images/**` answers ' +
+      '`immutable` (see public/.htaccess), exactly as `hero-home` was retired ' +
+      'for `hero-home-v2`. Deliberate departure from `mockup/index.html`, ' +
+      'which uses an architectural shot here.',
   },
   {
     name: 'hero-expertise',
@@ -133,13 +148,13 @@ const WIDTHS = [1920, 960];
 // strength, so the quality drop is not perceptible there; verified by
 // before/after screenshot diff.
 //
-// The home hero no longer does — it peaks at ~96% presence — so it was
-// re-checked directly against the source: over the region the hands occupy,
-// q74 deviates by a mean of 1.77/255 (max 43, at the sleeve edge) against
-// q82's 1.52 (max 31) for 12 KB more. Under 1% mean on a subject that is then
-// composited over white and, on the panel, downscaled ~1.6x from the 1920w
-// variant — not worth a re-encode, which `/images/**` being `immutable` would
-// make a rename anyway.
+// The home hero no longer does — it reaches full strength right of the fade —
+// so it was re-checked directly against the source: over the region the hands
+// occupy, q74 deviates by a mean of 1.77/255 (max 43, at the sleeve edge)
+// against q82's 1.52 (max 31) for 12 KB more. Under 1% mean on a subject that
+// is then composited over white and downscaled ~1.5x from the 2880w variant —
+// not worth a re-encode, which `/images/**` being `immutable` would make a
+// rename anyway.
 const WEBP_QUALITY = 74;
 const WEBP_EFFORT = 6;
 const JPEG_QUALITY = 74;
@@ -188,7 +203,9 @@ async function buildPhoto(photo) {
     );
   }
 
-  for (const width of WIDTHS) {
+  const widths = photo.widths || WIDTHS;
+
+  for (const width of widths) {
     const out = path.join(IMAGES_DIR, `${photo.name}-${width}.webp`);
     const buf = await sharp(source)
       .resize({ width, withoutEnlargement: true })
@@ -201,7 +218,7 @@ async function buildPhoto(photo) {
   // JPEG fallback at the large width, for browsers without WebP.
   const jpegOut = path.join(IMAGES_DIR, `${photo.name}.jpg`);
   const jpegBuf = await sharp(source)
-    .resize({ width: WIDTHS[0], withoutEnlargement: true })
+    .resize({ width: widths[0], withoutEnlargement: true })
     .jpeg({ quality: JPEG_QUALITY, mozjpeg: true, progressive: true })
     .toBuffer();
   fs.writeFileSync(jpegOut, jpegBuf);
