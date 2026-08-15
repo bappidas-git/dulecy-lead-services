@@ -12,6 +12,111 @@ prompt per branch/PR — and the entries below summarise each phase under the
 
 The format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.11.0] — 2026-08-15 — Home hero: the handshake as a full-bleed backdrop
+
+`[2.9.0]` and `[2.10.0]` shaped the photo as a **feathered panel** held right of
+the copy above 920px and a **band across the top** below it. The brief here is a
+different treatment for the same photo: put it in as a **background image that
+fills the section**, under a **white overlay that fades out from left to right**,
+at **every device size**, and **without enlarging the image**.
+
+So the panel, the band, the two vignette masks and the five scrim layers all
+come out, and what replaces them is one `object-fit: cover` backdrop and one
+horizontal fade. Numbers below are worst-pixel contrast and photo presence
+measured on the **live render** — the shipped `<img>` drawn at its computed
+geometry with the browser-resolved gradient stops composited over it — sampled
+at the skin-tone centroid of the hands.
+
+### Changed
+
+- **The backdrop fills the hero at every width.** `.bg` is now
+  `top: -10%; left: 0; width: 100%; height: 120%; object-fit: cover` — the same
+  box the Expertise and Who We Serve heroes already use, sized so
+  `useParallax`'s ±8% travel never exposes an edge. Gone: the `--panel` /
+  `--panel-inset` geometry, the `16 / 9` band with its lifted `top`, the radial
+  vignette, the linear bottom-edge mask, and the `min-width: 920px` override
+  that swapped between them. One rule, no breakpoint.
+
+- **The white overlay is a single left-to-right fade.** Above 920px the scrim is
+  one `90deg` gradient: a `0.88+` shelf across the copy, then a plunge to `0.06`
+  within 10% of the hero and to nothing 10% after that. The shelf ends at
+  `--copy-edge` (`calc(50vw + 275px)`), a line fitted through the measured right
+  edge of the widest glyph run at 920 / 1024 / 1440 / 1920px so it clears where
+  the copy actually ends rather than at one tuned viewport. An even ramp was
+  tried first and does not work: it puts ~0.18 white under the end of the
+  headline at 1024px, where the red accent reads 1.2:1.
+
+- **Below 920px the fade keeps running left to right, with a vertical veil
+  under it.** The copy spans the frame there — at 375px the lede's longest line
+  reaches 90.8% of the hero and "impact" reaches 84.1% — so there is no
+  right-hand strip for a horizontal fade to clear into and it cannot carry
+  legibility alone. A vertical layer does that instead: clear to 19% of the
+  hero (the room between the 68px header and the headline), `0.74` by 27%, held
+  to the foot. `0.74` is the least white that holds every glyph, grid-searched
+  over veil × fade; at `0.66` the accent falls to 1.7:1.
+
+- **Photo presence at the clasp**, and worst-pixel contrast for the three text
+  colours, measured on the live render:
+
+  | Viewport | Presence | Ink `<h1>` | Accent `#E8293E` | Lede `--grey-2` |
+  | -------- | -------- | ---------- | ---------------- | --------------- |
+  | 320px    | 19%      | 15.7:1     | 4.13:1           | 6.33:1          |
+  | 375px    | 19%      | 14.1:1     | 3.13:1           | 6.03:1          |
+  | 768px    | 19%      | 16.6:1     | 3.67:1           | 6.56:1          |
+  | 919px    | 19%      | 16.2:1     | 3.68:1           | 7.07:1          |
+  | 920px    | 43%      | 16.6:1     | 3.80:1           | 7.51:1          |
+  | 1024px   | 69%      | 16.6:1     | 3.76:1           | 7.53:1          |
+  | 1440px   | 97%      | 16.4:1     | 3.62:1           | 7.65:1          |
+  | 1920px   | 100%     | 15.8:1     | 3.49:1           | 7.51:1          |
+
+  The accent is the binding case at every width, as it was before, and stays
+  clear of AA large-text's 3:1. **Presence below 920px is the honest cost of
+  the brief**: filling a 0.41:1 box with a 2.13:1 photograph puts the clasp
+  behind the copy, where it can only be a tint. `[2.10.0]`'s band held it at
+  94% by keeping it *above* the copy instead of behind it — that is the trade
+  the change makes, not a regression in the fade.
+
+### Added
+
+- **`public/images/hero-home-v3-2880.webp` (47 KB) + `hero-home-v3.jpg`
+  (95 KB)** — the same client master (5000×1900), re-cut to 4050×1900 by
+  trimming 950px off the right edge only.
+
+  The trim is a composition lever, not a framing one. `object-position: <q> 50%`
+  pins a subject at fraction `q` of the file onto fraction `q` of the box at
+  every viewport, because `cover`'s crop then straddles it symmetrically — so
+  where the clasp sits on the page is decided by where it sits in the file. In
+  the whole master it is 68.4% across, which lands it under the headline from
+  920 to 1440px. At 84.5% it clears the copy at every width from 920px up, and
+  it holds there to the pixel: measured 84.5–84.6% of the hero from 320px to
+  1920px.
+
+- **One width and no `sizes`, on purpose.** A full-bleed `cover` backdrop is
+  scaled by the section's *height*, not its width, so the rendered width barely
+  moves with the viewport — 2178 to 2636 CSS px measured across 320–1920px. A
+  `vw`-keyed `sizes` would describe the wrong quantity, and every breakpoint
+  would resolve to the same variant anyway. 2880w covers the widest of those,
+  so **the photo is never drawn past its natural size at any viewport**
+  (verified `drawnWidth ≤ 2880` at 320 / 375 / 768 / 919 / 920 / 1024 / 1440 /
+  1920px). `scripts/generate-images.js` grew an optional per-photo `widths` to
+  express that.
+
+### Removed
+
+- **`public/images/hero-home-v2.jpg` + its two WebP variants.** Deleted rather
+  than left in place: they were the 3:2 cut for the panel treatment and have no
+  remaining consumer. `/images/**` answers `immutable` (see `public/.htaccess`),
+  which is why this ships as `-v3` rather than overwriting `-v2` — exactly why
+  `hero-home` became `hero-home-v2` in `[2.5.0]`.
+
+- **`HERO_BG_SRCSET` / `HERO_BG_SIZES`** and the `imagesrcset` / `imagesizes`
+  they had to stay in sync with on the home-only preload in
+  `public/index.html`. The preload now names the WebP directly and carries
+  `type="image/webp"`, so a browser that cannot decode it skips the preload
+  instead of wasting it and picks up the JPEG from the `<picture>` when the
+  bundle mounts. Verified: one hero request per load, initiated by the preload
+  at 26ms, reused by the `<picture>`.
+
 ## [2.10.0] — 2026-08-15 — Home hero: the handshake read clearly, on the marked spot
 
 `[2.9.0]` took the backdrop to ~60–65% presence at the clasp, which is visible
