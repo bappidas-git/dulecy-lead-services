@@ -55,10 +55,12 @@ const PHOTOS = [
     crop: { left: 1900, top: 0, width: 2850, height: 1900 },
     note:
       'Home hero backdrop — two people shaking hands, framed at forearm level ' +
-      'so neither head is in shot (opacity .82 under a left-heavy scrim that ' +
-      'lightens toward the right). Never cropped at render time: below 920px ' +
-      'it is a full-width band at its own 3:2, above it a feathered panel held ' +
-      'right of the copy — see HeroSection.module.css. Supersedes the Unsplash ' +
+      'so neither head is in shot (opacity 1, shaped entirely by a vignette ' +
+      'mask and a scrim that dissolves the frame on whichever side the copy ' +
+      'is on). Above 920px it is a feathered panel held right of the copy, on ' +
+      'this 3:2 uncropped; below it a full-width 16:9 band across the top, ' +
+      'which `object-fit: cover` trims 7.8% off the top and bottom of — the ' +
+      'only render-time crop — see HeroSection.module.css. Supersedes the Unsplash ' +
       'photo-1521791136064-7986c2920216 that shipped as `hero-home`; that ' +
       'basename is retired rather than reused because `/images/**` answers ' +
       '`immutable` (see public/.htaccess). Deliberate departure from ' +
@@ -126,10 +128,18 @@ const ICONS = [
 const WIDTHS = [1920, 960];
 // q74/effort6 keeps the heaviest photo at ~107 KB (about-band) — inside the
 // 250 KB budget with a wide margin now that the 229 KB `hero-industries`
-// landscape has been retired for a 51 KB replacement. Every photo renders
-// under a white scrim that caps its contribution well below full strength
-// (the home hero peaks around 57%, the others lower), so the quality drop is
-// not perceptible; verified by before/after screenshot diff.
+// landscape has been retired for a 51 KB replacement. The other three still
+// render under a white scrim that caps their contribution well below full
+// strength, so the quality drop is not perceptible there; verified by
+// before/after screenshot diff.
+//
+// The home hero no longer does — it peaks at ~96% presence — so it was
+// re-checked directly against the source: over the region the hands occupy,
+// q74 deviates by a mean of 1.77/255 (max 43, at the sleeve edge) against
+// q82's 1.52 (max 31) for 12 KB more. Under 1% mean on a subject that is then
+// composited over white and, on the panel, downscaled ~1.6x from the 1920w
+// variant — not worth a re-encode, which `/images/**` being `immutable` would
+// make a rename anyway.
 const WEBP_QUALITY = 74;
 const WEBP_EFFORT = 6;
 const JPEG_QUALITY = 74;

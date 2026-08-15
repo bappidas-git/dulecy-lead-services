@@ -12,6 +12,87 @@ prompt per branch/PR — and the entries below summarise each phase under the
 
 The format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.10.0] — 2026-08-15 — Home hero: the handshake read clearly, on the marked spot
+
+`[2.9.0]` took the backdrop to ~60–65% presence at the clasp, which is visible
+but still a wash — the handshake reads as a tint behind the page rather than a
+photograph on it. The brief was to keep the same fade-out treatment but let
+**the right ~55–60% of the frame read almost clearly**, and to bring the
+handshake itself onto a **marked point just past the end of "impact"** — at
+every width.
+
+Same photo, same `/images/hero-home-v2*` files. Everything here is geometry and
+alpha. Numbers are measured on the real composite
+(`opacity × mask × (1 − scrimWhite)` over the shipped photo's pixels), sampled
+at the skin-tone centroid of the hands, 53.4% × 55.2% of the frame.
+
+### Changed
+
+- **The handshake now reads at 94–96%, up from 60–67%.** Backdrop opacity goes
+  `.92` → `1` at both layouts; the mask and the scrim do all the shaping, which
+  is what lets the surviving part of the frame survive completely. Along the
+  frame's mid-line the photo is at full strength across its right **56%**
+  (panel) / **64%** (band) — the rest is the dissolve.
+
+  | Viewport | Before | After |
+  | -------- | ------ | ----- |
+  | 320 / 375 / 430px | 67% / 67% / 67% | 94% / 94% / 94% |
+  | 600 / 768 / 919px | 45% / 30% / 23% | 94% / 67% / 50% |
+  | 920 / 1024 / 1280px | 64% / 66% / 64% | 95% / 95% / 95% |
+  | 1440 / 1707 / 1920px | 63% / 61% / 60% | 95% / 96% / 96% |
+
+- **The clasp moves onto the marked point.** At 1920px it lands at 70.7% × 48.1%
+  of the hero and at 1707px 72.4% × 48.3%, against 74% × 52.5% before. The panel
+  is *narrower* to get there, not wider (603px against 721px at 1920px): the
+  clasp sits 53.4% into the frame, so `panelLeft = claspX − 0.534 × panel` —
+  shrinking the panel is what moves its left edge off the copy. The previous
+  panel could only clear the headline by sliding right, and it took the
+  handshake with it.
+
+  The clasp still drifts right as the viewport narrows (75.2% at 1440px, 81.6%
+  at 920px). That is geometry, not tuning: the headline's last line runs to
+  63.5% of the hero at 1920px but 73.7% at 1024px, so below ~1440px there is no
+  room left of it to stand in.
+
+- **`--panel` / `--panel-inset` now live on `.hero`.** The dissolve has to land
+  at a fixed fraction of the *panel*, and `.bg` and `.scrim` are siblings, so
+  the geometry is a custom property both read. `--panel-inset` reads "hold the
+  panel far enough off the right edge that the headline's right edge lands no
+  deeper than 32% into it", which keeps the copy inside the dissolve at every
+  width (measured 23–32%) without being aimed at any one of them.
+
+- **The dissolve moved from the mask to the scrim.** A radial mask cannot both
+  hold a large clear core and drop off inside the ~13% of the panel's width
+  between the end of "impact" and the clasp — those are the same knob. The mask
+  is now an even vignette centred at 46% × 50%, radii 60% × 56%, so every edge
+  feathers and none reads as a cut; the scrim's horizontal layer carries the
+  dissolve, with its stops written as `calc(100% − inset − panel × k)` so they
+  track the panel exactly.
+
+- **The sub-920px band is 16:9 and lifts with the viewport.** Height is what
+  decides whether the band clears the headline, and at the photo's own 3:2 it
+  stopped clearing at ~375px; at 16:9 it clears to ~500px, and `cover` scales
+  to the width, so the hands are exactly as large as before — it only trims
+  7.8% off the top and bottom of a frame whose subject spans 20–90% of its
+  height. `top: min(-4.6vw, 24px - 10.35vw)` then lifts the band as the
+  viewport widens so the clasp stays above the headline, floored at the
+  parallax overscan for small phones. Together these are what let 768–919px
+  stop being conceded: 23–30% before, 50–67% now.
+
+### Fixed
+
+- **Text contrast improves at the same time, at every width.** The accent — the
+  light end of `--grad-text` (#E8293E) on "impact", the binding case — is now
+  flat at **3.96:1** across 920–1920px instead of sagging to **2.39:1** where
+  the hero is most crowded, and 4.0–4.36:1 across 320–919px against 3.36–4.36:1.
+  The `--grey-2` lede reads 8.4–8.8:1 against 6.2–8.8:1. The ink headline gives
+  up a little where the band now sits behind it (18.2–19.7:1 on the panel,
+  11.6–11.9:1 at 768–919px) and stays far above AAA throughout.
+
+- **`sizes` corrected for the narrower panel** — `45vw` → `35vw` in both
+  `HeroSection.jsx` and the home-only preload in `public/index.html`, which had
+  been over-declaring the box and pulling the 1920w variant early.
+
 ## [2.9.0] — 2026-08-15 — Home hero: the handshake at 60–65%, nudged left, 6px larger
 
 `[2.8.0]` put the whole handshake in frame and moved it right of the copy, but
