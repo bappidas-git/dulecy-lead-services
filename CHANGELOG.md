@@ -12,6 +12,79 @@ prompt per branch/PR — and the entries below summarise each phase under the
 
 The format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.8.0] — 2026-08-15 — Home hero: the whole handshake, held right of the copy
+
+The Home hero drew its backdrop full bleed under `object-fit: cover`, and the
+box that gives `useParallax` its travel was also what set the crop: only ~72%
+of the photo's width survived at 1920px and ~54% at 1024px. The frame filled
+with one enormous wrist and the handshake stopped reading as a handshake. The
+brief was to show the whole photograph, smaller, with the clasp sitting in the
+white to the right of the headline, and to take some weight out of the
+right-hand side — at every width.
+
+### Changed
+
+- **The backdrop is never cropped, at any width.** The box is now the photo's
+  own 3:2 everywhere (`height: auto`), so both cuffs and both sleeves are
+  always in frame. Below the 920px nav breakpoint that means the existing band
+  keeps its ratio all the way up to the breakpoint instead of capping at
+  `min(66vw, 520px)` — 768–919px had been losing ~15% of the frame off the top
+  and bottom.
+
+- **Above 920px the backdrop is a panel, not a bleed.** It is held against the
+  right edge and centred on the hero: `width: clamp(340px, 44vw - 130px,
+  900px)`, `right: clamp(24px, 5.5vw, 130px)`, `top: 50%` with
+  `margin-top: calc(var(--panel) / -3)` — half the derived height, so the
+  centring costs no transform (`useParallax` owns that property). The width is
+  not a plain `vw` because the container caps at 1280px: past that point every
+  extra pixel of viewport is gutter, and the panel is sized to grow into it.
+
+  The clasp sits at 52% × 50% inside the photo, so it lands at 76–78% of the
+  hero's width and ~50% of its height at 1920 / 1440 / 1280 / 1024 / 920px —
+  the band of white to the right of "impact", which is where the client marked
+  it. The headline clears the panel's 30%-alpha contour at every one of those
+  widths (measured: +140px at 1920, +1px at 1280, the tightest).
+
+- **A radial mask keeps the panel from reading as a pasted-in rectangle.**
+  `radial-gradient(52% 50% at 52% 50%, …)` — radii about the clasp, so the
+  ellipse reaches exactly the left, top and bottom edges, the three that cut
+  through the near suit and the far sleeve, and stops ~92% of the way to the
+  right edge, which is the photo's own blown-out white and needs no help. It
+  holds full strength to 42% and eases out from there, so the clasp itself is
+  untouched and only its context dissolves.
+
+- **Lighter on the right, in two places.** Backdrop opacity drops `.92` → `.82`
+  (shared by both layouts), and the scrim's right-hand stops no longer clear to
+  zero: `.34` at 84% and `.30` at the edge on desktop (was `.06` and `0`),
+  `.16` at 62% and `.26` at the edge on the band (was `.1` and `0`). Both land
+  on the photo's right third — the far sleeve, the darkest mass in the frame.
+  Peak photo presence at the clasp goes from ~41% to ~36%.
+
+- **`sizes` now describes the panel, not the viewport.** `HERO_BG_SIZES` (and
+  the matching `imagesizes` on the home-only preload in `public/index.html`) is
+  `(max-width: 919px) 100vw, 45vw`. The desktop backdrop never draws wider than
+  900px, so `100vw` had every desktop pull the 1920w variant for a box a third
+  that size.
+
+- **`.bg` and `.scrim` are now mobile-first with a single `min-width: 920px`
+  override**, rather than a `max-width: 919px` / `min-width: 920px` pair. A
+  viewport at a fractional CSS width — emulation, fractional DPI, some zoom
+  levels — satisfies *neither* query, and neither element carries geometry
+  outside them: `.bg` would have fallen back to its intrinsic 1920px box in the
+  static position. Caught in verification at an emulated 919px viewport, where
+  both `matchMedia` queries reported `false`.
+
+### Notes
+
+- The DLS watermark keeps `0.04` above the breakpoint. Its field changed from
+  photo to mostly plain white, so it was re-checked against the new stack
+  rather than assumed: the composite is within a pixel value or two of what it
+  was, because the mark already sat over the photo's blown-out region.
+- Verified by measuring the live render at 320 / 375 / 768 / 919 / 920 / 1024 /
+  1280 / 1440 / 1920px — aspect 1.5 and no horizontal overflow at all of them —
+  and by compositing the exact CSS stack (photo × mask × opacity × both scrim
+  gradients, over the measured copy geometry) offline at each width.
+
 ## [2.7.0] — 2026-08-14 — New Who We Serve hero backdrop, left-weighted scrim
 
 The `/industries` hero already carried a photograph, but an Unsplash landscape

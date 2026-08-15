@@ -9,9 +9,11 @@
    The backdrop photo is a deliberate departure from `mockup/index.html`,
    which uses an architectural shot here: it is now a handshake framed at
    forearm level, with neither head in shot. A photo with a subject needs to
-   read as that subject, so the scrim alphas and the crop geometry depart from
-   the mockup too — see the annotated `.bg` / `.scrim` blocks in the
-   stylesheet.
+   read as that subject, so it is never cropped — the box is the photo's own
+   3:2 at every width — and it is not full-bleed above the nav breakpoint but
+   a feathered panel held to the right of the copy. The scrim alphas depart
+   from the mockup for the same reason. See the annotated `.bg` / `.scrim`
+   blocks in the stylesheet.
    ============================================ */
 
 import React from 'react';
@@ -34,6 +36,13 @@ import styles from './HeroSection.module.css';
 const HERO_BG = '/images/hero-home-v2.jpg';
 const HERO_BG_SRCSET =
   '/images/hero-home-v2-960.webp 960w, /images/hero-home-v2-1920.webp 1920w';
+// The backdrop is only full-bleed below the 920px nav breakpoint. Above it,
+// it is a right-hand panel that never draws wider than 900px (see the
+// `--panel` clamp in the stylesheet), so 100vw would have every desktop pull
+// the 1920w variant for a box a third that size. 45vw is the panel's width
+// rounded up across the range. Keep in sync with `imagesizes` on the
+// home-only preload in `public/index.html`.
+const HERO_BG_SIZES = '(max-width: 919px) 100vw, 45vw';
 
 const PILLARS = [
   { num: '01', label: 'Business Solutions' },
@@ -52,7 +61,11 @@ const HeroSection = () => {
       {/* `display: contents` on the <picture> keeps the absolutely
           positioned <img> laid out exactly as it was before the wrapper. */}
       <picture className={styles.bgPicture}>
-        <source type="image/webp" srcSet={HERO_BG_SRCSET} sizes="100vw" />
+        <source
+          type="image/webp"
+          srcSet={HERO_BG_SRCSET}
+          sizes={HERO_BG_SIZES}
+        />
         <img
           ref={bgRef}
           className={styles.bg}

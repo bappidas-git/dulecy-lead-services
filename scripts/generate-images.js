@@ -55,9 +55,10 @@ const PHOTOS = [
     crop: { left: 1900, top: 0, width: 2850, height: 1900 },
     note:
       'Home hero backdrop — two people shaking hands, framed at forearm level ' +
-      'so neither head is in shot (opacity .92 under a left-heavy scrim that ' +
-      'clears toward the right; below 920px it re-crops to a band — see ' +
-      'HeroSection.module.css). Supersedes the Unsplash ' +
+      'so neither head is in shot (opacity .82 under a left-heavy scrim that ' +
+      'lightens toward the right). Never cropped at render time: below 920px ' +
+      'it is a full-width band at its own 3:2, above it a feathered panel held ' +
+      'right of the copy — see HeroSection.module.css. Supersedes the Unsplash ' +
       'photo-1521791136064-7986c2920216 that shipped as `hero-home`; that ' +
       'basename is retired rather than reused because `/images/**` answers ' +
       '`immutable` (see public/.htaccess). Deliberate departure from ' +
