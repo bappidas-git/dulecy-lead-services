@@ -28,10 +28,23 @@
    is ~72% at 1920px and ~54% at 1024px — the frame fills with one enormous
    wrist and the handshake stops reading as a handshake.
 
-   Opacity is shared by both layouts. 0.82 (was 0.92) is the "lighten the
-   right" half of the same pass: the photo's own right third is the far
-   sleeve, the darkest mass in the frame, and it now sits where nothing
-   competes with it. See the `.scrim` right-hand stops for the other half.
+   Opacity is shared by both layouts. 0.92 (was 0.82) is the coarse half of
+   the "show the handshake at 60–65%" pass; the fine half is in the `.scrim`
+   stops and the panel's radial mask below. Photo presence at any pixel is
+   `opacity × mask × (1 − scrimWhite)`, and at the clasp that now lands at
+   60–67% at every measured width except the 768–919px pinch, against 27–41%
+   before.
+
+   "At the clasp" means the measured subject, not the middle of the frame: a
+   skin-tone centroid over the shipped photo puts the hands at 53.4% × 55.2%,
+   and every number quoted in this file is sampled there.
+
+   `left`/`width`/`max-width` are the band's, and they are the "6px larger,
+   nudged left" pass: the box grows 6px and spends all of it on the left, so
+   the right edge stays flush with the viewport and the whole frame — clasp
+   included — shifts 6px toward the copy. `max-width: none` is load-bearing:
+   `global.css` caps every `img` at `max-width: 100%`, which silently clamps
+   `calc(100% + 6px)` straight back to 100%.
 
    The base rule is the sub-920px layout, and the panel below is its only
    override — deliberately, rather than a `max-width: 919px` pair. A viewport
@@ -56,10 +69,11 @@
 .bg {
   position: absolute;
   top: -6.6vw;
-  left: 0;
-  width: 100%;
+  left: -6px;
+  width: calc(100% + 6px);
+  max-width: none;
   height: auto;
-  opacity: 0.82;
+  opacity: 0.92;
   pointer-events: none;
   will-change: transform;
   -webkit-mask-image: linear-gradient(
@@ -80,43 +94,73 @@
 
    The width is not a plain `vw`: the container caps at 1280px, so past that
    point every extra pixel of viewport becomes gutter, and the panel is sized
-   to grow into it. `44vw - 130px` is the line through the two constraints —
-   340px at the breakpoint, 715px at 1920px — that keeps the headline clear of
-   everything but the panel's outermost feathered edge. `margin-top` is half
-   the derived height (width ÷ 1.5 ÷ 2 = width ÷ 3), which centres the panel
+   to grow into it. `44vw - 124px` is the line through the two constraints —
+   346px at the breakpoint, 721px at 1920px — that keeps the headline clear of
+   everything but the panel's outermost feathered edge. It is the base rule's
+   `44vw - 130px` plus a flat 6px, so the panel grows by the same 6px the band
+   does at every width, floor and ceiling included. `margin-top` is half the
+   derived height (width ÷ 1.5 ÷ 2 = width ÷ 3), which centres the panel
    without a transform, since `useParallax` owns that property.
 
+   `right` carries the "nudge it left" pass, and it is deliberately not a flat
+   offset. It has to grow from ~0 at the breakpoint — where the headline's
+   last line already reaches 74% of the hero and there is no room to give — to
+   a real shift once the 1280px container starts banking gutter. Written
+   against the old `clamp(24px, 5.5vw, 130px)`, `11vw - 50px` is +0.6px at
+   920, +20px at 1280, +29px at 1440 and +56px at 1920: the clasp holds at
+   73–77% of the hero across the range instead of drifting.
+
    The radial mask is what stops a rectangle from reading as a pasted-in
-   photo. Radii are 52% × 50% about the clasp, so the ellipse reaches exactly
-   the left, top and bottom edges — the three that cut through the near suit
-   and the far sleeve — and only ~92% of the way to the right edge, which is
-   the photo's own blown-out white and needs no help. The ramp holds full
-   strength to 42% and eases out from there, so the clasp itself is untouched
-   and only the surrounding context dissolves.
+   photo, and its centre moves right — 64%, from 52% — while the vertical
+   stays on the frame's midline. Radii are 40% × 50%. 50% about 50% still
+   reaches exactly the top and bottom edges, and 40% about 64% falls to zero
+   at 24% across rather than at the left edge: that band is the near
+   shoulder, and it is also the only part of the panel the headline ever
+   reaches, so retiring it costs nothing the composition wants. The right
+   edge keeps residual alpha (~0.27) — as before, that strip is the photo's
+   own blown-out white (sampled rgb(253,253,254)) and shows nothing. The
+   clasp sits at distance 0.285 from the centre, inside the 0.34 core, so it
+   takes the full 0.92 opacity at every width.
+
+   Pushing the centre right is what pays for the extra opacity, and it is a
+   better lever here than tightening the ramp. "We deliver impact" runs 25–45%
+   into the panel depending on width, and under the old ramp it sat at mask
+   0.90–1.00 — so every point of added visibility landed on the headline too.
+   Simply steepening the falloff does fix that, but it also shrinks the photo
+   to a small bright core: at radii 42% × 45% with a 26% core, the area of the
+   panel reading at 25% photo or more collapsed from 34% to 11%, and the
+   backdrop stopped looking like a photograph. Moving the centre instead keeps
+   that area at 33% — the shipped 34%, near enough — while still halving the
+   mask behind the word.
+
+   Measured over the real photo, the light end of `--grad-text` (#E8293E)
+   against the composite reads 3.08–4.14:1 across 920–1920px, where the
+   shipped stack read 2.51–3.38:1 — so the headline is more legible than
+   before at every width, not merely held, while the clasp nearly doubles.
 
    `left: auto` is what hands positioning over to `right`, since the base rule
-   anchors the band at the left edge. */
+   anchors the band at the left edge; `max-width` is already `none` there. */
 @media (min-width: 920px) {
   .bg {
-    --panel: clamp(340px, 44vw - 130px, 900px);
+    --panel: clamp(346px, 44vw - 124px, 906px);
 
     top: 50%;
     left: auto;
-    right: clamp(24px, 5.5vw, 130px);
+    right: clamp(50px, 11vw - 50px, 190px);
     width: var(--panel);
     margin-top: calc(var(--panel) / -3);
     -webkit-mask-image: radial-gradient(
-      52% 50% at 52% 50%,
-      #000 42%,
-      rgba(0, 0, 0, 0.72) 72%,
-      rgba(0, 0, 0, 0.3) 88%,
+      40% 50% at 64% 50%,
+      #000 34%,
+      rgba(0, 0, 0, 0.55) 50%,
+      rgba(0, 0, 0, 0.32) 88%,
       transparent 100%
     );
     mask-image: radial-gradient(
-      52% 50% at 52% 50%,
-      #000 42%,
-      rgba(0, 0, 0, 0.72) 72%,
-      rgba(0, 0, 0, 0.3) 88%,
+      40% 50% at 64% 50%,
+      #000 34%,
+      rgba(0, 0, 0, 0.55) 50%,
+      rgba(0, 0, 0, 0.32) 88%,
       transparent 100%
     );
   }
@@ -133,13 +177,37 @@
 
    Under the band the layout is one full-width column, so there is no left
    column to protect and the legibility wash has to be vertical: clear over
-   the band, solid by ~42% where the headline starts. The horizontal gradient
-   still carries the same left-to-right reveal the panel does, so the
-   treatment reads as one idea at every width, and it has an easier job here —
-   the band shows the whole 3:2 frame, so the near suit already sits on the
-   left and the clasp centre-right. Nothing but the band is under it (the copy
-   all starts below), so its left stop is 0.8 rather than the panel's 0.96:
-   enough to empty that side without bleaching the band into nothing. */
+   the band, solid where the headline starts. The horizontal gradient still
+   carries the same left-to-right reveal the panel does, so the treatment
+   reads as one idea at every width, and it has an easier job here — the band
+   shows the whole 3:2 frame, so the near suit already sits on the left and
+   the clasp centre-right.
+
+   Three layers, and the top two are keyed to different things on purpose,
+   because the band and the copy do not scale together. The band is sized in
+   `vw`, so the clasp sits at a fixed ~31vw below the hero's top at every
+   width under the breakpoint; the headline is sized in `clamp()` and starts
+   at a near-fixed ~26–30% of the hero's height. A single gradient can only
+   key to one of them, and the shipped one keyed to the hero — which is why
+   its light window drifted off the band as the viewport grew and the clasp
+   fell from 41% at 375px to 22% at 919px.
+
+   Layer 2 is therefore the band's light window, written in `vw` so it tracks
+   the photo: near-clear from 22vw to 40vw (the clasp plus its full ±8%
+   parallax travel), climbing away below that. Layer 1 is the copy guard,
+   written in hero-% so it tracks the headline: nothing above 16%, 0.66 by
+   30%, held to the foot. Layer 3 is the horizontal composition ramp, opening
+   toward the clasp at ~53% across.
+
+   Between 768 and 919px the two simply collide — the band is 56–62% of the
+   hero tall by then and the headline sets straight over the handshake, with
+   only ~3 percentage points of hero height between them — so the guard wins
+   there by design and those widths land at 32%/23% rather than reaching for
+   60%. That is the one place this pass cannot deliver the target, and it is
+   geometry, not tuning: at 60% the headline would sit on a 2.3:1 background.
+   Phones, where the band clears the copy entirely, go from 41%/40% to
+   67%/62%. Headline contrast is 3.01–4.36:1 across 320–919px, against the
+   shipped 3.13–4.36:1. */
 .scrim {
   position: absolute;
   inset: 0;
@@ -147,54 +215,68 @@
   background:
     linear-gradient(
       180deg,
-      rgba(255, 255, 255, 0.28) 0%,
-      rgba(255, 255, 255, 0.34) 20%,
-      rgba(255, 255, 255, 0.9) 42%,
-      rgba(255, 255, 255, 0.96) 100%
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0) 16%,
+      rgba(255, 255, 255, 0.66) 30%,
+      rgba(255, 255, 255, 0.66) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.14) 0,
+      rgba(255, 255, 255, 0.06) 22vw,
+      rgba(255, 255, 255, 0.06) 40vw,
+      rgba(255, 255, 255, 0.6) 58vw,
+      rgba(255, 255, 255, 0.8) 100%
     ),
     linear-gradient(
       90deg,
-      rgba(255, 255, 255, 0.8) 0%,
-      rgba(255, 255, 255, 0.55) 30%,
-      rgba(255, 255, 255, 0.16) 62%,
-      rgba(255, 255, 255, 0.26) 100%
+      rgba(255, 255, 255, 0.62) 0%,
+      rgba(255, 255, 255, 0.41) 30%,
+      rgba(255, 255, 255, 0.2) 55%,
+      rgba(255, 255, 255, 0.1) 74%,
+      rgba(255, 255, 255, 0.18) 100%
     );
 }
 
-/* The panel's wash. The vertical gradient is an even veil — the panel's own
-   radial mask handles its top and bottom edges — and the horizontal one
-   carries the composition: near-solid white across the whole left column,
-   then a ramp that opens toward the right, so the photo reads as a single
-   subject emerging from the page rather than as an even tint behind
-   everything.
+/* The panel's wash — two layers, replacing the band's three outright, since
+   `background` is a shorthand and the copy guard has no job over here. The
+   vertical gradient is an even veil — the panel's own radial mask handles its
+   top and bottom edges — and the horizontal one carries the composition:
+   near-solid white across the whole left column, then a ramp that opens
+   toward the right, so the photo reads as a single subject emerging from the
+   page rather than as an even tint behind everything.
 
    The left half is where every piece of hero copy lives — the 640px lede in
    `--grey-2` is the one that needs a real contrast budget — and it sits on
    between 96% and 90% white, i.e. under 4% photo, before the panel's mask
-   takes another bite out of it. The ramp only opens past 58%, which is beyond
-   the lede's right edge.
+   takes another bite out of it. The ramp only opens past 60%, which is beyond
+   the lede's right edge at every width from 1024px up; at 920px the lede runs
+   to 73% and the mask is what covers it there (measured 7.8:1, better than
+   the 7.3:1 it had before).
 
-   Neither scrim's horizontal ramp clears to zero any more: 0.34 at 84% and
-   0.30 at the edge here, 0.16 and 0.26 on the band above, against 0.06/0 and
-   0.1/0 before. That is the "lighter on the right" pass, and it lands on
-   the photo's right third — the far sleeve, the darkest mass in the frame.
-   Peak photo presence at the clasp falls from ~41% to ~36%. */
+   The ramp is steeper and opens lighter than the shipped one — 0.34 at 68%
+   and 0.13 at the edge, against 0.52 at 58% and 0.30 — because the clasp sits
+   at a remarkably stable 73–77% of the hero across 920–1920px, so the opening
+   can be aimed at it rather than smeared across the right half. Neither
+   scrim's horizontal ramp clears to zero: the photo's right third is the far
+   sleeve, the darkest mass in the frame, and it keeps a floor under it. */
 @media (min-width: 920px) {
   .scrim {
     background:
       linear-gradient(
         180deg,
-        rgba(255, 255, 255, 0.72) 0%,
-        rgba(255, 255, 255, 0.28) 50%,
-        rgba(255, 255, 255, 0.86) 100%
+        rgba(255, 255, 255, 0.46) 0%,
+        rgba(255, 255, 255, 0.14) 50%,
+        rgba(255, 255, 255, 0.58) 100%
       ),
       linear-gradient(
         90deg,
         rgba(255, 255, 255, 0.96) 0%,
         rgba(255, 255, 255, 0.9) 32%,
-        rgba(255, 255, 255, 0.52) 58%,
-        rgba(255, 255, 255, 0.34) 84%,
-        rgba(255, 255, 255, 0.3) 100%
+        rgba(255, 255, 255, 0.62) 60%,
+        rgba(255, 255, 255, 0.34) 68%,
+        rgba(255, 255, 255, 0.15) 78%,
+        rgba(255, 255, 255, 0.13) 100%
       );
   }
 }

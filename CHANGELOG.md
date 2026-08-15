@@ -12,6 +12,93 @@ prompt per branch/PR — and the entries below summarise each phase under the
 
 The format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.9.0] — 2026-08-15 — Home hero: the handshake at 60–65%, nudged left, 6px larger
+
+`[2.8.0]` put the whole handshake in frame and moved it right of the copy, but
+it also took the photo down to ~36% presence at the clasp — legible as a shape,
+not really as a photograph. The brief was to bring it up to **60–65% visible on
+the right**, shift the handshake **slightly left**, and make the image **~6px
+larger**, at every width.
+
+Every number below is measured, not estimated: the composite is
+`opacity × mask × (1 − scrimWhite)`, sampled over the shipped photo's real
+pixels at the handshake's own position. A skin-tone centroid puts the hands at
+**53.4% × 55.2%** of the frame — not the 52% × 50% `[2.8.0]` assumed — and that
+is where "at the clasp" is sampled throughout.
+
+### Changed
+
+- **Visibility: ~35% → 60–67% at the clasp.** Backdrop opacity goes `.82` →
+  `.92`, and both scrims open up on the right. Measured across the ladder:
+
+  | Viewport | Before | After |
+  | -------- | ------ | ----- |
+  | 320 / 375 / 480px | 41% / 41% / 40% | 67% / 67% / 62% |
+  | 768 / 919px | 27% / 22% | 32% / 23% |
+  | 920 / 1024 / 1280px | 35% / 36% / 35% | 64% / 65% / 64% |
+  | 1440 / 1920px | 35% / 33% | 63% / 60% |
+
+- **6px larger, and it all goes on the left.** The band is `left: -6px;
+  width: calc(100% + 6px)`, so the right edge stays flush with the viewport
+  and the whole frame — clasp included — shifts 6px toward the copy, covering
+  "larger" and "slightly left" with one move. The panel's width clamp gains a
+  flat 6px at every stop: `clamp(346px, 44vw - 124px, 906px)`.
+
+  `max-width: none` is required alongside it — `global.css` caps every `img` at
+  `max-width: 100%`, which silently clamps `calc(100% + 6px)` back to 100%.
+
+- **Nudged left above the breakpoint, proportionally.** `right` goes
+  `clamp(24px, 5.5vw, 130px)` → `clamp(50px, 11vw - 50px, 190px)`: +0.6px at
+  920px, +20px at 1280, +29px at 1440, +56px at 1920. The shift has to start
+  near zero at the breakpoint, where the headline's last line already reaches
+  74% of the hero, and grow only as the 1280px container starts banking gutter.
+  The clasp holds at 73–77% of the hero across the whole range.
+
+- **The panel's radial mask moves its centre right instead of tightening.**
+  `radial-gradient(40% 50% at 64% 50%, …)`, holding full strength to 34%. The
+  vertical stays on the frame's midline so the ellipse still reaches the top
+  and bottom edges exactly; horizontally it now falls to zero at 24% across
+  rather than at the left edge — that band is the near shoulder, and the only
+  part of the panel the headline ever reaches.
+
+  Steepening the ramp in place was tried first and rejected: at radii
+  42% × 45% with a 26% core it hit the contrast targets, but the panel area
+  reading at ≥25% photo collapsed from 34% to 11% and the backdrop stopped
+  looking like a photograph. Moving the centre holds that area at 33%.
+
+- **The band's scrim is three layers, keyed to two different things.** The band
+  is sized in `vw`, so its clasp sits at a fixed ~31vw below the hero's top;
+  the headline is `clamp()`-sized and starts at a near-fixed ~26–30% of the
+  hero's *height*. One gradient can only track one of them, and the shipped one
+  tracked the hero — which is why its light window drifted off the band and the
+  clasp fell from 41% at 375px to 22% at 919px. Now: a `vw`-keyed light window
+  over the band, a hero-%-keyed copy guard over the headline, and the
+  horizontal composition ramp.
+
+### Notes
+
+- **Headline contrast improves at almost every width.** The light end of
+  `--grad-text` (#E8293E) over the composite behind "impact": 3.08 / 3.45 /
+  3.23 / 4.14:1 at 920 / 1280 / 1440 / 1920px, against 3.14 / 3.38 / **2.51** /
+  **2.66** before — so the desktop worst case goes from 2.51:1 to 3.08:1 and
+  now clears WCAG AA-large (3:1) everywhere it did not. Below the breakpoint it
+  is 3.01–4.36:1, against 3.13–4.36:1. The lede never drops below 7.8:1.
+
+- **768–919px is the one place the target is not met** (32% / 23%). The band is
+  56–62% of the hero's height there and the headline sets straight over the
+  handshake — about 3 percentage points of hero height separates them, and no
+  gradient can open one without opening the other. At 60% the headline would
+  sit on a 2.3:1 background. This is geometry, not tuning; it holds at or above
+  its shipped visibility instead.
+
+- The parallax overscan still clears: the band's worst-case top edge sits at
+  −11.9px at 919px, so no white gap opens above it while scrolling.
+
+- Verified at an emulated 919px viewport, where `max-width: 919px` and
+  `min-width: 920px` both report `false` — the reason `[2.8.0]` made these
+  rules mobile-first with a single `min-width` override, and why the 6px
+  geometry lives in the unconditional base rule too.
+
 ## [2.8.0] — 2026-08-15 — Home hero: the whole handshake, held right of the copy
 
 The Home hero drew its backdrop full bleed under `object-fit: cover`, and the
