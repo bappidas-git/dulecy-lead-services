@@ -42,44 +42,38 @@ const ICONS_DIR = path.join(IMAGES_DIR, 'icons');
  *  `widths` overrides the global `WIDTHS` ladder for that one photo. */
 const PHOTOS = [
   {
-    name: 'hero-home-v3',
+    name: 'hero-home-v4',
     url: 'https://res.cloudinary.com/dzokcuzo/image/upload/v1786720393/iStock-1224717790.jpg',
-    // Same client master as `hero-home-v2` (5000x1900, 2.63:1); a different
-    // window, because the hero draws it differently now — full bleed across
-    // the section instead of a panel held right of the copy.
+    // The client master, 5000x1900 (2.63:1), shipped **whole**. No `crop`, and
+    // that absence is the point of this variant: the hero draws it
+    // `object-fit: contain`, so every pixel of the purchased frame is on the
+    // page at every viewport and nothing is left to a crop.
     //
-    // The extract only trims the RIGHT edge, and it is a composition lever,
-    // not a framing one: `object-position: <q> 50%` pins a subject at fraction
-    // q of the frame onto fraction q of the box at EVERY viewport (the crop
-    // `cover` takes always straddles it symmetrically), so where the clasp
-    // sits on the page is decided here, by where it sits in the file. In the
-    // whole master it is 68.4% across, which lands it under the headline
-    // between 920 and 1440px, where the copy runs widest relative to the hero.
-    // Dropping 950px off the right moves it to 84.5% — clear of the headline
-    // at every width from 920px up (the copy's right edge peaks at 77.6%
-    // there) — and costs only the far sleeve's outer half and the blown-out
-    // margin beyond it, both of which `cover` was already cutting on desktop.
-    // The left stays at 0: that dead white is what the fade's opaque end sits
-    // on, so it is free, and trimming it would drag the clasp back left.
-    crop: { left: 0, top: 0, width: 4050, height: 1900 },
-    // 2880 rather than the global 1920. The hero draws this at
-    // `4050 x heroHeight / 1900` CSS px — 2180 to 2635 across 320-1920px
-    // viewports, near-flat because it is the section's HEIGHT that sets the
-    // scale, not its width — so 1920w would have every device upscale it.
-    // 2880 clears the widest of those with headroom to ~2900px viewports,
-    // and the photo is soft enough that it still encodes to ~48 KB.
+    // `hero-home-v3` trimmed 950px off the right to drag the clasp from 68.4%
+    // of the file to 84.5%, which is what let a `cover` backdrop clear the
+    // copy. `contain` does not crop, so that lever is gone with it: the clasp
+    // is back at its native 68.4% and the scrim's two-step fade — not the
+    // file — is what keeps it clear of the headline. See the annotated `.bg` /
+    // `.scrim` blocks in HeroSection.module.css.
+    //
+    // 2880 rather than the global 1920, still one width. `contain` draws this
+    // at exactly the hero's WIDTH (the box never reaches 2.63:1 below a
+    // ~2685px viewport), so 2880 covers a 1920px viewport at 1.5x DPR and any
+    // phone at 3x, and the photo is soft enough that it still encodes to
+    // ~50 KB.
     widths: [2880],
     note:
       'Home hero backdrop — two people shaking hands, framed at forearm level ' +
-      'so neither head is in shot. Full-bleed `object-fit: cover` across the ' +
-      'whole hero at every width, under a white overlay that fades out left to ' +
-      'right (plus a vertical legibility veil below 920px, where the copy spans ' +
-      'the frame) — see HeroSection.module.css. Supersedes `hero-home-v2`, the ' +
-      'same photo cut 3:2 for the right-hand panel that treatment replaced; ' +
-      'that basename is retired rather than reused because `/images/**` answers ' +
-      '`immutable` (see public/.htaccess), exactly as `hero-home` was retired ' +
-      'for `hero-home-v2`. Deliberate departure from `mockup/index.html`, ' +
-      'which uses an architectural shot here.',
+      'so neither head is in shot. The WHOLE frame at every width: ' +
+      '`object-fit: contain` across the full width of the hero, sitting above ' +
+      'the copy as a clear banner below 920px and behind it — bottom-anchored ' +
+      'just above the pillars rule, under a two-step left-to-right white ' +
+      'fade — from 920px up. See HeroSection.module.css. Supersedes ' +
+      '`hero-home-v3`, the 4050x1900 right-trim the `cover` treatment needed; ' +
+      'that basename is retired rather than reused because `/images/**` ' +
+      'answers `immutable` (see public/.htaccess), exactly as `hero-home` was ' +
+      'retired for `hero-home-v2`. Deliberate departure from ' +
+      '`mockup/index.html`, which uses an architectural shot here.',
   },
   {
     name: 'hero-expertise',
