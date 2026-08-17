@@ -12,6 +12,75 @@ prompt per branch/PR — and the entries below summarise each phase under the
 
 The format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.14.0] — 2026-08-17 — Home hero: the handshake as a full-bleed background
+
+`[2.13.0]` bought the right 55% of the frame at full strength by shrinking the
+frame: `object-fit: contain` in a right-anchored box whose width was solved so
+the copy always ended left of where the overlay let go. It kept every pixel of
+the photograph on the page, but the cost was section white around it — on a
+desktop viewport the frame read as a panel held in the corner rather than as
+the hero's background. This reverses that trade: **the photograph fills the
+section, edge to edge, on every device.**
+
+`.bgPicture` and `.scrim` are now plain `inset: 0` boxes — the same rectangle as
+the section — and `.bg` is `object-fit: cover`. The `--band` / `--frame-foot` /
+`--frame-max` / `--lede-edge` geometry that sized the panel is gone, along with
+the sub-920px banner and the `padding-top` that reserved room for it; `.inner`
+is back to the mockup's `clamp(140px, 18vh, 190px)` at every width.
+
+`object-position: 63% 50%` is the one number carrying the composition, and it is
+measured, not chosen: the joined hands span 43.5–83% of the file and the skin
+centroid sits at 62% × 55%. Setting x to the subject's own fraction is what pins
+the clasp at 63% of the hero on the narrow viewports, where `cover` is steeply
+height-limited (at 390px the photo is drawn 1584px wide into a 390px box) and
+any other value slides the hands off-frame entirely.
+
+### Changed
+
+- **One white overlay, two regimes, no mask.** From 920px up the fade alone
+  carries legibility: 0.97 at the left edge, 0.95 at 30%, holding 0.90 across
+  the copy to `--copy-edge` (`calc(50vw + 291px)`, fitted through the measured
+  right edge of the widest glyph run), then plunging to 0.10 within 8% of the
+  hero and to nothing 8% after that. Below the breakpoint the copy spans the
+  frame, so a vertical veil joins it — clear to 19% of the hero, 0.74 by 27%,
+  held to the foot — and the clear band is the top of the section rather than
+  the right of it.
+
+- **The watermark loses its second `top`.** `.float` keeps the mockup's
+  `top: 110px` at every width now that there is no banner to drop clear of;
+  only the opacity still splits at 920px (0.06 → 0.04).
+
+### Verified
+
+Worst-**pixel** contrast over the real composite (conservative: the darkest
+pixel anywhere under a glyph's box, not just under its strokes), and photo
+presence — the share of the photo's own pixel that survives the overlay —
+averaged across the clasp:
+
+|          | limited by | ink   | accent | lede | pillar № | presence |
+| -------- | ---------- | ----- | ------ | ---- | -------- | -------- |
+| 320px    | height     | 17.19 | 3.82   | 6.76 | 5.24     | 10%      |
+| 390px    | height     | 16.87 | 3.36   | 5.96 | 4.65     | 10%      |
+| 768px    | height     | 16.70 | 3.41   | 7.26 | 4.50     | 12%      |
+| 919px    | height     | 16.52 | 3.43   | 7.37 | 4.46     | 12%      |
+| 920px    | height     | 17.28 | 3.67   | 7.77 | 4.71     | 22%      |
+| 1024px   | height     | 17.26 | 3.78   | 7.68 | 4.80     | 24%      |
+| 1440px   | height     | 17.08 | 3.73   | 7.77 | 4.27     | 31%      |
+| 1920px   | width      | 17.07 | 3.69   | 7.65 | 4.08     | 38%      |
+
+The red accent on "impact" is the binding case at every width, as it has been
+through every revision of this hero, and it clears AA large-text's 3:1 with
+0.36–0.82 in hand. 919px and 920px are both listed because they exercise
+different scrim stacks; both are readable, which is why the two-layer stack is
+the base rule and the desktop one is the `min-width` override — a viewport at a
+fractional CSS width satisfies neither query and has to land on the safe one.
+
+Presence behind the copy is the honest cost of a full-bleed backdrop: the clasp
+sits at 63% of the hero and `--copy-edge` runs 65–78%, so the subject is partly
+under the shelf and reads at full strength only right of the plunge. That is
+the trade `[2.13.0]` refused and this release accepts — it is what "fills the
+section" means with this frame and this headline.
+
 ## [2.13.0] — 2026-08-17 — Home hero: a new frame, and the right 55% of it clear
 
 A new client photograph for the hero — a close-framed handshake against a
