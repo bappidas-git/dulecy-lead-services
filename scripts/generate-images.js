@@ -44,20 +44,18 @@ const PHOTOS = [
   {
     name: 'hero-home-v5',
     url: 'https://res.cloudinary.com/dzokcuzo/image/upload/v1786946741/3.png',
-    // The client master, 3840x2160 (16:9), shipped **whole**. No `crop` — the
-    // hero draws it `object-fit: contain`, so every pixel of the frame is on
-    // the page at every viewport.
+    // The client master, 3840x2160 (16:9), shipped **whole**. No `crop`: the
+    // hero draws it `object-fit: cover` into a box that fills the section, and
+    // the crop it needs is decided per viewport at render time, not baked in.
     //
-    // A different photograph AND a different shape from `hero-home-v4`, and
-    // the shape is what drove the hero's geometry to be rewritten around it.
-    // v4 was 2.63:1, so `contain` in a desktop hero was always WIDTH-limited:
-    // a short band that had to be bottom-anchored to stay off the copy. 16:9
-    // is very close to the hero box's own ratio, so `contain` is HEIGHT-limited
-    // from ~1080px up and the frame nearly fills the section. That is why the
-    // scrim is now keyed to the drawn frame (via `aspect-ratio` on a real
-    // wrapper box) rather than to the hero, and why the frame is right-anchored
-    // — see the annotated `.bgPicture` / `.bg` / `.scrim` blocks in
-    // HeroSection.module.css.
+    // The composition is what the hero's geometry is written around, so the
+    // two numbers worth recording here: the joined hands span 43.5-83% of the
+    // file's width and the skin centroid sits at 62% x 55%. `object-position:
+    // 63% 50%` is that x-fraction, and setting it to the subject's own
+    // fraction is what PINS the clasp at 63% of the hero on every narrow
+    // viewport instead of letting it drift off-frame. Re-cutting the file
+    // moves the subject on the page; re-tuning that number does not. See the
+    // annotated `.bg` block in HeroSection.module.css.
     //
     // 2880 rather than the global 1920, still one width. It covers the widest
     // draw (a 1920px viewport at 1.5x DPR reaches ~2100 device px) and any
@@ -65,11 +63,12 @@ const PHOTOS = [
     widths: [2880],
     note:
       'Home hero backdrop — a close-framed handshake between two people in ' +
-      'dark suits, shot against a blown-out white window. The WHOLE frame at ' +
-      'every width: `object-fit: contain`, sitting above the copy as a clear ' +
-      'banner below 920px and behind it — right-anchored, under a ' +
-      'left-to-right white fade that is gone by 45% across the frame — from ' +
-      '920px up. See HeroSection.module.css. Supersedes `hero-home-v4`, the ' +
+      'dark suits, shot against a blown-out white window. Fills the section ' +
+      'edge to edge at every width (`object-fit: cover`), under a white ' +
+      'overlay that runs left to right so the copy reads on paper and the ' +
+      'clasp on clear photo — that fade alone from 920px up, joined by a ' +
+      'vertical veil below it, where the copy spans the frame. See ' +
+      'HeroSection.module.css. Supersedes `hero-home-v4`, the ' +
       '5000x1900 forearm-level frame; that basename is retired rather than ' +
       'reused because `/images/**` answers `immutable` (see public/.htaccess), ' +
       'exactly as `hero-home` was retired for `hero-home-v2`. Deliberate ' +

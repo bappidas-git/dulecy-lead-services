@@ -1,23 +1,24 @@
 /* ============================================
    Home / Hero — ported 1:1 from `mockup/index.html`
    --------------------------------------------
-   A whole-frame photographic backdrop, a floating Dulcey "DLS" mark, then the
+   A full-bleed photographic backdrop, a floating Dulcey "DLS" mark, then the
    badge → headline → lede → CTAs → four pillars, all staggered in on load by
    `useHeroIntro` (the mockup's `data-hero` elements, marked with the same
    attribute here).
 
    The backdrop photo is a deliberate departure from `mockup/index.html`,
    which uses an architectural shot here: it is a close-framed handshake
-   against a blown-out white window. It is drawn `object-fit: contain`, so
-   **the entire frame is on the page at every viewport** — nothing is ever
-   cropped away. Below 920px it sits as a clear banner between the header and
-   the copy; from 920px up it is right-anchored beside the copy — its foot just
-   above the pillars rule, its width solved so that the copy always ends left of
-   where the overlay lets go — under a white overlay that fades out from left to
-   right and is gone by 45% across the frame. So the right 55% of the
-   photograph, the clasp included, reads at full strength at every viewport.
-   The scrim alphas depart from the mockup for the same reason. See the
-   annotated `.bgPicture` / `.bg` / `.scrim` blocks in the stylesheet.
+   against a blown-out white window. It is drawn `object-fit: cover` into a box
+   that fills the section, so **the photograph covers the hero edge to edge at
+   every viewport** — one background image, no breakpoint that turns it into a
+   panel or a band. Over it sits a white overlay that runs left to right, so
+   the copy reads on paper and the clasp on clear photo: from 920px up that
+   fade alone carries it, holding at 0.90+ across the copy and letting go
+   within 8% of the hero after the glyphs end; below the breakpoint the copy
+   spans the frame, so a vertical veil joins it and the clear band is the top
+   of the section instead of the right of it. The scrim alphas depart from the
+   mockup for the same reason. See the annotated `.bgPicture` / `.bg` /
+   `.scrim` blocks in the stylesheet.
    ============================================ */
 
 import React from 'react';
@@ -62,17 +63,17 @@ const HeroSection = () => {
   return (
     <section className={styles.hero}>
       {/* The <picture> is no longer a bare format-negotiation wrapper — it is
-          the positioned box that the frame is drawn into, and `.scrim` is laid
-          over the identical box so the fade's percentages are measured across
-          the PHOTOGRAPH rather than across the section. The two share one
-          geometry rule in the stylesheet; keep them grouped.
+          the positioned box the photo is drawn into, and `.scrim` is laid over
+          the identical box, so the two are the same rectangle as the section
+          and the fade's stops are section percentages. They share one geometry
+          rule in the stylesheet; keep them grouped.
 
           No `useParallax` here, unlike the Expertise and Who We Serve heroes.
-          Scrub parallax needs the photo drawn larger than its box so the
-          travel never exposes an edge, and "larger than its box" is exactly
-          what `contain` exists to prevent: any vertical travel would push the
-          frame's top or foot past `overflow: hidden` and crop the thing this
-          section is here to show whole. The backdrop is static on purpose. */}
+          Scrub parallax needs the photo drawn taller than its box so the
+          travel never exposes an edge, and on this frame every extra percent
+          of that is a percent more of a close-framed clasp cropped away for
+          motion nobody asked the hero for. The backdrop is static on
+          purpose. */}
       <picture className={styles.bgPicture}>
         <source type="image/webp" srcSet={HERO_BG_WEBP} />
         <img

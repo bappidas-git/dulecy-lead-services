@@ -95,15 +95,12 @@ with no dead margin to compensate for; keep that true of any re-cut. Reuse
 `MARK_SIZE` for the `width`/`height` attributes. Its one surface is the Home
 hero watermark, and it is **not** interchangeable with the "D" monogram it
 replaced: the mockup's `26vw / 380px` ramp widens to `30vw / 430px` for the
-1.87:1 aspect, and both the opacity **and the `top`** split at the **same 920px
-breakpoint the backdrop already switches on** — `0.07` below (small mark on
-plain white behind the copy, where less vanishes) and `0.04` above (2.3× wider,
-where `0.07` reads as a second headline). Below the breakpoint the mark also
-drops clear of the photo banner (`top: calc(72px + var(--band) + 46px)`): a
-0.07 watermark laid over a photograph is noise, not a mark. From 920px up it
-keeps the mockup's `top: 110px`, which the bottom-anchored frame leaves on
-white at most widths and grazes on the widest; `0.04` over a photograph reads
-as a faint sheen either way. See the annotated `.float` block in
+1.87:1 aspect, and the **opacity** splits at the **same 920px breakpoint the
+scrim already switches on** — `0.06` below (small mark, where less vanishes)
+and `0.04` above (2.3× wider, where the lower value keeps it from reading as a
+second headline). The `top` stays the mockup's `110px` at every width: the
+backdrop is full-bleed, so there is no banner for the mark to drop clear of and
+nothing to key a second value to. See the annotated `.float` block in
 `HeroSection.module.css`. The `-860` suffix is the width and `/images/**` is
 immutable, so re-cutting it means a new filename and a matching `MARK_SIZE`
 bump.
