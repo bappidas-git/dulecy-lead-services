@@ -189,9 +189,11 @@
     <!-- =========================================
          LCP image preload — home route only
          --------------------------------------------
-         The home hero backdrop is the largest above-the-fold asset and is
-         rendered by React, so without a preload it is not discovered until
-         the main bundle has parsed.
+         The home hero backdrop is the largest above-the-fold asset and is a
+         CSS `background-image` inside a React-rendered section, so without a
+         preload it is not discovered until the main bundle has parsed AND its
+         stylesheet has been applied. That makes this preload load-bearing
+         rather than an optimisation.
 
          This is a SPA: index.html is served for every route, so a static
          <link rel="preload"> here would also download the home hero on
@@ -201,16 +203,13 @@
          Runs synchronously in <head>, so discovery still happens long
          before the bundle executes.
 
-         The hero ships one width and no `sizes` (a full-bleed `cover`
-         backdrop is scaled by the section's height, so a viewport-keyed
-         `sizes` would describe the wrong quantity — see HeroSection.jsx), so
-         this preloads the WebP directly. `type` is what keeps that honest:
-         a browser that cannot decode image/webp skips the preload rather
-         than wasting it, and picks up the JPEG fallback from the <picture>
-         when the bundle mounts.
+         The hero ships one width, so this preloads the WebP directly. `type`
+         is what keeps that honest: a browser that cannot decode image/webp
+         skips the preload rather than wasting it, and picks up the JPEG
+         fallback from the `image-set()` when the stylesheet applies.
 
-         Keep the href in sync with HERO_BG_WEBP in
-         src/pages/Home/sections/HeroSection.jsx.
+         Keep the href in sync with the `.bg` rule's `image-set()` in
+         src/pages/Home/sections/HeroSection.module.css.
          ========================================= -->
     <script>
       (function () {
@@ -219,7 +218,7 @@
         link.rel = "preload";
         link.as = "image";
         link.type = "image/webp";
-        link.href = "/images/hero-home-v5-2880.webp";
+        link.href = "/images/hero-home-v6-2880.webp";
         link.setAttribute("fetchpriority", "high");
         document.head.appendChild(link);
       })();
