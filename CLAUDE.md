@@ -74,7 +74,7 @@ attributes rather than retyping the numbers, and keep `max-width: 100%` +
 > `public, max-age=31536000, immutable` (see `public/.htaccess`), so overwriting
 > a logo in place leaves every returning visitor on the previous render for a
 > year. The `-1351` suffix is the width, matching the convention the rest of
-> `/images/**` already uses (`hero-home-v5-2880.webp`). Bump it — and update
+> `/images/**` already uses (`hero-home-v6-2880.webp`). Bump it — and update
 > `LOGO_SIZE`, `LOGO_FILE` in `scripts/generate-og.js`, and the two absolute
 > JSON-LD `logo` URLs in `public/index.html` — in the same pass.
 

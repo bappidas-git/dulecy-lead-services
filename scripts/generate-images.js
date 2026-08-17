@@ -42,35 +42,47 @@ const ICONS_DIR = path.join(IMAGES_DIR, 'icons');
  *  `widths` overrides the global `WIDTHS` ladder for that one photo. */
 const PHOTOS = [
   {
-    name: 'hero-home-v5',
-    url: 'https://res.cloudinary.com/dzokcuzo/image/upload/v1786946741/3.png',
-    // The client master, 3840x2160 (16:9), shipped **whole**. No `crop`: the
-    // hero draws it `object-fit: cover` into a box that fills the section, and
-    // the crop it needs is decided per viewport at render time, not baked in.
+    name: 'hero-home-v6',
+    url: 'https://res.cloudinary.com/dzokcuzo/image/upload/v1786720393/iStock-1224717790.jpg',
+    // The client master, 5000x1900 (2.63:1), shipped **whole**. No `crop`: the
+    // hero draws it as a `background-size: cover` layer in a box that fills the
+    // section, and the crop it needs is decided per viewport at render time,
+    // not baked in.
     //
-    // The composition is what the hero's geometry is written around, so the
-    // two numbers worth recording here: the joined hands span 43.5-83% of the
-    // file's width and the skin centroid sits at 62% x 55%. `object-position:
-    // 63% 50%` is that x-fraction, and setting it to the subject's own
-    // fraction is what PINS the clasp at 63% of the hero on every narrow
-    // viewport instead of letting it drift off-frame. Re-cutting the file
-    // moves the subject on the page; re-tuning that number does not. See the
-    // annotated `.bg` block in HeroSection.module.css.
+    // The composition is what the hero's geometry is written around, measured
+    // off the file itself (skin-tone mask, 500x190 sample):
+    //
+    //   0-16%    blown-out white window (mean luminance 0.98)
+    //   18-54%   the near person's dark suit shoulder and sleeve (0.23-0.40)
+    //   55-81%   the joined hands, skin centroid at 67.8% x 55.2%
+    //   82-100%  the far person's dark sleeve entering from the right
+    //
+    // `background-position: 68% 50%` is that x-fraction. The frame is WIDER
+    // than any box the hero draws it into (the section runs ~0.4:1 on a phone
+    // to ~2.4:1 on a desktop, all below 2.63:1), so `cover` is height-limited
+    // at every real viewport and x is the only thing deciding what survives —
+    // setting it to the subject's own fraction is what PINS the clasp at 68% of
+    // the hero, immediately right of the red accent word "impact", instead of
+    // letting it drift off-frame. Re-cutting the file moves the subject on the
+    // page; re-tuning that number does not. See the annotated `.bg` block in
+    // HeroSection.module.css.
     //
     // 2880 rather than the global 1920, still one width. It covers the widest
-    // draw (a 1920px viewport at 1.5x DPR reaches ~2100 device px) and any
-    // phone at 3x, and the photo's shallow depth of field keeps it at ~56 KB.
+    // draw (the frame is drawn ~2100 CSS px wide into a 1920px desktop hero)
+    // and the photo's shallow depth of field keeps it small — 2.63:1 means the
+    // 2880w variant is only 1094px tall.
     widths: [2880],
     note:
-      'Home hero backdrop — a close-framed handshake between two people in ' +
-      'dark suits, shot against a blown-out white window. Fills the section ' +
-      'edge to edge at every width (`object-fit: cover`), under a white ' +
-      'overlay that runs left to right so the copy reads on paper and the ' +
-      'clasp on clear photo — that fade alone from 920px up, joined by a ' +
-      'vertical veil below it, where the copy spans the frame. See ' +
-      'HeroSection.module.css. Supersedes `hero-home-v4`, the ' +
-      '5000x1900 forearm-level frame; that basename is retired rather than ' +
-      'reused because `/images/**` answers `immutable` (see public/.htaccess), ' +
+      'Home hero backdrop — two people shaking hands, framed at forearm level ' +
+      'so neither head is in shot, against a blown-out white window. Fills the ' +
+      'section edge to edge at every width as a CSS `background-image` on a ' +
+      '`background-size: cover` box (not a <picture>), under a white overlay ' +
+      'that runs left to right so the copy reads on paper and the clasp on ' +
+      'clear photo — thin enough across the copy that the photograph still ' +
+      'reads through it. See HeroSection.module.css. Restores the 5000x1900 ' +
+      'master that shipped as `hero-home-v4` and supersedes `hero-home-v5`, ' +
+      'the 3840x2160 frame; that basename is retired rather than reused ' +
+      'because `/images/**` answers `immutable` (see public/.htaccess), ' +
       'exactly as `hero-home` was retired for `hero-home-v2`. Deliberate ' +
       'departure from `mockup/index.html`, which uses an architectural shot ' +
       'here.',

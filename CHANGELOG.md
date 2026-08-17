@@ -12,6 +12,100 @@ prompt per branch/PR — and the entries below summarise each phase under the
 
 The format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.15.0] — 2026-08-17 — Home hero: a background image, not a picture
+
+Three things asked for at once, all about the same section: put **this** frame
+back (`iStock-1224717790.jpg`, the 5000×1900 forearm-level handshake that
+shipped as `hero-home-v4`), draw it as a **CSS background image** rather than a
+`<picture>` in the markup, and keep the left-to-right white overlay but thin
+enough that **the photograph still reads through it** — with the clasp landing
+next to the red accent word "impact", on every device.
+
+### Changed
+
+- **`hero-home-v6` replaces `hero-home-v5`.** One 2880w WebP (39 KB) plus a
+  77 KB JPEG fallback, uncropped from the 5000×1900 master. New basename, not a
+  same-name swap and not a revival of `hero-home-v4`: `/images/**` answers
+  `immutable` for a year, so either would leave returning visitors on whichever
+  bytes they already hold.
+
+- **The `<picture>`/`<img>` pair is gone.** `.bg` is an empty `aria-hidden`
+  `<div>` carrying `background-image` / `background-size: cover` /
+  `background-position`, and the WebP-or-JPEG choice moves into `image-set()`
+  with a bare `url()` declaration above it as the pre-`type()` fallback. The
+  `HERO_BG` / `HERO_BG_WEBP` constants are retired — the file names now live in
+  the stylesheet and in the `public/index.html` preload, which is the pair that
+  has to stay in sync. That preload also stops being an optimisation: a
+  background image is discovered after the CSSOM, so on the home route it is
+  what keeps the LCP asset from waiting on the bundle.
+
+- **`background-position: 68% 50%`, and x is the only number doing work.** The
+  frame is 2.63:1 and the section runs ~0.4:1 (phone) to ~2.4:1 (desktop), so
+  `cover` is height-limited at *every* real viewport — there is no width-limited
+  desktop regime any more, and the vertical 50% is declared only for the
+  ultra-wide-and-short case past 2.63:1. 68% is measured, not chosen: the joined
+  hands span 55–81% of the file and the skin centroid sits at 67.8% × 55.2%.
+  A percentage `background-position` aligns that fraction of the image with the
+  same fraction of the box, so the clasp is pinned at 68% of the hero at every
+  width — beginning under "impact" and running right — however steep the crop
+  gets (at 375px, 80% of the frame is cut away).
+
+- **The desktop overlay is thinner across the copy.** From 920px up the shelf
+  holds 0.94 → 0.91 → 0.86 to `--copy-edge` instead of 0.97 → 0.95 → 0.90, then
+  plunges as before (0.10 within 8% of the hero, gone 8% after). Measured on this
+  frame at a fixed `--copy-edge`, that raises the share of the photograph
+  surviving *under the shelf* from 6.1% to 9.8% at 1440px and 5.9% to 9.7% at
+  1920px — a little over 1.6×, and the difference between a tint and a visible
+  photograph.
+
+  The sub-920px vertical veil stays at **0.74**, deliberately. It was tried at
+  0.72 and put back: the red accent's worst pixel in the whole section is on a
+  phone, not a desktop, and 0.72 takes 390px from 3.31:1 to 3.25:1 for 0.3% more
+  presence. Only the layer with margin to spare gave any up.
+
+- **`--copy-edge` moves from `calc(50vw + 291px)` to `calc(50vw + 320px)`**, and
+  the reason is a detail the old fit missed: it was fitted through the widest
+  *glyph run*, but the pillars row is a four-column flex that runs wider than the
+  headline, so once the container hits its 1280px cap the fourth pillar's number
+  — 14px `--red`, the least forgiving colour in the section — ends 19px *past*
+  the old edge, inside the plunge. It measured 3.54:1 there. Clearing it by 10px
+  brings it to 4.16:1 for about 2 points of photo presence.
+
+### Verified
+
+Worst-**pixel** contrast over the real composite — the photograph resampled
+through `cover` at the measured hero box, under the two gradients exactly as the
+browser resolves them, sampled at the darkest pixel anywhere inside a glyph run's
+client rect rather than just under its strokes. Presence is the share of the
+photograph's own pixel that survives the overlay, averaged across the clasp:
+
+|        | limited by | ink   | accent | lede | pillar № | pillar label | presence |
+| ------ | ---------- | ----- | ------ | ---- | -------- | ------------ | -------- |
+| 320px  | height     | 16.36 | 4.16   | 6.64 | 5.24     | 16.49        | 15%      |
+| 390px  | height     | 16.62 | 3.31   | 6.81 | 5.07     | 17.45        | 15%      |
+| 768px  | height     | 16.75 | 3.36   | 6.97 | 4.27     | 16.14        | 20%      |
+| 919px  | height     | 16.48 | 3.37   | 7.09 | 4.30     | 16.19        | 22%      |
+| 920px  | height     | 15.89 | 3.46   | 7.14 | 4.34     | 16.62        | 24%      |
+| 1024px | height     | 15.74 | 3.46   | 7.19 | 4.50     | 16.05        | 29%      |
+| 1440px | height     | 15.73 | 3.44   | 7.08 | 4.48     | 10.53        | 39%      |
+| 1920px | height     | 15.63 | 3.47   | 7.13 | 4.16     | 7.23         | 47%      |
+
+The red accent on "impact" is the binding case at every width, as it has been
+through every revision of this hero, and it clears AA large-text's 3:1 with
+0.31–1.16 in hand — its floor (3.31:1, at 390px) is unchanged from `[2.14.0]`'s
+3.36:1 within measurement noise, because the layer that protects it did not move.
+`--red` on the pillar numbers is the next tightest and is capped by the colour
+itself: #D5192E tops out at 5.24:1 even on pure white, so 4.16:1 is 79% of the
+best that combination can do anywhere on the site.
+
+"Limited by" is height at every listed viewport, which is the point of the frame
+being 2.63:1 — `cover` never crops it vertically, so `background-position`'s y
+is inert and x alone decides the composition. 919px and 920px are both listed
+because they exercise different scrim stacks; both are readable, which is why the
+two-layer stack is the base rule and the desktop one is the `min-width` override
+— a viewport at a fractional CSS width satisfies neither query and has to land
+on the safe one.
+
 ## [2.14.0] — 2026-08-17 — Home hero: the handshake as a full-bleed background
 
 `[2.13.0]` bought the right 55% of the frame at full strength by shrinking the
