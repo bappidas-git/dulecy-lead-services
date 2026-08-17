@@ -8,19 +8,24 @@
 
    The backdrop photo is a deliberate departure from `mockup/index.html`,
    which uses an architectural shot here: it is a handshake framed at forearm
-   level against a blown-out white window. It is a real CSS **background
-   image** — `background-size: cover` on a box that fills the section, not a
-   `<picture>` — so **the photograph covers the hero edge to edge at every
-   viewport**, with no breakpoint that turns it into a panel or a band, and
-   `background-position: 68% 50%` pins the clasp at 68% of the hero, just right
-   of the red accent word "impact". Over it sits a white overlay that runs left
-   to right, thin enough across the copy that the photograph still reads
-   through it: from 920px up that fade alone carries legibility, holding
-   0.94 → 0.86 across the copy and letting go within 8% of the hero after the
-   glyphs end; below the breakpoint the copy spans the frame, so a vertical
-   veil joins it and the clear band is the top of the section instead of the
-   right of it. The scrim alphas depart from the mockup for the same reason.
-   See the annotated `.bg` / `.scrim` blocks in the stylesheet.
+   level against a blown-out white window. **The whole frame is shown at every
+   viewport** — it is drawn CONTAINED rather than cropped, centred in a box that
+   fills the section, so no part of the photograph is ever cut off on any
+   device. Its own edges are feathered to nothing so it dissolves into the page
+   instead of ending on a line, and the white left over around it is simply the
+   page: same white, no seam.
+
+   Over it sits a white overlay that runs left to right, thin enough across the
+   copy that the photograph reads as a photograph: from 920px up that fade alone
+   carries legibility, holding 0.88 → 0.82 across the copy and letting go within
+   8% of the hero after the glyphs end — which lands just past the clasp, since a
+   contained frame spans the hero's full width and so still puts the clasp at 68%
+   of it, right of the red accent word "impact". Below the breakpoint the copy
+   spans the frame, so a vertical veil joins the fade — thinned from 0.74 to
+   0.60, with the fade under it reshaped into the same shelf-and-plunge. The
+   overlay departs from the mockup's alphas, and is thinner than the cropped
+   release that preceded this one. See the annotated `.bgWrap` / `.bg` /
+   `.scrim` blocks in the stylesheet.
    ============================================ */
 
 import React from 'react';
@@ -41,33 +46,31 @@ import styles from './HeroSection.module.css';
 // back again — but under a third basename for that same caching reason, not
 // revived under the old one.
 //
-// One width, and no `sizes`: the frame is only ever drawn as wide as the
-// section is tall (`cover` is height-limited on a 2.63:1 photo at every real
-// viewport), which peaks around 2100 CSS px, and the shallow depth of field
-// keeps 2880w at 39 KB.
+// One width, and no `sizes`: contained, the frame is never drawn wider than the
+// section itself, so 2880w covers a 1440px viewport at 2x and the shallow depth
+// of field keeps it at 39 KB.
 //
-// **The WebP is the only variant the hero paints, and it is painted from here
-// rather than from HeroSection.module.css.** Both halves of that are forced:
-//
-//   - From here, because css-loader turns any `/images/**` URL it finds in a
-//     stylesheet into a `require()` against the project root and fails the
-//     build — these files are served from `public/`, not bundled. The
-//     annotated `.bg` block in the stylesheet records the four dodges that do
-//     not work.
-//   - WebP only, because one inline style is one declaration, so there is no
-//     cascade to hold a JPEG fallback under an `image-set()`. That costs less
-//     than it sounds: `url()` on a WebP is supported back to Safari 14 and
-//     Chrome 32, a WIDER floor than `image-set()` with `type()` (Safari 17,
-//     Chrome 113) would have given. Older engines than that get no backdrop,
-//     which the section survives intact — the box is decorative and
-//     `aria-hidden`, the overlay above it is white, and every glyph in the
-//     hero is specified against white first.
+// **The WebP is the only variant the hero paints.** There is no `<picture>` and
+// no `image-set()` fallback, which costs less than it sounds: an `<img src>` on
+// a WebP is supported back to Safari 14 and Chrome 32, a WIDER floor than
+// `image-set()` with `type()` (Safari 17, Chrome 113) would have given. Older
+// engines than that get no backdrop, which the section survives intact — the
+// image is decorative and `aria-hidden`, the overlay above it is white, and
+// every glyph in the hero is specified against white first.
 //
 // `public/images/hero-home-v6.jpg` is still emitted next to it — every photo in
 // `generate-images` gets a universal JPEG fallback — and is simply not
-// referenced from anywhere; it is the file a `<picture>` here would need if this
-// ever went back to one.
-const HERO_BG_WEBP = '/images/hero-home-v6-2880.webp';
+// referenced from anywhere; it is the file a `<picture>` here would need.
+//
+// `HERO_BG` is the third place this filename lives, after `generate-images` and
+// the LCP preload in `public/index.html`; keep it in sync with the preload.
+const HERO_BG = '/images/hero-home-v6-2880.webp';
+
+// The intrinsic size of that file. Passed through as the `width`/`height`
+// attributes so the box has an aspect ratio before the bytes land; the
+// stylesheet then fits it with `max-width`/`max-height` and leaves both
+// dimensions `auto`, which is what resolves it to the contain box.
+const HERO_BG_SIZE = { width: 2880, height: 1094 };
 
 const PILLARS = [
   { num: '01', label: 'Business Solutions' },
@@ -82,33 +85,39 @@ const HeroSection = () => {
 
   return (
     <section className={styles.hero}>
-      {/* The backdrop and the overlay: two empty boxes, both `inset: 0`, so
-          they are the same rectangle as the section and the fade's stops are
-          section percentages. They share one geometry rule in the stylesheet;
-          keep them grouped.
+      {/* The backdrop and the overlay: two boxes, both `inset: 0`, so they are
+          the same rectangle as the section and the fade's stops are section
+          percentages. They share one geometry rule in the stylesheet; keep them
+          grouped.
 
-          The photograph is a CSS `background-image` on `.bg` rather than a
-          `<picture>`/`<img>` pair — which is why there is no `alt`, no
-          intrinsic `width`/`height` and no `fetchpriority` here. The URL is
-          inline because it cannot go in the stylesheet (see `HERO_BG_WEBP`
-          above); the crop, the size and the position all do. The third place
-          the file name appears is the LCP preload in `public/index.html`, which
-          must be kept in sync with `HERO_BG_WEBP` — and which stops being a
-          mere optimisation now: a background image is discovered only once the
-          CSSOM exists, so on the home route that preload is what keeps the
-          largest above-the-fold asset from queueing behind the bundle.
+          The photograph is a real `<img>` centred in the first box, not a CSS
+          background, and that is what makes "the whole frame, uncropped" work:
+          at `max-width`/`max-height: 100%` with both dimensions `auto` the
+          element resolves to exactly the contain box, so it IS the drawn photo
+          and the stylesheet's edge feather can be expressed in percentages of
+          the image itself. A background would keep the element at full section
+          size with the letterbox baked in, and the feather would have nothing
+          fixed to aim at. Being an `<img>` also earns `fetchpriority="high"`,
+          which a background cannot carry.
+
+          It stays decorative: empty `alt` plus `aria-hidden`, since the hero's
+          meaning is entirely in the copy beside it.
 
           No `useParallax` here, unlike the Expertise and Who We Serve heroes.
-          Scrub parallax needs the photo drawn taller than its box so the
-          travel never exposes an edge, and on this frame every extra percent
-          of that is a percent more of a close-framed clasp cropped away for
-          motion nobody asked the hero for. The backdrop is static on
-          purpose. */}
-      <div
-        className={styles.bg}
-        style={{ backgroundImage: `url('${HERO_BG_WEBP}')` }}
-        aria-hidden="true"
-      />
+          Scrub parallax needs the photo drawn larger than its box so the travel
+          never exposes an edge — the opposite of showing the whole frame. The
+          backdrop is static on purpose. */}
+      <div className={styles.bgWrap} aria-hidden="true">
+        <img
+          className={styles.bg}
+          src={HERO_BG}
+          alt=""
+          width={HERO_BG_SIZE.width}
+          height={HERO_BG_SIZE.height}
+          fetchpriority="high"
+          decoding="async"
+        />
+      </div>
       <div className={styles.scrim} aria-hidden="true" />
 
       <div ref={heroRef} className={`${layout.container} ${styles.inner}`}>

@@ -36,75 +36,125 @@
 }
 
 /* ============================================
-   THE BACKDROP BOX — `.bg` and `.scrim` share it
+   THE BACKDROP BOX — `.bgWrap` and `.scrim` share it
    --------------------------------------------
    Both fill the section, at every width, with no breakpoint between them. The
-   photograph is a real CSS **background image** here, not a framed `<picture>`
-   panel: it covers the hero edge to edge, and the fade's percentages are
-   percentages of the section, which is what makes one set of stops describe
-   every viewport.
+   overlay's percentages are therefore percentages of the section, which is what
+   makes one set of stops describe every viewport.
 
-   The two are separate elements rather than two `background` layers on one, so
-   that the responsive override below can restate the overlay with the
-   `background` shorthand without also having to restate the photo's URL,
-   position and size alongside it.
+   The two are separate elements rather than layers on one, so that the
+   responsive override below can restate the overlay with the `background`
+   shorthand without having to restate anything about the photograph.
    ============================================ */
-.bg,
+.bgWrap,
 .scrim {
   position: absolute;
   inset: 0;
   pointer-events: none;
 }
 
-/* `cover`, and — unlike the Expertise and Who We Serve heroes — with the whole
-   negotiation living in one place, because on this frame it only ever resolves
-   one way. The photograph is 2.63:1 and the section runs from about 0.4:1 at
-   320px to about 2.4:1 at 1920px, so the box is NARROWER than the frame at
-   every real viewport: `cover` scales the photo to the section's full height
-   and crops it horizontally, always. There is no second regime to write a
-   breakpoint for, and the vertical 50% never gets to do anything — it is
-   declared only for the ultra-wide-and-short case (past ~2.63:1, e.g. 2560px
-   against a 970px hero) where the axes would flip and an even trim is right.
+/* The photograph is CONTAINED, not cropped: the whole 2.63:1 frame is on the
+   page at every viewport, which is the one thing this layer exists to
+   guarantee. That is a deliberate reversal of the `cover` crop this hero used
+   before, where the section is narrower than the frame at every real viewport
+   (about 0.4:1 at 320px, about 2.4:1 at 1920px) so `cover` threw away 80% of
+   the file on a phone and slid most of the composition off-screen.
 
-   So x is the only number carrying the composition, and it is measured off the
-   file, not chosen: the joined hands span 55-81% of its width and the skin
-   centroid sits at 67.8%. A percentage `background-position` aligns that same
-   fraction of the image with that fraction of the box, so 68% PINS the clasp at
-   68% of the hero — just right of where the red accent word "impact" ends — at
-   every width, however steep the crop gets. And it gets steep: at 375px the
-   photo is drawn about 1840px wide into a 375px box, so 80% of the frame is cut
-   away and any other value slides the hands off-screen entirely (50% would show
-   the dark suit shoulder; 100% the far sleeve).
+   `contain` is expressed as an `<img>` inside a flex-centred box rather than as
+   `background-size: contain`, and that is load-bearing rather than a
+   preference. A background is painted INSIDE its element, so the element box
+   stays the whole section and the letterboxed strips are part of it — there is
+   no way to aim a percentage-based mask at the photo's own edges, because the
+   photo's edges move with the viewport. An `<img>` at `max-width/max-height:
+   100%` with both dimensions `auto` resolves to exactly the contain box, so the
+   element IS the drawn photo and the feather below lands on its real edges at
+   every width. It also drops the css-loader constraint that forced the URL
+   inline (see `HERO_BG_WEBP` in the component) — an `src` is just an attribute —
+   and lets the backdrop carry `fetchpriority="high"`, which a background image
+   cannot.
 
-   Move the subject by re-cutting the file, not by re-tuning this number.
+   Centred on both axes: the frame is symmetric enough that nothing is gained by
+   biasing it, and the letterbox splits evenly instead of pooling on one side.
 
-   **`background-image` is deliberately NOT declared here — HeroSection.jsx
-   paints it inline, and that is a build constraint, not a style choice.** The
-   photo lives in `public/images/` and is served straight from the web root; it
-   is not a webpack module. But css-loader resolves root-relative URLs against
-   `resolve.roots`, which CRA leaves pointing at the project root rather than
-   `public/`, so any `/images/**` path it finds in a stylesheet compiles to a
-   `require('/images/…')` that fails the build with MODULE_NOT_FOUND. All four
-   dodges were tried in this project and all four fail: a bare
-   `background-image: url('/images/…')`, the same inside `image-set()`, the same
-   inside `-webkit-image-set()`, and a `webpackIgnore` comment (stripped by
-   CRA's postcss pipeline before css-loader reads the URL). Setting it from JSX
-   is the way this codebase already references `public/` assets from a
-   background — see `Industries/sections/SectorsSection.jsx` — and it is why the
-   two constants that name the files still live in the component.
+   No `useParallax` here, unlike the Expertise and Who We Serve heroes. Scrub
+   parallax needs the photo drawn LARGER than its box so the travel never
+   exposes an edge — the exact opposite of showing the whole frame. */
+.bgWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
 
-   Everything else about the layer belongs here, since none of it depends on
-   which file is drawn.
+/* Feathering the four edges is what makes `contain` look composed rather than
+   pasted: with the whole frame on the page there is white left over — above and
+   below it at every normal viewport (the frame is wider than the section is
+   proportionally tall, so width binds), and to the sides only in the
+   wide-and-short case past 2.63:1 where height binds instead. Both are handled
+   here, so no viewport can produce a hard seam.
 
-   No `useParallax` here, unlike the Expertise and Who We Serve heroes, so the
-   box is a plain `inset: 0` rather than their `-10% / 120%` overscan: scrub
-   parallax needs the photo drawn taller than its box so the travel never
-   exposes an edge, and every extra percent of that is a percent more of the
-   frame cropped away. The backdrop is static on purpose. */
+   The mask is the white overlay's own idea applied to the photo's border: alpha
+   ramps to nothing across the outermost band of the image, so the frame dissolves
+   into the page instead of ending on a line. The stops are percentages of the
+   IMAGE (that is the whole reason for the `<img>` above), so the feather is the
+   same fraction of the photograph at 320px and at 1920px.
+
+   Deliberately shallow — 8% horizontally, 10% vertically, with a mid-stop so the
+   ramp reads as a fade rather than a linear wipe. The brief is that the entire
+   image should be visible, and every point of feather is a point of frame handed
+   back to the page; these are the smallest bands that still hide the edge. They
+   cost little in practice: the left edge of this frame is already blown-out
+   white, the right edge is out-of-focus sleeve, and only the vertical pair
+   crosses anything with detail (the suit shoulder).
+
+   `mask-composite` intersects the two ramps so corners fade on both axes.
+   Engines without it fall back to the `add` default — a union, i.e. no visible
+   feather — and engines without masks at all draw the frame with hard edges.
+   Both degrade to exactly the previous release's presentation of a photo edge,
+   never to a missing or clipped backdrop. */
 .bg {
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: 68% 50%;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  -webkit-mask-image: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0.55) 3%,
+      rgb(0, 0, 0) 8%,
+      rgb(0, 0, 0) 92%,
+      rgba(0, 0, 0, 0.55) 97%,
+      rgba(0, 0, 0, 0) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0.55) 4%,
+      rgb(0, 0, 0) 10%,
+      rgb(0, 0, 0) 90%,
+      rgba(0, 0, 0, 0.55) 96%,
+      rgba(0, 0, 0, 0) 100%
+    );
+  mask-image: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0.55) 3%,
+      rgb(0, 0, 0) 8%,
+      rgb(0, 0, 0) 92%,
+      rgba(0, 0, 0, 0.55) 97%,
+      rgba(0, 0, 0, 0) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0.55) 4%,
+      rgb(0, 0, 0) 10%,
+      rgb(0, 0, 0) 90%,
+      rgba(0, 0, 0, 0.55) 96%,
+      rgba(0, 0, 0, 0) 100%
+    );
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
 }
 
 /* The white overlay. The backdrop contributes `1 − scrimAlpha` of each pixel,
@@ -119,6 +169,19 @@
    (emulation, fractional DPI, some zoom levels) satisfies NEITHER query, and
    the base rule has to be the one that leaves text readable.
 
+   **Both rules are thinner than the release that preceded them**, because the
+   layer under them changed: `contain` draws the frame at a fraction of the area
+   `cover` did, so alphas tuned against a full-bleed crop leave the band reading
+   as a smudge rather than as a photograph. Every stop was re-measured against
+   the real composite rather than scaled by eye — see the ratios quoted below.
+
+   "Thinner" is exact for the desktop rule, where every stop drops. Below 920px
+   it is true of the composite the two layers make together at all but one place:
+   the fade is reshaped as well as thinned, so between roughly 62% and 86% of the
+   hero the new shelf holds up to 0.02 MORE white than the old ramp did at the
+   same x. That strip is bought deliberately, and what it buys is set out
+   below.
+
    ---- Below 920px: the fade, plus a vertical veil ----
 
    Under the breakpoint the hero is one full-width column and the copy spans
@@ -128,42 +191,62 @@
    and pushing it far enough to try would just wash the photo out evenly.
 
    So the fade stays (layer 2, and it still runs left to right) and a vertical
-   veil (layer 1) does the protecting: nothing above 19% of the hero, 0.74 by
-   27%, held to the foot. 19% is the room between the fixed 68px header and the
-   top of the headline — a real band of clear photo at the top of the section,
-   which on a phone is where the crop is tightest on the clasp and the frame
-   reads best — and the veil is flat below that because the copy runs to 96% of
-   the hero, so there is no lower window to open.
+   veil (layer 1) does the protecting: nothing above 12% of the hero, 0.6 by
+   22%, held to the foot.
 
-   Behind the copy the photo is a tint, and that is the honest cost of filling
-   a 0.3:1 box with a 2.63:1 photograph — at 390px the frame is drawn 2415px
-   wide into a 380px box, so 84% of it is cut away.
+   Both of the veil's stops move with the crop. Under `cover` it opened a window
+   on the top FIFTH of the section, where the frame read best on a phone;
+   contained, the top of the section is letterbox — there is no photo up there to
+   protect OR to reveal — so the clear band is pulled up to the strip above the
+   headline and the veil is at full strength by the time the copy starts.
 
-   0.74 is carried over unchanged from the previous frame, and it is the one
-   number here that was measured and then deliberately NOT reduced. The binding
-   constraint is the red accent, whose light end (#E8293E) matches mid-tone skin
-   almost exactly, and it is binding on a PHONE rather than on a desktop: the
-   worst pixel under "impact" anywhere in the section is at 390px, where the word
-   sits at 52-83% of the hero over the knuckles. Thinning the veil to 0.72 takes
-   that from 3.31:1 to 3.25:1 and buys 0.3% more photo presence — a bad trade on
-   the only element in the hero that is close to its floor, which is why the
-   desktop shelf below absorbed this release's thinning and this layer did
-   not. */
+   The fade under it is reshaped into the same shelf-and-plunge the desktop rule
+   uses (0.9 → 0.86 held to 80%, then away to 0.06), and that reshaping is what
+   pays for 0.74 → 0.6. The two layers multiply, so an evenly-ramped fade spent
+   the veil's whole budget in the middle of the section, exactly where the
+   headline is; holding the shelf out to 80% instead spends it at the right
+   edge, where nothing but photograph is.
+
+   The binding element is the one it has always been, the red accent (#E8293E)
+   on "impact", and where it lands relative to the band is a function of the
+   hero's aspect, not of a breakpoint — which is why this has to be checked
+   across the whole sub-920 range and not on a phone:
+
+     - At 320 and 390px the hero is tall, the band lands below the headline, and
+       the accent is over bare white: 4.36:1.
+     - Between about 600 and 900px the hero is squarer, the band has grown to
+       cover the headline, and the accent sits on the darkest thing in the
+       frame: 3.36:1 at 768px and 3.35:1 at 919px, against 3.27:1 and 3.26:1
+       for the old alphas over the same contained band, and a 3:1 large-text
+       floor. Keeping the old evenly-ramped fade and simply thinning the veil
+       put those at 2.96-3.14:1 — at or under the floor at the very widths a
+       phone-only reading would never check.
+     - The lede (`--grey-2`, small text, so a 4.5:1 floor) is second: 5.07:1 at
+       390px, where the band sits directly behind it, against 5.90:1 before.
+
+   What this layer buys is a redistribution, not a windfall, and the numbers say
+   so plainly: the photograph's own pixel surviving at the hero's right edge goes
+   from 24% to 38%, while averaged across the clasp it is unchanged at 12% and
+   across the whole band it moves 8% to 9%. The accent takes the rest of the gain
+   as margin. That is the whole budget there is here — the sub-920 layout has no
+   strip of hero that the copy does not cross, so every point of white this layer
+   gives back is a point given back under a glyph. What changes the phone hero is
+   the crop, not the scrim: the frame is whole now instead of 84% cut away. */
 .scrim {
   background:
     linear-gradient(
       180deg,
       rgba(255, 255, 255, 0) 0%,
-      rgba(255, 255, 255, 0) 19%,
-      rgba(255, 255, 255, 0.74) 27%,
-      rgba(255, 255, 255, 0.74) 100%
+      rgba(255, 255, 255, 0) 12%,
+      rgba(255, 255, 255, 0.6) 22%,
+      rgba(255, 255, 255, 0.6) 100%
     ),
     linear-gradient(
       90deg,
-      rgba(255, 255, 255, 0.95) 0%,
-      rgba(255, 255, 255, 0.9) 35%,
-      rgba(255, 255, 255, 0.4) 75%,
-      rgba(255, 255, 255, 0.08) 100%
+      rgba(255, 255, 255, 0.9) 0%,
+      rgba(255, 255, 255, 0.86) 35%,
+      rgba(255, 255, 255, 0.62) 80%,
+      rgba(255, 255, 255, 0.06) 100%
     );
 }
 
@@ -176,31 +259,32 @@
    the whole rule: an even fade from the left edge to the right one crosses the
    copy at exactly the alphas that break it (a 0.94 → 0 ramp puts about 0.18
    white under the end of the headline at 1024px, where the accent reads
-   1.2:1). So the white holds across the copy, then drops to 0.10 inside the
+   1.2:1). So the white holds across the copy, then drops to 0.08 inside the
    next 8% of the hero and to nothing 8% after that.
 
    How MUCH white the shelf holds is what this release tunes, and it is tuned
-   down: 0.94 → 0.91 → 0.86, against the 0.97 → 0.95 → 0.90 the previous frame
-   needed. The brief is that the photograph should still read through the overlay
-   rather than disappear under it, and the shelf is where nearly all of the
-   photograph lives — the clasp is pinned at 68% of the hero and `--copy-edge`
-   runs 68-73%, so the subject is mostly under the shelf and only its right side
-   clears the plunge. Three points of alpha sound like nothing and are not: the
-   share of the photo's own pixel surviving *under the shelf* — which is the part
-   the brief is actually about — goes from 6.1% to 9.8% at 1440px and 5.9% to
-   9.7% at 1920px, a little over 1.6x, which is the difference between a tint and
-   a visible photograph. Averaged across the whole clasp, plunge included, the
-   same change reads 36% → 39% and 45% → 47%.
+   down again: 0.94 → 0.91 → 0.86 becomes 0.88 → 0.85 → 0.82. `--copy-edge`'s
+   geometry survives the switch to `contain` intact, which is why none of the
+   POSITIONS below had to move: at every viewport where the frame is
+   width-limited — which is every normal one — the contained image spans the hero
+   edge to edge, so the clasp still sits at 68% of the file AND at 68% of the
+   hero, exactly as it did when `background-position: 68%` pinned it there. The
+   subject is still mostly under the shelf with only its right side in the clear.
 
-   It is also affordable in a way the sub-920px veil's thinning was not, and that
-   asymmetry is the reason only this layer moved. Every element the shelf covers
-   is ink or near-ink except one, and the exception — the red accent on "impact"
-   — has its worst pixel on a PHONE, not here: the desktop layout gives the
-   accent its own line inside the left column, where the crop puts the dark suit
-   under it rather than the knuckles. Measured over the real composite, the
-   accent runs 3.44-3.47:1 across 920-1920px against 3.31:1 at 390px, so
-   thinning the shelf from 0.90 (which measured 3.70-3.76:1) spends margin the
-   desktop had to spare and leaves the section's own floor untouched.
+   Six points is what the accent will pay for, and it was measured, not chosen.
+   The red on "impact" is the section's floor at every width; on desktop it keeps
+   its own line inside the left column, over the dark suit, and a red glyph LOSES
+   contrast as the composite behind it lightens, so the shelf is what holds it
+   up. Over the real composite the worst pixel under the word runs 3.09-3.10:1
+   across 920-1920px, against 3.38-3.42:1 at the old alphas and a 3:1 large-text
+   floor. The next notch down (0.86 → 0.83 → 0.80) measures 3.00:1 — landing
+   exactly on the floor for two more points of photo is not a trade worth making,
+   so this is where the thinning stops.
+
+   It buys, averaged across the clasp (55-81% of the frame, so it straddles the
+   plunge), 12% → 16% of the photograph's own pixel at 1024px, 23% → 27% at
+   1440px and 40% → 43% at 1920px. The ink copy over the shelf is nowhere near
+   its own floor at either setting — 14.1:1 at the thinnest.
 
    The plunge is keyed to `--copy-edge`, which follows the copy, so the shelf
    ends where the glyphs do at every width instead of at one tuned viewport.
@@ -219,10 +303,10 @@
   .scrim {
     background: linear-gradient(
       90deg,
-      rgba(255, 255, 255, 0.94) 0%,
-      rgba(255, 255, 255, 0.91) 30%,
-      rgba(255, 255, 255, 0.86) var(--copy-edge),
-      rgba(255, 255, 255, 0.1) calc(var(--copy-edge) + 8%),
+      rgba(255, 255, 255, 0.88) 0%,
+      rgba(255, 255, 255, 0.85) 30%,
+      rgba(255, 255, 255, 0.82) var(--copy-edge),
+      rgba(255, 255, 255, 0.08) calc(var(--copy-edge) + 8%),
       rgba(255, 255, 255, 0) calc(var(--copy-edge) + 16%)
     );
   }

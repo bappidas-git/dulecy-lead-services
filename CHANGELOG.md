@@ -12,6 +12,101 @@ prompt per branch/PR — and the entries below summarise each phase under the
 
 The format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.16.0] — 2026-08-17 — Home hero: the whole frame, feathered into the page
+
+`[2.15.0]` filled the section with the handshake and cropped whatever did not
+fit — at 375px that was 80% of the file. The brief here is the other way round:
+**the entire photograph must be visible on every device**, the white overlay must
+be thinner, and wherever showing the whole frame leaves white around it, that
+white must be the overlay's own fade rather than a visible edge.
+
+### Changed
+
+- **`background-size: cover` becomes a contained `<img>`.** `.bgWrap` is the
+  `inset: 0` box; the photograph is an `<img>` centred inside it at
+  `max-width`/`max-height: 100%` with both dimensions `auto`, which resolves to
+  exactly the contain box. Nothing is cropped at any viewport. The `<img>` is
+  not a preference: a background is painted inside its element, so the element
+  stays section-sized with the letterbox baked in and there is no fixed thing
+  for a percentage mask to aim at. As the element now IS the drawn photo, the
+  edge feather below can be written in percentages of the image. It also drops
+  the css-loader constraint that forced the URL inline (`HERO_BG` is a plain
+  `src` now) and lets the backdrop carry `fetchpriority="high"`, which a
+  background image cannot.
+
+- **The frame's own edges are feathered to nothing** — 8% of the image
+  horizontally, 10% vertically, each ramping through a mid-stop so it reads as a
+  fade and not a wipe. Two mask layers intersected (`mask-composite: intersect`,
+  `-webkit-mask-composite: source-in`), so corners fade on both axes. This is
+  what turns "contained" into "composed": the leftover white is the page, the
+  photograph dissolves into it, and no viewport can produce a seam. Engines
+  without `mask-composite` fall back to a union (no visible feather) and engines
+  without masks to hard edges — both are exactly the previous release's
+  treatment of a photo edge, never a missing backdrop.
+
+- **The white overlay is thinner.** From 920px up every stop drops: the shelf
+  holds 0.88 → 0.85 → 0.82 to `--copy-edge` instead of 0.94 → 0.91 → 0.86, then
+  plunges to 0.08 (was 0.10). Below the breakpoint the vertical veil comes down
+  from 0.74 to 0.60 and the fade is reshaped into the same shelf-and-plunge the
+  desktop rule uses: 0.90 → 0.86 held to 80% of the hero, then away to 0.06, in
+  place of 0.95 → 0.90 → 0.40 → 0.08. The two sub-920 layers multiply, so an
+  evenly-ramped fade spent the veil's whole budget in the middle of the section,
+  exactly where the headline is; holding the shelf out to 80% spends it at the
+  right edge instead, where nothing but photograph is. The composite is thinner
+  than before everywhere except a strip between roughly 62% and 86% of the hero,
+  which holds up to 0.02 more — bought deliberately, and paid back as accent
+  contrast (below).
+
+- **`--copy-edge` and `.float` are untouched**, and the first of those is worth
+  saying out loud: a contained frame is width-limited at every normal viewport,
+  so it spans the hero edge to edge and the clasp still sits at 68% of the hero
+  — the same place `background-position: 68%` pinned it. The plunge still ends
+  where the glyphs do.
+
+### Verified
+
+Worst-**pixel** contrast over the real composite — the photograph resampled into
+the measured contain box, through the edge mask, under the gradients exactly as
+the browser resolves them — sampled at the darkest pixel inside every glyph run's
+client rect (`Range.getClientRects()`, so line boxes rather than the block).
+Presence is the share of the photograph's own pixel that survives mask ×
+overlay, averaged across the clasp (55–81% of the frame, so it straddles the
+plunge):
+
+|        | ink   | accent | lede | pillar № | pillar label | presence |
+| ------ | ----- | ------ | ---- | -------- | ------------ | -------- |
+| 320px  | 19.67 | 4.36   | 5.07 | 5.24     | 19.67        | 12%      |
+| 390px  | 19.67 | 4.36   | 5.07 | 5.24     | 19.67        | 12%      |
+| 768px  | 15.99 | 3.36   | 7.13 | 5.24     | 19.67        | 12%      |
+| 919px  | 15.99 | 3.35   | 7.04 | 5.24     | 19.67        | 12%      |
+| 920px  | 14.13 | 3.10   | 6.33 | 5.24     | 19.67        | 16%      |
+| 1024px | 14.17 | 3.09   | 6.33 | 5.24     | 19.67        | 16%      |
+| 1440px | 14.33 | 3.10   | 6.63 | 5.24     | 19.67        | 27%      |
+| 1920px | 14.37 | 3.09   | 6.61 | 5.24     | 19.67        | 43%      |
+
+The red accent on "impact" is the binding case, as it has been through every
+revision of this hero, and it clears AA large-text's 3:1 everywhere with
+0.09–1.36 in hand. Run the same geometry with `[2.15.0]`'s alphas and it reads
+3.38–3.42:1 from 920px up at 11–40% presence: the desktop shelf spends 0.3 of
+that margin to raise presence to 16–43%, and the next notch down (0.86 → 0.83 →
+0.80) lands on 3.00:1 exactly, which is where the thinning stops.
+
+Below 920px the accent moves the other way — 3.27 → 3.36:1 at 768px — because
+reshaping the fade gave back more than thinning the veil took. That range is
+also why the check is not a phone-only one: where the band falls relative to the
+headline is a function of the hero's aspect, so at 320 and 390px the band lands
+*below* the headline (accent over bare white, 4.36:1) while between about 600 and
+900px it covers it. Simply thinning the veil under the old evenly-ramped fade
+measured 2.96–3.14:1 across 600 / 768 / 900px — at or under the floor at widths a
+phone-only reading never visits.
+
+Presence sub-920 is a redistribution rather than a windfall: 24% → 38% at the
+hero's right edge, unchanged at 12% across the clasp, 8% → 9% across the whole
+band. What changes the phone hero is the crop — the frame is whole now instead of
+84% cut away. `--red` on the pillar numbers reads 5.24:1 at every width, the most
+that colour can do on pure white, because a contained band never reaches the
+pillars row. Production build clean.
+
 ## [2.15.0] — 2026-08-17 — Home hero: a background image, not a picture
 
 Three things asked for at once, all about the same section: put **this** frame

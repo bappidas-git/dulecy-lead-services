@@ -189,11 +189,10 @@
     <!-- =========================================
          LCP image preload — home route only
          --------------------------------------------
-         The home hero backdrop is the largest above-the-fold asset and is a
-         CSS `background-image` inside a React-rendered section, so without a
-         preload it is not discovered until the main bundle has parsed AND its
-         stylesheet has been applied. That makes this preload load-bearing
-         rather than an optimisation.
+         The home hero backdrop is the largest above-the-fold asset and lives
+         inside a React-rendered section, so without a preload it is not
+         discovered until the main bundle has parsed and mounted. That makes
+         this preload load-bearing rather than an optimisation.
 
          This is a SPA: index.html is served for every route, so a static
          <link rel="preload"> here would also download the home hero on
@@ -205,11 +204,10 @@
 
          The hero ships one width, so this preloads the WebP directly. `type`
          is what keeps that honest: a browser that cannot decode image/webp
-         skips the preload rather than wasting it, and picks up the JPEG
-         fallback from the `image-set()` when the stylesheet applies.
+         skips the preload rather than wasting it.
 
-         Keep the href in sync with the `.bg` rule's `image-set()` in
-         src/pages/Home/sections/HeroSection.module.css.
+         Keep the href in sync with `HERO_BG` in
+         src/pages/Home/sections/HeroSection.jsx.
          ========================================= -->
     <script>
       (function () {
