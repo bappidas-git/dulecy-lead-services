@@ -12,6 +12,94 @@ prompt per branch/PR — and the entries below summarise each phase under the
 
 The format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.13.0] — 2026-08-17 — Home hero: a new frame, and the right 55% of it clear
+
+A new client photograph for the hero — a close-framed handshake against a
+blown-out white window, `3.png`, 3840×2160 — and a brief for how much of it to
+show: keep the left-to-right white fade, but pull it back far enough that
+**roughly the right 55% of the image is essentially unveiled**, still fitting
+the whole frame rather than filling the section with a crop, on every device.
+
+The shape change is what forced the rework. `[2.12.0]`'s frame was 2.63:1, so
+`contain` in a desktop hero was always width-limited — a short band that had to
+be bottom-anchored to stay off the copy, under a two-layer scrim keyed to the
+section. 16:9 sits close to the section's own ratio, so the same treatment put
+the photograph squarely behind the headline, and the brief's fade cannot survive
+that: `--grad-text` red (#E8293E) on skin and dark wool measures **1.05–1.6:1**
+however the stops are arranged, because the veil that used to rescue it is the
+thing being removed.
+
+So the fade is not the lever any more — the frame's **width** is. It is
+right-anchored and sized so the copy always ends left of where the overlay lets
+go, which costs nothing but section white and buys the whole right 55% at full
+strength. Numbers below are photo presence (the share of the photo's own pixel
+that survives the overlay) and worst-**glyph** contrast — sampled on the real
+composite through a mask of the page's own rendered glyphs, rather than through
+line boxes, which measure the gaps between words as if they were text.
+
+### Changed
+
+- **`hero-home-v5` replaces `hero-home-v4`.** One 2880w WebP (56 KB) plus a
+  JPEG fallback, uncropped from the 3840×2160 master. New basename, not a
+  same-name swap: `/images/**` answers `immutable` for a year, so overwriting
+  would leave returning visitors on the old photo. The `public/index.html`
+  preload moves with it.
+
+- **The scrim's percentages are the photograph's, not the section's.**
+  `.bgPicture` stops being `display: contents` and becomes the positioned box
+  the frame is drawn into; `.scrim` is laid over the identical rectangle, so
+  "clear from 45%" is a statement about the image and holds at every viewport.
+  The box reproduces `object-fit: contain`'s own negotiation in the layout tree
+  — `aspect-ratio` against a definite height with an `auto` width, clamped by
+  `max-width` — so it is exactly the frame's drawn width in both regimes.
+
+- **One fade instead of two, and no mask.** White holds at 0.97 → 0.93 across
+  the frame's left 38%, plunges to 0.12 by 45%, and is gone by 48%. The old
+  `--copy-edge` / `--lede-edge` two-layer scrim and its section-foot mask are
+  retired: with the frame sized to clear the copy there is nothing left for a
+  second layer to protect.
+
+- **`--frame-max` is the new lever**, the larger of two terms because which copy
+  the frame must clear depends on how tall it is: `80.65vw − 470px` to clear the
+  headline, or clear the lede capped at 500px (281px tall, which fits under the
+  headline's last line by construction). It gives 360 / 500 / 500 / 691 / 1078px
+  at 920 / 1024 / 1200 / 1440 / 1920px, with an `aspect-ratio` guard for short
+  wide viewports such as 1920×720.
+
+- **Below 920px, unchanged in kind and bigger in fact.** Still a clear banner
+  above the copy with no overlay at all — 100% of the photograph — now 56.25% of
+  the section's width tall rather than 38% (211px at 375px, 426px at 768px), so
+  `.inner`'s reserved room grows from 246px to 315px at 375px. The 46vh
+  landscape cap is unchanged; the width it is expressed as moves from 121vh to
+  82vh with the aspect ratio.
+
+### Measured
+
+| Viewport | Frame      | Clasp | Ink   | Accent | Lede | Pillar № |
+| -------- | ---------- | ----- | ----- | ------ | ---- | -------- |
+| <920px   | full width | 100%  | 19.67 | 4.36   | 8.81 | 5.24     |
+| 920px    | 360×203    | 100%  | 19.67 | 4.36   | 8.81 | 5.24     |
+| 1024px   | 500×281    | 100%  | 19.67 | 4.36   | 8.09 | 5.24     |
+| 1200px   | 500×281    | 100%  | 19.67 | 4.36   | 8.81 | 5.24     |
+| 1440px   | 691×389    | 100%  | 17.59 | 3.90   | 8.81 | 5.24     |
+| 1920px   | 1078×607   | 100%  | 17.42 | 3.86   | 8.22 | 5.24     |
+
+The clasp column is the point of the change: it ran 12–94% under `[2.12.0]` and
+is 100% everywhere now. The accent stays the binding case, as it has been
+through every revision of this hero, and binds higher than before — 3.86–4.36
+against 3.49–3.80. 1440px and 1920px are the only widths where the frame is wide
+enough to reach under the headline at all; everywhere else the copy sits on bare
+section white.
+
+### Known trade-off
+
+Between 920px and about 1000px the frame is small — 360×203, 22% of the
+section's height — because the lede is a fixed 640px box there and takes 73% of
+the width, leaving little for a photograph that has to clear it. It grows
+quickly (500px wide by 1024px) and nothing is cropped or illegible at any point,
+but that band is the honest cost of keeping the right 55% genuinely clear rather
+than nominally so.
+
 ## [2.12.0] — 2026-08-15 — Home hero: the whole frame, never cropped
 
 `[2.11.0]` filled the hero with the handshake using `object-fit: cover`, which

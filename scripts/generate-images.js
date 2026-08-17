@@ -42,38 +42,39 @@ const ICONS_DIR = path.join(IMAGES_DIR, 'icons');
  *  `widths` overrides the global `WIDTHS` ladder for that one photo. */
 const PHOTOS = [
   {
-    name: 'hero-home-v4',
-    url: 'https://res.cloudinary.com/dzokcuzo/image/upload/v1786720393/iStock-1224717790.jpg',
-    // The client master, 5000x1900 (2.63:1), shipped **whole**. No `crop`, and
-    // that absence is the point of this variant: the hero draws it
-    // `object-fit: contain`, so every pixel of the purchased frame is on the
-    // page at every viewport and nothing is left to a crop.
+    name: 'hero-home-v5',
+    url: 'https://res.cloudinary.com/dzokcuzo/image/upload/v1786946741/3.png',
+    // The client master, 3840x2160 (16:9), shipped **whole**. No `crop` — the
+    // hero draws it `object-fit: contain`, so every pixel of the frame is on
+    // the page at every viewport.
     //
-    // `hero-home-v3` trimmed 950px off the right to drag the clasp from 68.4%
-    // of the file to 84.5%, which is what let a `cover` backdrop clear the
-    // copy. `contain` does not crop, so that lever is gone with it: the clasp
-    // is back at its native 68.4% and the scrim's two-step fade — not the
-    // file — is what keeps it clear of the headline. See the annotated `.bg` /
-    // `.scrim` blocks in HeroSection.module.css.
+    // A different photograph AND a different shape from `hero-home-v4`, and
+    // the shape is what drove the hero's geometry to be rewritten around it.
+    // v4 was 2.63:1, so `contain` in a desktop hero was always WIDTH-limited:
+    // a short band that had to be bottom-anchored to stay off the copy. 16:9
+    // is very close to the hero box's own ratio, so `contain` is HEIGHT-limited
+    // from ~1080px up and the frame nearly fills the section. That is why the
+    // scrim is now keyed to the drawn frame (via `aspect-ratio` on a real
+    // wrapper box) rather than to the hero, and why the frame is right-anchored
+    // — see the annotated `.bgPicture` / `.bg` / `.scrim` blocks in
+    // HeroSection.module.css.
     //
-    // 2880 rather than the global 1920, still one width. `contain` draws this
-    // at exactly the hero's WIDTH (the box never reaches 2.63:1 below a
-    // ~2685px viewport), so 2880 covers a 1920px viewport at 1.5x DPR and any
-    // phone at 3x, and the photo is soft enough that it still encodes to
-    // ~50 KB.
+    // 2880 rather than the global 1920, still one width. It covers the widest
+    // draw (a 1920px viewport at 1.5x DPR reaches ~2100 device px) and any
+    // phone at 3x, and the photo's shallow depth of field keeps it at ~56 KB.
     widths: [2880],
     note:
-      'Home hero backdrop — two people shaking hands, framed at forearm level ' +
-      'so neither head is in shot. The WHOLE frame at every width: ' +
-      '`object-fit: contain` across the full width of the hero, sitting above ' +
-      'the copy as a clear banner below 920px and behind it — bottom-anchored ' +
-      'just above the pillars rule, under a two-step left-to-right white ' +
-      'fade — from 920px up. See HeroSection.module.css. Supersedes ' +
-      '`hero-home-v3`, the 4050x1900 right-trim the `cover` treatment needed; ' +
-      'that basename is retired rather than reused because `/images/**` ' +
-      'answers `immutable` (see public/.htaccess), exactly as `hero-home` was ' +
-      'retired for `hero-home-v2`. Deliberate departure from ' +
-      '`mockup/index.html`, which uses an architectural shot here.',
+      'Home hero backdrop — a close-framed handshake between two people in ' +
+      'dark suits, shot against a blown-out white window. The WHOLE frame at ' +
+      'every width: `object-fit: contain`, sitting above the copy as a clear ' +
+      'banner below 920px and behind it — right-anchored, under a ' +
+      'left-to-right white fade that is gone by 45% across the frame — from ' +
+      '920px up. See HeroSection.module.css. Supersedes `hero-home-v4`, the ' +
+      '5000x1900 forearm-level frame; that basename is retired rather than ' +
+      'reused because `/images/**` answers `immutable` (see public/.htaccess), ' +
+      'exactly as `hero-home` was retired for `hero-home-v2`. Deliberate ' +
+      'departure from `mockup/index.html`, which uses an architectural shot ' +
+      'here.',
   },
   {
     name: 'hero-expertise',

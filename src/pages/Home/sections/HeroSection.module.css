@@ -10,222 +10,246 @@
   position: relative;
   overflow: hidden;
 
-  /* Where the white overlay starts to let go — a length measured from the
-     hero's left edge, declared here because `.scrim` needs it and `.hero` is
-     the box it is measured against. Used only from the 920px nav breakpoint
-     up; below it the photo sits clear of the copy and there is no overlay.
-
-     It tracks the copy rather than the viewport, because the two do not scale
-     together: the headline sets in a `clamp()` inside a container that caps at
-     1280px, so its right edge runs from 63.5% of the hero at 1920px out to
-     77.6% at 1024px — the fade has to clear later on a narrow desktop, not
-     earlier. `50vw + 275px` is the line fitted through the measured right edge
-     of the widest glyph run at 920 / 1024 / 1440 / 1920px (673 / 746 / 972 /
-     1213px), rounded so it never lands short of one: it gives 735 / 787 / 995 /
-     1235px. Erring long costs a little photo; erring short puts a display
-     glyph on bare handshake. */
-  --copy-edge: calc(50vw + 275px);
-
-  /* The same idea for everything BELOW the headline, which is where the
-     handshake now sits. Past the headline's foot the widest copy is the lede,
-     and the lede is not a glyph run to fit a line to — it is a box: the
-     container's left gutter (its padding, plus the centring offset once the
-     1280px cap bites) plus `.lede`'s own `max-width: 640px`, +5px. That is
-     677 / 686 / 764 / 1004px at 920 / 1024 / 1440 / 1920px, against measured
-     longest lines of 664 / 607 / 685 / 925px — always over, never under,
-     whatever the copy wraps to.
-
-     It is 231px shy of `--copy-edge` at 1440px, and that gap is the whole
-     reason the scrim is two layers: it is where the clasp reads. */
-  --lede-edge: calc(
-    clamp(20px, 4vw, 44px) + max(0px, (100vw - 1280px) / 2) + 645px
-  );
-
-  /* The frame's own height when it spans the full width: 1900/5000 = 38%.
-     `46vh` caps it on a landscape phone, where 38vw would eat the whole
-     viewport — see `.bg`'s `width`, which is the same cap expressed as the
-     width it comes from (46vh x 2.6316 = 121vh). Only the sub-920px banner
+  /* The frame's own height when it spans the full width: 2160/3840 = 56.25%.
+     `46vh` caps it on a landscape phone, where 56.25vw would eat the whole
+     viewport — see `.bgPicture`'s `width`, which is the same cap expressed as
+     the width it comes from (46vh x 1.7778 = 82vh). Only the sub-920px banner
      uses it, for the space it has to reserve above the copy. */
-  --band: min(38vw, 46vh);
+  --band: min(56.25vw, 46vh);
+
+  /* How much of the section's foot the frame keeps clear from 920px up. The
+     pillars row occupies the bottom 124-146px (its 1px rule included), so this
+     lands the frame's foot 4-22px above that rule and the row keeps a plain
+     white ground — its red numerals read 5.2:1 there against 1.0-3.2:1 over a
+     full-bleed backdrop. */
+  --frame-foot: 130px;
+
+  /* The widest the frame may be drawn from 920px up, and the number that makes
+     the fade below survivable. It is solved backwards from the one thing the
+     fade cannot do: the shelf has to still be holding where the copy ends.
+
+     Why the copy wins that, when the point of this change was to show MORE
+     photograph — the accent word is `--grad-text` red (#E8293E, relative
+     luminance 0.19), and this frame is skin and dark wool, running 90-180
+     through the rows "impact" occupies. Red on that measures 1.05-1.6:1 no
+     matter what the fade does short of covering it, and covering it is exactly
+     what is being removed. So the photo cannot be both exposed under the
+     headline and behind a headline. It yields WIDTH instead — which costs
+     nothing but section white, keeps every pixel of the frame on the page, and
+     buys the whole right 55% at full strength.
+
+     The frame is right-anchored, so its shelf runs out at
+     `100vw − 0.62 x frameWidth` (0.62 = 1 − the 0.38 shelf stop below). Two
+     terms, whichever is larger, because which copy the frame has to clear
+     depends on how tall it is:
+
+     1. `80.65vw − 470px` — clear the HEADLINE. `50vw + 291px` is its edge, the
+        line fitted through the measured right edge of its widest glyph run at
+        920 / 1024 / 1440 / 1920px (671 / 747 / 972 / 1212px) and rounded so it
+        never lands short of one; this is that solved for the width, and it
+        leaves 30px in hand at 1440px and 1920px.
+
+     2. Clear the LEDE, capped at 500px. Below about 1200px term 1 alone would
+        strand a postage stamp — 272px at 920px — so the frame stops overlapping
+        the headline instead and only has to clear what is under it. 500px is
+        281px tall, and the headline's last line ends a near-constant 415-425px
+        above the section's foot at every width (everything below it is fixed-px
+        rhythm), so `281 + --frame-foot` sits under it with 4-14px to spare. That
+        cap is what makes the term self-consistent: take it off and a 1024px
+        desktop asks for 521px, which is tall enough to poke back up through the
+        headline it was allowed to ignore.
+
+        `--lede-edge` is a box, not a glyph run — the container's left gutter
+        (padding, plus the centring offset once the 1280px cap bites) plus
+        `.lede`'s own `max-width: 640px`, +20px for the scrollbar the `vw` terms
+        do not see. 697 / 701 / 764 / 1004px at 920 / 1024 / 1440 / 1920px
+        against measured longest lines of 664 / 607 / 685 / 925px: always over,
+        never under, whatever the copy wraps to.
+
+     Together:  920px  360   1024px  500   1200px  500   1440px  691
+                1920px 1078  2560px  capped by the aspect guard on `.bgPicture` */
+  --lede-edge: calc(
+    clamp(20px, 4vw, 44px) + max(0px, (100vw - 1280px) / 2) + 660px
+  );
+  --frame-max: max(
+    calc(80.65vw - 470px),
+    min(calc((100vw - var(--lede-edge)) / 0.62), 500px)
+  );
 }
 
-/* The <picture> is a pure format-negotiation wrapper: `display: contents`
-   removes its own box so `.bg` positions against `.hero` exactly as it did
-   when the <img> was a direct child. */
-.bgPicture {
-  display: contents;
-}
+/* ============================================
+   THE FRAME BOX — `.bgPicture` and `.scrim` share it
+   --------------------------------------------
+   These two must occupy the identical rectangle, because the whole point of
+   the arrangement is that the fade's percentages are measured across the
+   PHOTOGRAPH, not across the section. Keep them grouped; splitting them is how
+   the "right 55%" guarantee silently stops being true.
 
-/* THE WHOLE FRAME, AT EVERY WIDTH. `contain`, not `cover`: the section is
-   0.41:1 at 320px and 1.55:1 at 1920px, the photograph is 2.63:1, and `cover`
-   answered that mismatch by cropping — hard enough that what reached the page
-   was two hands at 2.2x the frame's own scale, with the suits, the arms and
-   the second figure cut away. `contain` answers it the other way: the photo
-   is drawn to the hero's full WIDTH, its own aspect ratio decides its height,
-   and every pixel of the file is on the page. Nothing here may reintroduce a
-   crop — that is the whole point of this treatment.
+   `.bgPicture` is no longer `display: contents`. It is a real box, and it is
+   sized to exactly what `object-fit: contain` will draw inside it — which is
+   what makes its 0-100% the frame's own 0-100%.
+   ============================================ */
 
-   The consequence to design around is that the frame is then a band 38% of
-   the hero's width tall (122px at 320px, 543px at 1440px, 726px at 1920px),
-   which is shorter than the section. Where that band sits, and what the scrim
-   does over it, is the only thing that changes at the 920px nav breakpoint.
+/* ---- Below 920px: a clear banner above the copy ----
 
-   ---- Below 920px: a clear banner above the copy ----
+   The copy spans the frame under the breakpoint, so a photo behind it could
+   only ever be a tint. So the frame does not go behind the copy at all: it
+   sits between the header and the badge, at FULL strength with no overlay over
+   it, and `.inner` reserves the room (see its `padding-top`). 72px of that is
+   the fixed 68px header plus a hair, so nothing of the frame is spent under
+   the header's translucent white.
 
-   The copy spans the frame under the breakpoint, so a photo behind it can
-   only be a tint — `[2.11.0]` measured the clasp at 19% there. So the band
-   does not go behind the copy at all: it sits between the header and the
-   badge, at FULL strength with no overlay over it, and `.inner` reserves the
-   room (see its `padding-top`). 72px is the fixed 68px header plus a hair, so
-   nothing of the frame is spent under the header's translucent white.
-
-   `width: min(100%, 121vh)` is a landscape guard, not a width: 121vh is the
-   width whose contained height is 46vh (121 / 2.6316), so the banner can
-   never take more than 46% of a short viewport's height. On any portrait
-   phone 121vh is far wider than the screen and `100%` wins, i.e. the rule is
-   inert exactly where the banner is the point. It pairs with `--band`, which
-   states the same cap as the height `.inner` must clear.
-
-   ---- 920px and up: bottom-anchored behind the copy ----
-
-   The band goes behind the copy, full-bleed, its foot 130px above the
-   section's — which is 4 to 22px above the pillars' 1px rule at every width
-   (the rule sits 124-146px up). Two things fall out of that. The pillars row
-   keeps a plain white ground, which it did not have before: its red numerals
-   measured 1.0-3.2:1 over the old `cover` backdrop and now read 5.2:1. And it
-   drops the clasp as low in the section as it can go, which is what lets the
-   scrim's short shelf clear it.
-
-   `max(0px, …)` guards the ultrawide case. `object-position`'s percentage
-   resolves against (box − image), so once the viewport passes ~2.63 × the
-   hero's height (~2685px) and the frame is height-limited instead, that term
-   is 0 and a bare `calc(100% - 130px)` would resolve to −130px — shifting the
-   frame up and clipping its foot. Clamped at 0 it simply sits flush, still
-   whole, centred by the 50%. */
-.bg {
+   `width: min(100%, 82vh)` is a landscape guard, not a width: 82vh is the
+   width whose contained height is 46vh (82 / 1.7778), so the banner can never
+   take more than 46% of a short viewport's height. On any portrait phone 82vh
+   is far wider than the screen and `100%` wins, i.e. the rule is inert exactly
+   where the banner is the point. It pairs with `--band`, which states the same
+   cap as the height `.inner` must clear. */
+.bgPicture,
+.scrim {
   position: absolute;
   top: 0;
+  bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: min(100%, 121vh);
+  width: min(100%, 82vh);
+  pointer-events: none;
+}
+
+/* ---- 920px and up: right-anchored beside the copy ----
+
+   `aspect-ratio` against a definite height and an `auto` width reproduces
+   `object-fit: contain`'s own negotiation in the layout tree, which is the
+   trick this whole treatment rests on: the used width resolves to
+   `16/9 x height`, then `max-width` clamps it. So the box is exactly
+
+     min(--frame-max, 16/9 x (sectionHeight - --frame-foot))
+
+   — the frame's drawn WIDTH — and therefore a rectangle whose horizontal
+   percentages are the photograph's own, which is what makes "clear from 45%"
+   a statement about the image rather than about the section. `--frame-max` is
+   the binding term at every shipped width; the aspect term is the guard that
+   keeps the frame inside the section on a short, wide viewport (it binds below
+   about 700px of section height, e.g. 1920x720).
+
+   `right: 0` is what puts the leftover on the left. It is not a preference:
+   the fade runs left-to-right, so leftover on the right would be white sitting
+   between the fade and the frame's clear edge — a hole in the photograph
+   exactly where the photograph is supposed to be strongest. On the left it is
+   bare section white, which is what the fade resolves to anyway, so the two
+   join invisibly and nothing extra is needed to "cover" it.
+
+   `top: 0` stays from the base rule and is load-bearing, not leftover: it is
+   what makes the box's HEIGHT definite, which is the precondition for
+   `aspect-ratio` resolving an `auto` width at all. Set `top: auto` and both
+   axes go auto, `aspect-ratio` has nothing to work from, and the box falls
+   back to shrink-to-fit around a 3840px intrinsic. The box is therefore taller
+   than the frame whenever `--frame-max` binds; `object-position` sits the
+   frame on its floor (see `.bg`) and the surplus is scrim painted over section
+   white, which is invisible. */
+@media (min-width: 920px) {
+  .bgPicture,
+  .scrim {
+    left: auto;
+    right: 0;
+    transform: none;
+    bottom: var(--frame-foot);
+    width: auto;
+    max-width: var(--frame-max);
+    aspect-ratio: 3840 / 2160;
+  }
+}
+
+/* THE WHOLE FRAME, AT EVERY WIDTH. `contain`, not `cover`: the section runs
+   from 0.41:1 at 320px to 1.85:1 at 1920px and the photograph is 1.78:1, so
+   `cover` would answer that mismatch by cropping — and this frame has nothing
+   to spare, being already a close crop of the clasp with the two cuffs at its
+   edges. `contain` answers it the other way: every pixel of the file is on the
+   page, and the box above is shaped so that costs nothing but section white.
+   Nothing here may reintroduce a crop — that is the whole point of this
+   treatment.
+
+   `object-position` therefore only ever resolves a leftover the box has
+   already minimised. Below 920px it is the 72px of header clearance. From
+   920px up it is `100% 100%` — bottom-right — so that in the width-limited
+   regime, where the box is taller than the frame, the frame sits on the box's
+   floor and keeps its foot exactly `--frame-foot` above the section's. In the
+   height-limited regime the frame fills the box and the value is moot. */
+.bg {
+  width: 100%;
   height: 100%;
   object-fit: contain;
   object-position: 50% 72px;
-  pointer-events: none;
 }
 
 @media (min-width: 920px) {
   .bg {
-    left: 0;
-    transform: none;
-    width: 100%;
-    object-position: 50% max(0px, calc(100% - 130px));
+    object-position: 100% 100%;
   }
 }
 
-/* The white overlay. The backdrop contributes `1 − scrimAlpha` of each pixel,
+/* ---- 920px and up: one fade, measured across the photograph ----
+
+   The white overlay. The backdrop contributes `1 − scrimAlpha` of each pixel,
    so this is what decides how much photo you actually see.
 
-   Below 920px there is none, and that is deliberate rather than an omission:
-   the banner sits above the copy, not behind it, so there is nothing to
-   protect and every pixel of the frame reads at full strength. The element
-   stays in the tree (and stays the base rule, so a viewport at a fractional
-   CSS width — emulation, fractional DPI, some zoom levels — that satisfies
-   neither query still lands on the readable layout) and only picks up a
-   background from 920px up. */
-.scrim {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
+   From the breakpoint up the copy is a left column with the frame beside and
+   behind its tail, and the overlay is white at the frame's left edge fading
+   out toward its right, so the copy sits on paper and the clasp on clear
+   photo.
 
-/* ---- 920px and up: a two-step fade ----
+   **The stops are the brief: white holds across the frame's left 38%, then a
+   plunge that is spent by 45%, so the right 55% of the photograph carries no
+   overlay at all.** They are percentages of `.scrim`, which is the FRAME — not
+   the section — so that guarantee is a statement about the image and holds at
+   every viewport, in both of `.bgPicture`'s sizing regimes. That is the entire
+   reason the box is derived the way it is. Do not re-key these to the section,
+   and do not push the 45% rightward to buy contrast: `--frame-max` is the lever
+   for that, and it is the one that costs nothing.
 
-   From the breakpoint up the copy is a left column with the photo behind it,
-   and the overlay is white at the left edge fading out toward the right, so
-   the copy sits on paper and the clasp on clear photo. The shape along that
-   axis is a shelf and a plunge, not an even ramp, and that distinction is the
-   whole rule: an even fade from edge to edge crosses the copy at exactly the
-   alphas that break it (a 0.95 → 0 ramp puts about 0.18 white under the end of
-   the headline at 1024px, where the accent reads 1.2:1). So the white holds at
-   0.88+ across the copy, then drops to 0.06 inside the next 6% of the hero and
-   to nothing 6% after that.
+   Only two numbers here are free. The 0.93 at the shelf's end is set by the
+   accent over the frame's near-black sleeve (L~40): it composites to ~240,
+   where #E8293E reads 3.9:1 and #0B0B0C reads 18:1. And the plunge is 7% of
+   the frame wide (50px at 1440px, 77px at 1920px) rather than the 2-3% the
+   arithmetic would allow, because the frame is a shallow-focus photograph and
+   a harder edge reads as a seam laid over it rather than as light.
 
-   What is new is that the shelf now ends in two different places depending on
-   how far down the section you are, because the copy is not a rectangle. The
-   headline runs out to 63.5-77.6% of the hero; everything below it stops at
-   47-54%. Holding one shelf long enough for the headline all the way down the
-   section is what buried the handshake: with the whole frame in view the clasp
-   sits at 68.2% of the hero — 3px from where the headline ends at 1440px —
-   so a single shelf either clears the glyphs or the subject, never both.
-
-   So: `.scrim` carries the SHORT shelf (`--lede-edge`) over the whole section,
-   and `::after` lays the LONG one (`--copy-edge`) over it, masked off below
-   the headline's foot. The two are additive where they overlap, never
-   complementary — a mask pair that hands off (m and 1−m) would dip to 0.72
-   white in the middle of the ramp and show the suit through in a band. Additive
-   errs whiter, by at most ~0.04 alpha in the left half where both are already
-   0.95+, which is under two luma levels on the near-white part of the frame.
-
-   The mask is keyed to the section's FOOT, not to a hero-%. The headline's
-   last line ends a near-constant distance above it — 423 / 414 / 420 / 420px
-   at 920 / 1024 / 1440 / 1920px — because everything below the headline
-   (lede, CTAs, pillars, padding) is fixed-px rhythm, while the hero's total
-   height is not. So `100% - 400px` keeps the long shelf solid past the last
-   descender at every width with 14-23px to spare, and it is fully gone 40px
-   later. A hero-% boundary drifts against that by tens of pixels and takes the
-   accent under 3:1 when it drifts the wrong way (measured: 2.56:1 at 1024px).
+   Below 920px there is no overlay at all, and that is deliberate rather than
+   an omission: the banner sits above the copy, not behind it, so there is
+   nothing to protect and every pixel reads at full strength. `.scrim` still
+   stays in the tree and unbackgrounded as the base rule, so a viewport at a
+   fractional CSS width — emulation, fractional DPI, some zoom levels — that
+   satisfies neither query still lands on the readable layout.
 
    Photo presence at the clasp — the share of the photo's own pixel that
-   survives the overlay, measured on the composite — and worst-pixel contrast
-   for the three text colours:
+   survives the overlay — and worst-glyph contrast, sampled on the composite
+   through a mask of the page's own rendered glyphs (not through line boxes,
+   which measure the gaps between words as if they were text):
 
-     920px   12%   ink 19.5  accent 4.25  lede 6.97
-     1024px  20%   ink 19.3  accent 3.59  lede 7.26
-     1440px  94%   ink 18.1  accent 3.52  lede 7.20
-     1920px  61%   ink 19.2  accent 3.72  lede 7.25
+              frame        clasp   ink    accent  lede   pillar №
+     920px    360 x 203    100%    19.67  4.36    8.81   5.24
+     1024px   500 x 281    100%    19.67  4.36    8.09   5.24
+     1200px   500 x 281    100%    19.67  4.36    8.81   5.24
+     1440px   691 x 389    100%    17.59  3.90    8.81   5.24
+     1920px  1078 x 607    100%    17.42  3.86    8.22   5.24
+     <920px  full width    100%    19.67  4.36    8.81   5.24
 
-   The accent (`--grad-text`'s light end, #E8293E) is the binding case at every
-   width, as it has been through every revision of this hero, and it is now
-   above where the `cover` treatment left it (3.49-3.80). The dip at 920-1100px
-   is the honest cost of showing the whole frame: the clasp's native 68.2% sits
-   inside the lede's own box there, and no fade can be both behind a glyph and
-   out of its way. It clears as soon as the container caps — 94% by 1440px. */
+   The clasp column is the point of the change: it was 12-94% under the
+   previous full-bleed treatment and is 100% at every width now, because the
+   frame is sized so nothing has to be held over it. The accent is still the
+   binding case, as it has been through every revision of this hero, but it now
+   binds at 3.86-4.36 rather than at 3.49-3.80. 1440px and 1920px are the two
+   widths where the frame is wide enough to reach under the headline at all;
+   everywhere else the copy is on bare section white. */
 @media (min-width: 920px) {
   .scrim {
     background: linear-gradient(
       90deg,
       rgba(255, 255, 255, 0.97) 0%,
-      rgba(255, 255, 255, 0.95) 30%,
-      rgba(255, 255, 255, 0.88) var(--lede-edge),
-      rgba(255, 255, 255, 0.06) calc(var(--lede-edge) + 6%),
-      rgba(255, 255, 255, 0) calc(var(--lede-edge) + 12%)
-    );
-  }
-
-  .scrim::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      90deg,
-      rgba(255, 255, 255, 0.97) 0%,
-      rgba(255, 255, 255, 0.95) 30%,
-      rgba(255, 255, 255, 0.88) var(--copy-edge),
-      rgba(255, 255, 255, 0.06) calc(var(--copy-edge) + 6%),
-      rgba(255, 255, 255, 0) calc(var(--copy-edge) + 12%)
-    );
-    -webkit-mask-image: linear-gradient(
-      180deg,
-      #000 0,
-      #000 calc(100% - 400px),
-      transparent calc(100% - 360px)
-    );
-    mask-image: linear-gradient(
-      180deg,
-      #000 0,
-      #000 calc(100% - 400px),
-      transparent calc(100% - 360px)
+      rgba(255, 255, 255, 0.95) 22%,
+      rgba(255, 255, 255, 0.93) 38%,
+      rgba(255, 255, 255, 0.12) 45%,
+      rgba(255, 255, 255, 0) 48%
     );
   }
 }
@@ -233,10 +257,11 @@
 /* Below 920px the top padding is what reserves the banner's room: the 72px of
    header clearance `.bg` starts the frame at, the frame's own height, and a
    gap under it. The mockup's `clamp(140px, 18vh, 190px)` comes back at the
-   breakpoint, where the photo moves behind the copy and needs no room of its
-   own. At 375px this is 246px against the mockup's 146px — the section grows
-   by the ~100px the photo is worth, rather than the photo shrinking to fit a
-   section written for no photo. */
+   breakpoint, where the photo moves beside the copy and needs no room of its
+   own. At 375px this is 315px against the mockup's 146px — the section grows
+   by the ~170px the photo is worth, rather than the photo shrinking to fit a
+   section written for no photo. (It was 246px while the backdrop was the
+   2.63:1 `hero-home-v4`; 16:9 is a taller band at the same width.) */
 .inner {
   position: relative;
   padding-top: calc(72px + var(--band) + clamp(32px, 6vw, 56px));
