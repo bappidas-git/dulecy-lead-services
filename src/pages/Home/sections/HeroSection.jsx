@@ -9,23 +9,30 @@
    The backdrop photo is a deliberate departure from `mockup/index.html`,
    which uses an architectural shot here: it is a handshake framed at forearm
    level against a blown-out white window. **The whole frame is shown at every
-   viewport** — it is drawn CONTAINED rather than cropped, centred in a box that
-   fills the section, so no part of the photograph is ever cut off on any
-   device. Its own edges are feathered to nothing so it dissolves into the page
-   instead of ending on a line, and the white left over around it is simply the
-   page: same white, no seam.
+   viewport** — it is drawn CONTAINED rather than cropped, so no part of the
+   photograph is ever cut off on any device — and its own edges are feathered to
+   nothing so it dissolves into the page instead of ending on a line, the white
+   left over around it being simply the page: same white, no seam.
+
+   **The box it is contained in is not the section, and that is what sets its
+   size.** `contain` fixes the frame's shape but takes its scale from whatever
+   holds it, and a section-sized box draws the photograph as wide as the hero —
+   1430px at 1440px, 1910px at 1920px, the clasp alone spanning 372px and 497px.
+   Uncropped is not the same as unenlarged. So `.bgWrap` is a placed box
+   instead: `--bg-w` wide, pinned to the hero's right edge, under the header on
+   phones and centred on the hero's height from 920px up. The frame stays whole;
+   it is drawn at 1058px and 1413px, with the clasp at 275px and 367px.
 
    Over it sits a white overlay that runs left to right, thin enough across the
    copy that the photograph reads as a photograph: from 920px up that fade alone
-   carries legibility, holding 0.88 → 0.82 across the copy and letting go within
-   8% of the hero after the glyphs end — which lands just past the clasp, since a
-   contained frame spans the hero's full width and so still puts the clasp at 68%
-   of it, right of the red accent word "impact". Below the breakpoint the copy
-   spans the frame, so a vertical veil joins the fade — thinned from 0.74 to
-   0.60, with the fade under it reshaped into the same shelf-and-plunge. The
-   overlay departs from the mockup's alphas, and is thinner than the cropped
-   release that preceded this one. See the annotated `.bgWrap` / `.bg` /
-   `.scrim` blocks in the stylesheet.
+   carries legibility, holding 0.92 → 0.86 across the copy and letting go within
+   8% of the hero after the glyphs end. Pinning the frame right moves the clasp
+   from 68% of the hero to about 76%, which is inside that plunge rather than
+   under the shelf — so the shelf could go back up (0.82 → 0.86) and MORE of the
+   subject survives, not less. Below the breakpoint the copy spans the frame, so
+   a vertical veil joins the fade; that rule is untouched, because the band now
+   sits above the headline instead of behind it. See the annotated `.bgWrap` /
+   `.bg` / `.scrim` blocks in the stylesheet.
    ============================================ */
 
 import React from 'react';
@@ -46,8 +53,9 @@ import styles from './HeroSection.module.css';
 // back again — but under a third basename for that same caching reason, not
 // revived under the old one.
 //
-// One width, and no `sizes`: contained, the frame is never drawn wider than the
-// section itself, so 2880w covers a 1440px viewport at 2x and the shallow depth
+// One width, and no `sizes`: the frame is never drawn wider than `--bg-w`,
+// which caps at 1460 CSS px from 920px up and 900 CSS px below it — exactly 2x
+// this file on a retina display, so it never upscales — and the shallow depth
 // of field keeps it at 39 KB.
 //
 // **The WebP is the only variant the hero paints.** There is no `<picture>` and
@@ -85,10 +93,11 @@ const HeroSection = () => {
 
   return (
     <section className={styles.hero}>
-      {/* The backdrop and the overlay: two boxes, both `inset: 0`, so they are
-          the same rectangle as the section and the fade's stops are section
-          percentages. They share one geometry rule in the stylesheet; keep them
-          grouped.
+      {/* The backdrop and the overlay: two boxes. Only `.scrim` is `inset: 0`,
+          which is what makes the fade's stops section percentages; `.bgWrap` is
+          the placed box the frame is contained in, sized and positioned by the
+          `--bg-*` custom properties on `.hero`. They no longer share a geometry
+          rule, but they are still one treatment — keep them grouped.
 
           The photograph is a real `<img>` centred in the first box, not a CSS
           background, and that is what makes "the whole frame, uncropped" work:

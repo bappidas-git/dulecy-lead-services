@@ -12,6 +12,72 @@ prompt per branch/PR — and the entries below summarise each phase under the
 
 The format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.17.0] — 2026-08-19 — Home hero: the contained frame, drawn at a chosen size
+
+`[2.16.0]` stopped the frame being cropped; it did not stop it being large.
+`contain` fixes a photograph's shape but takes its scale from the box holding
+it, and that box was the section — so the frame was still drawn as wide as the
+hero at every normal viewport (1430px at 1440px, 1910px at 1920px), with the
+clasp alone spanning 372px and 497px. **Uncropped is not the same as
+unenlarged.** This gives the contained frame a box of its own, which turns out
+to buy contrast as well as scale.
+
+### Changed
+
+- **`.bgWrap` is a placed box, not the section.** It takes its width from a new
+  `--bg-w` and pins to the hero's right edge: below the 920px nav breakpoint the
+  copy spans the frame, so the band does too — `clamp(430px, 135%, 900px)`,
+  sitting `--bg-top: 64px` clear of the header — and from 920px up the copy is a
+  left column, so the band steps back beside it at `clamp(760px, 74%, 1460px)`,
+  centred on the hero's height. Placement is `align-items` plus `padding-top`
+  rather than offsets, so the flex centring still works in the wide-and-short
+  case past 2.63:1 where height binds instead of width.
+
+  The whole frame is still on the page at every viewport — that is `contain`'s
+  guarantee and it is untouched — and the four-edge feather still lands on the
+  photo's own edges, because it is stated in percentages of the image. Neither
+  clamp end upscales the 2880px master: both ceilings are exactly 2x on retina.
+
+  | Viewport | Frame before | Frame now | Clasp before | Clasp now |
+  | --- | --- | --- | --- | --- |
+  | 390px | 390px | 527px | 101px | 137px |
+  | 768px | 758px | 900px | 197px | 234px |
+  | 1440px | 1430px | 1058px | 372px | 275px |
+  | 1920px | 1910px | 1413px | 497px | 367px |
+
+- **The desktop shelf goes back up, 0.88 → 0.85 → 0.82 becomes 0.92 → 0.89 →
+  0.86.** Not a reversal of `[2.16.0]` — the placement paying for itself. A
+  section-filling frame put the clasp at 68% of the hero, i.e. under the shelf,
+  so the only way to reveal the subject was to thin the same white that protects
+  the copy. Pinned right, the clasp sits at about 76%, inside the plunge, so the
+  shelf and the subject have come apart and both can improve at once. Over the
+  real composite, against `[2.16.0]` at its own widths: the accent runs
+  **3.36 / 3.32 / 3.33:1** at 1024 / 1440 / 1920px against 3.08 / 3.11 / 3.09:1,
+  restoring the third of a point above the 3:1 large-text floor that the
+  `contain` release had spent; and the photograph averaged across the clasp goes
+  **16% → 16%, 27% → 50%, 43% → 76%**. The frame is drawn smaller and more of it
+  survives, because what survives is now the part with the hand in it.
+
+- **The sub-920 overlay is untouched, and the placement is why.** With the band
+  above the headline rather than across the middle of the section, the same
+  alphas measure **4.36:1 at 320 / 390 / 768px and 4.18:1 at 919px** for the
+  accent (against 3.35-3.45:1 over a section-filling frame) and **8.81:1** for
+  the lede (against 5.06-7.12:1). The 600-900px range `[2.16.0]` identified as
+  the sub-920 danger zone is now its safest part.
+
+- `.hero` paints `#fff` explicitly, so the feather dissolves into a stated
+  colour rather than into whatever sits behind the section.
+
+### Notes
+
+- No image file changed, so the `public/index.html` LCP preload, the `<img>`,
+  its `fetchpriority="high"` and the `HERO_BG` / `HERO_BG_SIZE` constants all
+  carry over from `[2.16.0]` untouched.
+
+- `--copy-edge` keeps its fitted `50vw + 320px`. Its pillars clause is
+  belt-and-braces now — the band stops above the pillars row at every desktop
+  width — but the fade still has to clear the headline and the lede there.
+
 ## [2.16.0] — 2026-08-17 — Home hero: the whole frame, feathered into the page
 
 `[2.15.0]` filled the section with the handshake and cropped whatever did not
