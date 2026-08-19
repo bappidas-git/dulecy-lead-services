@@ -12,6 +12,106 @@ prompt per branch/PR — and the entries below summarise each phase under the
 
 The format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.20.0] — 2026-08-20 — Home hero: no seams in the overlay, and less of it
+
+The overlay worked, but you could see how it was built. Two of its edges drew
+visible lines across the photograph — one horizontal, along the top of the
+frame, and one vertical, down the hero at `--copy-edge` — and the same defect
+was present at six more places for the same reason.
+
+**The cause was vertices, not alphas.** A CSS gradient interpolates linearly
+between its stops, so a gradient is a piecewise-linear function and every
+place its slope changes is a corner. The eye finds corners in a smooth ramp
+(Mach banding) far more readily than it finds steepness. Three of them were
+stacked here:
+
+- `.bg`'s feather was `t^2.4`, which reaches full strength **still travelling
+  at 2.4x**. Where it met the flat middle of the mask — 34% and 68% of the
+  frame — the slope dropped to zero in one step. That is the horizontal line
+  across the top of the photograph.
+- The desktop overlay held a flat 0.50 to `--copy-edge` and then turned
+  straight into a 7%-wide plunge, and the shield turned into a 3.5% one. Two
+  corners, 66px apart, running the full height of the section. That is the
+  vertical line.
+- Every ramp was sampled at five or six stops, so each stop was itself a
+  slope change worth 4-5 levels regardless of which curve it approximated.
+
+`[2.19.0]`'s note put the frame's top edge at "2.6 levels across any 10px
+window". That measurement averaged each row of the ramp before differencing
+it, which smooths away exactly the vertex it was meant to find; measuring the
+curvature of the composite directly puts the shipped edges at **9.8-31.9
+levels**, which matches what is visible on screen.
+
+### Changed
+
+- **Every ramp in the hero is now an eased curve sampled at twentieths.**
+  `.bg`'s four mask ramps use `s5(t)^3` (smootherstep cubed), which keeps
+  `t^2.4`'s late bias — the part that was right — while arriving at **zero
+  slope at both ends**, so neither vertex of a ramp is a corner. The six
+  overlay ramps use plain smootherstep. Measured as luminance curvature over a
+  10px window against the shipped WebP, the worst edge in the section falls
+  from 9.8-31.9 levels to **3.2-8.5** vertically (14.1 at 375px, but that
+  peak sits at y=64px, behind the fixed 68px header) and from 6.0-16.8 to
+  **1.2-7.8** horizontally, across 375 / 768 / 900 / 920 / 1024 / 1280 / 1440 /
+  1920 / 2560px. The alphas are generated, not hand-picked: `s5(t)^3` and
+  `s5(t)` at `t = k/20`, `s5` being `6t^5 - 15t^4 + 10t^3`.
+- **Each mask is declared once, as a custom property**, and read by both the
+  prefixed and the unprefixed `mask-image` (`--feather-y` / `--feather-x` on
+  `.bg`, `--shield-mask` on `.scrim::after`). At 38 stops a ramp, two
+  hand-maintained copies would drift.
+- **The desktop overlay is thinner: base 0.50 → 0.40, shield 0.70 → 0.75.**
+  Those move together on purpose — `1 − 0.60 × 0.25` is the same **0.85**
+  behind "impact" that `1 − 0.50 × 0.30` produced, so the binding contrast is
+  untouched while everything the shield does not cover got lighter. The base's
+  plunge is 10% of the hero (from 14%) and the shield's is 5% (from 3.5%);
+  both are eased, and across the plunge the pair now leaves the hand with less
+  white on it than the cornered version did, not more.
+- **The shield's mask band opens at 32% of the hero instead of 25%.** This is
+  where most of the extra photograph behind the headline comes from: nothing
+  above the accent is colour-bound, so the shield has no work to do there. The
+  copy column gains 10% at 1920px and 18% at 2560px. It is flat from 920px
+  to 1440px, where the shield's ramp and the frame's own feathers already
+  overlap almost exactly and there is nothing left in that band to uncover.
+  The band's **bottom ramp stays at 78%** — the lede sits under it at 61%-71%
+  of the hero and is 16-19px `--grey-2`, i.e. normal-size text on a **4.5:1**
+  floor rather than large text on a 3:1 one. It measures 4.85:1 at 2560px;
+  closing that ramp at 72% to match the top takes it to 3.50:1 and fails.
+- **The sub-920px veil comes down 0.66 → 0.55 and the fade 0.36 → 0.24**, and
+  **`.bg`'s mobile bottom ramp starts at 62% of the frame instead of 68%.**
+  Those three move together. The accent word sits at 77%-93% of the frame's
+  height at that breakpoint — inside the bottom ramp — so lengthening the ramp
+  lightens the mask under the word by more than the thinner veil costs it.
+  Thin the veil on its own and 900px, the tightest width, fails first.
+
+### Notes
+
+- **Contrast is level or better everywhere, on the same strict method**
+  (each element's whole box against the darkest composite pixel under it).
+  The accent holds **3.25-3.31:1** from 920px to 2560px — identical to the
+  release before it, by construction — and **improves** below the breakpoint
+  to 3.53:1 at 900px, 3.91:1 at 768px and 4.27:1 at 375px, against 3.46 / 3.66
+  / 4.16. The ink headline never drops below 8.1:1 and the lede below 4.85:1
+  (4.5:1 floor). The pillars row is over bare page white at 5.24:1 at every
+  width, unchanged — `--copy-edge` still clears it.
+- **How much more photograph you actually see depends on where you look, and
+  the copy column is the honest answer for desktop.** The base alpha is the
+  weakest of the three desktop levers, because the band where the frame is
+  drawn at full mask is very nearly the band the shield covers — so left of
+  `--copy-edge` it is the shield's top ramp, not the base, that had room to
+  give. Over the hand the gain is 4-5% at every desktop width. Below the
+  breakpoint, where the veil is the lever, the copy column gains 14% at 375px
+  and 19% at 768-900px and the hand 9-16%.
+- **The frame's top and bottom feather LENGTHS are unchanged** (34% / 32% on
+  desktop, 20% on mobile) and the left ramp stays at 16%. Only the curve
+  across them changed, so nothing about which part of the photograph is drawn
+  moved — the fix was to how it dissolves, not to how much of it there is.
+  Lengthening the mobile top ramp is actively worse: at 375px a 20% ramp
+  finishes at 76px, just past the 68px header that hides it, while a 26% one
+  finishes 24px down the visible page and doubles the curvature there.
+- **Degradation is unchanged.** Engines without `mask-composite` union the two
+  `.bg` ramps; engines without `mask-image` paint the shield unmasked, which
+  composites to more white, never less.
+
 ## [2.19.0] — 2026-08-20 — Home hero: let the figure through the white, on every device
 
 `[2.18.1]` thinned the desktop shelf to 0.89 → 0.86 → 0.82 and found its

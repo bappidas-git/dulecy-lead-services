@@ -16,9 +16,16 @@
    and the placement is set so those edges land where the frame carries nothing:
    the blown-out window on the left, the far sleeve's outer end past the right.
    Three of the four edges end inside the section and are feathered to nothing
-   on a power curve so they dissolve rather than cut; the right one runs off the
-   page, so `overflow: hidden` ends it the way a viewport ends any full-bleed
-   image.
+   so they dissolve rather than cut; the right one runs off the page, so
+   `overflow: hidden` ends it the way a viewport ends any full-bleed image.
+
+   The feather is an eased curve — smootherstep cubed — sampled at twentieths,
+   and both of those matter. A CSS gradient is piecewise-linear between its
+   stops, so what reads as a line in a soft ramp is not its steepness but any
+   place its SLOPE changes: a curve that arrives at full strength still moving
+   (the `t^2.4` this replaced) puts a corner where the ramp meets the flat
+   middle of the mask, and a coarsely sampled one puts a smaller corner at
+   every stop. Same rule governs every ramp in the overlay below.
 
    That placement is what puts the subject where the brief wants it. The joined
    hands are a measured 56.1%-81.1% of the frame's width, so pinning it 11% past
@@ -34,11 +41,12 @@
    rather than one, because the suited figure the hands belong to stands
    directly behind the headline at every desktop width — there is no strip of
    hero where the figure is and the copy is not, so no left-to-right fade can
-   uncover it. A flat 0.50 base carries the whole copy column and lets go
-   within 7% of the hero after the glyphs end, which is also where the hand
-   starts; a second layer, masked to the 18% band of hero the red accent sits
-   in, brings the white back to 0.85 over "impact" alone — the one run of copy
-   that is colour-bound rather than ink-black. Below the breakpoint the copy
+   uncover it. A flat 0.40 base carries the whole copy column and lets go
+   within 10% of the hero after the glyphs end, which is also where the hand
+   starts; a second layer, masked to the band of hero the red accent sits in,
+   brings the white back to 0.85 over "impact" alone — the one run of copy
+   that is colour-bound rather than ink-black, and the one number in the
+   section that is fixed rather than tuned. Below the breakpoint the copy
    spans the frame, so a vertical veil takes over legibility and the fade is
    left to do nothing but keep the left edge clean. See the annotated `.bg`
    and `.scrim` blocks in the stylesheet.
