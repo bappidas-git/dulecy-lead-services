@@ -142,18 +142,40 @@
    for the `<img>` above), so the feather is the same fraction of the
    photograph at 320px and at 2560px, with nothing to re-tune per breakpoint.
 
-   **They are power curves, not linear ramps, and that is the difference
-   between a soft edge and no edge.** A mask ramp only has to hide the change
-   in the CONTENT it crosses, and this frame's top and bottom rows are the two
-   suit sleeves — near-black, about 0.85 of the full white-to-ink range. Spread
-   linearly, or even with a smoothstep, the first quarter of the ramp is
-   already carrying 15% of that: the previous release's 10% smoothstep put a
-   150-level step into 15px of page, which is a line. Alpha `t^2.4` moves the
-   perceptible part of the ramp deep into its own length — 2% at a fifth of the
-   way in, 11% at two fifths — so the same 34% of frame height reads as mist
-   rather than as an edge, and the ramp costs no more of the photograph than
-   the shallow one did. The six stops per ramp are that curve sampled at
-   fifths; the alphas (0.021 / 0.111 / 0.294 / 0.585) are `t^2.4` itself.
+   **They are eased curves sampled densely, not linear ramps, and that is the
+   difference between a soft edge and no edge.** A mask ramp only has to hide
+   the change in the CONTENT it crosses, and this frame's top and bottom rows
+   are the two suit sleeves — near-black, about 0.85 of the full white-to-ink
+   range. Three separate things decide whether a ramp across that reads as
+   mist or as a line, and `[2.20.0]` had to fix all three:
+
+     - **Where the curve spends its length.** Spread linearly, or even with a
+       smoothstep, the first quarter of the ramp already carries 15% of the
+       change. The alpha here is `s5(t)^3` — smootherstep cubed — which moves
+       the perceptible part deep into the ramp's own length (0.4% at a fifth of
+       the way in, 3.2% at two fifths), so the frame's edge itself sits over
+       nothing. `t^2.4` did this part correctly and this is close to it.
+     - **What the curve does where it ENDS.** This is the one the release
+       before this one missed, and the one a reader could point at. `t^2.4`
+       arrives at full strength still travelling at 2.4x, so the vertex where
+       it met the flat middle was a slope discontinuity — a Mach band, drawn
+       straight across the photograph at 34% and again at 68% of the frame.
+       `s5(t)^3` arrives with **zero slope at both ends**, so neither vertex
+       of a ramp is a corner. Any replacement curve must keep that property;
+       a bare power curve does not have it.
+     - **How finely the curve is sampled.** CSS interpolates linearly between
+       stops, so every stop is itself a small slope discontinuity. Six stops
+       per ramp — the previous sampling — put 4-5 levels into a single vertex
+       whatever the curve was. These ramps are sampled at **twentieths**,
+       which holds the worst vertex in a ramp under 1 level.
+
+   Measured on the shipped WebP as luminance curvature over a 10px window
+   (see `CHANGELOG.md` `[2.20.0]`), the frame's edges went from 9.8-31.9
+   levels to 3.2-8.5 (14.1 at 375px, where the peak lands at y=64px and the
+   fixed header covers it). Regenerate rather than hand-edit: the alphas are
+   `s5(t)^3` at `t = k/20`, `s5` being `6t^5 - 15t^4 + 10t^3`. Stops that
+   round to the same alpha as both their neighbours are dropped, which is why
+   each ramp opens on a short flat run.
 
    Ramp lengths differ per edge because what they cross does:
 
@@ -174,7 +196,17 @@
        at the top of the SECTION there and the fixed 68px header already covers
        it. The ramp only has to reach full strength by the time it clears the
        header, not hide an edge — there is no page above the edge for it to be
-       an edge against.
+       an edge against. Lengthening it is actively worse on a phone: at 375px
+       a 20% ramp finishes at 76px, just past the header, while a 26% one
+       finishes 24px down the visible page and doubles the curvature there.
+     - Below 920px the BOTTOM ramp starts at 62% rather than 68%, so it runs
+       38% of the frame instead of 32%. It is doing a second job at that
+       breakpoint: with the frame pinned to the top of the section, the red
+       accent word sits at 77%-93% of the frame's HEIGHT — inside this ramp —
+       so the ramp's own alpha is most of what stands between "impact" and a
+       near-black sleeve. Starting it earlier is what pays for the thinner
+       veil above (3.53:1 at 900px against 3.46:1 before it, on a 3:1 floor).
+       On desktop the accent is nowhere near the ramp and 68% stands.
 
    `mask-composite` intersects the two ramps so the corners fade on both axes.
    Engines without it fall back to the `add` default — a union, i.e. the
@@ -194,36 +226,55 @@
   height: auto;
   max-width: none;
   pointer-events: none;
-  -webkit-mask-image: linear-gradient(
+
+  /* Declared once and read by both the prefixed and the unprefixed property.
+     At 38 stops a ramp, keeping two hand-maintained copies in step is not a
+     risk worth taking, and a custom property holds a whole gradient value
+     perfectly well. */
+  --feather-y: linear-gradient(
     180deg,
     rgba(0, 0, 0, 0) 0%,
-    rgba(0, 0, 0, 0.021) 4%,
-    rgba(0, 0, 0, 0.111) 8%,
-    rgba(0, 0, 0, 0.294) 12%,
-    rgba(0, 0, 0, 0.585) 16%,
+    rgba(0, 0, 0, 0) 3%,
+    rgba(0, 0, 0, 0.0002) 4%,
+    rgba(0, 0, 0, 0.0011) 5%,
+    rgba(0, 0, 0, 0.0043) 6%,
+    rgba(0, 0, 0, 0.013) 7%,
+    rgba(0, 0, 0, 0.032) 8%,
+    rgba(0, 0, 0, 0.0674) 9%,
+    rgba(0, 0, 0, 0.125) 10%,
+    rgba(0, 0, 0, 0.2087) 11%,
+    rgba(0, 0, 0, 0.318) 12%,
+    rgba(0, 0, 0, 0.4474) 13%,
+    rgba(0, 0, 0, 0.5862) 14%,
+    rgba(0, 0, 0, 0.7205) 15%,
+    rgba(0, 0, 0, 0.8361) 16%,
+    rgba(0, 0, 0, 0.9223) 17%,
+    rgba(0, 0, 0, 0.9745) 18%,
+    rgba(0, 0, 0, 0.9965) 19%,
     rgb(0, 0, 0) 20%,
-    rgb(0, 0, 0) 68%,
-    rgba(0, 0, 0, 0.585) 74.4%,
-    rgba(0, 0, 0, 0.294) 80.8%,
-    rgba(0, 0, 0, 0.111) 87.2%,
-    rgba(0, 0, 0, 0.021) 93.6%,
+    rgb(0, 0, 0) 62%,
+    rgba(0, 0, 0, 0.9965) 63.9%,
+    rgba(0, 0, 0, 0.9745) 65.8%,
+    rgba(0, 0, 0, 0.9223) 67.7%,
+    rgba(0, 0, 0, 0.8361) 69.6%,
+    rgba(0, 0, 0, 0.7205) 71.5%,
+    rgba(0, 0, 0, 0.5862) 73.4%,
+    rgba(0, 0, 0, 0.4474) 75.3%,
+    rgba(0, 0, 0, 0.318) 77.2%,
+    rgba(0, 0, 0, 0.2087) 79.1%,
+    rgba(0, 0, 0, 0.125) 81%,
+    rgba(0, 0, 0, 0.0674) 82.9%,
+    rgba(0, 0, 0, 0.032) 84.8%,
+    rgba(0, 0, 0, 0.013) 86.7%,
+    rgba(0, 0, 0, 0.0043) 88.6%,
+    rgba(0, 0, 0, 0.0011) 90.5%,
+    rgba(0, 0, 0, 0.0002) 92.4%,
+    rgba(0, 0, 0, 0) 94.3%,
     rgba(0, 0, 0, 0) 100%
   );
-  mask-image: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 0) 0%,
-    rgba(0, 0, 0, 0.021) 4%,
-    rgba(0, 0, 0, 0.111) 8%,
-    rgba(0, 0, 0, 0.294) 12%,
-    rgba(0, 0, 0, 0.585) 16%,
-    rgb(0, 0, 0) 20%,
-    rgb(0, 0, 0) 68%,
-    rgba(0, 0, 0, 0.585) 74.4%,
-    rgba(0, 0, 0, 0.294) 80.8%,
-    rgba(0, 0, 0, 0.111) 87.2%,
-    rgba(0, 0, 0, 0.021) 93.6%,
-    rgba(0, 0, 0, 0) 100%
-  );
+
+  -webkit-mask-image: var(--feather-y);
+  mask-image: var(--feather-y);
 }
 
 /* ---- 920px and up ----
@@ -240,56 +291,72 @@
   }
 
   .bg {
-    -webkit-mask-image:
-      linear-gradient(
-        180deg,
-        rgba(0, 0, 0, 0) 0%,
-        rgba(0, 0, 0, 0.021) 6.8%,
-        rgba(0, 0, 0, 0.111) 13.6%,
-        rgba(0, 0, 0, 0.294) 20.4%,
-        rgba(0, 0, 0, 0.585) 27.2%,
-        rgb(0, 0, 0) 34%,
-        rgb(0, 0, 0) 68%,
-        rgba(0, 0, 0, 0.585) 74.4%,
-        rgba(0, 0, 0, 0.294) 80.8%,
-        rgba(0, 0, 0, 0.111) 87.2%,
-        rgba(0, 0, 0, 0.021) 93.6%,
-        rgba(0, 0, 0, 0) 100%
-      ),
-      linear-gradient(
-        90deg,
-        rgba(0, 0, 0, 0) 0%,
-        rgba(0, 0, 0, 0.021) 3.2%,
-        rgba(0, 0, 0, 0.111) 6.4%,
-        rgba(0, 0, 0, 0.294) 9.6%,
-        rgba(0, 0, 0, 0.585) 12.8%,
-        rgb(0, 0, 0) 16%
-      );
-    mask-image:
-      linear-gradient(
-        180deg,
-        rgba(0, 0, 0, 0) 0%,
-        rgba(0, 0, 0, 0.021) 6.8%,
-        rgba(0, 0, 0, 0.111) 13.6%,
-        rgba(0, 0, 0, 0.294) 20.4%,
-        rgba(0, 0, 0, 0.585) 27.2%,
-        rgb(0, 0, 0) 34%,
-        rgb(0, 0, 0) 68%,
-        rgba(0, 0, 0, 0.585) 74.4%,
-        rgba(0, 0, 0, 0.294) 80.8%,
-        rgba(0, 0, 0, 0.111) 87.2%,
-        rgba(0, 0, 0, 0.021) 93.6%,
-        rgba(0, 0, 0, 0) 100%
-      ),
-      linear-gradient(
-        90deg,
-        rgba(0, 0, 0, 0) 0%,
-        rgba(0, 0, 0, 0.021) 3.2%,
-        rgba(0, 0, 0, 0.111) 6.4%,
-        rgba(0, 0, 0, 0.294) 9.6%,
-        rgba(0, 0, 0, 0.585) 12.8%,
-        rgb(0, 0, 0) 16%
-      );
+    --feather-y: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0) 5.1%,
+      rgba(0, 0, 0, 0.0002) 6.8%,
+      rgba(0, 0, 0, 0.0011) 8.5%,
+      rgba(0, 0, 0, 0.0043) 10.2%,
+      rgba(0, 0, 0, 0.013) 11.9%,
+      rgba(0, 0, 0, 0.032) 13.6%,
+      rgba(0, 0, 0, 0.0674) 15.3%,
+      rgba(0, 0, 0, 0.125) 17%,
+      rgba(0, 0, 0, 0.2087) 18.7%,
+      rgba(0, 0, 0, 0.318) 20.4%,
+      rgba(0, 0, 0, 0.4474) 22.1%,
+      rgba(0, 0, 0, 0.5862) 23.8%,
+      rgba(0, 0, 0, 0.7205) 25.5%,
+      rgba(0, 0, 0, 0.8361) 27.2%,
+      rgba(0, 0, 0, 0.9223) 28.9%,
+      rgba(0, 0, 0, 0.9745) 30.6%,
+      rgba(0, 0, 0, 0.9965) 32.3%,
+      rgb(0, 0, 0) 34%,
+      rgb(0, 0, 0) 68%,
+      rgba(0, 0, 0, 0.9965) 69.6%,
+      rgba(0, 0, 0, 0.9745) 71.2%,
+      rgba(0, 0, 0, 0.9223) 72.8%,
+      rgba(0, 0, 0, 0.8361) 74.4%,
+      rgba(0, 0, 0, 0.7205) 76%,
+      rgba(0, 0, 0, 0.5862) 77.6%,
+      rgba(0, 0, 0, 0.4474) 79.2%,
+      rgba(0, 0, 0, 0.318) 80.8%,
+      rgba(0, 0, 0, 0.2087) 82.4%,
+      rgba(0, 0, 0, 0.125) 84%,
+      rgba(0, 0, 0, 0.0674) 85.6%,
+      rgba(0, 0, 0, 0.032) 87.2%,
+      rgba(0, 0, 0, 0.013) 88.8%,
+      rgba(0, 0, 0, 0.0043) 90.4%,
+      rgba(0, 0, 0, 0.0011) 92%,
+      rgba(0, 0, 0, 0.0002) 93.6%,
+      rgba(0, 0, 0, 0) 95.2%,
+      rgba(0, 0, 0, 0) 100%
+    );
+    --feather-x: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0) 2.4%,
+      rgba(0, 0, 0, 0.0002) 3.2%,
+      rgba(0, 0, 0, 0.0011) 4%,
+      rgba(0, 0, 0, 0.0043) 4.8%,
+      rgba(0, 0, 0, 0.013) 5.6%,
+      rgba(0, 0, 0, 0.032) 6.4%,
+      rgba(0, 0, 0, 0.0674) 7.2%,
+      rgba(0, 0, 0, 0.125) 8%,
+      rgba(0, 0, 0, 0.2087) 8.8%,
+      rgba(0, 0, 0, 0.318) 9.6%,
+      rgba(0, 0, 0, 0.4474) 10.4%,
+      rgba(0, 0, 0, 0.5862) 11.2%,
+      rgba(0, 0, 0, 0.7205) 12%,
+      rgba(0, 0, 0, 0.8361) 12.8%,
+      rgba(0, 0, 0, 0.9223) 13.6%,
+      rgba(0, 0, 0, 0.9745) 14.4%,
+      rgba(0, 0, 0, 0.9965) 15.2%,
+      rgb(0, 0, 0) 16%
+    );
+
+    -webkit-mask-image: var(--feather-y), var(--feather-x);
+    mask-image: var(--feather-y), var(--feather-x);
     -webkit-mask-composite: source-in;
     mask-composite: intersect;
   }
@@ -308,6 +375,15 @@
    levels) satisfies NEITHER query, and the base rule has to be the one that
    leaves text readable.
 
+   **Every ramp on this element is smootherstep sampled at twentieths**, for
+   the reason set out at length in the `.bg` block above: a gradient's visible
+   defect is not its steepness but its VERTICES, and a flat run meeting a
+   linear ramp is a corner however gentle the ramp. `[2.20.0]` rebuilt all
+   six of them that way. The two that were worst were both on this element and
+   both ran the full height of the section, which is what made them read as
+   drawn lines rather than as shading: the base fade's corner at
+   `--copy-edge`, and the shield's 3.5% plunge immediately after it.
+
    **Both stacks are shaped by the same measurement, so start with it.** The
    suited figure the joined hands belong to occupies frame width 15.6% to
    56.1% — a luminance scan of the shipped WebP, the same one `.bg`'s left
@@ -322,17 +398,18 @@
    strong white behind it — the red accent on "impact", the one glyph run that
    is colour-bound rather than ink-black — and it occupies a band 13% of the
    hero tall. Everything above and below it is ink (#0B0B0C) at display size,
-   which still measures past 12:1 at alphas that show the figure plainly.
+   which still measures past 8:1 at alphas that show the figure plainly.
 
    ---- 920px and up: a base fade, plus a shield over the accent ----
 
-   `.scrim` carries the base: a flat 0.50 across the whole copy column, then
+   `.scrim` carries the base: a flat 0.40 across the whole copy column, then
    the plunge. `.scrim::after` carries the shield: the same horizontal profile
-   at 0.70, masked down to the accent's own band — opaque across 42%-60% of the
-   hero, ramped in over the 17% above it and out over the 18% below. The two
-   composite to `1 − 0.50 x 0.30` = 0.85 behind the accent, a shade MORE than
-   the 0.845 the old shelf put there, so the binding contrast below is
-   preserved rather than spent.
+   at 0.75, masked down to the accent's own band — opaque across 42%-60% of the
+   hero, ramped in over the 10% above it and out over the 18% below. The two
+   composite to `1 − 0.60 x 0.25` = **0.85 behind the accent, exactly what the
+   pair produced before**: the base came down from 0.50 and the shield went up
+   from 0.70 by the amount that holds that product, so the binding contrast
+   below is unchanged while everything the shield does not cover got lighter.
 
    It has to be a mask on a second layer rather than a third gradient in the
    same `background`: stacked translucent layers UNION (`1 − Π(1 − a)`), so a
@@ -341,6 +418,19 @@
    column. Engines without `mask-image` paint the shield unmasked, which
    degrades to roughly the old full-height shelf: more white, never less.
 
+   **The shield's mask ramps are not symmetric, and the reason is the lede.**
+   The band opens over 32%-42% of the hero and closes over 60%-78%. The top
+   ramp was shortened from 25% in `[2.20.0]`, which is where most of the extra
+   photograph behind the headline came from — measured over the columns the
+   figure occupies, the copy column gains 10% at 1920px and 18% at 2560px (it
+   is flat from 920px to 1440px, where the shield's band and the frame's own
+   feathers already overlap almost exactly), and
+   nothing above the accent needs the shield. The BOTTOM ramp must stay at
+   78%: the lede sits under it at 61%-71% of the hero and is 16-19px `--grey-2`,
+   i.e. **normal-size text on a 4.5:1 floor**, not large text on a 3:1 one. It
+   measures 4.85:1 at 2560px, the tightest width; closing the ramp at 72%
+   instead takes it to 3.50:1 and fails. Do not shorten it to match the top.
+
    **Most of what this uncovers is in the frame's own feathers, and that is
    the point.** The frame is about half the hero tall, its top 34% and bottom
    32% are feather, and the full-mask middle is very nearly the same band the
@@ -348,35 +438,26 @@
    shield is 0, and lowering the base alpha would look pointless if you only
    read it there. What the base alpha actually multiplies is the surviving
    mask in the feathers: at mask 0.5 over the near-black sleeve the composite
-   moves from 240 under the old 0.86 shelf to 203 at 0.50. Measured as mean
-   deviation from page white over the columns the figure occupies, the
-   photograph gains 29% at 920px, 21% at 1440px, 46% at 1920px and 64% at
-   2560px.
+   moves from 240 under the 0.86 shelf two releases back to 203 at 0.50 and
+   180 at 0.40.
 
    Both layers let go after `--copy-edge` and the shield ramps in by
    `--accent-edge`, so the white tracks the copy rather than one tuned
-   viewport (see the block below). The shield's plunge is the faster of the
-   two, reaching zero at `+3.5%` against the base's `+7%`, and that is what
-   keeps the hands no whiter than they were: across the plunge the pair
-   measures 0.61 / 0.30 / 0.16 against the old single layer's 0.64 / 0.46 /
-   0.28.
+   viewport (see the block below). The shield's plunge is still the faster of
+   the two — 5% of the hero against the base's 10% — but both are now eased
+   rather than cornered, and both are shorter than what they replace (3.5%
+   from a hard corner, and 14%), so the hand ends up with less white on it,
+   not more.
 
    **The accent is still the binding element and these numbers are fitted to
-   it.** Measured against its real glyph coverage — the word rasterised at its
-   computed font and sampled only where its own alpha is 255 — white at 0.82
-   over the near-black sleeve behind it runs 3.13:1, 0.80 lands on 3.02:1, and
-   0.78 breaks the 3:1 large-text floor outright. Sampling the accent's whole
-   box against its brightest fill (#E8293E) — stricter again, since it takes
-   the darkest backdrop pixel anywhere under the word — the pair measures
-   3.20-3.27:1 from 920px to 2560px, against 3.06-3.12:1 for the shelf it
-   replaces. It needs that margin: shortening `.bg`'s left ramp raised the
-   mask under the accent's FIRST glyphs from 0.78 to 1, so more of the word
-   now sits over full-strength sleeve than when 0.82 was measured.
-
-   Do not thin either layer without re-measuring that way, and do not narrow
-   the shield's mask band: the accent's top edge sits at 43.9% of the hero at
-   its highest (920px on a short viewport) and its bottom at 59.2% at its
-   lowest, which is what 42%-60% opaque plus its ramps exists to cover.
+   it.** Sampling the accent's whole box against its brightest fill (#E8293E)
+   — the strict test, since it takes the darkest backdrop pixel anywhere under
+   the word — the pair measures 3.25-3.31:1 from 920px to 2560px, unchanged
+   from the release before it, against a 3:1 floor. Do not thin either layer
+   without re-measuring that way, and do not narrow the shield's mask BAND
+   (the opaque 42%-60%): the accent's top edge sits at 43.6% of the hero at
+   its highest (920px on a 640px-tall viewport) and its bottom at 59.2% at its
+   lowest, which is what that band plus its ramps exists to cover.
 
    ---- Below 920px: the fade, plus a vertical veil ----
 
@@ -388,59 +469,89 @@
 
    So the two layers split the job by axis — the same division of labour the
    desktop shield makes explicit, arrived at here first. The veil (layer 1)
-   owns legibility: nothing above 12% of the hero, 0.66 by 25%, held to the
+   owns legibility: nothing above 12% of the hero, 0.55 by 25%, held to the
    foot, so the copy is covered whatever the fade is doing. The fade (layer 2)
    is then free to be about the LEFT EDGE, the one thing the veil cannot help
-   with: 0.36 at the edge, 0.20 by 30%, gone by 75%.
+   with: 0.24 at the edge, eased to nothing by the right.
 
-   **The fade is where the phone's reveal comes from, not the veil**, and the
-   split is not symmetric with the desktop pair for that reason. Below 920px
-   the frame is pinned to the top of the section and is only about 40% of the
-   hero tall, so the veil — which has to be at full strength by the time the
-   copy starts at 26% — already covers the frame's lower half whatever it is
-   set to, while the strip above the copy is the fade's alone. Dropping the
-   fade from 0.55 to 0.36 takes the photograph there from 45% of itself to
-   64%; dropping the veil the same distance would have bought a third as much
-   and spent the accent's margin doing it. Measured over the figure's columns
-   the photograph gains 37% at 375px and 28% at 768-900px.
+   **The veil could come down from 0.66 to 0.55 only because `.bg`'s mobile
+   bottom ramp was lengthened at the same time**, and the two must be moved
+   together. The accent sits inside that ramp here (77%-93% of the frame's
+   height), so starting the ramp at 62% rather than 68% lightens the mask
+   under the word by more than the thinner veil costs it: 3.53:1 at 900px,
+   3.91:1 at 768px and 4.27:1 at 375px, all of them BETTER than the 3.46 /
+   3.66 / 4.16 the thicker veil produced. Thin the veil on its own and 900px
+   — the tightest width, where the frame is widest relative to the viewport —
+   is the one that fails first. The lede is past the frame entirely at 8.81:1
+   and the ink headline never drops below 8.1:1.
 
-   The accent's margin here comes from the geometry: with the frame's top edge
-   at the top of the section, the accent sits at 72-84% of the frame's HEIGHT,
-   inside the bottom feather, so the mask is down to about 0.2 before the
-   scrim is applied at all. It measures 4.10:1 at 375px, 4.03:1 at 768px and
-   3.69:1 at 900px — the tightest width, where the frame is widest relative to
-   the viewport — against 4.13 / 4.07 / 3.82 before, and a 3:1 floor. The lede
-   is past the frame entirely at 8.81:1, and the ink headline never drops
-   below 10.2:1.
+   Measured over the figure's columns, the photograph gains 14% at 375px and
+   19% at 768-900px in the copy column, and 9-16% over the hand.
 
    ---- Where the reveal lives, if it ever needs re-tuning ----
 
    Left of about 33% of the hero there is nothing to uncover at any alpha: the
    frame starts at 17.5% and its own left 16% is the blown-out window. Between
-   there and `--copy-edge` the levers are this overlay's base alpha and
-   `.bg`'s feathers, and they are not interchangeable — the feathers decide
-   whether the figure is drawn at all, the alpha decides how much of it
-   survives. The feathers are the bigger lever and the more dangerous one:
-   shortening the top ramp from 34% to 12% roughly doubles the figure again
-   and puts a 22-level step across 10px at the frame's top edge, which is a
-   visible horizontal line. The shipped ramps hold that step at 2.6 levels or
-   less (2.1-5.2 at the bottom edge, 4.2-6.8 across the shield's own seam),
-   which is the range the previous release already measured. Past
-   `--copy-edge` the lever is neither: it is `--bg-right`. */
+   there and `--copy-edge` the levers are this overlay's base alpha, the
+   SHIELD's mask ramps, and `.bg`'s feathers — and they are not
+   interchangeable. The base alpha is the weakest of the three on desktop,
+   because the band where the frame is drawn at full mask is very nearly the
+   band the shield covers; the shield's top ramp is the strong one, and it is
+   free down to about 32% because nothing above the accent is colour-bound.
+   The feathers are the most dangerous: shortening the top ramp from 34% to
+   12% roughly doubles the figure again and puts a 22-level step across 10px
+   at the frame's top edge, which is a visible horizontal line. Past
+   `--copy-edge` the lever is none of them: it is `--bg-right`. */
 .scrim {
   background:
     linear-gradient(
       180deg,
       rgba(255, 255, 255, 0) 0%,
       rgba(255, 255, 255, 0) 12%,
-      rgba(255, 255, 255, 0.66) 25%,
-      rgba(255, 255, 255, 0.66) 100%
+      rgba(255, 255, 255, 0.0006) 12.65%,
+      rgba(255, 255, 255, 0.0047) 13.3%,
+      rgba(255, 255, 255, 0.0146) 13.95%,
+      rgba(255, 255, 255, 0.0319) 14.6%,
+      rgba(255, 255, 255, 0.0569) 15.25%,
+      rgba(255, 255, 255, 0.0897) 15.9%,
+      rgba(255, 255, 255, 0.1293) 16.55%,
+      rgba(255, 255, 255, 0.1746) 17.2%,
+      rgba(255, 255, 255, 0.2238) 17.85%,
+      rgba(255, 255, 255, 0.275) 18.5%,
+      rgba(255, 255, 255, 0.3262) 19.15%,
+      rgba(255, 255, 255, 0.3754) 19.8%,
+      rgba(255, 255, 255, 0.4207) 20.45%,
+      rgba(255, 255, 255, 0.4603) 21.1%,
+      rgba(255, 255, 255, 0.4931) 21.75%,
+      rgba(255, 255, 255, 0.5181) 22.4%,
+      rgba(255, 255, 255, 0.5354) 23.05%,
+      rgba(255, 255, 255, 0.5453) 23.7%,
+      rgba(255, 255, 255, 0.5494) 24.35%,
+      rgba(255, 255, 255, 0.55) 25%,
+      rgba(255, 255, 255, 0.55) 100%
     ),
     linear-gradient(
       90deg,
-      rgba(255, 255, 255, 0.36) 0%,
-      rgba(255, 255, 255, 0.2) 30%,
-      rgba(255, 255, 255, 0.04) 75%,
+      rgba(255, 255, 255, 0.24) 0%,
+      rgba(255, 255, 255, 0.2397) 5%,
+      rgba(255, 255, 255, 0.2379) 10%,
+      rgba(255, 255, 255, 0.2336) 15%,
+      rgba(255, 255, 255, 0.2261) 20%,
+      rgba(255, 255, 255, 0.2152) 25%,
+      rgba(255, 255, 255, 0.2009) 30%,
+      rgba(255, 255, 255, 0.1836) 35%,
+      rgba(255, 255, 255, 0.1638) 40%,
+      rgba(255, 255, 255, 0.1424) 45%,
+      rgba(255, 255, 255, 0.12) 50%,
+      rgba(255, 255, 255, 0.0976) 55%,
+      rgba(255, 255, 255, 0.0762) 60%,
+      rgba(255, 255, 255, 0.0564) 65%,
+      rgba(255, 255, 255, 0.0391) 70%,
+      rgba(255, 255, 255, 0.0248) 75%,
+      rgba(255, 255, 255, 0.0139) 80%,
+      rgba(255, 255, 255, 0.0064) 85%,
+      rgba(255, 255, 255, 0.0021) 90%,
+      rgba(255, 255, 255, 0.0003) 95%,
       rgba(255, 255, 255, 0) 100%
     );
 }
@@ -494,10 +605,28 @@
   .scrim {
     background: linear-gradient(
       90deg,
-      rgba(255, 255, 255, 0.5) 0%,
-      rgba(255, 255, 255, 0.5) var(--copy-edge),
-      rgba(255, 255, 255, 0.1) calc(var(--copy-edge) + 7%),
-      rgba(255, 255, 255, 0) calc(var(--copy-edge) + 14%)
+      rgba(255, 255, 255, 0.4) 0%,
+      rgba(255, 255, 255, 0.4) var(--copy-edge),
+      rgba(255, 255, 255, 0.3995) calc(var(--copy-edge) + 0.5%),
+      rgba(255, 255, 255, 0.3966) calc(var(--copy-edge) + 1%),
+      rgba(255, 255, 255, 0.3894) calc(var(--copy-edge) + 1.5%),
+      rgba(255, 255, 255, 0.3768) calc(var(--copy-edge) + 2%),
+      rgba(255, 255, 255, 0.3586) calc(var(--copy-edge) + 2.5%),
+      rgba(255, 255, 255, 0.3348) calc(var(--copy-edge) + 3%),
+      rgba(255, 255, 255, 0.3059) calc(var(--copy-edge) + 3.5%),
+      rgba(255, 255, 255, 0.273) calc(var(--copy-edge) + 4%),
+      rgba(255, 255, 255, 0.2373) calc(var(--copy-edge) + 4.5%),
+      rgba(255, 255, 255, 0.2) calc(var(--copy-edge) + 5%),
+      rgba(255, 255, 255, 0.1627) calc(var(--copy-edge) + 5.5%),
+      rgba(255, 255, 255, 0.127) calc(var(--copy-edge) + 6%),
+      rgba(255, 255, 255, 0.0941) calc(var(--copy-edge) + 6.5%),
+      rgba(255, 255, 255, 0.0652) calc(var(--copy-edge) + 7%),
+      rgba(255, 255, 255, 0.0414) calc(var(--copy-edge) + 7.5%),
+      rgba(255, 255, 255, 0.0232) calc(var(--copy-edge) + 8%),
+      rgba(255, 255, 255, 0.0106) calc(var(--copy-edge) + 8.5%),
+      rgba(255, 255, 255, 0.0034) calc(var(--copy-edge) + 9%),
+      rgba(255, 255, 255, 0.0005) calc(var(--copy-edge) + 9.5%),
+      rgba(255, 255, 255, 0) calc(var(--copy-edge) + 10%)
     );
   }
 
@@ -508,11 +637,10 @@
 
      Its mask band is stated in percentages of the HERO, like the fade's own
      stops, so it tracks the section's height at every width instead of
-     needing a breakpoint of its own. The ramps are linear rather than the
-     power curve `.bg`'s feathers use: this one carries the composite from the
-     base's 0.50 to 0.85 over 17% of the hero (about 170px), so what it crosses
-     is 0.35 of white spread over that distance, not a near-black edge packed
-     into a fifth of it — there is nothing here for a curve to hide. */
+     needing a breakpoint of its own. Both the band's ramps and the horizontal
+     profile are smootherstep at twentieths, same as everything else on this
+     element — the linear ramps this used to carry put a corner at each of the
+     band's four stops. */
   .scrim::after {
     content: '';
     position: absolute;
@@ -520,24 +648,97 @@
     background: linear-gradient(
       90deg,
       rgba(255, 255, 255, 0) 0%,
-      rgba(255, 255, 255, 0.7) var(--accent-edge),
-      rgba(255, 255, 255, 0.7) var(--copy-edge),
-      rgba(255, 255, 255, 0) calc(var(--copy-edge) + 3.5%)
+      rgba(255, 255, 255, 0.0009) calc(var(--accent-edge) * 0.05),
+      rgba(255, 255, 255, 0.0064) calc(var(--accent-edge) * 0.1),
+      rgba(255, 255, 255, 0.02) calc(var(--accent-edge) * 0.15),
+      rgba(255, 255, 255, 0.0434) calc(var(--accent-edge) * 0.2),
+      rgba(255, 255, 255, 0.0776) calc(var(--accent-edge) * 0.25),
+      rgba(255, 255, 255, 0.1223) calc(var(--accent-edge) * 0.3),
+      rgba(255, 255, 255, 0.1764) calc(var(--accent-edge) * 0.35),
+      rgba(255, 255, 255, 0.2381) calc(var(--accent-edge) * 0.4),
+      rgba(255, 255, 255, 0.3052) calc(var(--accent-edge) * 0.45),
+      rgba(255, 255, 255, 0.375) calc(var(--accent-edge) * 0.5),
+      rgba(255, 255, 255, 0.4448) calc(var(--accent-edge) * 0.55),
+      rgba(255, 255, 255, 0.5119) calc(var(--accent-edge) * 0.6),
+      rgba(255, 255, 255, 0.5736) calc(var(--accent-edge) * 0.65),
+      rgba(255, 255, 255, 0.6277) calc(var(--accent-edge) * 0.7),
+      rgba(255, 255, 255, 0.6724) calc(var(--accent-edge) * 0.75),
+      rgba(255, 255, 255, 0.7066) calc(var(--accent-edge) * 0.8),
+      rgba(255, 255, 255, 0.73) calc(var(--accent-edge) * 0.85),
+      rgba(255, 255, 255, 0.7436) calc(var(--accent-edge) * 0.9),
+      rgba(255, 255, 255, 0.7491) calc(var(--accent-edge) * 0.95),
+      rgba(255, 255, 255, 0.75) var(--accent-edge),
+      rgba(255, 255, 255, 0.75) var(--copy-edge),
+      rgba(255, 255, 255, 0.7491) calc(var(--copy-edge) + 0.25%),
+      rgba(255, 255, 255, 0.7436) calc(var(--copy-edge) + 0.5%),
+      rgba(255, 255, 255, 0.73) calc(var(--copy-edge) + 0.75%),
+      rgba(255, 255, 255, 0.7066) calc(var(--copy-edge) + 1%),
+      rgba(255, 255, 255, 0.6724) calc(var(--copy-edge) + 1.25%),
+      rgba(255, 255, 255, 0.6277) calc(var(--copy-edge) + 1.5%),
+      rgba(255, 255, 255, 0.5736) calc(var(--copy-edge) + 1.75%),
+      rgba(255, 255, 255, 0.5119) calc(var(--copy-edge) + 2%),
+      rgba(255, 255, 255, 0.4448) calc(var(--copy-edge) + 2.25%),
+      rgba(255, 255, 255, 0.375) calc(var(--copy-edge) + 2.5%),
+      rgba(255, 255, 255, 0.3052) calc(var(--copy-edge) + 2.75%),
+      rgba(255, 255, 255, 0.2381) calc(var(--copy-edge) + 3%),
+      rgba(255, 255, 255, 0.1764) calc(var(--copy-edge) + 3.25%),
+      rgba(255, 255, 255, 0.1223) calc(var(--copy-edge) + 3.5%),
+      rgba(255, 255, 255, 0.0776) calc(var(--copy-edge) + 3.75%),
+      rgba(255, 255, 255, 0.0434) calc(var(--copy-edge) + 4%),
+      rgba(255, 255, 255, 0.02) calc(var(--copy-edge) + 4.25%),
+      rgba(255, 255, 255, 0.0064) calc(var(--copy-edge) + 4.5%),
+      rgba(255, 255, 255, 0.0009) calc(var(--copy-edge) + 4.75%),
+      rgba(255, 255, 255, 0) calc(var(--copy-edge) + 5%)
     );
-    -webkit-mask-image: linear-gradient(
+
+    --shield-mask: linear-gradient(
       180deg,
-      rgba(0, 0, 0, 0) 25%,
+      rgba(0, 0, 0, 0) 32%,
+      rgba(0, 0, 0, 0.0012) 32.5%,
+      rgba(0, 0, 0, 0.0086) 33%,
+      rgba(0, 0, 0, 0.0266) 33.5%,
+      rgba(0, 0, 0, 0.0579) 34%,
+      rgba(0, 0, 0, 0.1035) 34.5%,
+      rgba(0, 0, 0, 0.1631) 35%,
+      rgba(0, 0, 0, 0.2352) 35.5%,
+      rgba(0, 0, 0, 0.3174) 36%,
+      rgba(0, 0, 0, 0.4069) 36.5%,
+      rgba(0, 0, 0, 0.5) 37%,
+      rgba(0, 0, 0, 0.5931) 37.5%,
+      rgba(0, 0, 0, 0.6826) 38%,
+      rgba(0, 0, 0, 0.7648) 38.5%,
+      rgba(0, 0, 0, 0.8369) 39%,
+      rgba(0, 0, 0, 0.8965) 39.5%,
+      rgba(0, 0, 0, 0.9421) 40%,
+      rgba(0, 0, 0, 0.9734) 40.5%,
+      rgba(0, 0, 0, 0.9914) 41%,
+      rgba(0, 0, 0, 0.9988) 41.5%,
       rgb(0, 0, 0) 42%,
       rgb(0, 0, 0) 60%,
+      rgba(0, 0, 0, 0.9988) 60.9%,
+      rgba(0, 0, 0, 0.9914) 61.8%,
+      rgba(0, 0, 0, 0.9734) 62.7%,
+      rgba(0, 0, 0, 0.9421) 63.6%,
+      rgba(0, 0, 0, 0.8965) 64.5%,
+      rgba(0, 0, 0, 0.8369) 65.4%,
+      rgba(0, 0, 0, 0.7648) 66.3%,
+      rgba(0, 0, 0, 0.6826) 67.2%,
+      rgba(0, 0, 0, 0.5931) 68.1%,
+      rgba(0, 0, 0, 0.5) 69%,
+      rgba(0, 0, 0, 0.4069) 69.9%,
+      rgba(0, 0, 0, 0.3174) 70.8%,
+      rgba(0, 0, 0, 0.2352) 71.7%,
+      rgba(0, 0, 0, 0.1631) 72.6%,
+      rgba(0, 0, 0, 0.1035) 73.5%,
+      rgba(0, 0, 0, 0.0579) 74.4%,
+      rgba(0, 0, 0, 0.0266) 75.3%,
+      rgba(0, 0, 0, 0.0086) 76.2%,
+      rgba(0, 0, 0, 0.0012) 77.1%,
       rgba(0, 0, 0, 0) 78%
     );
-    mask-image: linear-gradient(
-      180deg,
-      rgba(0, 0, 0, 0) 25%,
-      rgb(0, 0, 0) 42%,
-      rgb(0, 0, 0) 60%,
-      rgba(0, 0, 0, 0) 78%
-    );
+
+    -webkit-mask-image: var(--shield-mask);
+    mask-image: var(--shield-mask);
   }
 }
 
