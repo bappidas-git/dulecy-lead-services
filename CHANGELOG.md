@@ -12,6 +12,43 @@ prompt per branch/PR — and the entries below summarise each phase under the
 
 The format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.18.1] — 2026-08-19 — Home hero: thin the white shelf so the photograph reads earlier
+
+The desktop overlay held white at 0.93 → 0.90 → 0.86 across the copy, which
+left the photograph contributing 7-14% of itself anywhere left of
+`--copy-edge`. On a wide screen the hero read as white paper with a handshake
+pasted onto its right third rather than as copy sitting on a photograph.
+
+### Changed
+
+- **The desktop shelf is 0.89 → 0.86 → 0.82** (from `0.93 → 0.90 → 0.86`) in
+  `HeroSection.module.css`'s `min-width: 920px` `.scrim`. The photograph's own
+  pixel now survives at 11% / 14% / 18% across the shelf instead of 7% / 10% /
+  14%, so the sleeve and the near arm read through the span between the
+  frame's left feather and the end of the copy. The plunge past `--copy-edge`
+  (0.10 at +7%, 0 at +14%) is untouched, as is the sub-920px pair — the phone
+  hero's veil-plus-fade split carries its own legibility budget and had no part
+  in this.
+
+### Notes
+
+- **0.82 is the floor, not a round number.** The binding pixel is a near-black
+  sleeve at full mask directly under the last glyph of "impact" — verified to
+  be under a painted glyph by rasterising the accent at its computed font and
+  sampling only where its own alpha is 255, not by sampling its bounding box.
+  On that measure the tail runs 3.39:1 at 0.86 and 3.13:1 at 0.82 at 1024 /
+  1440 / 1920px alike, against a 3:1 large-text floor; 0.80 gives 3.02:1 and
+  0.78 breaks it. The ink headline is 13.3:1 at its thinnest. The comment above
+  `.scrim` records this so the next pass does not re-derive it — the previous
+  comment's "4.0:1, because what sits behind it is the frame's blown-out left"
+  was measuring the wrong pixel.
+- **The far left is not this gradient's to give.** The frame starts at 17.5% of
+  the hero at 1440px and its own left feather does not reach full strength
+  until 47%, so at the shelf's 30% stop the backdrop is already 88% page white
+  and lowering that stop further moves the composite by about one part in a
+  hundred. The first two stops moved to keep the shelf reading as one surface.
+  More photograph further left is a `.bg` mask-ramp or `--bg-right` change.
+
 ## [2.18.0] — 2026-08-19 — Home hero: no box, a bigger hand, and the DLS watermark retired
 
 `[2.17.0]` fitted the photograph into a placed box. That box was the problem:
