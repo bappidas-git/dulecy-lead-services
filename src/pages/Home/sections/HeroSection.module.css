@@ -33,20 +33,53 @@
      for 2 points of photo presence. Erring long costs a little photo; erring
      short puts a display glyph — or that number — on bare handshake. */
   --copy-edge: calc(50vw + 320px);
+
+  /* ---- Where the contained frame is drawn, and how big ----
+     `contain` decides the photograph's SHAPE; these two decide the box it is
+     contained in, which is what decides its SIZE. Left to fill the section the
+     frame is drawn as wide as the hero at every normal viewport — 1430px at
+     1440px, 1910px at 1920px — and at that scale the clasp alone spans 372px
+     and 497px, which is what still reads as a large photograph even though
+     nothing is cropped any more.
+
+     `--bg-w` is the box's width, and since the frame is width-limited in it,
+     it IS the drawn width of the photograph. Below the 920px nav breakpoint the
+     copy spans the frame, so the band spans it too and runs off both sides: the
+     430px floor keeps the clasp reading at 320px, and the 900px ceiling holds
+     it inside the 2880px master at 2x. Above the breakpoint the copy is a left
+     column and the band steps back to the right of it — 74% of the hero,
+     floored at 760px so the step across the breakpoint is small, capped at
+     1460px for the same 2x reason.
+
+     `--bg-top` places it: clear of the 68px header on phones, where the band
+     belongs at the top of the section, and ignored from 920px up, where
+     `.bgWrap` centres it beside the copy instead.
+
+     Both are read only by `.bgWrap`. The feather that dissolves the frame's
+     edges is on `.bg` and is stated in percentages of the IMAGE, so it follows
+     these numbers wherever they put it, with nothing to re-tune here. */
+  --bg-w: clamp(430px, 135%, 900px);
+  --bg-top: 64px;
+
+  /* The feather has to dissolve into a stated colour rather than into whatever
+     happens to sit behind the section. The page is already white; this says
+     so. */
+  background: #fff;
 }
 
 /* ============================================
-   THE BACKDROP BOX — `.bgWrap` and `.scrim` share it
+   THE OVERLAY BOX — `.scrim` alone
    --------------------------------------------
-   Both fill the section, at every width, with no breakpoint between them. The
-   overlay's percentages are therefore percentages of the section, which is what
-   makes one set of stops describe every viewport.
+   The overlay fills the section at every width, with no breakpoint in its
+   geometry, which is what makes its stops percentages of the section and lets
+   one set of them describe every viewport. `.bgWrap` used to share this rule;
+   it no longer fills the section, so it has its own below.
 
-   The two are separate elements rather than layers on one, so that the
-   responsive override below can restate the overlay with the `background`
-   shorthand without having to restate anything about the photograph.
+   The two stay separate elements rather than layers on one, so that the
+   responsive override further down can restate the overlay with the
+   `background` shorthand without having to restate anything about the
+   photograph.
    ============================================ */
-.bgWrap,
 .scrim {
   position: absolute;
   inset: 0;
@@ -73,17 +106,60 @@
    and lets the backdrop carry `fetchpriority="high"`, which a background image
    cannot.
 
-   Centred on both axes: the frame is symmetric enough that nothing is gained by
-   biasing it, and the letterbox splits evenly instead of pooling on one side.
+   The box it is contained in is NOT the section. `contain` fixes the frame's
+   shape but takes its size from whatever it is contained in, and a
+   section-sized box draws the photograph as wide as the hero — 1430px at
+   1440px, 1910px at 1920px, with the clasp alone spanning 372px and 497px.
+   Uncropped is not the same as unenlarged, and that scale is what still read as
+   a large photograph. So `.bgWrap` is a placed box: `--bg-w` wide, pinned to
+   the hero's right edge, sitting under the header on phones and centred on the
+   hero's height from 920px up. The frame is still whole at every viewport —
+   that guarantee is `contain`'s and it is untouched — it is simply drawn at
+   1058px and 1413px instead, so the clasp comes to 275px and 367px.
+
+   Anchored right rather than centred because the copy is not symmetric: from
+   920px up it is a left column, so pinning the frame right puts the clasp at
+   about 76% of the hero instead of 68%, which is past `--copy-edge`'s plunge
+   at the wide end rather than under the shelf. Below the breakpoint the copy
+   spans the frame, so the band spans it too and the anchor stops mattering —
+   it runs off both sides at every phone width.
+
+   Vertically the two cases differ for the same reason and are set with
+   `align-items` plus `padding-top`, not with offsets, so the flex centring
+   keeps working in the wide-and-short case past 2.63:1 where height binds and
+   the frame is narrower than the box.
 
    No `useParallax` here, unlike the Expertise and Who We Serve heroes. Scrub
    parallax needs the photo drawn LARGER than its box so the travel never
    exposes an edge — the exact opposite of showing the whole frame. */
 .bgWrap {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: var(--bg-w);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
+  padding-top: var(--bg-top);
   overflow: hidden;
+  pointer-events: none;
+}
+
+/* From 920px up the copy is a left column, so the band narrows to 74% of the
+   hero and centres on its height beside the copy rather than sitting under the
+   header. `padding-top` is zeroed rather than left to fight `align-items`,
+   since `box-sizing: border-box` is global and the padding would otherwise
+   shorten the box the frame is centred in. */
+@media (min-width: 920px) {
+  .hero {
+    --bg-w: clamp(760px, 74%, 1460px);
+  }
+
+  .bgWrap {
+    align-items: center;
+    padding-top: 0;
+  }
 }
 
 /* Feathering the four edges is what makes `contain` look composed rather than
@@ -224,6 +300,17 @@
      - The lede (`--grey-2`, small text, so a 4.5:1 floor) is second: 5.07:1 at
        390px, where the band sits directly behind it, against 5.90:1 before.
 
+   **This rule is left exactly as that release tuned it, and the placement above
+   is why it can be.** Below 920px the band now sits at the top of the section
+   rather than across the middle of it, so the copy has moved off the
+   photograph rather than the photograph having been thinned out from under the
+   copy: the accent measures 4.36:1 at 320, 390 and 768px and 4.18:1 at 919px,
+   against the 3.35-3.45:1 the same alphas gave over a section-filling frame,
+   and the lede goes from 5.06-7.12:1 to 8.81:1. The reasoning below is the
+   reasoning that produced these stops and it still holds; there is simply
+   nothing left for a re-tune to buy here, and the 600-900px range that used to
+   be the sub-920 danger zone is now its safest part.
+
    What this layer buys is a redistribution, not a windfall, and the numbers say
    so plainly: the photograph's own pixel surviving at the hero's right edge goes
    from 24% to 38%, while averaged across the clasp it is unchanged at 12% and
@@ -262,29 +349,38 @@
    1.2:1). So the white holds across the copy, then drops to 0.08 inside the
    next 8% of the hero and to nothing 8% after that.
 
-   How MUCH white the shelf holds is what this release tunes, and it is tuned
-   down again: 0.94 → 0.91 → 0.86 becomes 0.88 → 0.85 → 0.82. `--copy-edge`'s
-   geometry survives the switch to `contain` intact, which is why none of the
-   POSITIONS below had to move: at every viewport where the frame is
-   width-limited — which is every normal one — the contained image spans the hero
-   edge to edge, so the clasp still sits at 68% of the file AND at 68% of the
-   hero, exactly as it did when `background-position: 68%` pinned it there. The
-   subject is still mostly under the shelf with only its right side in the clear.
+   How MUCH white the shelf holds went DOWN when the frame became contained
+   (0.94 → 0.91 → 0.86 became 0.88 → 0.85 → 0.82) and comes back up here, to
+   0.92 → 0.89 → 0.86. That is not a reversal: it is the placement above being
+   spent, and it buys on both axes at once.
 
-   Six points is what the accent will pay for, and it was measured, not chosen.
-   The red on "impact" is the section's floor at every width; on desktop it keeps
-   its own line inside the left column, over the dark suit, and a red glyph LOSES
-   contrast as the composite behind it lightens, so the shelf is what holds it
-   up. Over the real composite the worst pixel under the word runs 3.09-3.10:1
-   across 920-1920px, against 3.38-3.42:1 at the old alphas and a 3:1 large-text
-   floor. The next notch down (0.86 → 0.83 → 0.80) measures 3.00:1 — landing
-   exactly on the floor for two more points of photo is not a trade worth making,
-   so this is where the thinning stops.
+   The reason it can is that `--copy-edge`'s geometry no longer describes where
+   the subject is. A contained frame that fills the section spans the hero edge
+   to edge, so the clasp sat at 68% of the file AND at 68% of the hero, which is
+   under the shelf — the overlay could only reveal it by thinning the same white
+   that covers the copy. Pinned right at `--bg-w`, the clasp moves to about 76%
+   of the hero, which is inside the plunge. The shelf and the subject have come
+   apart, so white spent on the copy is no longer white spent on the hand.
 
-   It buys, averaged across the clasp (55-81% of the frame, so it straddles the
-   plunge), 12% → 16% of the photograph's own pixel at 1024px, 23% → 27% at
-   1440px and 40% → 43% at 1920px. The ink copy over the shelf is nowhere near
-   its own floor at either setting — 14.1:1 at the thinnest.
+   Measured over the real composite, against the release that preceded this one
+   at every one of its own widths:
+
+     - The accent — the red `#E8293E` on "impact", the section's floor at every
+       width, and a colour that LOSES contrast as the composite behind it
+       lightens — runs 3.36 / 3.32 / 3.33:1 at 1024 / 1440 / 1920px, against
+       3.08 / 3.11 / 3.09:1 before, and a 3:1 large-text floor. The previous
+       alphas left roughly a tenth of a point of margin; this restores the third
+       of a point the pre-`contain` release had.
+     - The photograph, averaged across the clasp (55-81% of the frame, so it
+       straddles the plunge), goes the SAME way rather than the opposite one:
+       16% → 16% at 1024px, 27% → 50% at 1440px, 43% → 76% at 1920px. The frame
+       is drawn smaller and more of it survives, because the part that survives
+       is now the part with the hand in it.
+
+   The ink copy over the shelf is nowhere near its own floor at either setting —
+   14.1:1 at the thinnest. 1024px is the one width that gains nothing: the copy
+   is at its widest share of the hero there, `--copy-edge` lands at 82%, and the
+   plunge starts past the clasp however the frame is placed.
 
    The plunge is keyed to `--copy-edge`, which follows the copy, so the shelf
    ends where the glyphs do at every width instead of at one tuned viewport.
@@ -303,9 +399,9 @@
   .scrim {
     background: linear-gradient(
       90deg,
-      rgba(255, 255, 255, 0.88) 0%,
-      rgba(255, 255, 255, 0.85) 30%,
-      rgba(255, 255, 255, 0.82) var(--copy-edge),
+      rgba(255, 255, 255, 0.92) 0%,
+      rgba(255, 255, 255, 0.89) 30%,
+      rgba(255, 255, 255, 0.86) var(--copy-edge),
       rgba(255, 255, 255, 0.08) calc(var(--copy-edge) + 8%),
       rgba(255, 255, 255, 0) calc(var(--copy-edge) + 16%)
     );
