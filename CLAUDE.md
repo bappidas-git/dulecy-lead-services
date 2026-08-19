@@ -92,18 +92,19 @@ supplied file already peaked at alpha 255, so the wordmark's normalisation pass
 above does **not** apply to it. The transparent padding the client's export
 carried was cropped away, so a CSS `width` maps straight onto the visible mark
 with no dead margin to compensate for; keep that true of any re-cut. Reuse
-`MARK_SIZE` for the `width`/`height` attributes. Its one surface is the Home
-hero watermark, and it is **not** interchangeable with the "D" monogram it
-replaced: the mockup's `26vw / 380px` ramp widens to `30vw / 430px` for the
-1.87:1 aspect, and the **opacity** splits at the **same 920px breakpoint the
-scrim already switches on** — `0.06` below (small mark, where less vanishes)
-and `0.04` above (2.3× wider, where the lower value keeps it from reading as a
-second headline). The `top` stays the mockup's `110px` at every width: the
-backdrop is full-bleed, so there is no banner for the mark to drop clear of and
-nothing to key a second value to. See the annotated `.float` block in
-`HeroSection.module.css`. The `-860` suffix is the width and `/images/**` is
-immutable, so re-cutting it means a new filename and a matching `MARK_SIZE`
-bump.
+`MARK_SIZE` for the `width`/`height` attributes.
+
+> ⚠️ **It currently has no surface.** Its one consumer was the Home hero's
+> floating watermark, which `[2.18.0]` removed — the hero's photograph now
+> carries that area and a second mark behind it read as a competing headline.
+> `logoMark` and `MARK_SIZE` stay exported and the PNG stays shipped, so
+> nothing has to be re-cut to use it again, but nothing in `src/` draws it
+> today. Do not "clean it up" as dead code; do not assume the old
+> `26vw / 380px` monogram values apply if it comes back (the mark is 1.87:1,
+> not square).
+
+The `-860` suffix is the width and `/images/**` is immutable, so re-cutting it
+means a new filename and a matching `MARK_SIZE` bump.
 
 `logoAt(url, { w, h })` returns a Cloudinary-resized display URL (`f_auto`,
 `q_auto:best`) — pass **2× the CSS box**; it returns a non-Cloudinary URL
