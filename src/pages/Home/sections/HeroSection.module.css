@@ -344,7 +344,7 @@
    1.2:1). So the white holds across the copy, then drops to 0.10 inside the
    next 7% of the hero and to nothing 7% after that.
 
-   The shelf is 0.93 → 0.90 → 0.86 and the plunge is keyed to `--copy-edge`,
+   The shelf is 0.89 → 0.86 → 0.82 and the plunge is keyed to `--copy-edge`,
    which follows the copy, so the white ends where the glyphs do at every width
    instead of at one tuned viewport. Percentages after it are hero-%, and
    `calc()` mixes them with the length happily.
@@ -366,9 +366,31 @@
    the headline sitting on bare knuckle.
 
    The ink copy over the shelf is nowhere near its own floor at either setting
-   — 14.1:1 at the thinnest — and the accent measures 4.0:1 or better at every
-   width, because what sits behind it is the last of the shelf over the
-   frame's blown-out left, not the hand. */
+   — 13.3:1 at the thinnest — and the accent measures 3.1:1 or better at every
+   width, against a 3:1 large-text floor.
+
+   **The shelf's tail is fitted to the accent and has no slack left.** The
+   binding pixel is not the blown-out left an earlier reading of this assumed:
+   it is a near-black sleeve (#30333B at 1920px, #4B2625 at 1024px) sitting at
+   full mask directly under the last glyph of "impact", and it is under a
+   painted glyph rather than in the whitespace beneath one. Measured against
+   the accent's real glyph coverage — the word rasterised at its computed font
+   and sampled only where its own alpha is 255 — the tail runs 3.39:1 at 0.86
+   and 3.13:1 at 0.82, consistently at 1024 / 1440 / 1920px. 0.80 lands on
+   3.02:1 and 0.78 breaks the floor outright. Do not thin this stop further
+   without re-measuring that way, and do not assume the left of the shelf can
+   pay for it, because:
+
+   **almost none of the reveal lives on the left — the photograph is not drawn
+   there.** The frame starts at 17.5% of the hero at 1440px and its own left
+   feather (32% of the frame) does not reach full strength until 47%, so at the
+   30% stop the mask is about 0.12 and the backdrop is already 88% page white;
+   dropping that stop by a further 0.10 moves the composite by roughly one part
+   in a hundred. The first two stops are lowered here to keep the shelf reading
+   as one surface, not because they uncover anything. Every visible percent of
+   this overlay is spent between 47% of the hero and `--copy-edge` — exactly
+   the span the accent sits in. If more photograph is wanted further left, the
+   lever is `.bg`'s left mask ramp or `--bg-right`, not this gradient. */
 .scrim {
   background:
     linear-gradient(
@@ -423,9 +445,9 @@
   .scrim {
     background: linear-gradient(
       90deg,
-      rgba(255, 255, 255, 0.93) 0%,
-      rgba(255, 255, 255, 0.9) 30%,
-      rgba(255, 255, 255, 0.86) var(--copy-edge),
+      rgba(255, 255, 255, 0.89) 0%,
+      rgba(255, 255, 255, 0.86) 30%,
+      rgba(255, 255, 255, 0.82) var(--copy-edge),
       rgba(255, 255, 255, 0.1) calc(var(--copy-edge) + 7%),
       rgba(255, 255, 255, 0) calc(var(--copy-edge) + 14%)
     );
