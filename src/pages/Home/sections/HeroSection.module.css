@@ -190,8 +190,15 @@
        — 2.7% of the photograph once the overlay was over it, i.e. nothing.
        Do not lengthen it back past the window without re-measuring where the
        figure starts.
-     - TOP, 34%, and BOTTOM, 32%. Both cross a sleeve. These are the numbers
+     - BOTTOM, 32% of the frame. It crosses a sleeve, and it is the number
        the curve above was chosen for.
+     - TOP is the same ramp, but its length is capped in PIXELS —
+       `min(160px, 34%)`, see `--top-ramp` on the desktop `.bg` rule. 34%
+       is what it still resolves to wherever the frame is at its 980px floor;
+       above about 1340px the cap binds and the ramp stops growing with the
+       frame. The seam it leaves is what stays constant, which is the property
+       that actually matters — a ramp is measured in levels per pixel, not in
+       percent of a picture.
      - Below 920px the top ramp drops to 20%, because the frame's top edge is
        at the top of the SECTION there and the fixed 68px header already covers
        it. The ramp only has to reach full strength by the time it clears the
@@ -291,27 +298,47 @@
   }
 
   .bg {
+    /* The top ramp's LENGTH, and the one number on this element stated in
+       PIXELS rather than as a fraction of the frame. What a ramp has to hide
+       is a rate of change per pixel, not a share of the picture, so a ramp
+       that is a fixed fraction of a frame which itself grows with the viewport
+       gets longer than it needs to be exactly where the frame is biggest — and
+       the surplus is spent erasing photograph. Capping it holds the seam
+       CONSTANT instead: measured as mask curvature over a 10px window against
+       the frame's own luminance, the worst band reads 4.9 / 4.9 / 4.3 / 4.3 /
+       4.3 at 920 / 1024 / 1440 / 1920 / 2560px, against 4.9 / 4.9 / 3.7 / 3.0 /
+       2.6 for the flat 34% this replaces — the same worst case, spread evenly,
+       and still inside the 3.2-8.5 the edges have measured since [2.20.0].
+       `min()` and not a bare 160px because the frame shrinks to its 980px
+       floor below about 1065px, where 34% is only 127px and already the
+       shorter of the two: the cap may never LENGTHEN the ramp. It binds from
+       about 1340px up (1440px: 160px against 171px) and is doing its real work
+       at 1920px (160px against 228px) and 2560px (against 245px), which is
+       where the frame is tall enough for a proportional ramp to swallow the
+       whole upper band. */
+    --top-ramp: min(160px, 34%);
+
     --feather-y: linear-gradient(
       180deg,
       rgba(0, 0, 0, 0) 0%,
-      rgba(0, 0, 0, 0) 5.1%,
-      rgba(0, 0, 0, 0.0002) 6.8%,
-      rgba(0, 0, 0, 0.0011) 8.5%,
-      rgba(0, 0, 0, 0.0043) 10.2%,
-      rgba(0, 0, 0, 0.013) 11.9%,
-      rgba(0, 0, 0, 0.032) 13.6%,
-      rgba(0, 0, 0, 0.0674) 15.3%,
-      rgba(0, 0, 0, 0.125) 17%,
-      rgba(0, 0, 0, 0.2087) 18.7%,
-      rgba(0, 0, 0, 0.318) 20.4%,
-      rgba(0, 0, 0, 0.4474) 22.1%,
-      rgba(0, 0, 0, 0.5862) 23.8%,
-      rgba(0, 0, 0, 0.7205) 25.5%,
-      rgba(0, 0, 0, 0.8361) 27.2%,
-      rgba(0, 0, 0, 0.9223) 28.9%,
-      rgba(0, 0, 0, 0.9745) 30.6%,
-      rgba(0, 0, 0, 0.9965) 32.3%,
-      rgb(0, 0, 0) 34%,
+      rgba(0, 0, 0, 0) calc(var(--top-ramp) * 0.15),
+      rgba(0, 0, 0, 0.0002) calc(var(--top-ramp) * 0.2),
+      rgba(0, 0, 0, 0.0011) calc(var(--top-ramp) * 0.25),
+      rgba(0, 0, 0, 0.0043) calc(var(--top-ramp) * 0.3),
+      rgba(0, 0, 0, 0.013) calc(var(--top-ramp) * 0.35),
+      rgba(0, 0, 0, 0.032) calc(var(--top-ramp) * 0.4),
+      rgba(0, 0, 0, 0.0674) calc(var(--top-ramp) * 0.45),
+      rgba(0, 0, 0, 0.125) calc(var(--top-ramp) * 0.5),
+      rgba(0, 0, 0, 0.2087) calc(var(--top-ramp) * 0.55),
+      rgba(0, 0, 0, 0.318) calc(var(--top-ramp) * 0.6),
+      rgba(0, 0, 0, 0.4474) calc(var(--top-ramp) * 0.65),
+      rgba(0, 0, 0, 0.5862) calc(var(--top-ramp) * 0.7),
+      rgba(0, 0, 0, 0.7205) calc(var(--top-ramp) * 0.75),
+      rgba(0, 0, 0, 0.8361) calc(var(--top-ramp) * 0.8),
+      rgba(0, 0, 0, 0.9223) calc(var(--top-ramp) * 0.85),
+      rgba(0, 0, 0, 0.9745) calc(var(--top-ramp) * 0.9),
+      rgba(0, 0, 0, 0.9965) calc(var(--top-ramp) * 0.95),
+      rgb(0, 0, 0) var(--top-ramp),
       rgb(0, 0, 0) 68%,
       rgba(0, 0, 0, 0.9965) 69.6%,
       rgba(0, 0, 0, 0.9745) 71.2%,
@@ -400,16 +427,43 @@
    hero tall. Everything above and below it is ink (#0B0B0C) at display size,
    which still measures past 8:1 at alphas that show the figure plainly.
 
-   ---- 920px and up: a base fade, plus a shield over the accent ----
+   ---- 920px and up: a base fade, plus a shield down the copy column ----
 
    `.scrim` carries the base: a flat 0.40 across the whole copy column, then
    the plunge. `.scrim::after` carries the shield: the same horizontal profile
-   at 0.75, masked down to the accent's own band — opaque across 42%-60% of the
-   hero, ramped in over the 10% above it and out over the 18% below. The two
-   composite to `1 − 0.60 x 0.25` = **0.85 behind the accent, exactly what the
-   pair produced before**: the base came down from 0.50 and the shield went up
-   from 0.70 by the amount that holds that product, so the binding contrast
-   below is unchanged while everything the shield does not cover got lighter.
+   at 0.75, masked to the copy column's own HEIGHT — opaque from the top of
+   the hero down to 60%, then ramped out over the 18% below. The two composite
+   to `1 − 0.60 x 0.25` = **0.85 behind the accent**: the base came down from
+   0.50 and the shield went up from 0.70 by the amount that holds that
+   product, so the binding contrast below is unchanged while everything the
+   shield does not cover got lighter.
+
+   **The shield's mask has no top ramp, and removing it is the whole of
+   [2.21.0].** It had one — 32% to 42% of the hero — and it was the last
+   rectangle in the section. The frame's own top feather and the shield's mask
+   ramp are two independent ramps crossing the same band of hero, and wherever
+   the photograph arrived BEFORE the white did, the gap between them showed as
+   a slab of extra photograph with a straight top edge and a straight right
+   edge, sitting behind the headline's first two lines. It is width-dependent,
+   because the frame's top edge falls at 31% of the hero at 1024px but only
+   17% at 2560px while the shield's ramp started at a fixed 32%: measured as
+   the peak composite photo weight in the copy column against the level just
+   below it, the slab ran 0.005 at 1024px, 0.068 at 1440px, 0.298 at 1920px
+   and 0.345 at 2560px. Taking the ramp away makes the copy column exactly
+   `0.15 x mask` from the frame's top edge down — one monotone dissolve with
+   nothing in it but the frame's own feather, at every width and every
+   viewport height, including ones nobody measured. Above the frame's top edge
+   the shield is painting white on white and costs nothing.
+
+   It does not spend photograph to buy that. What the slab showed sat UNDER
+   the copy; the capped `--top-ramp` on `.bg` hands the same area back where
+   there is no copy over it, and more of it. Mean photo weight across the band
+   the slab occupied (33%-100% of the hero wide, 27%-48% tall) goes 41.4% →
+   47.4% at 1920px and 45.3% → 54.0% at 2560px; over the strip right of
+   `--copy-edge` alone, 41.2% → 54.6% and 42.0% → 57.9%. At 920-1440px, where
+   there was no slab to remove, it is flat to within half a point. Headline
+   contrast improves as a side-effect (7.8:1 → 14.2:1 at 1920px, 7.0:1 →
+   14.9:1 at 2560px); the accent and the lede are untouched.
 
    It has to be a mask on a second layer rather than a third gradient in the
    same `background`: stacked translucent layers UNION (`1 − Π(1 − a)`), so a
@@ -418,25 +472,19 @@
    column. Engines without `mask-image` paint the shield unmasked, which
    degrades to roughly the old full-height shelf: more white, never less.
 
-   **The shield's mask ramps are not symmetric, and the reason is the lede.**
-   The band opens over 32%-42% of the hero and closes over 60%-78%. The top
-   ramp was shortened from 25% in `[2.20.0]`, which is where most of the extra
-   photograph behind the headline came from — measured over the columns the
-   figure occupies, the copy column gains 10% at 1920px and 18% at 2560px (it
-   is flat from 920px to 1440px, where the shield's band and the frame's own
-   feathers already overlap almost exactly), and
-   nothing above the accent needs the shield. The BOTTOM ramp must stay at
-   78%: the lede sits under it at 61%-71% of the hero and is 16-19px `--grey-2`,
-   i.e. **normal-size text on a 4.5:1 floor**, not large text on a 3:1 one. It
+   **The one ramp the mask still has is the bottom one, and the lede is why.**
+   It closes over 60%-78% of the hero, and it must stay at 78%: the lede sits
+   under it at 61%-71% of the hero and is 16-19px `--grey-2`, i.e.
+   **normal-size text on a 4.5:1 floor**, not large text on a 3:1 one. It
    measures 4.85:1 at 2560px, the tightest width; closing the ramp at 72%
-   instead takes it to 3.50:1 and fails. Do not shorten it to match the top.
+   instead takes it to 3.50:1 and fails. Do not shorten it, and do not add a
+   top ramp back to "balance" it — the asymmetry is the point.
 
    **Most of what this uncovers is in the frame's own feathers, and that is
-   the point.** The frame is about half the hero tall, its top 34% and bottom
-   32% are feather, and the full-mask middle is very nearly the same band the
-   accent sits in — so there is almost no area where the mask is 1 and the
-   shield is 0, and lowering the base alpha would look pointless if you only
-   read it there. What the base alpha actually multiplies is the surviving
+   the point.** The frame is about half the hero tall and its bottom 32% is
+   feather, so there is very little area where the mask is 1 and the shield is
+   0, and lowering the base alpha would look pointless if you only read it
+   there. What the base alpha actually multiplies is the surviving
    mask in the feathers: at mask 0.5 over the near-black sleeve the composite
    moves from 240 under the 0.86 shelf two releases back to 203 at 0.50 and
    180 at 0.40.
@@ -454,10 +502,10 @@
    — the strict test, since it takes the darkest backdrop pixel anywhere under
    the word — the pair measures 3.25-3.31:1 from 920px to 2560px, unchanged
    from the release before it, against a 3:1 floor. Do not thin either layer
-   without re-measuring that way, and do not narrow the shield's mask BAND
-   (the opaque 42%-60%): the accent's top edge sits at 43.6% of the hero at
-   its highest (920px on a 640px-tall viewport) and its bottom at 59.2% at its
-   lowest, which is what that band plus its ramps exists to cover.
+   without re-measuring that way, and do not lift the shield's mask off the
+   top of the hero or pull its opaque run back above 60%: the accent's bottom
+   edge sits at 59.2% of the hero at its lowest, which is what that run plus
+   the ramp below it exists to cover.
 
    ---- Below 920px: the fade, plus a vertical veil ----
 
@@ -492,15 +540,15 @@
 
    Left of about 33% of the hero there is nothing to uncover at any alpha: the
    frame starts at 17.5% and its own left 16% is the blown-out window. Between
-   there and `--copy-edge` the levers are this overlay's base alpha, the
-   SHIELD's mask ramps, and `.bg`'s feathers — and they are not
-   interchangeable. The base alpha is the weakest of the three on desktop,
-   because the band where the frame is drawn at full mask is very nearly the
-   band the shield covers; the shield's top ramp is the strong one, and it is
-   free down to about 32% because nothing above the accent is colour-bound.
-   The feathers are the most dangerous: shortening the top ramp from 34% to
-   12% roughly doubles the figure again and puts a 22-level step across 10px
-   at the frame's top edge, which is a visible horizontal line. Past
+   there and `--copy-edge` the only levers left are this overlay's base alpha
+   and `.bg`'s feathers, and neither is generous: the copy column is now a
+   flat `0.15 x mask` by construction, so raising it means either thinning the
+   base — which the accent's 3:1 floor prices — or shortening a feather. The
+   feathers are the dangerous one: `--top-ramp` is already capped at the
+   shortest length that holds the seam at its previous worst case, and taking
+   it to 12% of the frame puts a 22-level step across 10px at the frame's top
+   edge, which is a visible horizontal line. **Do not buy reveal by putting
+   the shield's top ramp back** — that is the trade [2.21.0] undid. Past
    `--copy-edge` the lever is none of them: it is `--bg-right`. */
 .scrim {
   background:
@@ -693,27 +741,7 @@
 
     --shield-mask: linear-gradient(
       180deg,
-      rgba(0, 0, 0, 0) 32%,
-      rgba(0, 0, 0, 0.0012) 32.5%,
-      rgba(0, 0, 0, 0.0086) 33%,
-      rgba(0, 0, 0, 0.0266) 33.5%,
-      rgba(0, 0, 0, 0.0579) 34%,
-      rgba(0, 0, 0, 0.1035) 34.5%,
-      rgba(0, 0, 0, 0.1631) 35%,
-      rgba(0, 0, 0, 0.2352) 35.5%,
-      rgba(0, 0, 0, 0.3174) 36%,
-      rgba(0, 0, 0, 0.4069) 36.5%,
-      rgba(0, 0, 0, 0.5) 37%,
-      rgba(0, 0, 0, 0.5931) 37.5%,
-      rgba(0, 0, 0, 0.6826) 38%,
-      rgba(0, 0, 0, 0.7648) 38.5%,
-      rgba(0, 0, 0, 0.8369) 39%,
-      rgba(0, 0, 0, 0.8965) 39.5%,
-      rgba(0, 0, 0, 0.9421) 40%,
-      rgba(0, 0, 0, 0.9734) 40.5%,
-      rgba(0, 0, 0, 0.9914) 41%,
-      rgba(0, 0, 0, 0.9988) 41.5%,
-      rgb(0, 0, 0) 42%,
+      rgb(0, 0, 0) 0%,
       rgb(0, 0, 0) 60%,
       rgba(0, 0, 0, 0.9988) 60.9%,
       rgba(0, 0, 0, 0.9914) 61.8%,

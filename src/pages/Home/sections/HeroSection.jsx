@@ -43,13 +43,30 @@
    hero where the figure is and the copy is not, so no left-to-right fade can
    uncover it. A flat 0.40 base carries the whole copy column and lets go
    within 10% of the hero after the glyphs end, which is also where the hand
-   starts; a second layer, masked to the band of hero the red accent sits in,
-   brings the white back to 0.85 over "impact" alone — the one run of copy
-   that is colour-bound rather than ink-black, and the one number in the
-   section that is fixed rather than tuned. Below the breakpoint the copy
-   spans the frame, so a vertical veil takes over legibility and the fade is
-   left to do nothing but keep the left edge clean. See the annotated `.bg`
-   and `.scrim` blocks in the stylesheet.
+   starts; a second layer with the same horizontal profile brings the white to
+   0.85 down the copy column, and lets go over the 18% of hero below the red
+   accent. 0.85 is fitted to "impact" — the one run of copy that is
+   colour-bound rather than ink-black — and is the one number in the section
+   that is fixed rather than tuned.
+
+   That second layer covers the column from the TOP of the hero, with no ramp
+   in. It used to fade in over 32%-42%, and that ramp was the last rectangle
+   here: it crossed the same band of hero as the frame's own top feather, so
+   wherever the photograph arrived first, the gap between the two showed as a
+   slab of extra photograph with a straight top edge and a straight right one,
+   behind the headline's first two lines — invisible at 1024px, plain at
+   1920px and wider, because the frame's top edge climbs the hero as the
+   viewport grows while the ramp stayed put. Dropping it makes the copy column
+   a single monotone dissolve, and the frame's top feather — now capped at
+   160px rather than left at 34% of a frame that keeps growing — hands the
+   photograph back on the other side of the copy, where nothing is over it.
+
+   Below the breakpoint the copy spans the frame, so a vertical veil takes
+   over legibility and the fade is left to do nothing but keep the left edge
+   clean; there is no second layer and no frame corner on the page at all
+   there, since the frame bleeds off both sides and its top edge sits under
+   the fixed header. See the annotated `.bg` and `.scrim` blocks in the
+   stylesheet.
    ============================================ */
 
 import React from 'react';

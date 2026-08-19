@@ -12,6 +12,82 @@ prompt per branch/PR — and the entries below summarise each phase under the
 
 The format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.21.0] — 2026-08-20 — Home hero: the last rectangle in the overlay
+
+`[2.20.0]` took the *lines* out of the hero by fixing every ramp's curve and
+sampling. What it left behind was a *shape*. Behind the headline's first two
+lines, from about 1440px up, the photograph carried a slab of extra strength
+with a straight top edge and a straight right edge — a rectangle, soft-edged
+but unmistakably rectangular, sitting inside an image that is otherwise all
+dissolve.
+
+**The cause was two independent ramps crossing the same band of hero.**
+`.bg`'s top feather brings the photograph in over the top 34% of the frame;
+`.scrim::after`'s mask brought the white in over 32%-42% of the *hero*. Those
+are different coordinate systems, and they drift apart as the viewport grows:
+the frame's top edge falls at 31% of the hero at 1024px but only 17% at
+2560px, while the shield's ramp stayed at 32%. Wherever the photograph arrived
+before the white did, the difference was visible as extra photograph — bounded
+above by the frame's feather, below by the shield, and on the right by
+`--copy-edge`. Three straight sides.
+
+Measured as the peak composite photo weight in the copy column against the
+level immediately below it, the slab ran **0.005 at 1024px, 0.068 at 1440px,
+0.298 at 1920px and 0.345 at 2560px** — invisible on a laptop, plain on a
+desktop, which is why it survived two releases of tuning.
+
+### Changed
+
+- **The shield's mask has no top ramp.** `--shield-mask` on `.scrim::after`
+  is opaque from the top of the hero to 60%, then eased out to 78% as before.
+  The copy column is therefore exactly `0.15 x mask` from the frame's top
+  edge down — one monotone dissolve carrying nothing but the frame's own
+  feather, at every width and every viewport height rather than at the ones
+  that happened to get measured. Above the frame's top edge the shield paints
+  white on white and costs nothing. The bottom ramp is unchanged and stays
+  asymmetric: it is fitted to the lede, which is normal-size `--grey-2` on a
+  4.5:1 floor.
+- **`.bg`'s top feather is capped in pixels** — `--top-ramp: min(160px, 34%)`,
+  replacing the flat 34%. What a ramp has to hide is a rate of change per
+  pixel, not a share of the picture, so a ramp stated as a fraction of a frame
+  that itself grows with the viewport gets longer than it needs to be exactly
+  where the frame is biggest, and spends the surplus erasing photograph. The
+  cap holds the seam constant instead: worst-band mask curvature over a 10px
+  window reads **4.9 / 4.9 / 4.3 / 4.3 / 4.3** at 920 / 1024 / 1440 / 1920 /
+  2560px, against 4.9 / 4.9 / 3.7 / 3.0 / 2.6 before — the same worst case,
+  spread evenly, and still inside the 3.2-8.5 the edges have measured since
+  `[2.20.0]`. `min()` and not a bare `160px` because the frame sits on its
+  980px floor below about 1065px, where 34% is only 127px and already the
+  shorter of the two: the cap may never lengthen the ramp.
+
+### Result
+
+Removing the slab did not cost photograph, because what the slab showed sat
+*under* the copy and the capped feather hands the same area back on the other
+side of it, where nothing is over it. Mean photo weight across the band the
+slab occupied (33%-100% of the hero wide, 27%-48% tall):
+
+| Viewport | Band, before → after | Right of `--copy-edge`, before → after | Slab |
+| -------- | -------------------- | --------------------------------------- | ---- |
+| 920px    | 12.1% → 11.7%        | 36.1% → 36.0%                           | none either way |
+| 1024px   | 12.9% → 12.6%        | 37.2% → 37.1%                           | none either way |
+| 1440px   | 24.0% → 24.0%        | 40.1% → 42.7%                           | 0.068 → **0** |
+| 1920px   | 41.4% → **47.4%**    | 41.2% → **54.6%**                       | 0.298 → **0** |
+| 2560px   | 45.3% → **54.0%**    | 42.0% → **57.9%**                       | 0.345 → **0** |
+
+Headline contrast improves as a side-effect — **7.8:1 → 14.2:1 at 1920px** and
+7.0:1 → 14.9:1 at 2560px, since the slab was the darkest thing under those two
+lines. The accent is untouched at **3.25-3.30:1** from 920px to 2560px against
+a 3:1 floor, and the lede at 5.2-6.9:1 against 4.5:1. Verified at 920 / 1024 /
+1440 / 1920 / 2560px and at a short 1920x640 viewport, where the hero is 40px
+shorter and every percentage stop lands somewhere different.
+
+**Nothing below 920px changed.** Both edits are inside the desktop media
+query, and the sub-920px stack cannot produce this defect: the frame bleeds
+off both sides, its top edge sits under the fixed header, and the overlay
+there is a full-width veil plus a full-height fade — no shield, no band, and
+no corner of the frame on the page to blend.
+
 ## [2.20.0] — 2026-08-20 — Home hero: no seams in the overlay, and less of it
 
 The overlay worked, but you could see how it was built. Two of its edges drew
