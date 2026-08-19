@@ -12,6 +12,105 @@ prompt per branch/PR — and the entries below summarise each phase under the
 
 The format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.23.0] — 2026-08-20 — Home hero: the desktop photograph fills the section again
+
+The eight releases before this one refined a *placed frame* on desktop — a
+photograph drawn at a stated width, bled past the hero's right edge, and
+feathered on three sides so its edges dissolved rather than cut. This release
+retires that machinery **at `min-width: 920px` only** and puts the desktop hero
+back on the framing it shipped with earlier in the rebuild: the photograph
+covers the section, and one horizontal overlay carries the copy.
+
+**Nothing below 920px changes.** The sub-920px stack — the placed frame at
+`--bg-w`, its smootherstep-at-twentieths feather, and the veil-plus-fade
+overlay — is byte-for-byte what it was, and was re-verified at 375px.
+
+### Changed
+
+- **The photograph covers the desktop hero** — `object-fit: cover` at
+  `object-position: 68% 50%` on an `inset: 0` box, replacing the `--bg-w` /
+  `--bg-right` / `--bg-top` placement and the `--feather-x` / `--feather-y`
+  masks (all four are switched off from 920px up; all four still run below it).
+  It stays an `<img>` rather than becoming a CSS background, because the
+  element is the LCP element on `/` and only an `<img>` carries
+  `fetchpriority="high"`.
+
+  The file is 2.63:1 and the desktop hero runs about 1.9:1, so `cover` is
+  height-limited at every real desktop viewport and only the horizontal
+  position carries the composition. **68% is measured off the file, not
+  chosen**: the joined hands span 56.1%-81.1% of its width with the skin
+  centroid at 68.0%, so a percentage `object-position` pins the clasp at 68%
+  of the hero — just right of where "impact" ends — at every width. Measured
+  on the shipped WebP, the hands land at:
+
+  | viewport | 920     | 1024     | 1440     | 1906      |
+  | -------- | ------- | -------- | -------- | --------- |
+  | hands x  | 329-937 | 395-1014 | 658-1318 | 972-1638  |
+
+  Move the subject by re-cutting the file, not by re-tuning this number.
+
+- **The desktop overlay is one layer again — a shelf and a plunge.** The
+  `.scrim::after` shield and its `--shield-mask` are gone (they existed to hold
+  white over a placed frame that stood directly behind the headline; with the
+  photograph on `cover` the horizontal fade carries the whole job), and so is
+  `--accent-edge`, which only the shield read.
+
+- **The shelf is three points thinner than the framing it restores** —
+  `0.94 / 0.91 / 0.86` → **`0.91 / 0.88 / 0.83`**, with the plunge's landing
+  at `0.10` → `0.08`. The shelf is where nearly all of the photograph lives
+  (the clasp is pinned at 68% and `--copy-edge` runs 68-73%, so the subject is
+  mostly under it), so three points is not the nothing it sounds like: the
+  share of the photo's own pixel surviving under the shelf goes from about 14%
+  to about 17%.
+
+- **`--copy-edge` is back to `calc(50vw + 320px)`, from `+ 275px`.** The
+  `+ 275px` value was fitted to the headline alone, which was correct while the
+  placed frame kept the pillars row clear of the photograph. With the
+  photograph covering the section that row is over it again, and it runs wider
+  than the headline — so the shelf is fitted to the row, as it was before.
+
+### Measured
+
+Sampled over the real composite (the shipped WebP drawn through the same
+`cover` mapping, multiplied by the fade's own alpha at each x), worst pixel in
+each element's box:
+
+| element                         | 920      | 1024     | 1440     | 1906     | floor |
+| ------------------------------- | -------- | -------- | -------- | -------- | ----- |
+| accent "impact" vs `#E8293E`    | 3.28     | 3.26     | 3.26     | 3.27     | 3:1   |
+| headline, ink                   | 14.8-15.4| 14.7-15.3| 14.7-15.3| 14.7-15.2| 4.5:1 |
+| lede, `--grey-2`                | 6.60     | 6.56     | 6.65     | 6.54     | 4.5:1 |
+| pillar labels, ink              | 16.0-16.6| 15.2-19.5| 10.3-16.4| 7.2-19.7 | 4.5:1 |
+
+**The accent is still what prices the shelf**, and 0.83 is the floor: it is
+the one run of copy in the section that is colour-bound rather than ink-black,
+it measures 3.26-3.28:1 across 920-1906px, and each point off the shelf costs
+about 0.065. Do not thin it further without re-measuring the accent that way.
+
+### Known, and accepted
+
+- **The pillar numbers sit on photograph again, and two of the four fall below
+  4.5:1.** They are 14px `700` `--red` (`#D5192E`) — normal-size text, so the
+  4.5:1 threshold applies — and that colour has only 5.24:1 to give *on pure
+  white*. Over the composite they read **4.12-5.24:1** across 920-1906px. This
+  is a property of the framing this release restores rather than of the
+  thinning: at the `0.86` shelf the same row reads 4.16-5.24:1 and still fails
+  the same two. The placed frame the release before this one used kept that row
+  off the photograph entirely, which is what bought it pure white. Lifting the
+  row over the 4.5:1 line means either a second layer under it or a larger /
+  darker numeral — neither is in the scope of this change.
+
+- **The desktop fade's ramps are linear**, unlike the smootherstep-at-twentieths
+  curves `[2.20.0]` rebuilt everywhere else. The stops at `--copy-edge` and at
+  `+8%` are slope discontinuities, so a soft vertical band is visible at each
+  under a close look. It is the shape the desktop hero is specified to have,
+  and the plunge is steep enough that easing it would visibly move where the
+  white lets go rather than only how.
+
+- **The "DLS" watermark is not restored.** `siteConfig.logoMark` still has no
+  surface in `src/` — see `CLAUDE.md`. Only the photograph and the overlay
+  moved here.
+
 ## [2.22.0] — 2026-08-20 — Home hero: the photograph, moved off the accent
 
 The four releases before this one were all about the *overlay* — its lines,

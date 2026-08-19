@@ -9,64 +9,46 @@
    uses an architectural shot here: it is a handshake framed at forearm level
    against a blown-out white window.
 
-   **The frame is drawn whole, at a stated width, and the section clips it.**
-   There is no fitting box and no CSS-decided crop — `width: var(--bg-w);
-   height: auto` on a 2.63:1 file is the entire sizing rule — so what the page
-   shows is decided only by where the hero's edges fall across the photograph,
-   and the placement is set so those edges land where the frame carries nothing:
-   the blown-out window on the left, the far sleeve's outer end past the right.
-   Three of the four edges end inside the section and are feathered to nothing
-   so they dissolve rather than cut; the right one runs off the page, so
-   `overflow: hidden` ends it the way a viewport ends any full-bleed image.
+   **The two breakpoints frame it two different ways, and the split is at the
+   920px nav breakpoint.**
 
-   The feather is an eased curve — smootherstep cubed — sampled at twentieths,
-   and both of those matter. A CSS gradient is piecewise-linear between its
-   stops, so what reads as a line in a soft ramp is not its steepness but any
-   place its SLOPE changes: a curve that arrives at full strength still moving
-   (the `t^2.4` this replaced) puts a corner where the ramp meets the flat
-   middle of the mask, and a coarsely sampled one puts a smaller corner at
-   every stop. Same rule governs every ramp in the overlay below.
+   From 920px up the photograph COVERS the section — `object-fit: cover` at
+   `object-position: 68% 50%` on an `inset: 0` box. The file is 2.63:1 and the
+   desktop hero is about 1.9:1, so `cover` is always height-limited and only
+   the horizontal position carries the composition. 68% is measured off the
+   file rather than chosen (the joined hands span 56.1%-81.1% of its width,
+   skin centroid at 68.0%), and it pins the clasp at 68% of the hero — just
+   right of where the red accent word "impact" ends — at every desktop width.
+   There is no placed frame, no bleed constant and no edge feather at this
+   breakpoint: the photograph has no visible edge because it has no edge inside
+   the section.
 
-   That placement is what puts the subject where the brief wants it. The joined
-   hands are a measured 56.1%-81.1% of the frame's width, so pinning it 13.5%
-   past the hero's right edge always leaves 5.4% of frame between their right
-   edge and the screen — the arm reads as continuing, and the hands are never
-   the thing that gets cut. Their left edge lands beside the headline: 55px past
-   where it ends at 1440px, further out as the viewport grows, and just inside
-   it below about 1235px, where the copy owns too much of a narrow hero for
-   anything else. At 1440px that is 331px of hand against the 265px the release
-   before this one drew.
+   Below 920px the copy spans the full width, so the frame is drawn WHOLE
+   instead, at a stated width, pinned to the top of the section and bled off
+   both sides: `width: var(--bg-w); height: auto` on a 2.63:1 file is the
+   entire sizing rule. Its bottom edge ends inside the section and is feathered
+   to nothing so it dissolves rather than cuts; the left and right run off the
+   page, and the top sits under the fixed 68px header. That feather is an eased
+   curve — smootherstep cubed — sampled at twentieths, and both of those
+   matter: a CSS gradient is piecewise-linear between its stops, so what reads
+   as a line in a soft ramp is not its steepness but any place its SLOPE
+   changes.
 
-   Over it sits a white overlay, and from 920px up that overlay is two layers
-   rather than one, because the suited figure the hands belong to stands
-   directly behind the headline at every desktop width — there is no strip of
-   hero where the figure is and the copy is not, so no left-to-right fade can
-   uncover it. A flat 0.40 base carries the whole copy column and lets go
-   within 10% of the hero after the glyphs end, which is also where the hand
-   starts; a second layer with the same horizontal profile brings the white to
-   0.85 down the copy column, and lets go over the 18% of hero below the red
-   accent. 0.85 is fitted to "impact" — the one run of copy that is
-   colour-bound rather than ink-black — and is the one number in the section
-   that is fixed rather than tuned.
+   Over it sits a white overlay, and it too splits at 920px.
 
-   That second layer covers the column from the TOP of the hero, with no ramp
-   in. It used to fade in over 32%-42%, and that ramp was the last rectangle
-   here: it crossed the same band of hero as the frame's own top feather, so
-   wherever the photograph arrived first, the gap between the two showed as a
-   slab of extra photograph with a straight top edge and a straight right one,
-   behind the headline's first two lines — invisible at 1024px, plain at
-   1920px and wider, because the frame's top edge climbs the hero as the
-   viewport grows while the ramp stayed put. Dropping it makes the copy column
-   a single monotone dissolve, and the frame's top feather — now capped at
-   160px rather than left at 34% of a frame that keeps growing — hands the
-   photograph back on the other side of the copy, where nothing is over it.
+   On desktop it is one horizontal layer: a shelf and a plunge. The white holds
+   across the copy column — 0.91 at the left edge, 0.88 at 30%, 0.83 where the
+   glyphs end — then drops to 0.08 inside the next 8% of the hero and to
+   nothing 8% after that, so the copy sits on paper and the clasp on clear
+   photograph. The shelf is where nearly all of the photograph lives, which is
+   why its alpha is the number the section is actually tuned on; 0.83 is priced
+   by the red accent on "impact", the one run of copy that is colour-bound
+   rather than ink-black, which measures about 3.25:1 there against a 3:1 floor
+   for large text.
 
-   Below the breakpoint the copy spans the frame, so a vertical veil takes
-   over legibility and the fade is left to do nothing but keep the left edge
-   clean; there is no second layer and no frame corner on the page at all
-   there, since the frame bleeds off both sides and its top edge sits under
-   the fixed header. See the annotated `.bg` and `.scrim` blocks in the
-   stylesheet.
+   Below the breakpoint the copy spans the frame, so a vertical veil takes over
+   legibility and the fade is left to do nothing but keep the left edge clean.
+   See the annotated `.bg` and `.scrim` blocks in the stylesheet.
    ============================================ */
 
 import React from 'react';
@@ -87,10 +69,11 @@ import styles from './HeroSection.module.css';
 // back again — but under a third basename for that same caching reason, not
 // revived under the old one.
 //
-// One width, and no `sizes`: the frame is drawn at exactly `--bg-w`, which
-// caps at 1900 CSS px from 920px up and 1400 CSS px below it — comfortably
-// inside 2x this file on a retina display, so it never upscales — and the
-// shallow depth of field keeps it at 39 KB.
+// One width, and no `sizes`: from 920px up the photograph is drawn by `cover`
+// into a box that never exceeds the viewport, and below it the frame is drawn
+// at exactly `--bg-w`, which caps at 1400 CSS px — both comfortably inside 2x
+// this file on a retina display, so it never upscales — and the shallow depth
+// of field keeps it at 39 KB.
 //
 // **The WebP is the only variant the hero paints.** There is no `<picture>` and
 // no `image-set()` fallback, which costs less than it sounds: an `<img src>` on
@@ -110,8 +93,8 @@ const HERO_BG = '/images/hero-home-v6-2880.webp';
 
 // The intrinsic size of that file. Passed through as the `width`/`height`
 // attributes so the box has an aspect ratio before the bytes land; the
-// stylesheet then sets `width: var(--bg-w)` and leaves `height: auto`, which
-// draws the whole 2.63:1 frame at that width.
+// stylesheet then overrides both — `100%`/`100%` under `object-fit: cover` on
+// desktop, `var(--bg-w)` with `height: auto` below 920px.
 const HERO_BG_SIZE = { width: 2880, height: 1094 };
 
 const PILLARS = [
@@ -128,29 +111,29 @@ const HeroSection = () => {
   return (
     <section className={styles.hero}>
       {/* The backdrop and the overlay: two elements, one treatment — keep them
-          grouped. Only `.scrim` is `inset: 0`, which is what makes the fade's
-          stops section percentages; the photograph is a placed element sized
-          and positioned by the `--bg-*` custom properties on `.hero`.
+          grouped. `.scrim` is `inset: 0` at every width, which is what makes
+          the fade's stops section percentages. So is the photograph from 920px
+          up, where `object-fit: cover` frames it; below that it is a placed
+          element sized and positioned by the `--bg-*` properties on `.hero`.
 
-          It is a real `<img>` rather than a CSS background, and that is what
-          lets the stylesheet's edge feather be expressed in percentages of the
-          image itself: the element IS the drawn photograph, at its own stated
-          width with no box fitted around it. A background would keep the
-          element at full section size with the framing baked in, and the
-          feather would have nothing fixed to aim at. Being an `<img>` also
-          earns `fetchpriority="high"`, which a background cannot carry.
+          It is a real `<img>` rather than a CSS background, and that stays
+          load-bearing at both breakpoints. Below 920px the element IS the drawn
+          photograph, at its own stated width with no box fitted around it,
+          which is what lets the stylesheet's edge feather be expressed in
+          percentages of the image and land on its real edges. At every width it
+          earns `fetchpriority="high"`, which a background cannot carry — this
+          is the LCP element on the site's busiest route.
 
           The `width`/`height` attributes are the file's intrinsic size, so the
-          box has an aspect ratio before the bytes land; the stylesheet sets
-          `width` and leaves `height: auto`, which is what draws the whole
-          2.63:1 frame rather than a crop of it.
+          box has an aspect ratio before the bytes land; the stylesheet then
+          decides the framing per breakpoint.
 
           It stays decorative: empty `alt` plus `aria-hidden`, since the hero's
           meaning is entirely in the copy beside it.
 
           No `useParallax` here, unlike the Expertise and Who We Serve heroes.
           Scrub parallax would slide the subject out of the relationship with
-          "impact" that the placement exists to hold. The backdrop is static on
+          "impact" that the framing exists to hold. The backdrop is static on
           purpose. */}
       <img
         className={styles.bg}
