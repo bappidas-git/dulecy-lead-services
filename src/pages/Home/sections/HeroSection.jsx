@@ -12,16 +12,19 @@
    **The two breakpoints frame it two different ways, and the split is at the
    920px nav breakpoint.**
 
-   From 920px up the photograph COVERS the section — `object-fit: cover` at
-   `object-position: 68% 50%` on an `inset: 0` box. The file is 2.63:1 and the
-   desktop hero is about 1.9:1, so `cover` is always height-limited and only
-   the horizontal position carries the composition. 68% is measured off the
-   file rather than chosen (the joined hands span 56.1%-81.1% of its width,
-   skin centroid at 68.0%), and it pins the clasp at 68% of the hero — just
-   right of where the red accent word "impact" ends — at every desktop width.
-   There is no placed frame, no bleed constant and no edge feather at this
-   breakpoint: the photograph has no visible edge because it has no edge inside
-   the section.
+   From 920px up the WHOLE photograph is drawn, uncropped, at the largest size
+   that fits inside the section — `width`/`height` `auto` with `max-width` and
+   `max-height` at 100%, which is the replaced-element algorithm and so cannot
+   crop, letterbox or stretch it. The file is 2.63:1 against a hero that runs
+   1.43:1 at 1440px, so on every ordinary desktop the width binds and the frame
+   lands as a band across the TOP of the section: 543px of a 1002px hero at
+   1440px. Because it spans the section, image-x maps straight onto hero-x, so
+   the joined hands (55.4%-85.7% of the file, skin centroid 68.1%) sit at those
+   same fractions of the hero — the clasp at 68%, just right of where the red
+   accent word "impact" ends — with no framing constant left to tune. Its top
+   edge is the top of the page and its sides are the viewport's, so the one
+   edge that exists inside the section is the bottom, and that one is feathered
+   to nothing.
 
    Below 920px the copy spans the full width, so the frame is drawn WHOLE
    instead, at a stated width, pinned to the top of the section and bled off
@@ -37,14 +40,15 @@
    Over it sits a white overlay, and it too splits at 920px.
 
    On desktop it is one horizontal layer: a shelf and a plunge. The white holds
-   across the copy column — 0.91 at the left edge, 0.88 at 30%, 0.83 where the
+   across the copy column — 0.86 at the left edge, 0.84 at 30%, 0.83 where the
    glyphs end — then drops to 0.08 inside the next 8% of the hero and to
    nothing 8% after that, so the copy sits on paper and the clasp on clear
    photograph. The shelf is where nearly all of the photograph lives, which is
-   why its alpha is the number the section is actually tuned on; 0.83 is priced
-   by the red accent on "impact", the one run of copy that is colour-bound
-   rather than ink-black, which measures about 3.25:1 there against a 3:1 floor
-   for large text.
+   why its alpha is the number the section is actually tuned on. The first two
+   stops come down five and four points from the shelf this replaces; the third
+   cannot move, because it is what prices the red accent on "impact" — the one
+   run of copy that is colour-bound rather than ink-black — which measures
+   3.11:1 at its worst width against a 3:1 floor for large text.
 
    Below the breakpoint the copy spans the frame, so a vertical veil takes over
    legibility and the fade is left to do nothing but keep the left edge clean.
@@ -69,11 +73,11 @@ import styles from './HeroSection.module.css';
 // back again — but under a third basename for that same caching reason, not
 // revived under the old one.
 //
-// One width, and no `sizes`: from 920px up the photograph is drawn by `cover`
-// into a box that never exceeds the viewport, and below it the frame is drawn
-// at exactly `--bg-w`, which caps at 1400 CSS px — both comfortably inside 2x
-// this file on a retina display, so it never upscales — and the shallow depth
-// of field keeps it at 39 KB.
+// One width, and no `sizes`: from 920px up the photograph is drawn whole, at
+// the largest box that fits the section, which its own intrinsic width caps at
+// 2880 CSS px; below it the frame is drawn at exactly `--bg-w`, which caps at
+// 1400 CSS px. Neither ever asks the file for more pixels than it has — the
+// desktop cap IS the file — and the shallow depth of field keeps it at 39 KB.
 //
 // **The WebP is the only variant the hero paints.** There is no `<picture>` and
 // no `image-set()` fallback, which costs less than it sounds: an `<img src>` on
@@ -92,9 +96,10 @@ import styles from './HeroSection.module.css';
 const HERO_BG = '/images/hero-home-v6-2880.webp';
 
 // The intrinsic size of that file. Passed through as the `width`/`height`
-// attributes so the box has an aspect ratio before the bytes land; the
-// stylesheet then overrides both — `100%`/`100%` under `object-fit: cover` on
-// desktop, `var(--bg-w)` with `height: auto` below 920px.
+// attributes so the box has an aspect ratio before the bytes land. Above 920px
+// the stylesheet leaves both CSS dimensions `auto` and constrains them with
+// `max-width`/`max-height`, so this pair is also where the sizing starts;
+// below 920px it overrides them with `var(--bg-w)` and `height: auto`.
 const HERO_BG_SIZE = { width: 2880, height: 1094 };
 
 const PILLARS = [
@@ -112,29 +117,31 @@ const HeroSection = () => {
     <section className={styles.hero}>
       {/* The backdrop and the overlay: two elements, one treatment — keep them
           grouped. `.scrim` is `inset: 0` at every width, which is what makes
-          the fade's stops section percentages. So is the photograph from 920px
-          up, where `object-fit: cover` frames it; below that it is a placed
-          element sized and positioned by the `--bg-*` properties on `.hero`.
+          the fade's stops section percentages. The photograph never is: at
+          every width it is a placed element sized to its own aspect — by the
+          `--bg-*` properties below 920px, and by `max-width`/`max-height` on an
+          intrinsically-sized box above it.
 
           It is a real `<img>` rather than a CSS background, and that stays
-          load-bearing at both breakpoints. Below 920px the element IS the drawn
-          photograph, at its own stated width with no box fitted around it,
-          which is what lets the stylesheet's edge feather be expressed in
-          percentages of the image and land on its real edges. At every width it
-          earns `fetchpriority="high"`, which a background cannot carry — this
-          is the LCP element on the site's busiest route.
+          load-bearing at both breakpoints. The element IS the drawn photograph,
+          with no box fitted around it, which is what lets the stylesheet's edge
+          feather be expressed in percentages of the image and land on its real
+          edges. At every width it earns `fetchpriority="high"`, which a
+          background cannot carry — this is the LCP element on the site's
+          busiest route.
 
           The `width`/`height` attributes are the file's intrinsic size, so the
-          box has an aspect ratio before the bytes land; the stylesheet then
-          decides the framing per breakpoint.
+          box has an aspect ratio before the bytes land — and above 920px they
+          are also what the sizing rule starts from, since both CSS dimensions
+          are `auto` there.
 
           It stays decorative: empty `alt` plus `aria-hidden`, since the hero's
           meaning is entirely in the copy beside it.
 
           No `useParallax` here, unlike the Expertise and Who We Serve heroes.
-          Scrub parallax would slide the subject out of the relationship with
-          "impact" that the framing exists to hold. The backdrop is static on
-          purpose. */}
+          Scrub parallax needs the photo drawn taller than its box so the travel
+          never exposes an edge, which is the one thing this framing will not
+          do. The backdrop is static on purpose. */}
       <img
         className={styles.bg}
         src={HERO_BG}
