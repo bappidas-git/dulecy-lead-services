@@ -30,11 +30,17 @@
    else. At 1440px that is 331px of hand against the 265px the release before
    this one drew.
 
-   Over it sits a white overlay that runs left to right: from 920px up it holds
-   0.93 → 0.86 across the copy and lets go within 7% of the hero after the
-   glyphs end, which is also where the hand starts. Below the breakpoint the
-   copy spans the frame, so a vertical veil takes over legibility and the fade
-   is left to do nothing but keep the left edge clean. See the annotated `.bg`
+   Over it sits a white overlay, and from 920px up that overlay is two layers
+   rather than one, because the suited figure the hands belong to stands
+   directly behind the headline at every desktop width — there is no strip of
+   hero where the figure is and the copy is not, so no left-to-right fade can
+   uncover it. A flat 0.50 base carries the whole copy column and lets go
+   within 7% of the hero after the glyphs end, which is also where the hand
+   starts; a second layer, masked to the 18% band of hero the red accent sits
+   in, brings the white back to 0.85 over "impact" alone — the one run of copy
+   that is colour-bound rather than ink-black. Below the breakpoint the copy
+   spans the frame, so a vertical veil takes over legibility and the fade is
+   left to do nothing but keep the left edge clean. See the annotated `.bg`
    and `.scrim` blocks in the stylesheet.
    ============================================ */
 

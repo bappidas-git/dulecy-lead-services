@@ -12,6 +12,95 @@ prompt per branch/PR — and the entries below summarise each phase under the
 
 The format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.19.0] — 2026-08-20 — Home hero: let the figure through the white, on every device
+
+`[2.18.1]` thinned the desktop shelf to 0.89 → 0.86 → 0.82 and found its
+floor there. The hero still read as white paper with a handshake on its right
+third, and the reason was not the alpha: it was that a left-to-right fade
+cannot uncover this photograph at all. The suited figure the hands belong to
+occupies frame width 15.6%-56.1%, which at 1440px runs from 33% of the hero to
+69.5% — and the copy runs to 69.5% too. **There is no strip of hero where the
+figure is and the copy is not**, so every percent the shelf gave up was given
+up under a glyph, and the shelf's tail was already fitted to the one glyph run
+that could not afford it.
+
+Two things were also hiding the figure that the overlay was being blamed for:
+`.bg`'s left mask ramp ran 32% of the frame against a 16% blown-out window, so
+its second half was erasing the torso rather than the frame's edge, and the
+overlay's own vertical dimension was unused.
+
+### Changed
+
+- **The desktop overlay is two layers, split by axis** —
+  `HeroSection.module.css`'s `min-width: 920px` `.scrim` plus a new
+  `.scrim::after`. The base is a flat **0.50** across the copy column (from
+  the 0.89 → 0.86 → 0.82 shelf), then the same plunge as before (0.10 at
+  `--copy-edge + 7%`, 0 at +14%). The `::after` shield repeats that horizontal
+  profile at **0.70** and is masked to the band of hero the red accent
+  occupies — opaque 42%-60%, ramped in over the 17% above and out over the 18%
+  below — so the two composite to **0.85 behind "impact" alone**, a shade more
+  than the 0.845 the old shelf put there. It is a mask on a second layer and
+  not a third gradient in the same `background` because stacked translucent
+  layers union: a plain vertical band would have raised the white over the
+  hands too, and only an intersection can hold white to one band of one column.
+- **A `--accent-edge` custom property** (`calc(var(--copy-edge) - 400px)`)
+  keys the shield's left ramp to the accent the way `--copy-edge` keys the
+  plunge to the copy. The slack between the accent's left edge and
+  `--copy-edge` measures 311px at 920px, 316px at 1024px, 352px at 1280px,
+  362px at 1440px and 357px at 1920px — it stops growing once the display type
+  hits its 104px clamp — so 400px starts the shield 38-89px ahead of the first
+  glyph at every width.
+- **`.bg`'s left mask ramp is 16% of the frame, from 32%** (`min-width: 920px`
+  only). A luminance scan of the shipped WebP puts the figure's own left edge
+  at 15.6%-20.7% of the frame depending on the row, with every column left of
+  that at 246-252 — so 16% is exactly the blown-out window the ramp has to
+  cross, and the 32% version was spending its second half on the torso, holding
+  it at about 0.19 mask behind the headline.
+- **The sub-920px pair is 0.66 veil / 0.36 → 0.20 → 0.04 fade**, from 0.7 and
+  0.55 → 0.32 → 0.06. The split is deliberately not symmetric with the desktop
+  pair: below the breakpoint the frame is pinned to the top of the section and
+  is only about 40% of the hero tall, so the veil — which must be at full
+  strength by the time the copy starts at 26% — already covers the frame's
+  lower half whatever it is set to, while the strip above the copy belongs to
+  the fade alone. Dropping the fade to 0.36 takes the photograph there from 45%
+  of itself to 64%; dropping the veil the same distance would have bought a
+  third as much and spent the accent's margin doing it.
+
+### Notes
+
+- **The reveal lives in the frame's feathers, which is why the base alpha is
+  worth 0.50.** The frame is about half the hero tall, its top 34% and bottom
+  32% are feather, and the full-mask middle is very nearly the same band the
+  accent sits in — so there is almost no area where the mask is 1 and the
+  shield is 0. What 0.50 multiplies is the surviving mask inside the feathers:
+  at mask 0.5 over the near-black sleeve the composite moves from 240 under the
+  old shelf to 203. Measured as mean deviation from page white over the columns
+  the figure occupies, the photograph gains 29% at 920px, 21% at 1440px, 46% at
+  1920px, 64% at 2560px, and 37% at 375px / 28% at 768-900px on the phone
+  stack.
+- **Every contrast floor is met with more margin than before, not less.**
+  Sampling each element's whole box against the darkest backdrop pixel under it
+  — stricter than the glyph-coverage method `[2.18.1]` used, and stricter than
+  necessary — the accent measures **3.20-3.27:1** from 920px to 2560px against
+  3.06-3.12:1 for the shelf it replaces, and 3.69-4.10:1 below the breakpoint
+  against 3.82-4.13:1. The ink headline never drops below 12.6:1, the lede
+  below 5.55:1 (4.5:1 floor, 19px regular), and the pillars row is over bare
+  page white at 5.24:1 at every width. The accent needed that margin:
+  shortening `.bg`'s left ramp raised the mask under the word's FIRST glyphs
+  from 0.78 to 1, so more of it now sits over full-strength sleeve than when
+  0.82 was measured.
+- **The frame's top and bottom feathers were not touched, and that was the
+  binding constraint on how far this could go.** Shortening the top ramp is by
+  far the biggest lever on how much figure is drawn — and it puts a horizontal
+  line across the hero: at 34% the largest change in the row-averaged profile
+  across any 10px window near the frame's top edge is 2.6 levels, at 22% it is
+  7.5, and at 12% it is 22, which is plainly visible. The shipped values hold
+  every edge inside the range the previous release already measured (top ≤2.6,
+  bottom 2.1-5.2, and 4.2-6.8 across the shield's own seam, against 1.0-1.9 /
+  1.0-3.9 / 2.5-6.1 before).
+- **Engines without `mask-image` paint the shield unmasked**, which composites
+  to roughly the old full-height shelf — more white, never less.
+
 ## [2.18.1] — 2026-08-19 — Home hero: thin the white shelf so the photograph reads earlier
 
 The desktop overlay held white at 0.93 → 0.90 → 0.86 across the copy, which

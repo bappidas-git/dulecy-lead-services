@@ -46,11 +46,11 @@
      staying parallel. Measured against the headline's right edge: 22px past it
      at 1440px, 117px at 1920px, 393px at 2560px, and on the other side of the
      crossover (about 1330px) 14px short at 1280px, 55px at 1024px. Below the
-     crossover the hands start under the tail of the overlay's shelf rather than
-     clear of it, which is the correct failure — a narrow desktop has no strip
-     of hero the copy does not want, and the shelf thins the hand there instead
-     of the headline sitting on it. Do not "fix" it by raising the bleed: the
-     8% margin above is what it would spend.
+     crossover the hands start under the tail of the overlay rather than clear
+     of it, which is the correct failure — a narrow desktop has no strip of hero
+     the copy does not want, and the overlay thins the hand there instead of the
+     headline sitting on it. Do not "fix" it by raising the bleed: the 8% margin
+     above is what it would spend.
 
      `--bg-top` centres the band on 52% of the hero from 920px up, which is
      where the accent word sits at every desktop width (52.4% at 1440px, 53.7%
@@ -157,10 +157,17 @@
 
    Ramp lengths differ per edge because what they cross does:
 
-     - LEFT, 32% of the frame. The frame's own left 16% is the blown-out
-       window — white ramping into white — so this one is nearly free and is
-       run long, which is what keeps the photograph from ever showing a
-       vertical edge behind the headline.
+     - LEFT, 16% of the frame, which is exactly the width of the blown-out
+       window it crosses. A luminance scan of the shipped WebP puts the suited
+       figure's own left edge at 15.6%-20.7% of the frame depending on the
+       row, and every column left of that measures 246-252 — white ramping
+       into white, so this ramp never has to hide anything and the edge itself
+       sits at alpha 0 over near-paper. It ran 32% until [2.19.0], which is
+       double the window: the second half was spent erasing the FIGURE rather
+       than the edge, holding the torso at about 0.19 mask behind the headline
+       — 2.7% of the photograph once the overlay was over it, i.e. nothing.
+       Do not lengthen it back past the window without re-measuring where the
+       figure starts.
      - TOP, 34%, and BOTTOM, 32%. Both cross a sleeve. These are the numbers
        the curve above was chosen for.
      - Below 920px the top ramp drops to 20%, because the frame's top edge is
@@ -252,11 +259,11 @@
       linear-gradient(
         90deg,
         rgba(0, 0, 0, 0) 0%,
-        rgba(0, 0, 0, 0.021) 6.4%,
-        rgba(0, 0, 0, 0.111) 12.8%,
-        rgba(0, 0, 0, 0.294) 19.2%,
-        rgba(0, 0, 0, 0.585) 25.6%,
-        rgb(0, 0, 0) 32%
+        rgba(0, 0, 0, 0.021) 3.2%,
+        rgba(0, 0, 0, 0.111) 6.4%,
+        rgba(0, 0, 0, 0.294) 9.6%,
+        rgba(0, 0, 0, 0.585) 12.8%,
+        rgb(0, 0, 0) 16%
       );
     mask-image:
       linear-gradient(
@@ -277,28 +284,99 @@
       linear-gradient(
         90deg,
         rgba(0, 0, 0, 0) 0%,
-        rgba(0, 0, 0, 0.021) 6.4%,
-        rgba(0, 0, 0, 0.111) 12.8%,
-        rgba(0, 0, 0, 0.294) 19.2%,
-        rgba(0, 0, 0, 0.585) 25.6%,
-        rgb(0, 0, 0) 32%
+        rgba(0, 0, 0, 0.021) 3.2%,
+        rgba(0, 0, 0, 0.111) 6.4%,
+        rgba(0, 0, 0, 0.294) 9.6%,
+        rgba(0, 0, 0, 0.585) 12.8%,
+        rgb(0, 0, 0) 16%
       );
     -webkit-mask-composite: source-in;
     mask-composite: intersect;
   }
 }
 
-/* The white overlay. The backdrop contributes `1 − scrimAlpha` of each pixel,
-   so this is what decides how much photo you actually see.
+/* The white overlay — two gradients' worth on one `.scrim` (the base rule,
+   plus a `::after` shield from 920px up). The backdrop contributes
+   `1 − alpha` of each pixel, so this is what decides how much photo you
+   actually see.
 
-   The treatment is one idea at every width: white at the left edge, letting go
-   toward the right, so the copy sits on paper and the clasp on clear photo.
-   What changes at the 920px nav breakpoint is not the idea but whether that
-   horizontal fade can carry the legibility on its own. Base rule = the
-   sub-920px stack, one `min-width: 920px` override for the desktop one, rather
-   than a `max-width: 919px` pair: a viewport at a fractional CSS width
-   (emulation, fractional DPI, some zoom levels) satisfies NEITHER query, and
-   the base rule has to be the one that leaves text readable.
+   The treatment is one idea at every width: white where the copy is, letting
+   go toward the photograph. What changes at the 920px nav breakpoint is which
+   AXIS carries it. Base rule = the sub-920px stack, one `min-width: 920px`
+   override for the desktop one, rather than a `max-width: 919px` pair: a
+   viewport at a fractional CSS width (emulation, fractional DPI, some zoom
+   levels) satisfies NEITHER query, and the base rule has to be the one that
+   leaves text readable.
+
+   **Both stacks are shaped by the same measurement, so start with it.** The
+   suited figure the joined hands belong to occupies frame width 15.6% to
+   56.1% — a luminance scan of the shipped WebP, the same one `.bg`'s left
+   ramp is cut to — which puts it directly behind the headline at every
+   desktop width: at 1440px it runs from 33% of the hero (where the frame's
+   blown-out window ends) to 69.5% (where the hands begin, which is also where
+   the copy ends). **There is no strip of hero where the figure is and the
+   copy is not**, so no purely horizontal fade can uncover it, at any alpha it
+   is allowed to take. That is what the shelf this replaced kept running into.
+
+   What is available is the other axis. Only one thing in the copy needs a
+   strong white behind it — the red accent on "impact", the one glyph run that
+   is colour-bound rather than ink-black — and it occupies a band 13% of the
+   hero tall. Everything above and below it is ink (#0B0B0C) at display size,
+   which still measures past 12:1 at alphas that show the figure plainly.
+
+   ---- 920px and up: a base fade, plus a shield over the accent ----
+
+   `.scrim` carries the base: a flat 0.50 across the whole copy column, then
+   the plunge. `.scrim::after` carries the shield: the same horizontal profile
+   at 0.70, masked down to the accent's own band — opaque across 42%-60% of the
+   hero, ramped in over the 17% above it and out over the 18% below. The two
+   composite to `1 − 0.50 x 0.30` = 0.85 behind the accent, a shade MORE than
+   the 0.845 the old shelf put there, so the binding contrast below is
+   preserved rather than spent.
+
+   It has to be a mask on a second layer rather than a third gradient in the
+   same `background`: stacked translucent layers UNION (`1 − Π(1 − a)`), so a
+   plain vertical band would raise the white over the HANDS too, and only an
+   intersection — which is what a mask is — can hold white to one band of one
+   column. Engines without `mask-image` paint the shield unmasked, which
+   degrades to roughly the old full-height shelf: more white, never less.
+
+   **Most of what this uncovers is in the frame's own feathers, and that is
+   the point.** The frame is about half the hero tall, its top 34% and bottom
+   32% are feather, and the full-mask middle is very nearly the same band the
+   accent sits in — so there is almost no area where the mask is 1 and the
+   shield is 0, and lowering the base alpha would look pointless if you only
+   read it there. What the base alpha actually multiplies is the surviving
+   mask in the feathers: at mask 0.5 over the near-black sleeve the composite
+   moves from 240 under the old 0.86 shelf to 203 at 0.50. Measured as mean
+   deviation from page white over the columns the figure occupies, the
+   photograph gains 29% at 920px, 21% at 1440px, 46% at 1920px and 64% at
+   2560px.
+
+   Both layers let go after `--copy-edge` and the shield ramps in by
+   `--accent-edge`, so the white tracks the copy rather than one tuned
+   viewport (see the block below). The shield's plunge is the faster of the
+   two, reaching zero at `+3.5%` against the base's `+7%`, and that is what
+   keeps the hands no whiter than they were: across the plunge the pair
+   measures 0.61 / 0.30 / 0.16 against the old single layer's 0.64 / 0.46 /
+   0.28.
+
+   **The accent is still the binding element and these numbers are fitted to
+   it.** Measured against its real glyph coverage — the word rasterised at its
+   computed font and sampled only where its own alpha is 255 — white at 0.82
+   over the near-black sleeve behind it runs 3.13:1, 0.80 lands on 3.02:1, and
+   0.78 breaks the 3:1 large-text floor outright. Sampling the accent's whole
+   box against its brightest fill (#E8293E) — stricter again, since it takes
+   the darkest backdrop pixel anywhere under the word — the pair measures
+   3.20-3.27:1 from 920px to 2560px, against 3.06-3.12:1 for the shelf it
+   replaces. It needs that margin: shortening `.bg`'s left ramp raised the
+   mask under the accent's FIRST glyphs from 0.78 to 1, so more of the word
+   now sits over full-strength sleeve than when 0.82 was measured.
+
+   Do not thin either layer without re-measuring that way, and do not narrow
+   the shield's mask band: the accent's top edge sits at 43.9% of the hero at
+   its highest (920px on a short viewport) and its bottom at 59.2% at its
+   lowest, which is what 42%-60% opaque plus its ramps exists to cover.
 
    ---- Below 920px: the fade, plus a vertical veil ----
 
@@ -308,103 +386,61 @@
    horizontal fade to clear into, so it cannot do the legibility work alone,
    and pushing it far enough to try would just wash the photo out evenly.
 
-   So the two layers split the job by axis, and the split is what lets each one
-   be thin. The veil (layer 1) owns legibility: nothing above 12% of the hero,
-   0.7 by 25%, held to the foot — the copy starts below that and is covered
-   whatever the fade is doing. The fade (layer 2) is then free to stop being
-   about text at all and be about the LEFT EDGE, which is the one thing the
-   veil cannot help with: 0.55 at the edge, half that by 30%, gone by 75%.
+   So the two layers split the job by axis — the same division of labour the
+   desktop shield makes explicit, arrived at here first. The veil (layer 1)
+   owns legibility: nothing above 12% of the hero, 0.66 by 25%, held to the
+   foot, so the copy is covered whatever the fade is doing. The fade (layer 2)
+   is then free to be about the LEFT EDGE, the one thing the veil cannot help
+   with: 0.36 at the edge, 0.20 by 30%, gone by 75%.
 
-   That is a straight trade against the release before it, which ran the fade
-   at 0.9 → 0.86 → 0.62 and the veil at 0.6. Over the copy the two composite to
-   0.79 where they used to make 0.91 — thinner, and still far more than the
-   accent needs (below) — while in the strip ABOVE the copy, where the veil is
-   nothing and the fade is the only layer, the photograph goes from 14% of
-   itself to 68%. The phone hero's handshake was faint because of that layer,
-   not because of its size, and this is the half of the fix that the geometry
-   could not buy.
+   **The fade is where the phone's reveal comes from, not the veil**, and the
+   split is not symmetric with the desktop pair for that reason. Below 920px
+   the frame is pinned to the top of the section and is only about 40% of the
+   hero tall, so the veil — which has to be at full strength by the time the
+   copy starts at 26% — already covers the frame's lower half whatever it is
+   set to, while the strip above the copy is the fade's alone. Dropping the
+   fade from 0.55 to 0.36 takes the photograph there from 45% of itself to
+   64%; dropping the veil the same distance would have bought a third as much
+   and spent the accent's margin doing it. Measured over the figure's columns
+   the photograph gains 37% at 375px and 28% at 768-900px.
 
-   The binding element is the one it has always been, the red accent (#E8293E)
-   on "impact", and it is not close at these values: the accent sits at 72-84%
-   of the frame's height, which is inside the bottom feather, so the mask is
-   down to about 0.2 there before the scrim is applied at all. The composite
-   behind the glyphs measures 0.96 of white — 4.2:1 against a 3:1 large-text
-   floor, and the lede below it is past the frame entirely and sits on bare
-   paper.
+   The accent's margin here comes from the geometry: with the frame's top edge
+   at the top of the section, the accent sits at 72-84% of the frame's HEIGHT,
+   inside the bottom feather, so the mask is down to about 0.2 before the
+   scrim is applied at all. It measures 4.10:1 at 375px, 4.03:1 at 768px and
+   3.69:1 at 900px — the tightest width, where the frame is widest relative to
+   the viewport — against 4.13 / 4.07 / 3.82 before, and a 3:1 floor. The lede
+   is past the frame entirely at 8.81:1, and the ink headline never drops
+   below 10.2:1.
 
-   ---- 920px and up: the fade alone ----
+   ---- Where the reveal lives, if it ever needs re-tuning ----
 
-   One layer, replacing both of the above outright, since `background` is a
-   shorthand and the vertical veil has no job once the copy is a left column.
-
-   The shape is a shelf and a plunge, not an even ramp, and that distinction is
-   the whole rule: an even fade from the left edge to the right one crosses the
-   copy at exactly the alphas that break it (a 0.94 → 0 ramp puts about 0.18
-   white under the end of the headline at 1024px, where the accent reads
-   1.2:1). So the white holds across the copy, then drops to 0.10 inside the
-   next 7% of the hero and to nothing 7% after that.
-
-   The shelf is 0.89 → 0.86 → 0.82 and the plunge is keyed to `--copy-edge`,
-   which follows the copy, so the white ends where the glyphs do at every width
-   instead of at one tuned viewport. Percentages after it are hero-%, and
-   `calc()` mixes them with the length happily.
-
-   7%+7% rather than the previous 8%+8% because the plunge no longer has to
-   share its length with the subject at the widths where it matters most. The
-   frame is pinned so the hands start at `100% - 0.329 x --bg-w`, which is
-   essentially where this plunge starts at 1440px (994px against 995px) and
-   further right of it at every width above — so from 1440px up every percent
-   the plunge spends is spent on sleeve, not on hand. Measured across the clasp
-   at 1440px the photograph's own pixel survives at 61%, against 27% for the
-   release before this one; at the hero's right edge it is untouched.
-
-   From 1280px down the two cross over (see `--bg-right`) and the shelf covers
-   the hands' left third — 1024px is the tightest, with the plunge at 78% of the
-   hero and the clasp reaching from 68% to 92%. That is the one width where the
-   photograph reads as a suggestion rather than as a subject, and it is
-   deliberate: the copy owns 74% of a 1014px hero there, so the alternative is
-   the headline sitting on bare knuckle.
-
-   The ink copy over the shelf is nowhere near its own floor at either setting
-   — 13.3:1 at the thinnest — and the accent measures 3.1:1 or better at every
-   width, against a 3:1 large-text floor.
-
-   **The shelf's tail is fitted to the accent and has no slack left.** The
-   binding pixel is not the blown-out left an earlier reading of this assumed:
-   it is a near-black sleeve (#30333B at 1920px, #4B2625 at 1024px) sitting at
-   full mask directly under the last glyph of "impact", and it is under a
-   painted glyph rather than in the whitespace beneath one. Measured against
-   the accent's real glyph coverage — the word rasterised at its computed font
-   and sampled only where its own alpha is 255 — the tail runs 3.39:1 at 0.86
-   and 3.13:1 at 0.82, consistently at 1024 / 1440 / 1920px. 0.80 lands on
-   3.02:1 and 0.78 breaks the floor outright. Do not thin this stop further
-   without re-measuring that way, and do not assume the left of the shelf can
-   pay for it, because:
-
-   **almost none of the reveal lives on the left — the photograph is not drawn
-   there.** The frame starts at 17.5% of the hero at 1440px and its own left
-   feather (32% of the frame) does not reach full strength until 47%, so at the
-   30% stop the mask is about 0.12 and the backdrop is already 88% page white;
-   dropping that stop by a further 0.10 moves the composite by roughly one part
-   in a hundred. The first two stops are lowered here to keep the shelf reading
-   as one surface, not because they uncover anything. Every visible percent of
-   this overlay is spent between 47% of the hero and `--copy-edge` — exactly
-   the span the accent sits in. If more photograph is wanted further left, the
-   lever is `.bg`'s left mask ramp or `--bg-right`, not this gradient. */
+   Left of about 33% of the hero there is nothing to uncover at any alpha: the
+   frame starts at 17.5% and its own left 16% is the blown-out window. Between
+   there and `--copy-edge` the levers are this overlay's base alpha and
+   `.bg`'s feathers, and they are not interchangeable — the feathers decide
+   whether the figure is drawn at all, the alpha decides how much of it
+   survives. The feathers are the bigger lever and the more dangerous one:
+   shortening the top ramp from 34% to 12% roughly doubles the figure again
+   and puts a 22-level step across 10px at the frame's top edge, which is a
+   visible horizontal line. The shipped ramps hold that step at 2.6 levels or
+   less (2.1-5.2 at the bottom edge, 4.2-6.8 across the shield's own seam),
+   which is the range the previous release already measured. Past
+   `--copy-edge` the lever is neither: it is `--bg-right`. */
 .scrim {
   background:
     linear-gradient(
       180deg,
       rgba(255, 255, 255, 0) 0%,
       rgba(255, 255, 255, 0) 12%,
-      rgba(255, 255, 255, 0.7) 25%,
-      rgba(255, 255, 255, 0.7) 100%
+      rgba(255, 255, 255, 0.66) 25%,
+      rgba(255, 255, 255, 0.66) 100%
     ),
     linear-gradient(
       90deg,
-      rgba(255, 255, 255, 0.55) 0%,
-      rgba(255, 255, 255, 0.32) 30%,
-      rgba(255, 255, 255, 0.06) 75%,
+      rgba(255, 255, 255, 0.36) 0%,
+      rgba(255, 255, 255, 0.2) 30%,
+      rgba(255, 255, 255, 0.04) 75%,
       rgba(255, 255, 255, 0) 100%
     );
 }
@@ -440,16 +476,67 @@
        while the hero keeps its height: check this pair if either number moves.
        Fitting to the headline instead hands 45px straight back to the hand. */
     --copy-edge: calc(50vw + 275px);
+
+    /* Where the red accent word BEGINS, by the same logic and for the shield
+       in the overlay above: the one length the white has to be strong by.
+       Measured as the accent's left edge against `--copy-edge` — the slack
+       between them is 311px at 920px, 316px at 1024px, 352px at 1280px, 362px
+       at 1440px and 357px at 1920px (it stops growing once the display type
+       hits its 104px clamp ceiling, so 1920px is the widest case) — so 400px
+       starts the shield 38-89px ahead of the first glyph at every width.
+
+       Erring early is the safe direction and is why this is one flat number
+       rather than a fitted curve: starting the shield too soon costs a slice
+       of torso, starting it too late costs contrast on the accent. */
+    --accent-edge: calc(var(--copy-edge) - 400px);
   }
 
   .scrim {
     background: linear-gradient(
       90deg,
-      rgba(255, 255, 255, 0.89) 0%,
-      rgba(255, 255, 255, 0.86) 30%,
-      rgba(255, 255, 255, 0.82) var(--copy-edge),
+      rgba(255, 255, 255, 0.5) 0%,
+      rgba(255, 255, 255, 0.5) var(--copy-edge),
       rgba(255, 255, 255, 0.1) calc(var(--copy-edge) + 7%),
       rgba(255, 255, 255, 0) calc(var(--copy-edge) + 14%)
+    );
+  }
+
+  /* The shield. A pseudo-element rather than a second node in the JSX, since
+     nothing outside this stylesheet has any business knowing the overlay is
+     two layers — and `.scrim` is already `inset: 0` and
+     `pointer-events: none`, so this inherits the box it needs.
+
+     Its mask band is stated in percentages of the HERO, like the fade's own
+     stops, so it tracks the section's height at every width instead of
+     needing a breakpoint of its own. The ramps are linear rather than the
+     power curve `.bg`'s feathers use: this one carries the composite from the
+     base's 0.50 to 0.85 over 17% of the hero (about 170px), so what it crosses
+     is 0.35 of white spread over that distance, not a near-black edge packed
+     into a fifth of it — there is nothing here for a curve to hide. */
+  .scrim::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.7) var(--accent-edge),
+      rgba(255, 255, 255, 0.7) var(--copy-edge),
+      rgba(255, 255, 255, 0) calc(var(--copy-edge) + 3.5%)
+    );
+    -webkit-mask-image: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0) 25%,
+      rgb(0, 0, 0) 42%,
+      rgb(0, 0, 0) 60%,
+      rgba(0, 0, 0, 0) 78%
+    );
+    mask-image: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0) 25%,
+      rgb(0, 0, 0) 42%,
+      rgb(0, 0, 0) 60%,
+      rgba(0, 0, 0, 0) 78%
     );
   }
 }
