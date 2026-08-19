@@ -12,6 +12,77 @@ prompt per branch/PR — and the entries below summarise each phase under the
 
 The format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.18.0] — 2026-08-19 — Home hero: no box, a bigger hand, and the DLS watermark retired
+
+`[2.17.0]` fitted the photograph into a placed box. That box was the problem:
+at any width its own four edges were on the page, and the feather that was
+meant to hide them was a shallow smoothstep laid across two near-black suit
+sleeves — 150 levels of change inside 15px, which is a line, not a fade. On a
+2560px screen the result read as a grey rectangle sitting behind the hero, with
+its left edge running down through the headline.
+
+This drops the box. The frame is drawn **whole, at a stated width**, pinned
+past the hero's right edge, and the section clips it — so the only edges that
+end on the page are the ones that can be dissolved, and the placement puts the
+hero's own edges where the frame carries nothing.
+
+### Changed
+
+- **No fitting box.** `.bgWrap` is gone; the `<img>` is positioned directly
+  against `.hero` with `width: var(--bg-w); height: auto`, so nothing in the CSS
+  decides a crop. `max-width: none` is needed to override the global
+  `img { max-width: 100% }` in `global.css`.
+- **`--bg-w` / `--bg-right` / `--bg-top` place it.** `clamp(980px, 92vw, 1900px)`
+  from 920px up, bled 11% of its own width past the hero's right edge and
+  centred on 52% of the hero — which is where the accent word sits at every
+  desktop width. The joined hands were re-measured off the shipped file (skin
+  mask): they are 56.1%-81.1% of its width, centroid 68.0%. Because the bleed is
+  a fraction of the frame rather than a length, the hero's right edge falls at
+  89% of the frame at **every** width from 920px to 3440px — always past the
+  hands, so the sleeve is what runs off the page and the clasp cannot. Their
+  left edge lands 22px past the headline's right edge at 1440px and further out
+  above; below a crossover near 1330px it slips back under the tail of the
+  overlay's shelf (14px at 1280px, 55px at 1024px), which is the correct
+  trade on a hero the copy already owns 74% of. The hand goes from 265px to
+  331px at 1440px, and from 365px to 475px at 2560px.
+- **Below 920px the numbers change job.** `clamp(1000px, 165vw, 1400px)`, bled
+  14%, top-anchored at the section's own top edge — where the fixed 68px header
+  covers it, so there is no top edge to hide. That is a deliberate zoom: 250px
+  of hand on a 390px phone, against 132px before.
+- **The feather is a power curve, not a smoothstep.** Alpha `t^2.4`, six stops
+  per ramp, sampled at fifths. Left 32% of the frame, top 34%, bottom 32% (top
+  20% below 920px, where the header does the work). The right edge has no ramp
+  at all — it runs off the page, and `overflow: hidden` ends it the way a
+  viewport ends any full-bleed image. Measured as the maximum luminance slope
+  coherent across the whole frame width, the top edge goes from 2.28 to 0.71
+  levels/px at 2560px and the left from 0.79 to 0.55, and in both cases the
+  steepest point moves off the boundary and into the middle of the ramp.
+- **The scrim splits by axis below 920px.** The veil (0 → 0.7 by 25% of the
+  hero) owns legibility on its own, which frees the horizontal fade to stop
+  being about text and be about the left edge: 0.55 → 0.32 → 0.06 instead of
+  0.9 → 0.86 → 0.62. Over the copy the two composite to 0.79 where they used to
+  make 0.91; in the strip above the copy, where the veil is nothing, the
+  photograph goes from 14% of itself to 68%. The phone hero was faint because
+  of that layer, not because of its size.
+- **`--copy-edge` is `50vw + 275px`, from `50vw + 320px`.** The old value was
+  fitted to the pillars row, which the band no longer reaches — it is feathered
+  to zero by 78% of the hero and the pillars sit at 88% and below. Fitting to
+  the headline instead (its widest line is 853px at the 104px display size,
+  i.e. `50vw + 257px`) hands 45px back to the hand. The desktop shelf goes back
+  up to 0.93 → 0.90 → 0.86 and the plunge tightens to 7% + 7%.
+- Contrast was re-measured against the real composite at 320 / 390 / 600 / 768 /
+  920 / 1024 / 1200 / 1280 / 1440 / 1920 / 2560px. The red accent on "impact" —
+  the section's floor — runs 3.30–4.14:1 against a 3:1 large-text floor,
+  equal to or better than `[2.17.0]` at every desktop width; the lede holds
+  6.8–8.8:1 and the pillar numbers 5.24:1 on bare white.
+
+### Removed
+
+- **The floating "DLS" watermark.** `.float`, the `floaty` keyframes, and the
+  `<img>` that carried them are gone from the Home hero. `siteConfig.logoMark`
+  and `MARK_SIZE` stay exported but now have no consumer in `src/` — the mark
+  itself is unchanged and still shipped at `public/images/logo/dls-mark-860.png`.
+
 ## [2.17.0] — 2026-08-19 — Home hero: the contained frame, drawn at a chosen size
 
 `[2.16.0]` stopped the frame being cropped; it did not stop it being large.

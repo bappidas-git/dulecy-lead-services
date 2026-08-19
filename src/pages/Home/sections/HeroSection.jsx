@@ -1,44 +1,47 @@
 /* ============================================
    Home / Hero — ported 1:1 from `mockup/index.html`
    --------------------------------------------
-   A full-bleed photographic backdrop, a floating Dulcey "DLS" mark, then the
-   badge → headline → lede → CTAs → four pillars, all staggered in on load by
-   `useHeroIntro` (the mockup's `data-hero` elements, marked with the same
-   attribute here).
+   A photographic backdrop, then the badge → headline → lede → CTAs → four
+   pillars, all staggered in on load by `useHeroIntro` (the mockup's
+   `data-hero` elements, marked with the same attribute here).
 
-   The backdrop photo is a deliberate departure from `mockup/index.html`,
-   which uses an architectural shot here: it is a handshake framed at forearm
-   level against a blown-out white window. **The whole frame is shown at every
-   viewport** — it is drawn CONTAINED rather than cropped, so no part of the
-   photograph is ever cut off on any device — and its own edges are feathered to
-   nothing so it dissolves into the page instead of ending on a line, the white
-   left over around it being simply the page: same white, no seam.
+   The backdrop photo is a deliberate departure from `mockup/index.html`, which
+   uses an architectural shot here: it is a handshake framed at forearm level
+   against a blown-out white window.
 
-   **The box it is contained in is not the section, and that is what sets its
-   size.** `contain` fixes the frame's shape but takes its scale from whatever
-   holds it, and a section-sized box draws the photograph as wide as the hero —
-   1430px at 1440px, 1910px at 1920px, the clasp alone spanning 372px and 497px.
-   Uncropped is not the same as unenlarged. So `.bgWrap` is a placed box
-   instead: `--bg-w` wide, pinned to the hero's right edge, under the header on
-   phones and centred on the hero's height from 920px up. The frame stays whole;
-   it is drawn at 1058px and 1413px, with the clasp at 275px and 367px.
+   **The frame is drawn whole, at a stated width, and the section clips it.**
+   There is no fitting box and no CSS-decided crop — `width: var(--bg-w);
+   height: auto` on a 2.63:1 file is the entire sizing rule — so what the page
+   shows is decided only by where the hero's edges fall across the photograph,
+   and the placement is set so those edges land where the frame carries nothing:
+   the blown-out window on the left, the far sleeve's outer end past the right.
+   Three of the four edges end inside the section and are feathered to nothing
+   on a power curve so they dissolve rather than cut; the right one runs off the
+   page, so `overflow: hidden` ends it the way a viewport ends any full-bleed
+   image.
 
-   Over it sits a white overlay that runs left to right, thin enough across the
-   copy that the photograph reads as a photograph: from 920px up that fade alone
-   carries legibility, holding 0.92 → 0.86 across the copy and letting go within
-   8% of the hero after the glyphs end. Pinning the frame right moves the clasp
-   from 68% of the hero to about 76%, which is inside that plunge rather than
-   under the shelf — so the shelf could go back up (0.82 → 0.86) and MORE of the
-   subject survives, not less. Below the breakpoint the copy spans the frame, so
-   a vertical veil joins the fade; that rule is untouched, because the band now
-   sits above the headline instead of behind it. See the annotated `.bgWrap` /
-   `.bg` / `.scrim` blocks in the stylesheet.
+   That placement is what puts the subject where the brief wants it. The joined
+   hands are a measured 56.1%-81.1% of the frame's width, so pinning it 11% past
+   the hero's right edge always leaves 8% of frame between their right edge and
+   the screen — the arm reads as continuing, and the hands are never the thing
+   that gets cut. Their left edge lands beside the headline: 22px past where it
+   ends at 1440px, further out as the viewport grows, and just inside it below
+   about 1330px, where the copy owns too much of a narrow hero for anything
+   else. At 1440px that is 331px of hand against the 265px the release before
+   this one drew.
+
+   Over it sits a white overlay that runs left to right: from 920px up it holds
+   0.93 → 0.86 across the copy and lets go within 7% of the hero after the
+   glyphs end, which is also where the hand starts. Below the breakpoint the
+   copy spans the frame, so a vertical veil takes over legibility and the fade
+   is left to do nothing but keep the left edge clean. See the annotated `.bg`
+   and `.scrim` blocks in the stylesheet.
    ============================================ */
 
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useModal } from '../../../context/ModalContext';
-import { siteConfig, MARK_SIZE } from '../../../data/siteConfig';
+import { siteConfig } from '../../../data/siteConfig';
 import { useHeroIntro } from '../../../animations';
 import layout from '../../../styles/layout.module.css';
 import styles from './HeroSection.module.css';
@@ -53,10 +56,10 @@ import styles from './HeroSection.module.css';
 // back again — but under a third basename for that same caching reason, not
 // revived under the old one.
 //
-// One width, and no `sizes`: the frame is never drawn wider than `--bg-w`,
-// which caps at 1460 CSS px from 920px up and 900 CSS px below it — exactly 2x
-// this file on a retina display, so it never upscales — and the shallow depth
-// of field keeps it at 39 KB.
+// One width, and no `sizes`: the frame is drawn at exactly `--bg-w`, which
+// caps at 1900 CSS px from 920px up and 1400 CSS px below it — comfortably
+// inside 2x this file on a retina display, so it never upscales — and the
+// shallow depth of field keeps it at 39 KB.
 //
 // **The WebP is the only variant the hero paints.** There is no `<picture>` and
 // no `image-set()` fallback, which costs less than it sounds: an `<img src>` on
@@ -76,8 +79,8 @@ const HERO_BG = '/images/hero-home-v6-2880.webp';
 
 // The intrinsic size of that file. Passed through as the `width`/`height`
 // attributes so the box has an aspect ratio before the bytes land; the
-// stylesheet then fits it with `max-width`/`max-height` and leaves both
-// dimensions `auto`, which is what resolves it to the contain box.
+// stylesheet then sets `width: var(--bg-w)` and leaves `height: auto`, which
+// draws the whole 2.63:1 frame at that width.
 const HERO_BG_SIZE = { width: 2880, height: 1094 };
 
 const PILLARS = [
@@ -93,57 +96,44 @@ const HeroSection = () => {
 
   return (
     <section className={styles.hero}>
-      {/* The backdrop and the overlay: two boxes. Only `.scrim` is `inset: 0`,
-          which is what makes the fade's stops section percentages; `.bgWrap` is
-          the placed box the frame is contained in, sized and positioned by the
-          `--bg-*` custom properties on `.hero`. They no longer share a geometry
-          rule, but they are still one treatment — keep them grouped.
+      {/* The backdrop and the overlay: two elements, one treatment — keep them
+          grouped. Only `.scrim` is `inset: 0`, which is what makes the fade's
+          stops section percentages; the photograph is a placed element sized
+          and positioned by the `--bg-*` custom properties on `.hero`.
 
-          The photograph is a real `<img>` centred in the first box, not a CSS
-          background, and that is what makes "the whole frame, uncropped" work:
-          at `max-width`/`max-height: 100%` with both dimensions `auto` the
-          element resolves to exactly the contain box, so it IS the drawn photo
-          and the stylesheet's edge feather can be expressed in percentages of
-          the image itself. A background would keep the element at full section
-          size with the letterbox baked in, and the feather would have nothing
-          fixed to aim at. Being an `<img>` also earns `fetchpriority="high"`,
-          which a background cannot carry.
+          It is a real `<img>` rather than a CSS background, and that is what
+          lets the stylesheet's edge feather be expressed in percentages of the
+          image itself: the element IS the drawn photograph, at its own stated
+          width with no box fitted around it. A background would keep the
+          element at full section size with the framing baked in, and the
+          feather would have nothing fixed to aim at. Being an `<img>` also
+          earns `fetchpriority="high"`, which a background cannot carry.
+
+          The `width`/`height` attributes are the file's intrinsic size, so the
+          box has an aspect ratio before the bytes land; the stylesheet sets
+          `width` and leaves `height: auto`, which is what draws the whole
+          2.63:1 frame rather than a crop of it.
 
           It stays decorative: empty `alt` plus `aria-hidden`, since the hero's
           meaning is entirely in the copy beside it.
 
           No `useParallax` here, unlike the Expertise and Who We Serve heroes.
-          Scrub parallax needs the photo drawn larger than its box so the travel
-          never exposes an edge — the opposite of showing the whole frame. The
-          backdrop is static on purpose. */}
-      <div className={styles.bgWrap} aria-hidden="true">
-        <img
-          className={styles.bg}
-          src={HERO_BG}
-          alt=""
-          width={HERO_BG_SIZE.width}
-          height={HERO_BG_SIZE.height}
-          fetchpriority="high"
-          decoding="async"
-        />
-      </div>
+          Scrub parallax would slide the subject out of the relationship with
+          "impact" that the placement exists to hold. The backdrop is static on
+          purpose. */}
+      <img
+        className={styles.bg}
+        src={HERO_BG}
+        alt=""
+        aria-hidden="true"
+        width={HERO_BG_SIZE.width}
+        height={HERO_BG_SIZE.height}
+        fetchpriority="high"
+        decoding="async"
+      />
       <div className={styles.scrim} aria-hidden="true" />
 
       <div ref={heroRef} className={`${layout.container} ${styles.inner}`}>
-        {/* Decorative floating mark — the self-hosted "DLS" initialism, drawn
-            up to 430px wide and shipped at 860px so it stays crisp at 2×.
-            `MARK_SIZE` reserves the 1.87:1 box; the stylesheet sets the
-            rendered width and leaves the height auto. */}
-        <img
-          className={styles.float}
-          src={siteConfig.logoMark}
-          alt=""
-          aria-hidden="true"
-          width={MARK_SIZE.width}
-          height={MARK_SIZE.height}
-          decoding="async"
-        />
-
         <div className={styles.badge} data-hero>
           <span className={styles.dot} aria-hidden="true" /> {siteConfig.tagline}
         </div>
