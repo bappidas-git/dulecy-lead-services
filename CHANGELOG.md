@@ -12,6 +12,117 @@ prompt per branch/PR — and the entries below summarise each phase under the
 
 The format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.24.0] — 2026-08-20 — Home hero: the whole photograph on desktop, and a thinner shelf
+
+The release before this one put the desktop hero back on `object-fit: cover`,
+which frames the file to the section and discards whatever does not fit — 46%
+of the frame's width at 1440px, including the second figure on the left. This
+release stops cropping it. From `min-width: 920px` the **entire** photograph is
+drawn, at the largest size that fits inside the section, and the white overlay
+over it comes down at the two stops that had headroom for it.
+
+**Nothing below 920px changes.** The sub-920px stack — the placed frame at
+`--bg-w`, its smootherstep-at-twentieths feather, and the veil-plus-fade
+overlay — is byte-for-byte what it was, and was re-verified at 919px.
+
+### Changed
+
+- **The desktop photograph is drawn whole, uncropped.** `object-fit` /
+  `object-position` are gone; the sizing is now
+
+  ```css
+  width: auto; height: auto; max-width: 100%; max-height: 100%;
+  ```
+
+  which is the CSS 2.1 replaced-element algorithm rather than four independent
+  constraints: with both dimensions `auto` the element starts at the file's
+  intrinsic 2880x1094, and a violated max- constraint scales the box down
+  **preserving the ratio**. Nothing in the rule can crop, letterbox or stretch
+  it at any viewport. It stays an `<img>` — it is the LCP element on `/` and
+  only an `<img>` carries `fetchpriority="high"`.
+
+  Three regimes, all intended:
+
+  | viewport      | binds        | drawn frame  | hero        |
+  | ------------- | ------------ | ------------ | ----------- |
+  | 920           | `max-width`  | 910 x 346    | 910 x 922   |
+  | 1440          | `max-width`  | 1430 x 543   | 1430 x 1002 |
+  | 1920          | `max-width`  | 1910 x 726   | 1910 x 1020 |
+  | 3440          | `max-height` | 2639 x 1003  | 3430 x 1003 |
+
+  `object-fit: contain` would give the same guarantee about the pixels and was
+  rejected for a specific reason: it takes its SIZE from the box, so the
+  element box would stay the full section while the drawn frame sat inside it,
+  and every percentage in the feather would then be a percentage of the box
+  rather than of the picture. Sizing the element to the image is what keeps the
+  mask landing on real edges — the same reason the sub-920px stack draws a
+  placed frame.
+
+- **It is pinned `top: 0` / `right: 0`, which leaves exactly one visible edge.**
+  The top edge is the top of the page (the hero is first in `<main>`; the 68px
+  header floats over it), so there is nothing for it to be an edge against. The
+  right edge is the hero's right edge, ended by `overflow: hidden` exactly as a
+  viewport ends any full-bleed image. The left edge only comes onto the page
+  past ~2685px, where `max-height` binds and the frame goes narrower than the
+  section — and it is left untreated on measurement, not assumption: the file's
+  first 40 columns run 246-254 against a `#fff` section, an 8.7-level step at
+  full strength, under a shelf at least 0.84 opaque there, so under 1.4 levels
+  reach the page.
+
+  Pinning the right rather than the left is what holds the composition in that
+  height-limited regime. Because the frame spans the section everywhere else,
+  image-x maps straight onto hero-x, so the joined hands (55.4%-85.7% of the
+  file, skin centroid 68.1%) sit at those same fractions of the hero — the
+  clasp still at 68%, just right of where "impact" ends — with no framing
+  constant left to tune.
+
+- **The bottom edge is feathered to nothing**, with `--feather-y` restated for
+  the breakpoint as a single `to top` ramp of `--bottom-ramp: max(96px, 22%)`,
+  smootherstep-cubed sampled at twentieths (alpha at `k/20` of the ramp is
+  `1 - s5(1 - k/20)^3`). The percentage is what the ramp costs the picture; the
+  96px floor is what it has to be worth on a short frame. Measured as the worst
+  10px luminance window in the composite against a per-column flat stand-in,
+  which isolates the mask's own curvature from image detail:
+
+  | viewport      | 920 | 1440 | 1920 |
+  | ------------- | --- | ---- | ---- |
+  | bare 22%      | 9.4 | 4.5  | 6.3  |
+  | `max(96px,22%)` | 4.9 | 3.8  | 5.2  |
+
+  against the 7-9 levels this section is held to. Because the curve spends its
+  length lazily — alpha is still 0.97 two fifths of the way in — the visible
+  part of the fade is only the last ~9% of the frame, so the picture still
+  reads as complete.
+
+- **The desktop shelf is thinner: `0.91 / 0.88 / 0.83` → `0.86 / 0.84 / 0.83`.**
+  In signal rather than alpha, what survives of the photo's own pixel under the
+  copy column goes from 0.09 to 0.14 at the left edge and from 0.12 to 0.16 at
+  30% — half again and a third again.
+
+  **The third stop does not move, because it is what prices the accent.** The
+  red on "impact" is the one run of copy that is colour-bound rather than
+  ink-black, and it sits close enough to `--copy-edge` that the alpha under it
+  is set almost entirely by that stop: at 1920px its darkest column reads 0.79
+  of the way from the second stop to the third, so lowering the first two costs
+  it 0.841 → 0.832 of white while buying the whole left column. Measured
+  against the accent's brightest fill (#E8293E), taking the darkest backdrop
+  pixel anywhere under the word:
+
+  | viewport | 920  | 1280 | 1440 | 1920 | 2560 | 3440 |
+  | -------- | ---- | ---- | ---- | ---- | ---- | ---- |
+  | accent   | 4.36 | 4.30 | 3.32 | 3.11 | 3.11 | 3.19 |
+
+  against a **3:1 floor for large text**; the shelf it replaces read 3.17:1 at
+  its own worst width. The ink headline never drops below 12.8:1 and the lede
+  below 6.2:1. Do not thin the third stop.
+
+- **The pillars row is better off, not worse.** Its fourth number is 14px
+  `--red`, the least forgiving colour in the section, and `--copy-edge`'s
+  `+ 320px` is still fitted to it. With the frame ending 460px above the row at
+  1440px and 294px at 1920px, the red now measures 4.7-5.0:1 at 2560px and
+  4.25:1 at 3440px — the only widths where the feathered tail reaches it at
+  all — against 3.7-4.1:1 under the cropped backdrop.
+
 ## [2.23.0] — 2026-08-20 — Home hero: the desktop photograph fills the section again
 
 The eight releases before this one refined a *placed frame* on desktop — a
