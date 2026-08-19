@@ -12,6 +12,65 @@ prompt per branch/PR — and the entries below summarise each phase under the
 
 The format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.22.0] — 2026-08-20 — Home hero: the photograph, moved off the accent
+
+The four releases before this one were all about the *overlay* — its lines,
+its rectangles, how much of the photograph it was allowed to keep. This one
+moves the photograph itself, and it is the only change: one number, on the
+desktop rule alone.
+
+**At 11% bleed the clasped hands had converged onto "impact".** The frame's
+width tracks the viewport (`92vw`) while the copy caps at a 1280px container,
+so the hands' left edge and the headline's right edge do not stay parallel —
+they close as the viewport narrows. Measured as the gap between the accent
+word's right edge and where the hands begin, 1440px sat at **22px**: close
+enough that the clasp read as pressed against the word rather than placed
+beside it, and below about 1300px it crossed over and started under the copy.
+
+### Changed
+
+- **`--bg-right` is `-13.5%` of `--bg-w`, from `-11%`** — desktop only
+  (`min-width: 920px`). Nothing below the nav breakpoint moves: the frame
+  still bleeds 14% there, still pins to the top of the section, and the
+  sub-920px overlay stack is untouched. Gap from the accent to the hands, at
+  11% against 13.5%:
+
+  | viewport | 920 | 1024 | 1280 | 1440 | 1920 | 2560 |
+  | -------- | --- | ---- | ---- | ---- | ---- | ---- |
+  | `-11%`   | −81 | −56  | −15  | +22  | +116 | +392 |
+  | `-13.5%` | −56 | −31  | +14  | +55  | +161 | +440 |
+
+  The crossover where the hands stop clearing the headline moves from about
+  1300px to about 1235px. Below it they still start under the tail of the
+  overlay, which stays the correct failure — a narrow desktop has no strip of
+  hero the copy does not want.
+
+- **What it spends is the right margin, and it stays sufficient.** The hero's
+  right edge now falls at 86.5% of the frame against hands that end at 81.1%,
+  so 5.4% of frame is left for the far sleeve to run off on: **53px** where
+  `--bg-w` sits on its 980px floor (920-1065px), 72px at 1440px, 96px at
+  1920px, 103px at 2560px. The clasp is 245px wide at that floor. 920px is the
+  column that runs out first, not the widest one — re-measure there before
+  raising the bleed again.
+
+### Unchanged, and verified so
+
+- **Contrast.** The accent on "impact" — the binding element, sampled across
+  its whole box against its brightest fill `#E8293E` — reads **3.21-3.28:1**
+  from 920px to 2560px against a 3:1 floor, within 0.03 of the release before
+  it at every width. The lede improves slightly (4.74 → 4.99:1 at 2560px, its
+  tightest width) because a little more of the frame's bottom feather moves
+  out from under it.
+- **The blending, which is already at its floor.** Measured against a flat
+  near-black stand-in for the photograph — which isolates what the gradients
+  contribute, since any curvature left is the mask's and never image detail —
+  the worst 10px window in the whole desktop composite reads **7-9 levels** at
+  920-2560px, and a translation cannot change it. Rebuilding `--feather-y` at
+  fortieths and at eightieths instead of twentieths was measured and moves
+  that to 9 and 8: the residual is the curve's own curvature quantised to
+  8-bit output, not stop spacing. There is nothing left for more stops to buy,
+  and the note now says so in the stylesheet so it is not retried.
+
 ## [2.21.0] — 2026-08-20 — Home hero: the last rectangle in the overlay
 
 `[2.20.0]` took the *lines* out of the hero by fixing every ramp's curve and

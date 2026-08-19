@@ -33,24 +33,38 @@
      1031px hero at 2560px).
 
      `--bg-right` is the bleed, and stating it as a fraction is what makes the
-     RIGHT side viewport-independent: the hero's right edge falls at `100% - 11%`
-     of the frame, i.e. 89%, which is past the hands at 81.1% — so the far
-     sleeve always runs off the page and the clasp never can, with 8% of frame
-     left between them to read as an arm continuing rather than as a photograph
-     ending. That holds identically from 920px to 3440px.
+     RIGHT side viewport-independent: the hero's right edge falls at
+     `100% - 13.5%` of the frame, i.e. 86.5%, which is past the hands at 81.1%
+     — so the far sleeve always runs off the page and the clasp never can, with
+     5.4% of frame left between them to read as an arm continuing rather than as
+     a photograph ending. That holds identically from 920px to 3440px.
 
-     The LEFT side cannot hold identically, and it is worth knowing which way it
-     moves. The hands begin at 56.1% of the frame, so their left edge lands at
-     `100% - 0.329 x --bg-w` of the hero — but `--bg-w` tracks the viewport
+     **13.5% and not the 11% it was, and the LEFT edge is what bought it.** The
+     hands begin at 56.1% of the frame, so their left edge lands at
+     `100% - 0.304 x --bg-w` of the hero — but `--bg-w` tracks the viewport
      while the copy caps at a 1280px container, so the two converge rather than
-     staying parallel. Measured against the headline's right edge: 22px past it
-     at 1440px, 117px at 1920px, 393px at 2560px, and on the other side of the
-     crossover (about 1330px) 14px short at 1280px, 55px at 1024px. Below the
-     crossover the hands start under the tail of the overlay rather than clear
-     of it, which is the correct failure — a narrow desktop has no strip of hero
-     the copy does not want, and the overlay thins the hand there instead of the
-     headline sitting on it. Do not "fix" it by raising the bleed: the 8% margin
-     above is what it would spend.
+     staying parallel, and at 11% they had converged to the point of touching.
+     Measured as the gap between the accent word's right edge and where the
+     hands begin, at 11% against 13.5%:
+
+       920px   -81 → -56      1440px   +22 → +55
+       1024px  -56 → -31      1920px  +116 → +161
+       1280px  -15 → +14      2560px  +392 → +440
+
+     1440px is the case that changes character: 22px is close enough that the
+     clasp reads as pressed against "impact" rather than placed beside it, and
+     55px is a gap. The crossover where the hands stop clearing the headline
+     moves from about 1300px to about 1235px, and below it they start under the
+     tail of the overlay rather than clear of it — which is the correct failure,
+     since a narrow desktop has no strip of hero the copy does not want, and the
+     overlay thins the hand there instead of the headline sitting on it.
+
+     What it spends is the right margin, and that is the number to watch: 5.4%
+     of frame is 53px where `--bg-w` sits at its 980px floor (920-1065px), 72px
+     at 1440px, 96px at 1920px and 103px at 2560px. The clasp is 245px wide at
+     that floor, so even the tightest case leaves a fifth of a hand's worth of
+     sleeve past it. Do not raise the bleed again without re-measuring the 920px
+     column — it is the one that runs out first, not the widest one.
 
      `--bg-top` centres the band on 52% of the hero from 920px up, which is
      where the accent word sits at every desktop width (52.4% at 1440px, 53.7%
@@ -177,6 +191,17 @@
    round to the same alpha as both their neighbours are dropped, which is why
    each ramp opens on a short flat run.
 
+   **Twentieths is the floor, not a budget, and re-sampling finer is wasted
+   work.** Measuring against a FLAT near-black stand-in for the photograph
+   isolates what the gradients themselves contribute — any curvature left is
+   the mask's, never image detail — and on that test the worst 10px window in
+   the whole desktop composite reads 7-9 levels at 920-2560px. Rebuilding
+   `--feather-y` at fortieths and at eightieths moves that to 9 and 8: the
+   residual is the curve's own curvature quantised to 8-bit output, not stop
+   spacing, so there is nothing left for more stops to buy. The only lever
+   still open on this edge is ramp LENGTH, and `--top-ramp` is already capped
+   at the shortest that holds the seam — see the desktop `.bg` rule.
+
    Ramp lengths differ per edge because what they cross does:
 
      - LEFT, 16% of the frame, which is exactly the width of the blown-out
@@ -293,7 +318,7 @@
   .hero {
     --bg-w: clamp(980px, 92vw, 1900px);
     --bg-h: calc(var(--bg-w) / 2.6325);
-    --bg-right: calc(var(--bg-w) * -0.11);
+    --bg-right: calc(var(--bg-w) * -0.135);
     --bg-top: calc(52% - var(--bg-h) / 2);
   }
 
@@ -415,11 +440,13 @@
    suited figure the joined hands belong to occupies frame width 15.6% to
    56.1% — a luminance scan of the shipped WebP, the same one `.bg`'s left
    ramp is cut to — which puts it directly behind the headline at every
-   desktop width: at 1440px it runs from 33% of the hero (where the frame's
-   blown-out window ends) to 69.5% (where the hands begin, which is also where
-   the copy ends). **There is no strip of hero where the figure is and the
-   copy is not**, so no purely horizontal fade can uncover it, at any alpha it
-   is allowed to take. That is what the shelf this replaced kept running into.
+   desktop width: at 1440px it runs from 34.7% of the hero (where the frame's
+   blown-out window ends) to 71.8% (where the hands begin), against copy that
+   ends at 68%. **There is essentially no strip of hero where the figure is
+   and the copy is not** — the 13.5% bleed opens 3.8% of one, a 55px band that
+   is the far shoulder rather than the torso — so no purely horizontal fade can
+   uncover it, at any alpha it is allowed to take. That is what the shelf this
+   replaced kept running into.
 
    What is available is the other axis. Only one thing in the copy needs a
    strong white behind it — the red accent on "impact", the one glyph run that
@@ -538,8 +565,8 @@
 
    ---- Where the reveal lives, if it ever needs re-tuning ----
 
-   Left of about 33% of the hero there is nothing to uncover at any alpha: the
-   frame starts at 17.5% and its own left 16% is the blown-out window. Between
+   Left of about 35% of the hero there is nothing to uncover at any alpha: the
+   frame starts at 19.8% and its own left 16% is the blown-out window. Between
    there and `--copy-edge` the only levers left are this overlay's base alpha
    and `.bg`'s feathers, and neither is generous: the copy column is now a
    flat `0.15 x mask` by construction, so raising it means either thinning the

@@ -28,14 +28,14 @@
    every stop. Same rule governs every ramp in the overlay below.
 
    That placement is what puts the subject where the brief wants it. The joined
-   hands are a measured 56.1%-81.1% of the frame's width, so pinning it 11% past
-   the hero's right edge always leaves 8% of frame between their right edge and
-   the screen — the arm reads as continuing, and the hands are never the thing
-   that gets cut. Their left edge lands beside the headline: 22px past where it
-   ends at 1440px, further out as the viewport grows, and just inside it below
-   about 1330px, where the copy owns too much of a narrow hero for anything
-   else. At 1440px that is 331px of hand against the 265px the release before
-   this one drew.
+   hands are a measured 56.1%-81.1% of the frame's width, so pinning it 13.5%
+   past the hero's right edge always leaves 5.4% of frame between their right
+   edge and the screen — the arm reads as continuing, and the hands are never
+   the thing that gets cut. Their left edge lands beside the headline: 55px past
+   where it ends at 1440px, further out as the viewport grows, and just inside
+   it below about 1235px, where the copy owns too much of a narrow hero for
+   anything else. At 1440px that is 331px of hand against the 265px the release
+   before this one drew.
 
    Over it sits a white overlay, and from 920px up that overlay is two layers
    rather than one, because the suited figure the hands belong to stands
