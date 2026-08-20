@@ -41,8 +41,11 @@ export const siteConfig = {
   logoWhite: '/images/logo/dulcey-wordmark-white-1351.png',
   // The "D" mark. Its Cloudinary public_id still carries the old spelling —
   // that is the asset's immutable delivery path, not a brand string.
-  // Splash lineage only — the `public/index.html` splash `<img>` hard-codes
-  // this same URL. The favicon/PWA set is cut from `logoMark` below.
+  // **No longer drawn anywhere.** The favicon/PWA set is cut from `logoMark`
+  // below, and the `public/index.html` splash — its last consumer — now draws
+  // `logoMark` too. Kept as the archive of the original "D"; if a surface ever
+  // needs it again, the public_id must still not be folded into a rebrand
+  // find-and-replace.
   logoIcon: `${CLOUDINARY_BASE}/v1785484838/Dulecy-Logo-Icon_hylrpw.png`,
   // The "DLS" initialism mark, self-hosted alongside the wordmark and carrying
   // the same real alpha channel (peak 255 as supplied — the wordmark's
@@ -51,7 +54,10 @@ export const siteConfig = {
   // dead padding to compensate for. This is the favicon source:
   // `scripts/generate-icons.js` reads the file straight off disk, so a re-cut
   // needs `MARK_FILE` there updated and `npm run generate:icons` re-run.
-  // Nothing in `src/` draws it today. The `-860` suffix is the width, and
+  // It is also the splash mark: the `public/index.html` initial loader
+  // hard-codes this same path. Nothing in `src/` draws it today, though —
+  // the React tree's one consumer was the Home hero watermark, removed in
+  // [2.18.0]. The `-860` suffix is the width, and
   // `/images/**` answers `immutable`, so re-cutting means a NEW filename.
   logoMark: '/images/logo/dls-mark-860.png',
   social: {}, // fill when the client provides profiles; components must hide empty entries
@@ -121,10 +127,11 @@ export const absoluteUrl = (pathOrUrl) =>
  * returned untouched rather than silently no-op'ing through a `.replace()`
  * that never matches.
  *
- * **Currently has no caller.** Its one consumer was the Home hero watermark,
- * which now draws the self-hosted `logoMark` instead. Kept because `logoIcon`
- * is still live — the `index.html` splash `<img>` hard-codes that same
- * Cloudinary URL — and this is the only way to size it.
+ * **Currently has no caller, and neither does its one possible subject.** The
+ * Home hero watermark that used it now draws the self-hosted `logoMark`, and
+ * the `index.html` splash — the last surface on the Cloudinary `logoIcon` —
+ * moved to `logoMark` too. Kept because `logoIcon` is still exported and this
+ * is the only way to size it if a surface ever draws it again.
  *
  * @example logoAt(siteConfig.logoIcon, { w: 760 })
  */

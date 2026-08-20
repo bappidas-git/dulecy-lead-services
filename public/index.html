@@ -140,9 +140,6 @@
          ========================================= -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- Cloudinary still serves the splash "D" mark below; the header/footer
-         wordmark is self-hosted from /images/logo/. -->
-    <link rel="preconnect" href="https://res.cloudinary.com" />
     <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
     <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
     <!-- api.iconify.design is intentionally NOT preconnected: Iconify is only
@@ -189,6 +186,21 @@
         rel="stylesheet"
       />
     </noscript>
+
+    <!-- Splash mark preload. The initial loader draws this on every route's
+         first paint, and it sits in <body> markup the parser only reaches
+         after all of <head>, so preloading here starts the fetch earlier.
+         Same-origin and immutably cached (see public/.htaccess), so it costs
+         one request on a first visit and nothing afterwards. Keep in sync with
+         the <img> in the initial loader below and `logoMark` in
+         src/data/siteConfig.js. -->
+    <link
+      rel="preload"
+      as="image"
+      type="image/png"
+      href="%PUBLIC_URL%/images/logo/dls-mark-860.png"
+      fetchpriority="high"
+    />
 
     <!-- =========================================
          LCP image preload — home route only
@@ -607,8 +619,18 @@
       }
 
       .loader-logo-img {
-        width: 180px;
+        /* The "DLS" mark is 860x460 (1.87:1), not the square "D" this splash
+           used to draw — `aspect-ratio` reserves the right box before the PNG
+           decodes so the wrapper never reflows on any device. `max-width`
+           keeps it inside .loader-wrapper's 232px content box on the
+           narrowest phones. Widened from the 180px the square "D" used: at
+           1.87:1 the same width would draw a 96px-tall block where a 180px
+           one stood, so the brand read as an afterthought above the 232px
+           progress bar. */
+        width: 200px;
+        max-width: 100%;
         height: auto;
+        aspect-ratio: 860 / 460;
         object-fit: contain;
         animation: loaderFadeIn 0.6s ease both;
       }
@@ -821,16 +843,19 @@
       <div class="loader-wrapper">
         <!-- Logo + Brand -->
         <div class="loader-brand">
-          <!-- Drawn 180px wide; requested from Cloudinary at 2× for retina
-               (f_auto,q_auto:best,w_360) instead of the 1000px original —
-               this sits on the first-paint path. Mirrors logoAt() in
-               src/data/siteConfig.js. -->
+          <!-- The self-hosted "DLS" mark — the same artwork as the favicon
+               and the PWA icon set. Drawn 180px wide from an 860px master, so
+               it stays sharp to 3× with no CDN resize on the first-paint
+               path. Mirrors `logoMark` / MARK_SIZE in src/data/siteConfig.js;
+               preloaded in <head>. -->
           <img
-            src="https://res.cloudinary.com/dn9gyaiik/image/upload/f_auto,q_auto:best,w_360/v1785484838/Dulecy-Logo-Icon_hylrpw.png"
+            src="%PUBLIC_URL%/images/logo/dls-mark-860.png"
             alt="Dulcey Lead Services"
             class="loader-logo-img"
-            width="360"
-            height="361"
+            width="860"
+            height="460"
+            decoding="async"
+            fetchpriority="high"
           />
           <p class="loader-tagline">Beyond Business Support</p>
         </div>

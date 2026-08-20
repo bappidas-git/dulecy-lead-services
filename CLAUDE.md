@@ -55,12 +55,13 @@ never hard-code a contact or company fact in a component, script, or schema.
     > brand string — "correcting" it to `Dulcey-` 404s the favicon source.
     > Leave it until the mark is re-uploaded under a new public_id.
     >
-    > This is now a **splash asset only**. Nothing in `src/` renders it, and
-    > the favicon/PWA pipeline no longer reads it either — `[2.25.0]` pointed
-    > `scripts/generate-icons.js` at the "DLS" mark below. Its single
-    > remaining consumer is the hard-coded URL in the `public/index.html`
-    > splash; the Home hero's watermark, its last consumer in the app, moved
-    > to `logoMark` in `[2.18.0]`.
+    > **It is no longer drawn anywhere.** The Home hero's watermark, its last
+    > consumer in the app, moved to `logoMark` in `[2.18.0]`; the favicon/PWA
+    > pipeline moved in `[2.25.0]`; and `[2.27.0]` moved the last surface —
+    > the `public/index.html` splash — to `logoMark` too, dropping the
+    > `res.cloudinary.com` `preconnect` with it. `logoIcon` stays exported as
+    > the archive of the original "D"; do not "clean it up", and if a surface
+    > ever draws it again, the public_id rule above still holds.
   - "DLS" mark — `siteConfig.logoMark`: `/images/logo/dls-mark-860.png`
 
 **The wordmark is self-hosted and transparent.** Both PNGs are one 1351×200
@@ -117,6 +118,14 @@ maskable spec assumes an opaque bleed behind the launcher's crop. The script
 keeps an unused `WHITE` constant purely so either can be put back on a plate
 by swapping one argument — do not "clean it up" as dead code.
 
+**It is also the splash mark.** `[2.27.0]` pointed the `public/index.html`
+initial loader at this same file, so the mark a visitor sees while React boots
+is the mark in the browser tab beside it. The splash `<img>` hard-codes the
+path rather than importing it (it must render before any bundle parses), is
+preloaded from `<head>` because the markup sits in `<body>`, and is drawn
+200px wide with `aspect-ratio: 860 / 460` — one fixed size on every device.
+Keep those three in step with any re-cut.
+
 > ⚠️ **Nothing in `src/` draws it.** The React tree's one consumer was the
 > Home hero's floating watermark, which `[2.18.0]` removed — the hero's
 > photograph now carries that area and a second mark behind it read as a
@@ -131,9 +140,10 @@ means a new filename, a matching `MARK_SIZE` bump, an updated `MARK_FILE` in
 
 `logoAt(url, { w, h })` returns a Cloudinary-resized display URL (`f_auto`,
 `q_auto:best`) — pass **2× the CSS box**; it returns a non-Cloudinary URL
-untouched. It currently has **no caller**: `logoIcon` was its only subject and
-nothing in `src/` draws that asset any more. Kept because `logoIcon` is still
-live in the `index.html` splash and this is the only way to size it. Wrap logo
+untouched. It currently has **no caller, and no live subject**: `logoIcon` was
+its only subject, and since `[2.27.0]` nothing — in `src/` or in
+`index.html` — draws that asset. Kept as the only way to size `logoIcon` if a
+surface ever draws it again. Wrap logo
 paths in `absoluteUrl()` wherever a schema or meta tag needs a fully qualified
 URL.
 
@@ -565,8 +575,10 @@ post-launch checklist: `SEO_GUIDE.md`.
 1. **Copy** — structured content lives in `src/data/`; page-specific prose is
    inline in the section components under `src/pages/<Page>/sections/`.
 2. **Branding** — the header, mobile menu, footer, and admin topbar read the
-   logo from `src/data/siteConfig.js`. The `public/index.html` splash logo and
-   the two `scripts/generate-*.js` URLs are set separately.
+   logo from `src/data/siteConfig.js`. The `public/index.html` splash logo
+   (the "DLS" mark, hard-coded in the `<img>` **and** in its `<head>`
+   preload — change both) and the two `scripts/generate-*.js` files are set
+   separately.
 3. **Contact facts** — `src/data/siteConfig.js` only (plus the static blocks in
    `public/index.html`).
 4. **Design tokens** — `src/styles/variables.css` + `src/theme/muiTheme.js`

@@ -12,6 +12,53 @@ prompt per branch/PR — and the entries below summarise each phase under the
 
 The format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.27.0] — 2026-08-20 — The splash draws the "DLS" mark
+
+The first-paint splash in `public/index.html` was the last surface still
+drawing the old Cloudinary "D" icon. `[2.25.0]` had already moved the favicon
+and the whole PWA icon set to the self-hosted "DLS" mark, so a visitor saw the
+"D" for the second or two before React mounted and the "DLS" mark in the tab
+beside it. This release puts one mark on every surface.
+
+### Changed
+
+- **The splash `<img>` is `/images/logo/dls-mark-860.png`.** The same file
+  `scripts/generate-icons.js` cuts the icon set from — self-hosted,
+  transparent, and immutably cached — replacing the hard-coded
+  `res.cloudinary.com/.../Dulecy-Logo-Icon_hylrpw.png` URL. Its `width`/
+  `height` attributes are the mark's intrinsic `860`/`460`, matching
+  `MARK_SIZE`.
+
+- **It is preloaded.** The splash markup sits in `<body>`, which the parser
+  only reaches after all of `<head>`, so a `<link rel="preload" as="image">`
+  starts the fetch earlier. Unlike the home-hero preload beside it, this one is
+  static rather than route-guarded — the splash renders on every route.
+  Verified in the browser: one request for the file, served from the preload.
+
+- **`.loader-logo-img` is sized for a 1.87:1 mark, not a square.** The rule
+  gains `aspect-ratio: 860 / 460` so the box is reserved before the PNG
+  decodes, `max-width: 100%` so it stays inside `.loader-wrapper`'s 232px
+  content box, and `width` goes `180px → 200px`. The width bump is the shape
+  change: at 1.87:1 the old 180px drew a 96px-tall block where the square "D"
+  stood 180px tall, which read as an afterthought above the 232px progress bar.
+  The splash is one fixed size at every viewport, so this is identical on every
+  device; measured 200×107 with no horizontal overflow at 320 / 375 / 768 /
+  1440px.
+
+### Removed
+
+- **The `res.cloudinary.com` `preconnect`.** The splash was the only asset on
+  that origin in the first-paint path, and nothing in `src/` has drawn a
+  Cloudinary asset since `[2.18.0]`. Confirmed on a reload: the page issues no
+  request to Cloudinary at all.
+
+### Not changed
+
+`siteConfig.logoIcon` and `logoAt()` stay exported, with their comments
+updated to say the splash has moved off them. `logoIcon` now has **no consumer
+anywhere**; it is kept as the archive of the original "D" mark, and its
+public_id still must not be folded into a "Dulecy" → "Dulcey" rebrand pass.
+
 ## [2.26.0] — 2026-08-20 — The icon set is transparent
 
 `[2.25.0]` made the "DLS" mark the favicon but kept the old generator's
