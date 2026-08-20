@@ -135,24 +135,52 @@ const PHOTOS = [
   {
     name: 'hero-industries-v2',
     url: 'https://res.cloudinary.com/dzokcuzo/image/upload/v1786720389/iStock-2272021169.jpg',
-    // The client-supplied master is 2370x1264 (1.875:1) and ships uncropped.
-    // The composition is already the one a left-heavy scrim is written
-    // against, and mirrored from the other two: the hand and its dark suit
-    // cuff enter from the RIGHT, the glowing KPI ring sits centre-left, and
-    // the left ~15% is defocused office that the near-solid white column
-    // covers anyway — there is nothing to re-frame. At 1920w the variant is
-    // 1920x1024, taller than any desktop hero box draws it, so no render
-    // upscales it.
+    // The client-supplied master is 2370x1264 (1.875:1) and ships **whole**.
+    // No `crop`, and none should ever be added here: since `[2.29.0]` the hero
+    // draws the entire frame at every width — `max-width`/`max-height` on an
+    // intrinsically-sized <img> — and lets the section decide what of it is
+    // seen, so the framing is a render-time decision made per viewport rather
+    // than something baked into the file.
+    //
+    // **These fractions are what the hero's overlay is written around**, and
+    // they are why the composition needed no re-framing in the first place —
+    // it is mirrored from the home hero's, with the subject entering from the
+    // right, which is the end the white lets go of:
+    //
+    //   column deciles  167 / 161 / 156 / 150 / 140 / 119 / 92 / 52 / 66 / 43
+    //                   — defocused bright office on the left falling away to
+    //                     the dark suit cuff and the glowing KPI ring
+    //   left 16%        mean 165/255 (174 over the first 4%) — an 81-to-90
+    //                   level step against a #fff section, which is what the
+    //                   frame's left feather has to cross
+    //   bottom 18%      mean 123/255 — a 131-level step, two and a half times
+    //                   the expertise hero's, and the reason this frame's
+    //                   bottom ramp is max(80px, 20%) rather than that
+    //                   section's max(64px, 18%)
+    //   top 6.8%        mean 60/255 (33 across the right quarter) — no edge
+    //                   treatment (it is the top of the page), but it is what
+    //                   the translucent header composites over
+    //   darkest pixel   10/255 — the worst case the white over the copy is
+    //                   priced against
+    //
+    // Re-cutting the file moves all of those and invalidates the numbers in
+    // `Industries/sections/HeroSection.module.css` — re-measure before
+    // changing this source. At 1920w the variant is 1920x1024, wider and
+    // taller than any hero draws it, so no render upscales it.
     note:
       'Who We Serve hero backdrop — a hand in a dark suit pointing at a ' +
-      'glowing KPI dashboard ring (opacity .9 under a left-heavy scrim that ' +
-      'clears toward the right, matching the home and expertise heroes; ' +
-      'below 920px it re-crops to a band — see ' +
-      'Industries/sections/HeroSection.module.css). Supersedes the Unsplash ' +
-      'photo-1449824913935-59a10b8d2000 that shipped as `hero-industries`; ' +
-      'that basename is retired rather than reused because `/images/**` ' +
-      'answers `immutable` (see public/.htaccess), exactly as `hero-home` ' +
-      'was retired for `hero-home-v2`.',
+      'glowing KPI dashboard ring. Drawn WHOLE and uncropped at every width, ' +
+      'pinned to the top-right of the hero at the largest size that fits ' +
+      'inside it, with its left and bottom edges feathered to nothing; under ' +
+      'white that holds only where the copy is (a band from `--copy-top` ' +
+      'down below 920px, a flat .75 shelf-and-plunge above it) and lets go ' +
+      'everywhere else — see Industries/sections/HeroSection.module.css. ' +
+      'Deliberate departure from `mockup/industries.html`, which tints its ' +
+      'photo evenly and fades it out by 75% of the width. Supersedes the ' +
+      'Unsplash photo-1449824913935-59a10b8d2000 that shipped as ' +
+      '`hero-industries`; that basename is retired rather than reused ' +
+      'because `/images/**` answers `immutable` (see public/.htaccess), ' +
+      'exactly as `hero-home` was retired for `hero-home-v2`.',
   },
 ];
 

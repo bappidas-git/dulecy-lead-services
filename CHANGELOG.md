@@ -12,6 +12,116 @@ prompt per branch/PR — and the entries below summarise each phase under the
 
 The format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.29.0] — 2026-08-20 — Who We Serve hero: the same treatment, on the same photograph
+
+`/expertise` got the whole-photograph treatment in `[2.28.0]`. This applies it
+to `/industries`, which was the last hero still drawing its backdrop through
+`object-fit: cover` — two separate hand-cut framings (`center 45%` on desktop,
+a re-cropped `--band` below 920px) inside a box overscanned for parallax, under
+a two-layer white overlay that tinted the entire section on top of an
+`opacity: .9` veil.
+
+**The source file does not change.** `/images/hero-industries-v2*` is still cut
+from the client's `iStock-2272021169` master (2370x1264, 1.875:1) —
+`https://res.cloudinary.com/dzokcuzo/image/upload/v1786720389/iStock-2272021169.jpg`,
+already the registered source in `generate-images.js`, which is untouched apart
+from its note. Nothing was re-downloaded, re-encoded or renamed.
+
+### Changed
+
+- **The photograph is drawn whole at every viewport, phone included.**
+  `object-fit` / `object-position` are gone, along with both hand-cut framings
+  and the `--band` re-crop; the sizing is the same replaced-element rule
+  `[2.28.0]` gave `/expertise`:
+
+  ```css
+  width: auto; height: auto; max-width: 100%; max-height: 100%;
+  ```
+
+  The file is 1.875:1 — wider than the expertise hero's 1.63:1 — so it crosses
+  from width-limited to height-limited at a narrower viewport, and that
+  crossover lands within a pixel of the stylesheet's own 920px breakpoint:
+
+  - **Up to ~921px** `max-width` binds and the frame spans the section as a
+    band across the top — 360x192 of a 360x432 hero, 375x200 of 375x438,
+    758x404 of 758x467, and 910x485 of 910x486 at the breakpoint itself.
+  - **Past that** `max-height` binds and the frame goes narrower than the
+    section: 958x511 at 1024px, 1038x553 at 1440px, 1090x581 at 1920px. Pinned
+    `top: 0` / `right: 0` it fills the hero's full height on the right while
+    the copy column keeps plain paper on the left.
+
+  Pinning right suits this composition independently of the copy: its column
+  deciles run 167 / 161 / 156 / 150 / 140 / 119 / 92 / 52 / 66 / 43, so the
+  subject — the dark suit cuff and the glowing KPI ring — enters from the
+  right, which is the end the white lets go of.
+
+- **The frame's two interior edges are feathered on the same
+  smootherstep-cubed curve**, with the same stop list. Only the bottom ramp's
+  length differs, and it is measured rather than copied: `/expertise` crosses a
+  white desk at a mean of 202/255 (a 53-level step) and spends
+  `max(64px, 18%)`; this file's bottom crosses the dark lower third of the
+  dashboard at 123/255, a **131-level step**, so it spends `max(80px, 20%)` —
+  interpolated between that and the home hero's `max(96px, 22%)` over a ~225
+  step. The left ramp stays at 16%: the edge it crosses is defocused office at
+  a mean of 165/255, the same kind of edge as `/expertise`'s.
+
+- **The two-layer scrim is one white layer that holds only where the copy
+  is** — the sub-920px band keyed to `--copy-top` at a 0.8 plateau, the
+  920px-and-up shelf-and-plunge at 0.75, both lifted from `/expertise`
+  unchanged.
+
+- **`--copy-edge` is `calc(50vw + 232px)`, not `/expertise`'s `+ 384px`.** The
+  run to clear here is not a display line — "Our expertise" / "Your industry"
+  reach only 557px and 542px at the capped 88px size — but the first line of
+  the 660px `.lede`. Its peak offset is at **950px**, a cusp rather than an end
+  of the range: below it `.lede`'s `clamp(16px, 2vw, 19px)` grows the line at
+  ~0.69px per px of viewport while `50vw` gains only 0.5, and above it the type
+  caps and the offset falls monotonically to a constant `50vw + 12px`. The peak
+  is `50vw + 219.9px`; 232 clears it with 12px to spare.
+
+- **`opacity: .9` and `useParallax` are both gone from `.bg`.** This hero
+  really did run the parallax — `parallaxPreset(-16)` over a box drawn at 120%
+  of the section with -10% of overscan — and that overscan *was* the crop, so
+  it cannot survive a rule that draws the whole frame. `Industries/HeroSection`
+  no longer imports `useParallax` or `parallaxPreset`.
+
+### Measured
+
+Photo signal is the mean of `mask x (1 - scrim)` over the frame's own area —
+what survives of each of the photograph's pixels — with the share of the frame
+drawn at over 90% of full strength beside it. The old overlay's two layers
+multiply, so its figure is `.9 x (1 - av(y)) x (1 - ah(x))`: 9.6% of the frame
+on average, at most 7% anywhere across the copy column, and never above 61%
+anywhere at all.
+
+| Viewport | Before     | After            |
+| -------- | ---------- | ---------------- |
+| 360px    | 9.6% / 0%  | **64.9% / 49%**  |
+| 768px    | 9.6% / 0%  | **50.3% / 34%**  |
+| 919px    | 9.6% / 0%  | **41.6% / 24%**  |
+| 920px    | 9.6% / 0%  | **39.4% / 16%**  |
+| 950px    | 9.6% / 0%  | **40.1% / 17%**  |
+| 1024px   | 9.6% / 0%  | **42.3% / 20%**  |
+| 1440px   | 9.6% / 0%  | **54.6% / 35%**  |
+| 1920px   | 9.6% / 0%  | **70.2% / 55%**  |
+| 2560px   | 9.6% / 0%  | **88.0% / 77%**  |
+
+The two sides of the 920px breakpoint land within 3 points of each other, which
+is what keeps the changeover from reading as a jump.
+
+Worst-pixel contrast on the real composite — the photograph sampled under every
+glyph run through both the mask and the scrim, at 360 / 375 / 768 / 919 / 920 /
+950 / 1024 / 1440 / 1920 / 2560px: eyebrow **5.01-5.24:1** (floor 4.5), accent
+**4.33-4.36:1** (floor 3, against its brightest fill `#E8293E`), lede
+**8.81:1** at every width (floor 4.5), ink headline 18.7-19.7:1. The tightest
+numbers are at **950px**, the same width `--copy-edge` is tightest at.
+
+Unlike `/expertise`, this hero does **not** trade the eyebrow's AA rating for
+the thinner white. The 0.75 and 0.8 plateaus are under the 0.853 an 11px
+`--red` needs over a black pixel, but that case never arises here: the eyebrow
+sets between 4% and 17% of the section's width, inside the frame's own 16% left
+feather at every viewport, so what sits under it is nearly bare paper.
+
 ## [2.28.0] — 2026-08-20 — Expertise hero: the whole photograph, and white only where the copy is
 
 The `/expertise` hero drew its backdrop through `object-fit: cover` inside a
