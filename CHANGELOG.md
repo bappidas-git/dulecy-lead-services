@@ -79,11 +79,20 @@ from its note. Nothing was re-downloaded, re-encoded or renamed.
   caps and the offset falls monotonically to a constant `50vw + 12px`. The peak
   is `50vw + 219.9px`; 232 clears it with 12px to spare.
 
-- **`opacity: .9` and `useParallax` are both gone from `.bg`.** This hero
-  really did run the parallax — `parallaxPreset(-16)` over a box drawn at 120%
-  of the section with -10% of overscan — and that overscan *was* the crop, so
-  it cannot survive a rule that draws the whole frame. `Industries/HeroSection`
-  no longer imports `useParallax` or `parallaxPreset`.
+- **`opacity: .9` and `useParallax` are both gone from `.bg`.** The parallax
+  was `parallaxPreset(-16)` over a box drawn at 120% of the section with -10%
+  of overscan — the same rig `/expertise` ran until `[2.28.0]` — and that
+  overscan *was* the crop, so it cannot survive a rule that draws the whole
+  frame. `Industries/HeroSection` no longer imports `useParallax` or
+  `parallaxPreset`.
+
+  **No hero on the site has a parallaxed backdrop any more.** Three comments
+  still said otherwise and are corrected here: `Home/HeroSection.jsx` and
+  `Home/HeroSection.module.css` both read "unlike the Expertise and Who We
+  Serve heroes" (half-stale since `[2.28.0]`, fully stale now), and
+  `Expertise/HeroSection.jsx` read "unlike the Who We Serve one". The hook
+  itself stays live on `About/IntersectionSection` and `Home/BeliefSection`,
+  which parallax a band and a glow rather than a placed frame.
 
 ### Measured
 

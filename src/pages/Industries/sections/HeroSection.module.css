@@ -171,9 +171,10 @@
 
    ---- No parallax, and no opacity ----
 
-   `useParallax` is gone, and unlike the expertise hero this section really
-   did have it: `parallaxPreset(-16)` scrubbing a box drawn at 120% of the
-   hero with -10% of overscan. Scrub parallax needs the photo drawn TALLER
+   `useParallax` is gone: `parallaxPreset(-16)` scrubbing a box drawn at 120%
+   of the hero with -10% of overscan — the same rig the expertise hero ran
+   until `[2.28.0]`, dropped here for the same reason and leaving no hero on
+   the site with a parallaxed backdrop. Scrub parallax needs the photo TALLER
    than its box so the travel never exposes an edge, and drawing the whole
    frame is the one thing that will not do — the overscan WAS the crop. The
    backdrop is static now, the same call the home and expertise heroes make.

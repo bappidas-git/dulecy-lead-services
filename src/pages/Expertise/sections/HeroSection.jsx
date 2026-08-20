@@ -68,8 +68,8 @@ const HeroSection = () => {
           real edges. It also earns `fetchpriority="high"`, which a background
           cannot carry.
 
-          No `useParallax`, unlike this hero before and unlike the Who We
-          Serve one. Scrub parallax needs the photo drawn taller than its box
+          No `useParallax`, unlike this hero before `[2.28.0]`. Scrub
+          parallax needs the photo drawn taller than its box
           so the travel never exposes an edge, and drawing the whole frame is
           the one thing that will not do. The backdrop is static on purpose —
           the same call the home hero makes. */}
