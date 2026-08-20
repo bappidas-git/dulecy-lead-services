@@ -45,7 +45,7 @@ this repository, so a fresh clone runs without extra setup — but see
 | `npm start` | CRA dev server on port 3000 |
 | `npm run build` | Production build into `build/` |
 | `npm test` | CRA test runner (no test suites are committed yet) |
-| `npm run generate:icons` | Rebuild favicons + PWA icons from the icon logo |
+| `npm run generate:icons` | Rebuild favicons + PWA icons from the "DLS" mark |
 | `npm run generate:og` | Rebuild `public/og-image.png` (1200×630) |
 | `npm run generate:images` | Re-download and re-optimize `public/images/` |
 | `npm run analyze` | Bundle treemap — needs `npx source-map-explorer` (not a committed dependency) |

@@ -442,8 +442,8 @@ const DeveloperGuide = ({ styles }) => {
 npm start                # dev server at localhost:3000
 npm run build            # production build → build/
 npm run analyze          # bundle size breakdown (after a build)
-npm run generate:icons   # favicon / PWA icons from the logo
-npm run generate:og      # 1200x630 share image from the logo
+npm run generate:icons   # favicon / PWA icons from the DLS mark
+npm run generate:og      # 1200x630 share image from the wordmark
 
 # Optional: serve the PHP lead API locally so the admin panel has real data
 php -S localhost:8080 -t public`}

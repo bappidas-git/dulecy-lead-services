@@ -180,9 +180,10 @@ Sitemap: https://www.dulceyleadservices.com/sitemap.xml
 
 ## 6. Favicons, PWA icons & the OG image
 
-Generated from the Dulcey logo by committed scripts (dev deps `sharp` and
-`png-to-ico`). Re-run them whenever the logo changes; both fetch from Cloudinary,
-so they need network access.
+Generated from the Dulcey brand marks by committed scripts (dev deps `sharp`
+and `png-to-ico`). Re-run them whenever the artwork changes. `generate:icons`
+reads its source from disk; `generate:og` still fetches from Cloudinary, so it
+needs network access.
 
 ```bash
 npm run generate:icons
@@ -192,11 +193,17 @@ npm run generate:icons
 npm run generate:og
 ```
 
-- `scripts/generate-icons.js` flattens the **icon** logo (the standalone "D"
-  mark) onto white and trims the surrounding circle — what stays legible at
-  16px — then writes `favicon.png` (32×32), `favicon.ico` (16/32/48),
-  `apple-touch-icon.png` (180×180) and the maskable-safe `logo192.png` /
-  `logo512.png`.
+- `scripts/generate-icons.js` flattens the **"DLS" mark**
+  (`public/images/logo/dls-mark-860.png`) onto white and centres it on square
+  canvases, writing `favicon.png` (32×32), `favicon.ico` (16/32/48),
+  `apple-touch-icon.png` (180×180), the `purpose: "any"` `logo192.png` /
+  `logo512.png`, and the `purpose: "maskable"` `maskable-192.png` /
+  `maskable-512.png`. The mark is 1.87:1, so each size is driven by a **width**
+  fraction (`WIDTH_PCT`) and letterboxes vertically; `any` and `maskable` are
+  separate files because the safe circle caps a mark this wide at ~70% width.
+  These filenames are fixed, so `public/.htaccess` caps them at a revalidated
+  day rather than the year `/images/**` gets — otherwise a rebrand would not
+  reach returning visitors.
 - `scripts/generate-og.js` composes the color logo, an ink headline, a red
   accent rule, the secondary tagline and the site URL into
   `public/og-image.png` (1200×630).

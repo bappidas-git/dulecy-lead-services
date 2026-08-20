@@ -107,6 +107,18 @@ Options -Indexes
     Header set Cache-Control "no-cache, must-revalidate"
   </FilesMatch>
 
+  # The root icon set is fixed-name but content-swappable: a rebrand replaces
+  # the bytes behind favicon.ico / favicon.png / apple-touch-icon.png /
+  # logo192 / logo512 / maskable-* without changing a single URL. Unlike
+  # /images/**, they cannot be re-versioned — the manifest and the browser's
+  # own favicon lookup expect these exact names — so the one-year lifetime
+  # mod_expires would otherwise hand them (image/png, image/x-icon below) would
+  # leave returning visitors, and every home-screen install, on the previous
+  # mark. A revalidated day is the compromise.
+  <FilesMatch "^(favicon\.(ico|png)|apple-touch-icon\.png|logo(192|512)\.png|maskable-(192|512)\.png)$">
+    Header set Cache-Control "public, max-age=86400, must-revalidate"
+  </FilesMatch>
+
   # The API sets its own `Cache-Control: no-store` in leads.php (a cached list
   # response would leak stale — or unauthenticated — lead data, and a cached 401
   # would pin the admin panel broken). Restated here so an intermediate proxy
@@ -127,7 +139,7 @@ Options -Indexes
   ExpiresByType image/jpeg              "access plus 1 year"
   ExpiresByType image/png               "access plus 1 year"
   ExpiresByType image/svg+xml           "access plus 1 year"
-  ExpiresByType image/x-icon            "access plus 1 year"
+  ExpiresByType image/x-icon            "access plus 1 day"
   ExpiresByType font/woff2              "access plus 1 year"
   ExpiresByType text/html               "access plus 0 seconds"
 </IfModule>

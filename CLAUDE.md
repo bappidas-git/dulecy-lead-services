@@ -55,10 +55,12 @@ never hard-code a contact or company fact in a component, script, or schema.
     > brand string — "correcting" it to `Dulcey-` 404s the favicon source.
     > Leave it until the mark is re-uploaded under a new public_id.
     >
-    > This is now a **favicon/PWA/splash asset only**. Nothing in `src/`
-    > renders it: `scripts/generate-icons.js` and the `public/index.html`
-    > splash each hard-code the same URL, and the Home hero's watermark — its
-    > last consumer in the app — moved to `logoMark` below.
+    > This is now a **splash asset only**. Nothing in `src/` renders it, and
+    > the favicon/PWA pipeline no longer reads it either — `[2.25.0]` pointed
+    > `scripts/generate-icons.js` at the "DLS" mark below. Its single
+    > remaining consumer is the hard-coded URL in the `public/index.html`
+    > splash; the Home hero's watermark, its last consumer in the app, moved
+    > to `logoMark` in `[2.18.0]`.
   - "DLS" mark — `siteConfig.logoMark`: `/images/logo/dls-mark-860.png`
 
 **The wordmark is self-hosted and transparent.** Both PNGs are one 1351×200
@@ -94,23 +96,33 @@ carried was cropped away, so a CSS `width` maps straight onto the visible mark
 with no dead margin to compensate for; keep that true of any re-cut. Reuse
 `MARK_SIZE` for the `width`/`height` attributes.
 
-> ⚠️ **It currently has no surface.** Its one consumer was the Home hero's
-> floating watermark, which `[2.18.0]` removed — the hero's photograph now
-> carries that area and a second mark behind it read as a competing headline.
-> `logoMark` and `MARK_SIZE` stay exported and the PNG stays shipped, so
-> nothing has to be re-cut to use it again, but nothing in `src/` draws it
-> today. Do not "clean it up" as dead code; do not assume the old
-> `26vw / 380px` monogram values apply if it comes back (the mark is 1.87:1,
-> not square).
+**It is the favicon.** `[2.25.0]` made `scripts/generate-icons.js` read this
+PNG — not the Cloudinary "D" — so the browser tab, `favicon.ico`, the iOS
+home-screen icon, and every manifest icon are now the "DLS" mark on white. The
+generator drives each size off a **width** fraction (`WIDTH_PCT` at the top of
+the script) because the mark is 1.87:1 and letterboxes vertically; the old "D"
+percentages assumed a square and must not be reused. Manifest `any` and
+`maskable` are **separate files** — a 1.87:1 mark only fits Android's
+80%-diameter safe circle at ~0.70 width, and forcing that padding on the
+un-masked icon shrank it for nothing.
+
+> ⚠️ **Nothing in `src/` draws it.** The React tree's one consumer was the
+> Home hero's floating watermark, which `[2.18.0]` removed — the hero's
+> photograph now carries that area and a second mark behind it read as a
+> competing headline. `logoMark` and `MARK_SIZE` stay exported for a future
+> surface; do not "clean them up" as dead code, and do not assume the old
+> `26vw / 380px` monogram values apply if the watermark comes back (the mark
+> is 1.87:1, not square).
 
 The `-860` suffix is the width and `/images/**` is immutable, so re-cutting it
-means a new filename and a matching `MARK_SIZE` bump.
+means a new filename, a matching `MARK_SIZE` bump, an updated `MARK_FILE` in
+`scripts/generate-icons.js`, and a `npm run generate:icons` re-run.
 
 `logoAt(url, { w, h })` returns a Cloudinary-resized display URL (`f_auto`,
 `q_auto:best`) — pass **2× the CSS box**; it returns a non-Cloudinary URL
 untouched. It currently has **no caller**: `logoIcon` was its only subject and
 nothing in `src/` draws that asset any more. Kept because `logoIcon` is still
-live in the icon/splash pipeline and this is the only way to size it. Wrap logo
+live in the `index.html` splash and this is the only way to size it. Wrap logo
 paths in `absoluteUrl()` wherever a schema or meta tag needs a fully qualified
 URL.
 
@@ -161,8 +173,11 @@ URL.
 - `public/.htaccess` — the Apache config, copied into `build/` by the build. SPA
   rewrite **excluding `^api/`** (a blanket fallback would hand `index.html` to
   `/api/leads.php` and lose every enquiry silently), immutable caching for
-  `/static/**` + `/images/**`, `no-cache` on `index.html`, `Options -Indexes`,
-  and a dotfile block that spares `/.well-known/` so ACME renewal keeps working.
+  `/static/**` + `/images/**`, `no-cache` on `index.html`, a one-day
+  revalidated cap on the fixed-name root icon set (`favicon.*`,
+  `apple-touch-icon.png`, `logo192/512`, `maskable-*`) so a rebrand actually
+  reaches returning visitors, `Options -Indexes`, and a dotfile block that
+  spares `/.well-known/` so ACME renewal keeps working.
   Rule order matters: the `LONG_CACHE` tagging must precede the file-exists rule,
   which ends in `[L]`.
 - `public/api/` — `leads.php` (the shared lead store) + `config.example.php`.
@@ -529,8 +544,9 @@ structured-data guidelines. Do not add them, and do not invent an address, geo
 coordinates, opening hours, or ratings to qualify.
 
 `public/sitemap.xml` lists exactly the five indexable routes; `robots.txt`
-disallows `/admin`. Favicons / PWA icons / the OG image are generated from the
-logo by `npm run generate:icons` and `npm run generate:og`. Full guide and the
+disallows `/admin`. Favicons / PWA icons come from the "DLS" mark via
+`npm run generate:icons`; the OG image comes from the wordmark via
+`npm run generate:og`. Full guide and the
 post-launch checklist: `SEO_GUIDE.md`.
 
 ## Customization Guide

@@ -194,7 +194,7 @@ const SEOSetupGuide = ({ styles }) => {
         </p>
         <pre className={styles.guideCode}>
 {`npm run generate:og      # writes public/og-image.png (1200x630)
-npm run generate:icons   # writes the favicon / PWA icon set from the logo`}
+npm run generate:icons   # writes the favicon / PWA icon set from the DLS mark`}
         </pre>
         <p className={styles.guideParagraph}>
           Re-run both after any logo change, then confirm the URLs in{' '}

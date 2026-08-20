@@ -193,8 +193,8 @@ Notes:
    a white one, both with a transparent background. **Use a new filename**:
    `/images/**` is served `immutable`, so overwriting in place leaves returning
    visitors on the old file for a year. The "DLS" mark lives beside them
-   (`dls-mark-860.png`); the old "D" monogram still lives on Cloudinary and now
-   only feeds the favicons and the splash.
+   (`dls-mark-860.png`) and feeds the favicons; the old "D" monogram still
+   lives on Cloudinary and now only feeds the splash screen.
 2. Update `logo` / `logoWhite` / `logoIcon` in `src/data/siteConfig.js` — the
    header, mobile menu, footer, admin topbar and admin login all read from
    there. Set `LOGO_SIZE` to the new file's intrinsic pixel size in the same
@@ -208,17 +208,18 @@ Notes:
    so the solid interior hits 255 before shipping it.
 4. Swapping the **"DLS" mark** is its own pass: new file into
    `public/images/logo/` (new filename again), then `logoMark` and `MARK_SIZE`
-   in `siteConfig.js`. Trim the artwork to its own bounding box first — the
-   client's exports arrive with transparent padding, and the hero's `.float`
-   width is written against the visible mark, not the canvas. Its only surface
-   is the Home hero watermark, and `.float` in `HeroSection.module.css` is
-   tuned to this mark's 1.87:1 aspect and ink coverage: a mark with a different
-   shape or weight needs that width ramp and opacity re-checked against the
-   rendered hero, not carried over. Nothing else on the site draws it.
+   in `siteConfig.js` **and `MARK_FILE` in `scripts/generate-icons.js`**, then
+   re-run `npm run generate:icons`. Trim the artwork to its own bounding box
+   first — the client's exports arrive with transparent padding, and the icon
+   generator's width fractions are written against the visible mark, not the
+   canvas. Its only surface is the favicon / PWA icon set: nothing in `src/`
+   draws it. If the new mark's aspect ratio differs from this one's 1.87:1,
+   re-check `WIDTH_PCT` in the generator — the `maskable` value in particular
+   is derived from that ratio against Android's 80%-diameter safe circle.
 5. Update the hardcoded URLs outside the data layer:
-   - the splash-loader `<img>` (icon mark) and the JSON-LD `logo` values
-     (absolute URLs) in `public/index.html`
-   - `LOGO_ICON_URL` in `scripts/generate-icons.js`
+   - the splash-loader `<img>` (the Cloudinary "D" mark) and the JSON-LD
+     `logo` values (absolute URLs) in `public/index.html`
+   - `MARK_FILE` in `scripts/generate-icons.js`
    - `LOGO_FILE` in `scripts/generate-og.js`, then re-run `npm run generate:og`
 6. Regenerate the derived assets:
 
@@ -231,8 +232,11 @@ npm run generate:og
 ```
 
    (`generate:icons` writes `favicon.ico`, `favicon.png`, `apple-touch-icon.png`,
-   `logo192.png`, `logo512.png`; `generate:og` writes `og-image.png` at
-   1200×630. Both fetch the logo over the network.)
+   `logo192.png`, `logo512.png`, `maskable-192.png`, `maskable-512.png` — it
+   reads its source from disk; `generate:og` writes `og-image.png` at 1200×630
+   and fetches its logo over the network. If you add or drop an icon file, keep
+   `public/manifest.json` and the `<FilesMatch>` icon-cache rule in
+   `public/.htaccess` in step with it.)
 7. If the brand color changed, update `theme_color` in `public/manifest.json`
    and the `INK` / `RED` constants in `scripts/generate-og.js`.
 8. Rebuild and redeploy.

@@ -12,6 +12,97 @@ prompt per branch/PR — and the entries below summarise each phase under the
 
 The format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.25.0] — 2026-08-20 — The favicon is the "DLS" mark
+
+The site's icon set was still cut from the old Cloudinary "D" monogram — the
+one asset the Dulcey rebrand never replaced. `[2.3.0]` self-hosted the
+wordmark, `[2.17.0]` added the client's "DLS" initialism mark, and `[2.18.0]`
+took away that mark's only surface (the Home hero watermark), leaving it
+shipped but unused while every browser tab, home-screen icon and PWA install
+still showed a "D" that appears nowhere else on the site. This release makes
+the "DLS" mark the icon.
+
+**No new artwork.** `public/images/logo/dls-mark-860.png` is byte-identical —
+860x460, full-alpha `#ED1C24`, already trimmed to its own glyphs. Only the
+generator's source and the derived PNGs changed.
+
+### Changed
+
+- **`scripts/generate-icons.js` reads the "DLS" mark off disk.** The old
+  `LOGO_ICON_URL` `fetch()` of `Dulecy-Logo-Icon_hylrpw.png` is replaced by a
+  `MARK_FILE` path, so the script no longer needs network access — a real
+  convenience, since the one asset it used to depend on lives under a
+  public_id that must never be folded into a brand find-and-replace.
+
+  The flatten-then-trim step stays, but for a different reason: the "D" arrived
+  with a white circle baked onto a transparent square and `trim()` was what
+  made it legible at 16px, whereas the "DLS" mark has no padding to remove.
+  It is kept defensively, so a future re-cut that ships with margin still
+  produces a tight icon.
+
+- **Every size is now driven by a width fraction, collected in `WIDTH_PCT`.**
+  The mark is **1.87:1, not square**, so it letterboxes vertically on a square
+  canvas and the old "D" percentages do not transfer — `0.92` filled the frame
+  for a square mark and would leave this one 53% as tall as it is wide with the
+  corners doing nothing. The values: `favicon 0.94` (16-48px, where every
+  pixel counts), `apple 0.84` (iOS rounds the corners itself), `any 0.88`,
+  `maskable 0.70`.
+
+- **Regenerated**: `favicon.png` (32), `favicon.ico` (16/32/48),
+  `apple-touch-icon.png` (180), `logo192.png`, `logo512.png`.
+
+### Added
+
+- **`maskable-192.png` / `maskable-512.png`, split out from the "any" icons.**
+  A maskable icon has to keep its artwork inside a centred circle of 80% the
+  canvas diameter, because Android crops to a circle or squircle of its own
+  choosing. Solving `w²/4 + (w/1.87)²/4 <= (0.4s)²` for a 1.87:1 mark caps it
+  at **~0.705 of the canvas width** — so the single `"any maskable"` file the
+  manifest used to declare would have forced that padding onto the un-masked
+  surfaces too (Chrome's install prompt, the tab-strip PWA icon), shrinking the
+  mark there for nothing. Two files, two purposes: `0.88` for `any`, `0.70`
+  for `maskable`.
+
+- **A one-day cache cap on the root icon set** (`<FilesMatch>` in
+  `public/.htaccess`, covering `favicon.ico`, `favicon.png`,
+  `apple-touch-icon.png`, `logo192/512.png`, `maskable-192/512.png`), plus
+  `image/x-icon` dropped from a year to a day in the `mod_expires` fallback.
+
+  This is the change that makes the release actually reach anyone. Unlike
+  `/images/**`, these files **cannot be re-versioned** — `favicon.ico` and the
+  manifest `src` values are fixed names a browser looks up by convention — so
+  a rebrand always swaps content behind an unchanged URL. The existing
+  `ExpiresByType image/png "access plus 1 year"` would have handed every
+  returning visitor the "D" for up to a year after deploy, and every existing
+  home-screen install indefinitely. `/images/**` keeps its `immutable` year;
+  only the root icon names are capped.
+
+- **`sizes="180x180"` on the `apple-touch-icon` link** in
+  `public/index.html`, so iOS picks it by declared size rather than by
+  fetching it to find out.
+
+### Notes
+
+- **`siteConfig.logoIcon` is now a splash asset only.** Its last non-splash
+  consumer was this generator. The Cloudinary URL stays exactly as it is —
+  `Dulecy-Logo-Icon_hylrpw.png` is the asset's immutable delivery path, not a
+  brand string — and the `public/index.html` splash `<img>` still hard-codes
+  it. **The splash screen therefore still shows the "D"**, which is now the
+  only place on the site that does; replacing it is a separate, deliberate
+  pass, not a side effect of a favicon swap.
+- `logoAt()` still has no caller, and `siteConfig.logoMark` / `MARK_SIZE` are
+  still not drawn by anything in `src/` — the mark's surface is the build-time
+  icon pipeline, which reads the file by path rather than through the data
+  layer. Neither export is dead code.
+- Re-cutting the mark now means four coupled edits, not two: new filename
+  (`/images/**` is `immutable`), `logoMark` + `MARK_SIZE` in
+  `siteConfig.js`, `MARK_FILE` in `scripts/generate-icons.js`, and a
+  `npm run generate:icons` re-run. If the new artwork's aspect ratio is not
+  1.87:1, `WIDTH_PCT.maskable` has to be re-derived from the safe-circle
+  inequality above.
+- `og-image.png` is untouched — `generate:og` composes the **wordmark**, which
+  is correct for a social card and unaffected by this change.
+
 ## [2.24.0] — 2026-08-20 — Home hero: the whole photograph on desktop, and a thinner shelf
 
 The release before this one put the desktop hero back on `object-fit: cover`,
