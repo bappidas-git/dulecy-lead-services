@@ -7,6 +7,22 @@
    trimmed to its own glyphs, so there is no white plate or dead padding to
    crop; we still `.trim()` defensively in case a future re-cut carries some.
 
+   **Every output is transparent.** The mark ships as full-alpha `#ED1C24`
+   glyphs on nothing, and the generator preserves that end to end — no
+   `flatten()`, and every canvas is created at `alpha: 0`. The `.trim()` above
+   is what makes this safe: it removes the transparent margin, so `WIDTH_PCT`
+   measures the *visible* mark rather than the mark plus its padding.
+
+   Two surfaces are transparent by explicit request, against platform advice —
+   if either ever needs to go back to an opaque plate, give it `WHITE` below
+   instead of `TRANSPARENT` and nothing else has to change:
+     - apple-touch-icon: iOS does not honour alpha on home-screen icons and
+       composites the transparent area onto **black**, so the mark reads red
+       on black rather than red on white.
+     - maskable-*: the maskable spec assumes an opaque bleed, since the
+       launcher crops to its own shape; with alpha the result depends on what
+       the launcher paints behind it.
+
    The mark is 860×460 — **1.87:1, not square** — so every size below is
    driven by a *width* fraction and letterboxes vertically. Do not reuse the
    old "D"-mark percentages: at 0.92 width a square mark filled the frame,
@@ -14,8 +30,8 @@
 
    Outputs (into public/):
      - favicon.png            32×32
-     - favicon.ico            16 + 32 + 48 (multi-resolution)
-     - apple-touch-icon.png   180×180 (white background, padded)
+     - favicon.ico            16 + 32 + 48 (multi-resolution, 32-bit RGBA)
+     - apple-touch-icon.png   180×180 (padded)
      - logo192.png            192×192 ("any" — mark near full width)
      - logo512.png            512×512 ("any")
      - maskable-192.png       192×192 (mark inside the 80% safe circle)
@@ -43,6 +59,10 @@ const PUBLIC_DIR = path.resolve(__dirname, "..", "public");
 // under a new `-<width>` filename; update this path in the same pass.
 const MARK_FILE = path.join(PUBLIC_DIR, "images", "logo", "dls-mark-860.png");
 
+// Canvas backgrounds. WHITE is unused at present — kept as the documented
+// escape hatch for the apple-touch / maskable note in the header above.
+const TRANSPARENT = { r: 0, g: 0, b: 0, alpha: 0 };
+// eslint-disable-next-line no-unused-vars
 const WHITE = { r: 255, g: 255, b: 255, alpha: 1 };
 
 // Fraction of the canvas *width* the mark spans, per surface.
@@ -53,11 +73,10 @@ const WIDTH_PCT = {
   maskable: 0.7, // ~0.705 is the 80%-safe-circle cap at 1.87:1; round down
 };
 
-// Trim any transparent/white padding down to the bounding box of the mark,
-// then flatten onto white so the composites below are opaque.
+// Trim the transparent padding down to the bounding box of the mark. Alpha is
+// preserved — `WIDTH_PCT` is meant to measure the glyphs, not the margin.
 async function extractMark() {
-  const trimmed = await sharp(MARK_FILE).trim({ threshold: 10 }).png().toBuffer();
-  return sharp(trimmed).flatten({ background: WHITE }).png().toBuffer();
+  return sharp(MARK_FILE).trim({ threshold: 10 }).png().toBuffer();
 }
 
 // Place the mark, scaled to `widthPct` of the canvas, centered on a square.
@@ -66,7 +85,13 @@ async function extractMark() {
 async function squareIcon(markBuf, size, widthPct, background) {
   const inner = Math.max(1, Math.round(size * widthPct));
   const resized = await sharp(markBuf)
-    .resize({ width: inner, height: inner, fit: "inside", withoutEnlargement: false })
+    .resize({
+      width: inner,
+      height: inner,
+      fit: "inside",
+      withoutEnlargement: false,
+      background: TRANSPARENT,
+    })
     .png()
     .toBuffer();
   return sharp({
@@ -81,40 +106,41 @@ async function main() {
   console.log(`Reading ${path.relative(process.cwd(), MARK_FILE)}…`);
   const mark = await extractMark();
   const m = await sharp(mark).metadata();
-  console.log(`Mark trimmed to ${m.width}×${m.height}`);
+  console.log(`Mark trimmed to ${m.width}×${m.height} (alpha: ${m.hasAlpha})`);
 
   const out = (name) => path.join(PUBLIC_DIR, name);
 
-  // favicon.png (32) — maximise the mark; white background reads well in tabs.
-  await sharp(await squareIcon(mark, 32, WIDTH_PCT.favicon, WHITE)).toFile(
+  // favicon.png (32) — maximise the mark.
+  await sharp(await squareIcon(mark, 32, WIDTH_PCT.favicon, TRANSPARENT)).toFile(
     out("favicon.png"),
   );
 
-  // favicon.ico — 16/32/48 multi-resolution.
+  // favicon.ico — 16/32/48 multi-resolution. png-to-ico embeds each PNG
+  // whole, so the 32-bit RGBA alpha survives into the .ico.
   const icoPngs = await Promise.all(
-    [16, 32, 48].map((s) => squareIcon(mark, s, WIDTH_PCT.favicon, WHITE)),
+    [16, 32, 48].map((s) => squareIcon(mark, s, WIDTH_PCT.favicon, TRANSPARENT)),
   );
   fs.writeFileSync(out("favicon.ico"), await pngToIco(icoPngs));
 
-  // apple-touch-icon (180) — white background with padding (iOS rounds corners).
-  await sharp(await squareIcon(mark, 180, WIDTH_PCT.apple, WHITE)).toFile(
+  // apple-touch-icon (180) — padded because iOS rounds the corners.
+  await sharp(await squareIcon(mark, 180, WIDTH_PCT.apple, TRANSPARENT)).toFile(
     out("apple-touch-icon.png"),
   );
 
   // logo192 / logo512 — manifest `purpose: "any"`.
-  await sharp(await squareIcon(mark, 192, WIDTH_PCT.any, WHITE)).toFile(
+  await sharp(await squareIcon(mark, 192, WIDTH_PCT.any, TRANSPARENT)).toFile(
     out("logo192.png"),
   );
-  await sharp(await squareIcon(mark, 512, WIDTH_PCT.any, WHITE)).toFile(
+  await sharp(await squareIcon(mark, 512, WIDTH_PCT.any, TRANSPARENT)).toFile(
     out("logo512.png"),
   );
 
   // maskable-192 / maskable-512 — manifest `purpose: "maskable"`; the mark
   // must survive Android cropping it to a circle/squircle.
-  await sharp(await squareIcon(mark, 192, WIDTH_PCT.maskable, WHITE)).toFile(
+  await sharp(await squareIcon(mark, 192, WIDTH_PCT.maskable, TRANSPARENT)).toFile(
     out("maskable-192.png"),
   );
-  await sharp(await squareIcon(mark, 512, WIDTH_PCT.maskable, WHITE)).toFile(
+  await sharp(await squareIcon(mark, 512, WIDTH_PCT.maskable, TRANSPARENT)).toFile(
     out("maskable-512.png"),
   );
 
