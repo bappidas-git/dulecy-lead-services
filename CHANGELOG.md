@@ -12,6 +12,94 @@ prompt per branch/PR — and the entries below summarise each phase under the
 
 The format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.31.0] — 2026-08-20 — Who We Serve hero: the right edge dissolves too
+
+`[2.30.0]` drew the frame at the section's full width, which put the
+photograph's darkest tenth — a near-black suit cuff and dark office — hard
+against the window, in the one part of the section the white has finished
+letting go of. The result read as a pasted rectangle: a black slab bounded on
+the left by the end of the scrim's plunge, on the right by the window, and on
+top by the header's own bottom edge, sitting inside a section that dissolves
+into paper on every other side. It was visible from 390px up and worst around
+1024-1440px, where the slab is widest relative to the hero.
+
+This feathers that edge and eases the plunge that meets it. **No image files
+change**, no markup changes, and nothing about the sizing, the copy, or the
+sub-920px band moves.
+
+### Changed
+
+- **The frame's right edge is feathered.** `--right-ramp: 22%` on `.bg` in
+  `src/pages/Industries/sections/HeroSection.module.css`, mirrored into
+  `--feather-x` as the same nineteen `s5(t)^3` alphas the left ramp uses,
+  measured inward from `100%`. One gradient still, not a third mask layer:
+
+  ```css
+  /* was — one rise, then opaque to the edge */
+  --feather-x: linear-gradient(to right, …, rgb(0, 0, 0) var(--left-ramp));
+  /* now — rise, plateau, fall */
+  --feather-x: linear-gradient(
+    to right, …, rgb(0, 0, 0) var(--left-ramp),
+    rgb(0, 0, 0) calc(100% - var(--right-ramp)), …,
+    rgba(0, 0, 0, 0) 100%
+  );
+  ```
+
+  A flat fraction at every viewport, with no breakpoint — the same 22% on a
+  phone, a tablet and a 2560px desktop. Unlike the left ramp it never meets a
+  run of copy, so it has nothing to anchor to; the only thing it has to clear
+  is the photograph's own darkest column. **22% rather than 16%** because at
+  16% the cuff still arrived at the window with visible weight, and at 30% the
+  fade took the arm with it. At 22% the arm and cuff still read as the subject
+  and the black behind them is gone by the edge.
+
+  This is a deliberate departure from the home and expertise heroes, which
+  leave their right edge to the window. It is warranted by the file rather
+  than by taste: this photograph's column deciles run 167 / 161 / 156 / 150 /
+  140 / 119 / 92 / 52 / 66 / 43, so its last tenth is the darkest thing on the
+  page, where the expertise photograph stays mid-toned across.
+
+  The two horizontal ramps never meet. The left one peaks at `80vw - 714px` —
+  52% of the frame at 2560px, 62% at 3840px — so left + right stays under 85%
+  of the width at any viewport a browser will render.
+
+- **Both segments of the desktop plunge are eased.** They were bare linear
+  ramps whose stops at `--copy-edge` and `+8%` are slope discontinuities, and
+  the file's own note recorded that each drew a soft vertical band. Each
+  segment is now sampled on smootherstep against its own endpoints —
+  `0.75 - 0.68 * s5(k/20)` across the first 8%, `0.07 * (1 - s5(k/20))` across
+  the second — so the envelope is unchanged (still exactly 0.75 at
+  `--copy-edge`, 0.07 at `+8%`, 0 at `+16%`) and only the corners go. The
+  earlier objection to easing — that it would move where the white lets go —
+  applied to easing the plunge as one curve, not to easing each segment.
+
+### Contrast
+
+Unchanged, and every figure in the file's tables still holds as a floor. The
+copy all sits left of `--copy-edge`, where the 0.75 shelf and the 0.8 band are
+untouched; the eased plunge only ever adds white relative to the old ramps;
+and the right feather only ever removes photograph. Nothing anywhere on the
+route gets a darker backdrop than it had.
+
+### Measured
+
+Mean of `mask x (1 - scrim)` over the hero's own box, from 920px up: **17-29%**
+of full strength, against 30-43% before, with **0-16%** of the section drawn
+at over 90% of it against 14-33%. Over the frame's own box, at
+360 / 768 / 919 / 920 / 950 / 1024 / 1440 / 1920 / 2560px:
+**45 / 35 / 29 / 17 / 18 / 19 / 21 / 19 / 17%**.
+
+The wide end gives up the most, and that is the point — the strip those
+numbers counted was reading as a slab rather than as picture. Between 920px
+and about 1030px nothing in the section now reaches 90%; the left ramp, the
+plunge and the right ramp leave no gap there and the picture peaks around
+0.6-0.7 instead, which is where it looks best on this file.
+
+The stale transmission table that sat on `.scrim` (`65 / 50 / 42 / …`) has
+been replaced rather than adjusted: it could not be reproduced by any
+measurement of the shipped rules and predates the full-width frame. Both
+tables now state their method so the next change can re-measure them.
+
 ## [2.30.0] — 2026-08-20 — Who We Serve hero: the photograph outgrows the hero
 
 `[2.29.0]` gave this hero the whole-photograph treatment, and the sizing it

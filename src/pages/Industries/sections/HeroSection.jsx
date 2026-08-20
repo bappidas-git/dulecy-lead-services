@@ -29,15 +29,22 @@
    below are lifted a stacking level, so the frame passes behind the sector
    grid and dissolves there.
 
-   Its two edges that end inside the page — left and bottom — are feathered
-   to nothing on a smootherstep-cubed curve; its top is the top of the page
-   and its right is the hero's own, so neither needs anything.
+   Three of its four edges are feathered to nothing on a smootherstep-cubed
+   curve — left, bottom, and, since `[2.31.0]`, right. Only the top is left
+   alone, because it is the top of the page. The right edge is the window's
+   rather than a line inside the layout, which normally needs no treatment;
+   it gets one here because this file's last tenth is a near-black suit and
+   dark office, and the white has finished letting go by the time it arrives,
+   so it was drawing a hard-edged slab against a section that dissolves into
+   paper on every other side. One flat 22%, the same at every viewport.
 
    Over it, one white layer, and it is the thinnest one the copy allows: a
    band that starts where the copy starts below 920px, a flat 0.75 shelf that
    ends where the glyphs end above it — extended down the overhang so the
-   frame does not step at the section's bottom edge. See the annotated `.bg`
-   / `.scrim` blocks in the stylesheet for the contrast table that prices it.
+   frame does not step at the section's bottom edge, and with both segments of
+   its plunge eased so neither vertex draws a vertical band. See the annotated
+   `.bg` / `.scrim` blocks in the stylesheet for the contrast table that
+   prices it.
    ============================================ */
 
 import React from "react";
