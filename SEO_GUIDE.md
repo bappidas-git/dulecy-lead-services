@@ -193,14 +193,19 @@ npm run generate:icons
 npm run generate:og
 ```
 
-- `scripts/generate-icons.js` flattens the **"DLS" mark**
-  (`public/images/logo/dls-mark-860.png`) onto white and centres it on square
+- `scripts/generate-icons.js` centres the **"DLS" mark**
+  (`public/images/logo/dls-mark-860.png`) on square **transparent**
   canvases, writing `favicon.png` (32×32), `favicon.ico` (16/32/48),
   `apple-touch-icon.png` (180×180), the `purpose: "any"` `logo192.png` /
   `logo512.png`, and the `purpose: "maskable"` `maskable-192.png` /
   `maskable-512.png`. The mark is 1.87:1, so each size is driven by a **width**
   fraction (`WIDTH_PCT`) and letterboxes vertically; `any` and `maskable` are
   separate files because the safe circle caps a mark this wide at ~70% width.
+  The alpha is carried end to end (no `flatten()`, `alpha: 0` canvases, 32-bit
+  BGRA inside the `.ico`), which is a deliberate call on `apple-touch-icon` and
+  the maskable pair — iOS composites their transparency onto black, and the
+  maskable spec expects an opaque bleed. Swap `TRANSPARENT` for the generator's
+  `WHITE` constant on those calls to put either back on a plate.
   These filenames are fixed, so `public/.htaccess` caps them at a revalidated
   day rather than the year `/images/**` gets — otherwise a rebrand would not
   reach returning visitors.

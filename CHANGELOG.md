@@ -12,6 +12,62 @@ prompt per branch/PR — and the entries below summarise each phase under the
 
 The format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.26.0] — 2026-08-20 — The icon set is transparent
+
+`[2.25.0]` made the "DLS" mark the favicon but kept the old generator's
+flatten-onto-white step, so every output shipped on an opaque plate: a white
+square in the browser tab, in the PWA install prompt, and behind the mark on
+every home screen. The mark's own artwork is full-alpha `#ED1C24` on nothing.
+This release stops discarding that.
+
+**No new artwork, and no markup change.** `dls-mark-860.png` is untouched,
+every output keeps its filename and size, and `index.html` / `manifest.json`
+already point at all seven files. Only the generator's compositing changed.
+
+### Changed
+
+- **`scripts/generate-icons.js` preserves alpha end to end.** `extractMark()`
+  drops its `.flatten({ background: WHITE })`, `squareIcon()` takes
+  `TRANSPARENT` (`alpha: 0`) for every canvas, and the `resize()` pads with
+  alpha rather than the default black. Verified on the output: all six PNGs
+  now report `alphaMin=0, alphaMax=255` where they previously reported
+  `alphaMin=255`.
+
+  `trim({ threshold: 10 })` changes role rather than going away. Under
+  `[2.25.0]` it ran after a flatten and was documented as defensive; it is now
+  the step that removes the source's transparent margin, which is what keeps
+  `WIDTH_PCT` measuring the glyphs instead of the glyphs plus padding.
+
+- **`favicon.ico` carries real transparency.** `png-to-ico` writes three
+  32-bit BGRA entries (16/32/48); sampling the decoded pixel data confirms
+  alpha `0` at all four corners and an opaque glyph interior at centre. No
+  1-bit AND-mask fallback is involved, so the tab icon has soft edges at every
+  size rather than a keyed-out fringe.
+
+### Known trade-off
+
+Two surfaces are transparent **against platform guidance**, by explicit
+request:
+
+- **`apple-touch-icon.png`** — iOS does not honour alpha on home-screen icons
+  and composites the transparent region onto **black**, so the mark reads red
+  on black there instead of red on white.
+- **`maskable-192.png` / `maskable-512.png`** — the maskable contract assumes
+  an opaque bleed, because the launcher crops the canvas to its own shape;
+  with alpha, what appears behind the mark is left to the launcher.
+
+The generator keeps an otherwise-unused `WHITE` constant so either can be
+returned to an opaque plate by swapping one argument, with no other change.
+It is documented as deliberate in the script header, `CLAUDE.md` and
+`SEO_GUIDE.md` — do not remove it as dead code.
+
+### Notes
+
+- `public/.htaccess` already caps the fixed-name root icon set
+  (`favicon.*`, `apple-touch-icon.png`, `logo192/512`, `maskable-*`) at a
+  revalidated day rather than the immutable year `/images/**` gets, so
+  returning visitors pick the new icons up without a filename bump.
+
 ## [2.25.0] — 2026-08-20 — The favicon is the "DLS" mark
 
 The site's icon set was still cut from the old Cloudinary "D" monogram — the

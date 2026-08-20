@@ -98,13 +98,24 @@ with no dead margin to compensate for; keep that true of any re-cut. Reuse
 
 **It is the favicon.** `[2.25.0]` made `scripts/generate-icons.js` read this
 PNG — not the Cloudinary "D" — so the browser tab, `favicon.ico`, the iOS
-home-screen icon, and every manifest icon are now the "DLS" mark on white. The
+home-screen icon, and every manifest icon are now the "DLS" mark. The
 generator drives each size off a **width** fraction (`WIDTH_PCT` at the top of
 the script) because the mark is 1.87:1 and letterboxes vertically; the old "D"
 percentages assumed a square and must not be reused. Manifest `any` and
 `maskable` are **separate files** — a 1.87:1 mark only fits Android's
 80%-diameter safe circle at ~0.70 width, and forcing that padding on the
 un-masked icon shrank it for nothing.
+
+**Every icon is transparent** as of `[2.26.0]`: no `flatten()`, and each
+canvas is created at `alpha: 0`, so the mark's own alpha survives from source
+to output — including inside `favicon.ico`, whose three entries are 32-bit
+BGRA. `trim()` is load-bearing here rather than defensive: it strips the
+transparent margin so `WIDTH_PCT` measures the glyphs, not the padding. Two
+surfaces are transparent **against platform advice**, on an explicit call:
+iOS ignores alpha on `apple-touch-icon` and composites it onto black, and the
+maskable spec assumes an opaque bleed behind the launcher's crop. The script
+keeps an unused `WHITE` constant purely so either can be put back on a plate
+by swapping one argument — do not "clean it up" as dead code.
 
 > ⚠️ **Nothing in `src/` draws it.** The React tree's one consumer was the
 > Home hero's floating watermark, which `[2.18.0]` removed — the hero's
