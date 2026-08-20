@@ -95,17 +95,37 @@ const PHOTOS = [
   {
     name: 'hero-expertise',
     url: 'https://res.cloudinary.com/dzokcuzo/image/upload/v1786720389/iStock1559948366-mirrored.jpg',
-    // The client-supplied master is 2211x1356 (1.63:1) and needs no re-framing:
-    // the subject already sits left with the laptop and the floating candidate
-    // cards centre-right, which is the composition the hero's left-heavy scrim
-    // is written against. Shipped whole, so the 1920w variant is 1920x1178 and
-    // never upscales on a desktop hero.
+    // The client-supplied master is 2211x1356 (1.63:1) and ships **whole**. No
+    // `crop`, and none should ever be added here: since `[2.28.0]` the hero
+    // draws the entire frame at every width — `max-width`/`max-height` on an
+    // intrinsically-sized <img> — and lets the section decide what of it is
+    // seen, so the framing is a render-time decision made per viewport rather
+    // than something baked into the file.
+    //
+    // **These fractions are what the hero's overlay is written around**, and
+    // they are why the composition needed no re-framing in the first place:
+    //
+    //   0-35%      the sitter's white shirt and the defocused window (bright,
+    //              the left edge column running a mean 160/255)
+    //   35-48%     the floating candidate/record cards over dark background
+    //   48-100%    the laptop, near-black — the reason the white over the copy
+    //              cannot go below 0.85 and hold the 11px red eyebrow at 4.5:1
+    //   bottom 15% the white desk (mean 202/255), which is what the frame's
+    //              bottom feather has to cross
+    //
+    // Re-cutting the file moves all four and invalidates the numbers in
+    // `Expertise/sections/HeroSection.module.css` — re-measure before changing
+    // this source.
     note:
       'Expertise hero backdrop — a person typing at a laptop under floating ' +
-      'candidate/record cards (opacity .9 under a left-heavy scrim that clears ' +
-      'toward the right, mirroring the home hero; below 920px it re-crops to a ' +
-      'band — see Expertise/sections/HeroSection.module.css). Deliberate ' +
-      'departure from `mockup/expertise.html`, whose hero is type-only.',
+      'candidate/record cards. Drawn WHOLE and uncropped at every width, ' +
+      'pinned to the top-right of the hero at the largest size that fits ' +
+      'inside it, with its left and bottom edges feathered to nothing; under ' +
+      'white that holds only where the copy is (a band from `--copy-top` down ' +
+      'below 920px, a flat .85 shelf-and-plunge above it) and lets go ' +
+      'everywhere else — see Expertise/sections/HeroSection.module.css. ' +
+      'Deliberate departure from `mockup/expertise.html`, whose hero is ' +
+      'type-only.',
   },
   {
     name: 'about-band',

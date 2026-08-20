@@ -12,6 +12,133 @@ prompt per branch/PR — and the entries below summarise each phase under the
 
 The format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.28.0] — 2026-08-20 — Expertise hero: the whole photograph, and white only where the copy is
+
+The `/expertise` hero drew its backdrop through `object-fit: cover` inside a
+box overscanned for parallax, under a two-layer white overlay that tinted the
+entire section. Between them the photograph reached **11% of its own signal on
+desktop and 21-26% on a phone, and no part of it at any width was ever more
+than 90% clear** — while `cover` threw away 40% of the frame at 1440px,
+including most of the laptop the composition is built around. This release
+applies the treatment the home hero settled on in `[2.24.0]`: the entire
+photograph, uncropped, at the largest size that fits inside the section, under
+a single white layer that holds only where the copy is.
+
+The source file does not change. `/images/hero-expertise*` is still cut from
+the client's `iStock1559948366-mirrored` master, and `generate-images.js` is
+untouched apart from its note.
+
+### Changed
+
+- **The photograph is drawn whole at every viewport, phone included.**
+  `object-fit` / `object-position` are gone; the sizing is now
+
+  ```css
+  width: auto; height: auto; max-width: 100%; max-height: 100%;
+  ```
+
+  the CSS 2.1 replaced-element algorithm rather than four independent
+  constraints — a violated max- constraint scales the box down **preserving
+  the ratio**, so nothing in the rule can crop, letterbox or stretch the file.
+  `object-fit: contain` guarantees the same pixels and was rejected for the
+  same reason it was on the home hero: it takes its SIZE from the box, so
+  every percentage in the feather would measure the box rather than the
+  picture.
+
+  The file is 1.63:1 against a content-driven hero that runs 545-725px tall,
+  which gives two regimes, both intended:
+
+  - **Up to about 1030px of viewport** `max-width` binds. The frame spans the
+    section edge to edge as a band across the top — 375x230 of a 375x545 hero,
+    768x471 of 768x553, 1019x625 of 1024x625.
+  - **Past that** `max-height` binds and the frame goes narrower than the
+    section: 1136x697 at 1440px, 1182x725 at 1920px. Pinned `top: 0` /
+    `right: 0` it fills the hero's full height on the right while the copy
+    column keeps plain paper on the left.
+
+  `right` rather than `left` is what makes the thin shelf affordable: at
+  1920px the headline's first 374px never touch the picture at all. It never
+  upscales — `sizes="100vw"` always selects a candidate at least as wide as
+  the section.
+
+- **Two edges land inside the page, and both are feathered** on `s5(t)^3`
+  (smootherstep cubed) sampled at twentieths, composited with
+  `mask-composite: intersect` so the bottom-left corner fades on both axes.
+  LEFT runs 16% of the frame's width and exists only past ~1030px; it crosses
+  the sitter's shoulder and the defocused window, a 95-to-157 level step
+  against `#fff`. BOTTOM runs `max(64px, 18%)` — shorter than the home hero's
+  `max(96px, 22%)` because it crosses the white desk, a 53-level step rather
+  than that section's near-black sleeve. Worst deviation from linear over a
+  10px window, measured against a flat near-black stand-in so the residual is
+  the mask's own and never image detail: **0.4-2.8 levels** across 360-2560px,
+  inside the 7-9 the home hero is held to.
+
+- **The overlay is one layer at each breakpoint instead of two, and it stops
+  where the copy stops.**
+
+  - **Below 920px** the copy spans the frame, so the white is a horizontal
+    band pinned to `var(--copy-top)` — the same custom property the copy's own
+    padding reads, because the hero's height, the band's height and the copy's
+    start all scale on different terms and a percentage that clears the first
+    line at 375px does not at 768px. Above that stop the photograph is
+    untouched: 36% of the frame at 375px, 25% at 768px, at full strength. The
+    ramp is the 64px above `--copy-top`, plain smootherstep at twentieths
+    (a scrim ramp hides its own gradient, not a photo edge), worst 10px window
+    about 3.4 levels. The old horizontal companion layer is gone — the frame
+    is full-bleed at these widths and has no left edge to clean up.
+  - **From 920px** it is a flat **0.85** shelf across the copy column, then a
+    plunge to 0.08 inside 8% of the hero and to nothing 8% after that. Flat,
+    unlike home's 0.86 / 0.84 / 0.83 taper, because this frame is pinned right
+    and past ~1280px does not reach the left edge at all — a taper there would
+    be tuning the alpha of blank paper.
+
+- **`--copy-edge: calc(50vw + 384px)`** anchors the plunge to the copy rather
+  than the viewport. The run to clear is the accent's long line, "processes &
+  performance", 958px at the capped 80px display size. Its peak offset is not
+  at the wide end but at **1250px**, where the type has reached its cap and the
+  container has not: `50vw + 377px`. 384 clears that with 7px to spare, and the
+  scrollbar (which `vw` counts and the hero does not) adds a few more at every
+  width.
+
+- **`opacity: .9` and `useParallax` are both gone from `.bg`.** The opacity was
+  a second flat veil over a picture this release is about seeing. The parallax
+  cannot survive the sizing rule: scrub travel needs the photo drawn taller
+  than its box so it never exposes an edge, which is the one thing drawing the
+  whole frame will not do — the same call the home hero has always made.
+
+### Measured
+
+Photo signal is the mean of `mask x (1 - scrim)` over the frame's own area —
+what survives of each of the photograph's pixels — with the share of the frame
+drawn at over 90% of full strength beside it.
+
+| Viewport | Before      | After                |
+| -------- | ----------- | -------------------- |
+| 375px    | 25.5% / 0%  | **47.3% / 37%**      |
+| 768px    | 23.7% / 0%  | **33.8% / 25%**      |
+| 1024px   | 11.1% / 0%  | **17.6% / 4%**       |
+| 1440px   | 11.1% / 0%  | **29.4% / 17%**      |
+| 1920px   | 11.1% / 0%  | **42.5% / 31%**      |
+| 2560px   | 11.1% / 0%  | **60.8% / 50%**      |
+
+That is as thin as the white goes, and the `.eyebrow` is what prices it: 11px
+`--red` with no plate of its own, small text so AA wants 4.5:1, and `#D5192E`
+scores only 5.23:1 on plain white — about 0.15 of relative luminance of
+headroom, which no thinner white holds over the near-black laptop this
+photograph is half made of. The `.grad-text` accent is second, at 3:1 for large
+text measured against its brightest fill `#E8293E` (the strict test, since that
+takes the darkest backdrop pixel anywhere under the run).
+
+Worst-pixel contrast on the real composite, sampled over every glyph run at
+360 / 375 / 414 / 768 / 919 / 1024 / 1280 / 1440 / 1920 / 2560px: eyebrow
+**4.54-5.24:1** (floor 4.5), accent **3.11-4.36:1** (floor 3), lede
+**6.23-8.81:1** (floor 4.5), ink headline 14.8-19.7:1, helper 3.22-3.38:1 —
+the last being what `--grey-4` scores on plain white anyway. Every tightest
+number is at **1024px**, which is the section's structural worst case: the
+container has not yet reached its 1280px cap, so the copy owns the largest
+share of the width it ever does, and the photograph still spans the section.
+Re-measure there first.
+
 ## [2.27.0] — 2026-08-20 — The splash draws the "DLS" mark
 
 The first-paint splash in `public/index.html` was the last surface still
