@@ -138,10 +138,14 @@ const HeroSection = () => {
           It stays decorative: empty `alt` plus `aria-hidden`, since the hero's
           meaning is entirely in the copy beside it.
 
-          No `useParallax` here, unlike the Expertise and Who We Serve heroes.
-          Scrub parallax needs the photo drawn taller than its box so the travel
-          never exposes an edge, which is the one thing this framing will not
-          do. The backdrop is static on purpose. */}
+          No `useParallax` here, and as of `[2.29.0]` no hero has it: scrub
+          parallax needs the photo drawn taller than its box so the travel
+          never exposes an edge, which is the one thing drawing a whole frame
+          will not do — the Expertise hero dropped it in `[2.28.0]` and Who We
+          Serve in `[2.29.0]`, both for that reason. This backdrop never had
+          it. The hook is still live on `About/IntersectionSection` and
+          `Home/BeliefSection`, which parallax a band and a glow, not a
+          placed frame. */}
       <img
         className={styles.bg}
         src={HERO_BG}

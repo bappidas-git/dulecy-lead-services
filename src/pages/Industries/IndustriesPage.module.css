@@ -12,3 +12,22 @@
   font-size: 16px;
   line-height: normal;
 }
+
+/* The hero's photograph is drawn at the section's full width, which past
+   ~875px makes it taller than the hero, so it hangs below the section rather
+   than being clipped (see `sections/HeroSection.module.css`). It is an
+   absolutely positioned child of a `position: relative` section, so by
+   default it paints in the positioned step — after the in-flow sector cards,
+   i.e. on top of them.
+
+   Lifting every section after the hero onto its own positive stacking level
+   puts them back in front. They have no background of their own, so the
+   overhang still shows between and around the white sector cards, which is
+   the intent; what it can no longer do is cover them. Applied to the
+   siblings rather than by pushing the hero behind with a negative z-index,
+   because that would depend on nothing above `.page` ever painting a
+   background of its own. */
+.page > * + * {
+  position: relative;
+  z-index: 1;
+}

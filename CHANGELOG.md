@@ -12,6 +12,220 @@ prompt per branch/PR — and the entries below summarise each phase under the
 
 The format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.31.0] — 2026-08-20 — Who We Serve hero: the right edge dissolves too
+
+`[2.30.0]` drew the frame at the section's full width, which put the
+photograph's darkest tenth — a near-black suit cuff and dark office — hard
+against the window, in the one part of the section the white has finished
+letting go of. The result read as a pasted rectangle: a black slab bounded on
+the left by the end of the scrim's plunge, on the right by the window, and on
+top by the header's own bottom edge, sitting inside a section that dissolves
+into paper on every other side. It was visible from 390px up and worst around
+1024-1440px, where the slab is widest relative to the hero.
+
+This feathers that edge and eases the plunge that meets it. **No image files
+change**, no markup changes, and nothing about the sizing, the copy, or the
+sub-920px band moves.
+
+### Changed
+
+- **The frame's right edge is feathered.** `--right-ramp: 22%` on `.bg` in
+  `src/pages/Industries/sections/HeroSection.module.css`, mirrored into
+  `--feather-x` as the same nineteen `s5(t)^3` alphas the left ramp uses,
+  measured inward from `100%`. One gradient still, not a third mask layer:
+
+  ```css
+  /* was — one rise, then opaque to the edge */
+  --feather-x: linear-gradient(to right, …, rgb(0, 0, 0) var(--left-ramp));
+  /* now — rise, plateau, fall */
+  --feather-x: linear-gradient(
+    to right, …, rgb(0, 0, 0) var(--left-ramp),
+    rgb(0, 0, 0) calc(100% - var(--right-ramp)), …,
+    rgba(0, 0, 0, 0) 100%
+  );
+  ```
+
+  A flat fraction at every viewport, with no breakpoint — the same 22% on a
+  phone, a tablet and a 2560px desktop. Unlike the left ramp it never meets a
+  run of copy, so it has nothing to anchor to; the only thing it has to clear
+  is the photograph's own darkest column. **22% rather than 16%** because at
+  16% the cuff still arrived at the window with visible weight, and at 30% the
+  fade took the arm with it. At 22% the arm and cuff still read as the subject
+  and the black behind them is gone by the edge.
+
+  This is a deliberate departure from the home and expertise heroes, which
+  leave their right edge to the window. It is warranted by the file rather
+  than by taste: this photograph's column deciles run 167 / 161 / 156 / 150 /
+  140 / 119 / 92 / 52 / 66 / 43, so its last tenth is the darkest thing on the
+  page, where the expertise photograph stays mid-toned across.
+
+  The two horizontal ramps never meet. The left one peaks at `80vw - 714px` —
+  52% of the frame at 2560px, 62% at 3840px — so left + right stays under 85%
+  of the width at any viewport a browser will render.
+
+- **Both segments of the desktop plunge are eased.** They were bare linear
+  ramps whose stops at `--copy-edge` and `+8%` are slope discontinuities, and
+  the file's own note recorded that each drew a soft vertical band. Each
+  segment is now sampled on smootherstep against its own endpoints —
+  `0.75 - 0.68 * s5(k/20)` across the first 8%, `0.07 * (1 - s5(k/20))` across
+  the second — so the envelope is unchanged (still exactly 0.75 at
+  `--copy-edge`, 0.07 at `+8%`, 0 at `+16%`) and only the corners go. The
+  earlier objection to easing — that it would move where the white lets go —
+  applied to easing the plunge as one curve, not to easing each segment.
+
+### Contrast
+
+Unchanged, and every figure in the file's tables still holds as a floor. The
+copy all sits left of `--copy-edge`, where the 0.75 shelf and the 0.8 band are
+untouched; the eased plunge only ever adds white relative to the old ramps;
+and the right feather only ever removes photograph. Nothing anywhere on the
+route gets a darker backdrop than it had.
+
+### Measured
+
+Mean of `mask x (1 - scrim)` over the hero's own box, from 920px up: **17-29%**
+of full strength, against 30-43% before, with **0-16%** of the section drawn
+at over 90% of it against 14-33%. Over the frame's own box, at
+360 / 768 / 919 / 920 / 950 / 1024 / 1440 / 1920 / 2560px:
+**45 / 35 / 29 / 17 / 18 / 19 / 21 / 19 / 17%**.
+
+The wide end gives up the most, and that is the point — the strip those
+numbers counted was reading as a slab rather than as picture. Between 920px
+and about 1030px nothing in the section now reaches 90%; the left ramp, the
+plunge and the right ramp leave no gap there and the picture peaks around
+0.6-0.7 instead, which is where it looks best on this file.
+
+The stale transmission table that sat on `.scrim` (`65 / 50 / 42 / …`) has
+been replaced rather than adjusted: it could not be reproduced by any
+measurement of the shipped rules and predates the full-width frame. Both
+tables now state their method so the next change can re-measure them.
+
+## [2.30.0] — 2026-08-20 — Who We Serve hero: the photograph outgrows the hero
+
+`[2.29.0]` gave this hero the whole-photograph treatment, and the sizing it
+used — `max-width: 100%; max-height: 100%` — fitted the frame INSIDE the
+section. That is what this changes. The frame is drawn at the section's full
+width at every viewport instead, so from about 875px up it is taller than the
+hero and hangs below it. Nothing is cropped in either arrangement; what moved
+is which box the picture is fitted to.
+
+**No image files change.** `/images/hero-industries-v2*` is the same cut of the
+same master, and `scripts/generate-images.js` is untouched.
+
+### Changed
+
+- **The frame is sized to the section's width, not fitted inside the section.**
+  `.bg` in `src/pages/Industries/sections/HeroSection.module.css`:
+
+  ```css
+  /* was */
+  right: 0;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  /* now */
+  left: 0;
+  width: 100%;
+  height: auto;
+  ```
+
+  `height: auto` against a stated width is still the replaced-element
+  algorithm, so the intrinsic ratio picks the height and nothing can crop,
+  letterbox or stretch the file. The frame is `W x W/1.875` at every viewport:
+
+  - **Below ~875px** it is shorter than the hero and the drawing is byte-for-
+    byte what `[2.29.0]` shipped — the same band across the top, 375x200 of a
+    375x438 hero, 768x410 of 768x467. Phones and small tablets are untouched.
+  - **Above that** it is taller than the section, and the overhang is drawn:
+    1024x546 against a 511px hero, 1440x768 against 553px, 1920x1024 against
+    555px, 2560x1365 against 560px. Contain-to-fit had capped the frame at
+    about 1040px wide however wide the window got (1037px at 1440px, 1041px at
+    1920px, 1050px at 2560px), so the picture was at its smallest share of the
+    section exactly where there was most room for it.
+
+  Measured over the hero's own box, the photograph now delivers **30-43%** of
+  full strength from 920px up, against 31-35% before, with **14-33%** of the
+  section drawn at over 90% of it. The gain is all at the wide end: 43% / 30%
+  at 1920px against 32% / 25%.
+
+- **`overflow: hidden` is gone from `.hero`**, which is what lets the overhang
+  be seen rather than cut. There is nothing left to clip horizontally — the
+  frame is exactly the section's width — and the frame only adds downward
+  scroll overflow, which the sector grid already exceeds several times over.
+
+- **`.page > * + *` in `IndustriesPage.module.css` lifts every section after
+  the hero onto its own stacking level.** `.bg` is an absolutely positioned
+  child of a positioned section, so by default it paints after the in-flow
+  sector cards, i.e. over them. The sections carry no background of their own,
+  so the overhang still shows between and around the white cards — it simply
+  can no longer cover them. Done on the siblings rather than by pushing the
+  hero behind with a negative `z-index`, which would depend on nothing above
+  `.page` ever painting a background.
+
+- **`.scrim` follows the frame down**: `inset: 0` became
+  `top/left/right: 0` + `height: max(100%, calc(100vw / 1.875))`. The scrim
+  used to be the hero's box, which was also the frame's box; now that the frame
+  overhangs, a scrim stopping at the section would have drawn a hard horizontal
+  seam across the picture — a quarter of it above the line, all of it below.
+  Both gradients are uniform along the axis this extends, so extending them
+  changes nothing inside the hero.
+
+- **The bottom feather learned about the overhang.** `--bottom-ramp` went from
+  `max(80px, 20%)` to `max(80px, 20%, calc(100% - 500px))`. The two original
+  terms still bind up to ~1170px of viewport and are unchanged there; the third
+  is the overhang term, `100%` being the frame's height and 500px the hero's
+  own to within the range it moves over up here (486px at 920px, 553px at
+  1440px, 555px at 1920px). It starts the fade level with the bottom of the
+  section and finishes it on the frame's own bottom edge, so the photograph is
+  complete and still at 84-94% strength where the hero ends and has gone to
+  nothing by the time the sector grid is under way — 268px of ramp at 1440px,
+  524px at 1920px, 865px at 2560px. Raising 500px shortens the ramp and puts
+  more photograph behind the cards; lowering it starts the fade before the hero
+  ends.
+
+- **The left feather is anchored to the eyebrow from 920px up.** It was a flat
+  16% of the frame's width, and below 920px it still is — the stops resolve to
+  the same 2.4% … 16% list as before. Above it the frame now reaches the copy
+  column, which it never did under contain-to-fit, and 16% of 1440px ends at
+  230px, exactly where the `.eyebrow` sets. The desktop scrim's 0.75 plateau
+  transmits a quarter of whatever is beneath it, and an 11px `--red` run with
+  no plate of its own cannot afford a quarter of this photograph. So
+  `--left-ramp` becomes `max(6.4vw + 240px, 80vw - 714px)` — 1.6x the
+  eyebrow's own right end, i.e. 299px at 920px, 438px at 1440px, 822px at
+  1920px, 1334px at 2560px. `s5^3` holds under 0.04 across the first 40% of a
+  ramp, so the eyebrow sits on all-but-bare paper and the picture arrives at
+  full strength just past it, under the headline.
+
+  Worst-pixel contrast on the real composite, sampled under every glyph run at
+  920 / 950 / 1024 / 1160 / 1440 / 1920 / 2560px — the eyebrow's **worst case
+  improves**, and nothing else crosses a floor:
+
+  | run      | now         | `[2.29.0]`  | floor |
+  | -------- | ----------- | ----------- | ----- |
+  | eyebrow  | 4.55-4.87:1 | 4.08-5.24:1 | 4.5   |
+  | accent   | 3.10-3.34:1 | 3.10-4.36:1 | 3     |
+  | lede     | 4.72-5.99:1 | 4.80-7.45:1 | 4.5   |
+  | headline | 12.5-15.1:1 | 15.1-19.7:1 | 3     |
+
+  Below 920px none of these move: the geometry there is what it was.
+
+- **Both feather stop lists are now written against their own custom
+  property.** They are the same nineteen alphas at the same twentieths they
+  have always been; the horizontal one could stop being a bare percentage
+  because the length it is a fraction of is no longer a constant.
+
+### Notes
+
+- `sizes="100vw"` was a deliberate overstatement and is now exact, the frame
+  being the viewport's width. The `srcset` tops out at 1920w, so a window wider
+  than that upscales it — 1.33x at 2560px, on a defocused backdrop under a
+  scrim. A `widths: [2370, 1920, 960]` override on this photo in
+  `scripts/generate-images.js` (2370 is the master's own width) is what would
+  end that if a wider candidate is ever wanted.
+- The other four heroes are untouched. This is the only one whose backdrop
+  leaves its own section.
+
 ## [2.29.0] — 2026-08-20 — Who We Serve hero: the same treatment, on the same photograph
 
 `/expertise` got the whole-photograph treatment in `[2.28.0]`. This applies it
@@ -35,7 +249,10 @@ from its note. Nothing was re-downloaded, re-encoded or renamed.
   `[2.28.0]` gave `/expertise`:
 
   ```css
-  width: auto; height: auto; max-width: 100%; max-height: 100%;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
   ```
 
   The file is 1.875:1 — wider than the expertise hero's 1.63:1 — so it crosses
@@ -79,11 +296,20 @@ from its note. Nothing was re-downloaded, re-encoded or renamed.
   caps and the offset falls monotonically to a constant `50vw + 12px`. The peak
   is `50vw + 219.9px`; 232 clears it with 12px to spare.
 
-- **`opacity: .9` and `useParallax` are both gone from `.bg`.** This hero
-  really did run the parallax — `parallaxPreset(-16)` over a box drawn at 120%
-  of the section with -10% of overscan — and that overscan *was* the crop, so
-  it cannot survive a rule that draws the whole frame. `Industries/HeroSection`
-  no longer imports `useParallax` or `parallaxPreset`.
+- **`opacity: .9` and `useParallax` are both gone from `.bg`.** The parallax
+  was `parallaxPreset(-16)` over a box drawn at 120% of the section with -10%
+  of overscan — the same rig `/expertise` ran until `[2.28.0]` — and that
+  overscan _was_ the crop, so it cannot survive a rule that draws the whole
+  frame. `Industries/HeroSection` no longer imports `useParallax` or
+  `parallaxPreset`.
+
+  **No hero on the site has a parallaxed backdrop any more.** Three comments
+  still said otherwise and are corrected here: `Home/HeroSection.jsx` and
+  `Home/HeroSection.module.css` both read "unlike the Expertise and Who We
+  Serve heroes" (half-stale since `[2.28.0]`, fully stale now), and
+  `Expertise/HeroSection.jsx` read "unlike the Who We Serve one". The hook
+  itself stays live on `About/IntersectionSection` and `Home/BeliefSection`,
+  which parallax a band and a glow rather than a placed frame.
 
 ### Measured
 
@@ -94,17 +320,17 @@ multiply, so its figure is `.9 x (1 - av(y)) x (1 - ah(x))`: 9.6% of the frame
 on average, at most 7% anywhere across the copy column, and never above 61%
 anywhere at all.
 
-| Viewport | Before     | After            |
-| -------- | ---------- | ---------------- |
-| 360px    | 9.6% / 0%  | **64.9% / 49%**  |
-| 768px    | 9.6% / 0%  | **50.3% / 34%**  |
-| 919px    | 9.6% / 0%  | **41.6% / 24%**  |
-| 920px    | 9.6% / 0%  | **39.4% / 16%**  |
-| 950px    | 9.6% / 0%  | **40.1% / 17%**  |
-| 1024px   | 9.6% / 0%  | **42.3% / 20%**  |
-| 1440px   | 9.6% / 0%  | **54.6% / 35%**  |
-| 1920px   | 9.6% / 0%  | **70.2% / 55%**  |
-| 2560px   | 9.6% / 0%  | **88.0% / 77%**  |
+| Viewport | Before    | After           |
+| -------- | --------- | --------------- |
+| 360px    | 9.6% / 0% | **64.9% / 49%** |
+| 768px    | 9.6% / 0% | **50.3% / 34%** |
+| 919px    | 9.6% / 0% | **41.6% / 24%** |
+| 920px    | 9.6% / 0% | **39.4% / 16%** |
+| 950px    | 9.6% / 0% | **40.1% / 17%** |
+| 1024px   | 9.6% / 0% | **42.3% / 20%** |
+| 1440px   | 9.6% / 0% | **54.6% / 35%** |
+| 1920px   | 9.6% / 0% | **70.2% / 55%** |
+| 2560px   | 9.6% / 0% | **88.0% / 77%** |
 
 The two sides of the 920px breakpoint land within 3 points of each other, which
 is what keeps the changeover from reading as a jump.
@@ -144,7 +370,10 @@ untouched apart from its note.
   `object-fit` / `object-position` are gone; the sizing is now
 
   ```css
-  width: auto; height: auto; max-width: 100%; max-height: 100%;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
   ```
 
   the CSS 2.1 replaced-element algorithm rather than four independent
@@ -222,14 +451,14 @@ Photo signal is the mean of `mask x (1 - scrim)` over the frame's own area —
 what survives of each of the photograph's pixels — with the share of the frame
 drawn at over 90% of full strength beside it.
 
-| Viewport | Before      | After                |
-| -------- | ----------- | -------------------- |
-| 375px    | 25.5% / 0%  | **47.3% / 37%**      |
-| 768px    | 23.7% / 0%  | **33.8% / 25%**      |
-| 1024px   | 11.1% / 0%  | **17.6% / 4%**       |
-| 1440px   | 11.1% / 0%  | **29.4% / 17%**      |
-| 1920px   | 11.1% / 0%  | **42.5% / 31%**      |
-| 2560px   | 11.1% / 0%  | **60.8% / 50%**      |
+| Viewport | Before     | After           |
+| -------- | ---------- | --------------- |
+| 375px    | 25.5% / 0% | **47.3% / 37%** |
+| 768px    | 23.7% / 0% | **33.8% / 25%** |
+| 1024px   | 11.1% / 0% | **17.6% / 4%**  |
+| 1440px   | 11.1% / 0% | **29.4% / 17%** |
+| 1920px   | 11.1% / 0% | **42.5% / 31%** |
+| 2560px   | 11.1% / 0% | **60.8% / 50%** |
 
 That is as thin as the white goes, and the `.eyebrow` is what prices it: 11px
 `--red` with no plate of its own, small text so AA wants 4.5:1, and `#D5192E`
@@ -462,7 +691,10 @@ overlay — is byte-for-byte what it was, and was re-verified at 919px.
   `object-position` are gone; the sizing is now
 
   ```css
-  width: auto; height: auto; max-width: 100%; max-height: 100%;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
   ```
 
   which is the CSS 2.1 replaced-element algorithm rather than four independent
@@ -474,12 +706,12 @@ overlay — is byte-for-byte what it was, and was re-verified at 919px.
 
   Three regimes, all intended:
 
-  | viewport      | binds        | drawn frame  | hero        |
-  | ------------- | ------------ | ------------ | ----------- |
-  | 920           | `max-width`  | 910 x 346    | 910 x 922   |
-  | 1440          | `max-width`  | 1430 x 543   | 1430 x 1002 |
-  | 1920          | `max-width`  | 1910 x 726   | 1910 x 1020 |
-  | 3440          | `max-height` | 2639 x 1003  | 3430 x 1003 |
+  | viewport | binds        | drawn frame | hero        |
+  | -------- | ------------ | ----------- | ----------- |
+  | 920      | `max-width`  | 910 x 346   | 910 x 922   |
+  | 1440     | `max-width`  | 1430 x 543  | 1430 x 1002 |
+  | 1920     | `max-width`  | 1910 x 726  | 1910 x 1020 |
+  | 3440     | `max-height` | 2639 x 1003 | 3430 x 1003 |
 
   `object-fit: contain` would give the same guarantee about the pixels and was
   rejected for a specific reason: it takes its SIZE from the box, so the
@@ -515,9 +747,9 @@ overlay — is byte-for-byte what it was, and was re-verified at 919px.
   10px luminance window in the composite against a per-column flat stand-in,
   which isolates the mask's own curvature from image detail:
 
-  | viewport      | 920 | 1440 | 1920 |
-  | ------------- | --- | ---- | ---- |
-  | bare 22%      | 9.4 | 4.5  | 6.3  |
+  | viewport        | 920 | 1440 | 1920 |
+  | --------------- | --- | ---- | ---- |
+  | bare 22%        | 9.4 | 4.5  | 6.3  |
   | `max(96px,22%)` | 4.9 | 3.8  | 5.2  |
 
   against the 7-9 levels this section is held to. Because the curve spends its
@@ -556,7 +788,7 @@ overlay — is byte-for-byte what it was, and was re-verified at 919px.
 
 ## [2.23.0] — 2026-08-20 — Home hero: the desktop photograph fills the section again
 
-The eight releases before this one refined a *placed frame* on desktop — a
+The eight releases before this one refined a _placed frame_ on desktop — a
 photograph drawn at a stated width, bled past the hero's right edge, and
 feathered on three sides so its edges dissolved rather than cut. This release
 retires that machinery **at `min-width: 920px` only** and puts the desktop hero
@@ -585,9 +817,9 @@ overlay — is byte-for-byte what it was, and was re-verified at 375px.
   of the hero — just right of where "impact" ends — at every width. Measured
   on the shipped WebP, the hands land at:
 
-  | viewport | 920     | 1024     | 1440     | 1906      |
-  | -------- | ------- | -------- | -------- | --------- |
-  | hands x  | 329-937 | 395-1014 | 658-1318 | 972-1638  |
+  | viewport | 920     | 1024     | 1440     | 1906     |
+  | -------- | ------- | -------- | -------- | -------- |
+  | hands x  | 329-937 | 395-1014 | 658-1318 | 972-1638 |
 
   Move the subject by re-cutting the file, not by re-tuning this number.
 
@@ -617,12 +849,12 @@ Sampled over the real composite (the shipped WebP drawn through the same
 `cover` mapping, multiplied by the fade's own alpha at each x), worst pixel in
 each element's box:
 
-| element                         | 920      | 1024     | 1440     | 1906     | floor |
-| ------------------------------- | -------- | -------- | -------- | -------- | ----- |
-| accent "impact" vs `#E8293E`    | 3.28     | 3.26     | 3.26     | 3.27     | 3:1   |
-| headline, ink                   | 14.8-15.4| 14.7-15.3| 14.7-15.3| 14.7-15.2| 4.5:1 |
-| lede, `--grey-2`                | 6.60     | 6.56     | 6.65     | 6.54     | 4.5:1 |
-| pillar labels, ink              | 16.0-16.6| 15.2-19.5| 10.3-16.4| 7.2-19.7 | 4.5:1 |
+| element                      | 920       | 1024      | 1440      | 1906      | floor |
+| ---------------------------- | --------- | --------- | --------- | --------- | ----- |
+| accent "impact" vs `#E8293E` | 3.28      | 3.26      | 3.26      | 3.27      | 3:1   |
+| headline, ink                | 14.8-15.4 | 14.7-15.3 | 14.7-15.3 | 14.7-15.2 | 4.5:1 |
+| lede, `--grey-2`             | 6.60      | 6.56      | 6.65      | 6.54      | 4.5:1 |
+| pillar labels, ink           | 16.0-16.6 | 15.2-19.5 | 10.3-16.4 | 7.2-19.7  | 4.5:1 |
 
 **The accent is still what prices the shelf**, and 0.83 is the floor: it is
 the one run of copy in the section that is colour-bound rather than ink-black,
@@ -633,8 +865,8 @@ about 0.065. Do not thin it further without re-measuring the accent that way.
 
 - **The pillar numbers sit on photograph again, and two of the four fall below
   4.5:1.** They are 14px `700` `--red` (`#D5192E`) — normal-size text, so the
-  4.5:1 threshold applies — and that colour has only 5.24:1 to give *on pure
-  white*. Over the composite they read **4.12-5.24:1** across 920-1906px. This
+  4.5:1 threshold applies — and that colour has only 5.24:1 to give _on pure
+  white_. Over the composite they read **4.12-5.24:1** across 920-1906px. This
   is a property of the framing this release restores rather than of the
   thinning: at the `0.86` shelf the same row reads 4.16-5.24:1 and still fails
   the same two. The placed frame the release before this one used kept that row
@@ -655,7 +887,7 @@ about 0.065. Do not thin it further without re-measuring the accent that way.
 
 ## [2.22.0] — 2026-08-20 — Home hero: the photograph, moved off the accent
 
-The four releases before this one were all about the *overlay* — its lines,
+The four releases before this one were all about the _overlay_ — its lines,
 its rectangles, how much of the photograph it was allowed to keep. This one
 moves the photograph itself, and it is the only change: one number, on the
 desktop rule alone.
@@ -714,8 +946,8 @@ beside it, and below about 1300px it crossed over and started under the copy.
 
 ## [2.21.0] — 2026-08-20 — Home hero: the last rectangle in the overlay
 
-`[2.20.0]` took the *lines* out of the hero by fixing every ramp's curve and
-sampling. What it left behind was a *shape*. Behind the headline's first two
+`[2.20.0]` took the _lines_ out of the hero by fixing every ramp's curve and
+sampling. What it left behind was a _shape_. Behind the headline's first two
 lines, from about 1440px up, the photograph carried a slab of extra strength
 with a straight top edge and a straight right edge — a rectangle, soft-edged
 but unmistakably rectangular, sitting inside an image that is otherwise all
@@ -723,7 +955,7 @@ dissolve.
 
 **The cause was two independent ramps crossing the same band of hero.**
 `.bg`'s top feather brings the photograph in over the top 34% of the frame;
-`.scrim::after`'s mask brought the white in over 32%-42% of the *hero*. Those
+`.scrim::after`'s mask brought the white in over 32%-42% of the _hero_. Those
 are different coordinate systems, and they drift apart as the viewport grows:
 the frame's top edge falls at 31% of the hero at 1024px but only 17% at
 2560px, while the shield's ramp stayed at 32%. Wherever the photograph arrived
@@ -763,17 +995,17 @@ desktop, which is why it survived two releases of tuning.
 ### Result
 
 Removing the slab did not cost photograph, because what the slab showed sat
-*under* the copy and the capped feather hands the same area back on the other
+_under_ the copy and the capped feather hands the same area back on the other
 side of it, where nothing is over it. Mean photo weight across the band the
 slab occupied (33%-100% of the hero wide, 27%-48% tall):
 
-| Viewport | Band, before → after | Right of `--copy-edge`, before → after | Slab |
-| -------- | -------------------- | --------------------------------------- | ---- |
-| 920px    | 12.1% → 11.7%        | 36.1% → 36.0%                           | none either way |
-| 1024px   | 12.9% → 12.6%        | 37.2% → 37.1%                           | none either way |
-| 1440px   | 24.0% → 24.0%        | 40.1% → 42.7%                           | 0.068 → **0** |
-| 1920px   | 41.4% → **47.4%**    | 41.2% → **54.6%**                       | 0.298 → **0** |
-| 2560px   | 45.3% → **54.0%**    | 42.0% → **57.9%**                       | 0.345 → **0** |
+| Viewport | Band, before → after | Right of `--copy-edge`, before → after | Slab            |
+| -------- | -------------------- | -------------------------------------- | --------------- |
+| 920px    | 12.1% → 11.7%        | 36.1% → 36.0%                          | none either way |
+| 1024px   | 12.9% → 12.6%        | 37.2% → 37.1%                          | none either way |
+| 1440px   | 24.0% → 24.0%        | 40.1% → 42.7%                          | 0.068 → **0**   |
+| 1920px   | 41.4% → **47.4%**    | 41.2% → **54.6%**                      | 0.298 → **0**   |
+| 2560px   | 45.3% → **54.0%**    | 42.0% → **57.9%**                      | 0.345 → **0**   |
 
 Headline contrast improves as a side-effect — **7.8:1 → 14.2:1 at 1920px** and
 7.0:1 → 14.9:1 at 2560px, since the slab was the darkest thing under those two
@@ -1112,11 +1344,11 @@ to buy contrast as well as scale.
   clamp end upscales the 2880px master: both ceilings are exactly 2x on retina.
 
   | Viewport | Frame before | Frame now | Clasp before | Clasp now |
-  | --- | --- | --- | --- | --- |
-  | 390px | 390px | 527px | 101px | 137px |
-  | 768px | 758px | 900px | 197px | 234px |
-  | 1440px | 1430px | 1058px | 372px | 275px |
-  | 1920px | 1910px | 1413px | 497px | 367px |
+  | -------- | ------------ | --------- | ------------ | --------- |
+  | 390px    | 390px        | 527px     | 101px        | 137px     |
+  | 768px    | 758px        | 900px     | 197px        | 234px     |
+  | 1440px   | 1430px       | 1058px    | 372px        | 275px     |
+  | 1920px   | 1910px       | 1413px    | 497px        | 367px     |
 
 - **The desktop shelf goes back up, 0.88 → 0.85 → 0.82 becomes 0.92 → 0.89 →
   0.86.** Not a reversal of `[2.16.0]` — the placement paying for itself. A
@@ -1234,7 +1466,7 @@ Below 920px the accent moves the other way — 3.27 → 3.36:1 at 768px — beca
 reshaping the fade gave back more than thinning the veil took. That range is
 also why the check is not a phone-only one: where the band falls relative to the
 headline is a function of the hero's aspect, so at 320 and 390px the band lands
-*below* the headline (accent over bare white, 4.36:1) while between about 600 and
+_below_ the headline (accent over bare white, 4.36:1) while between about 600 and
 900px it covers it. Simply thinning the veil under the old evenly-ramped fade
 measured 2.96–3.14:1 across 600 / 768 / 900px — at or under the floor at widths a
 phone-only reading never visits.
@@ -1275,7 +1507,7 @@ next to the red accent word "impact", on every device.
 
 - **`background-position: 68% 50%`, and x is the only number doing work.** The
   frame is 2.63:1 and the section runs ~0.4:1 (phone) to ~2.4:1 (desktop), so
-  `cover` is height-limited at *every* real viewport — there is no width-limited
+  `cover` is height-limited at _every_ real viewport — there is no width-limited
   desktop regime any more, and the vertical 50% is declared only for the
   ultra-wide-and-short case past 2.63:1. 68% is measured, not chosen: the joined
   hands span 55–81% of the file and the skin centroid sits at 67.8% × 55.2%.
@@ -1288,7 +1520,7 @@ next to the red accent word "impact", on every device.
   holds 0.94 → 0.91 → 0.86 to `--copy-edge` instead of 0.97 → 0.95 → 0.90, then
   plunges as before (0.10 within 8% of the hero, gone 8% after). Measured on this
   frame at a fixed `--copy-edge`, that raises the share of the photograph
-  surviving *under the shelf* from 6.1% to 9.8% at 1440px and 5.9% to 9.7% at
+  surviving _under the shelf_ from 6.1% to 9.8% at 1440px and 5.9% to 9.7% at
   1920px — a little over 1.6×, and the difference between a tint and a visible
   photograph.
 
@@ -1299,9 +1531,9 @@ next to the red accent word "impact", on every device.
 
 - **`--copy-edge` moves from `calc(50vw + 291px)` to `calc(50vw + 320px)`**, and
   the reason is a detail the old fit missed: it was fitted through the widest
-  *glyph run*, but the pillars row is a four-column flex that runs wider than the
+  _glyph run_, but the pillars row is a four-column flex that runs wider than the
   headline, so once the container hits its 1280px cap the fourth pillar's number
-  — 14px `--red`, the least forgiving colour in the section — ends 19px *past*
+  — 14px `--red`, the least forgiving colour in the section — ends 19px _past_
   the old edge, inside the plunge. It measured 3.54:1 there. Clearing it by 10px
   brings it to 4.16:1 for about 2 points of photo presence.
 
@@ -1385,16 +1617,16 @@ pixel anywhere under a glyph's box, not just under its strokes), and photo
 presence — the share of the photo's own pixel that survives the overlay —
 averaged across the clasp:
 
-|          | limited by | ink   | accent | lede | pillar № | presence |
-| -------- | ---------- | ----- | ------ | ---- | -------- | -------- |
-| 320px    | height     | 17.19 | 3.82   | 6.76 | 5.24     | 10%      |
-| 390px    | height     | 16.87 | 3.36   | 5.96 | 4.65     | 10%      |
-| 768px    | height     | 16.70 | 3.41   | 7.26 | 4.50     | 12%      |
-| 919px    | height     | 16.52 | 3.43   | 7.37 | 4.46     | 12%      |
-| 920px    | height     | 17.28 | 3.67   | 7.77 | 4.71     | 22%      |
-| 1024px   | height     | 17.26 | 3.78   | 7.68 | 4.80     | 24%      |
-| 1440px   | height     | 17.08 | 3.73   | 7.77 | 4.27     | 31%      |
-| 1920px   | width      | 17.07 | 3.69   | 7.65 | 4.08     | 38%      |
+|        | limited by | ink   | accent | lede | pillar № | presence |
+| ------ | ---------- | ----- | ------ | ---- | -------- | -------- |
+| 320px  | height     | 17.19 | 3.82   | 6.76 | 5.24     | 10%      |
+| 390px  | height     | 16.87 | 3.36   | 5.96 | 4.65     | 10%      |
+| 768px  | height     | 16.70 | 3.41   | 7.26 | 4.50     | 12%      |
+| 919px  | height     | 16.52 | 3.43   | 7.37 | 4.46     | 12%      |
+| 920px  | height     | 17.28 | 3.67   | 7.77 | 4.71     | 22%      |
+| 1024px | height     | 17.26 | 3.78   | 7.68 | 4.80     | 24%      |
+| 1440px | height     | 17.08 | 3.73   | 7.77 | 4.27     | 31%      |
+| 1920px | width      | 17.07 | 3.69   | 7.65 | 4.08     | 38%      |
 
 The red accent on "impact" is the binding case at every width, as it has been
 through every revision of this hero, and it clears AA large-text's 3:1 with
@@ -1680,7 +1912,7 @@ at the skin-tone centroid of the hands.
   clear of AA large-text's 3:1. **Presence below 920px is the honest cost of
   the brief**: filling a 0.41:1 box with a 2.13:1 photograph puts the clasp
   behind the copy, where it can only be a tint. `[2.10.0]`'s band held it at
-  94% by keeping it *above* the copy instead of behind it — that is the trade
+  94% by keeping it _above_ the copy instead of behind it — that is the trade
   the change makes, not a regression in the fade.
 
 ### Added
@@ -1699,7 +1931,7 @@ at the skin-tone centroid of the hands.
   1920px.
 
 - **One width and no `sizes`, on purpose.** A full-bleed `cover` backdrop is
-  scaled by the section's *height*, not its width, so the rendered width barely
+  scaled by the section's _height_, not its width, so the rendered width barely
   moves with the viewport — 2178 to 2636 CSS px measured across 320–1920px. A
   `vw`-keyed `sizes` would describe the wrong quantity, and every breakpoint
   would resolve to the same variant anyway. 2880w covers the widest of those,
@@ -1746,16 +1978,16 @@ at the skin-tone centroid of the hands, 53.4% × 55.2% of the frame.
   frame's mid-line the photo is at full strength across its right **56%**
   (panel) / **64%** (band) — the rest is the dissolve.
 
-  | Viewport | Before | After |
-  | -------- | ------ | ----- |
-  | 320 / 375 / 430px | 67% / 67% / 67% | 94% / 94% / 94% |
-  | 600 / 768 / 919px | 45% / 30% / 23% | 94% / 67% / 50% |
-  | 920 / 1024 / 1280px | 64% / 66% / 64% | 95% / 95% / 95% |
+  | Viewport             | Before          | After           |
+  | -------------------- | --------------- | --------------- |
+  | 320 / 375 / 430px    | 67% / 67% / 67% | 94% / 94% / 94% |
+  | 600 / 768 / 919px    | 45% / 30% / 23% | 94% / 67% / 50% |
+  | 920 / 1024 / 1280px  | 64% / 66% / 64% | 95% / 95% / 95% |
   | 1440 / 1707 / 1920px | 63% / 61% / 60% | 95% / 96% / 96% |
 
 - **The clasp moves onto the marked point.** At 1920px it lands at 70.7% × 48.1%
   of the hero and at 1707px 72.4% × 48.3%, against 74% × 52.5% before. The panel
-  is *narrower* to get there, not wider (603px against 721px at 1920px): the
+  is _narrower_ to get there, not wider (603px against 721px at 1920px): the
   clasp sits 53.4% into the frame, so `panelLeft = claspX − 0.534 × panel` —
   shrinking the panel is what moves its left edge off the copy. The previous
   panel could only clear the headline by sliding right, and it took the
@@ -1767,7 +1999,7 @@ at the skin-tone centroid of the hands, 53.4% × 55.2% of the frame.
   room left of it to stand in.
 
 - **`--panel` / `--panel-inset` now live on `.hero`.** The dissolve has to land
-  at a fixed fraction of the *panel*, and `.bg` and `.scrim` are siblings, so
+  at a fixed fraction of the _panel_, and `.bg` and `.scrim` are siblings, so
   the geometry is a custom property both read. `--panel-inset` reads "hold the
   panel far enough off the right edge that the headline's right edge lands no
   deeper than 32% into it", which keeps the copy inside the dissolve at every
@@ -1824,15 +2056,15 @@ is where "at the clasp" is sampled throughout.
 - **Visibility: ~35% → 60–67% at the clasp.** Backdrop opacity goes `.82` →
   `.92`, and both scrims open up on the right. Measured across the ladder:
 
-  | Viewport | Before | After |
-  | -------- | ------ | ----- |
-  | 320 / 375 / 480px | 41% / 41% / 40% | 67% / 67% / 62% |
-  | 768 / 919px | 27% / 22% | 32% / 23% |
+  | Viewport            | Before          | After           |
+  | ------------------- | --------------- | --------------- |
+  | 320 / 375 / 480px   | 41% / 41% / 40% | 67% / 67% / 62% |
+  | 768 / 919px         | 27% / 22%       | 32% / 23%       |
   | 920 / 1024 / 1280px | 35% / 36% / 35% | 64% / 65% / 64% |
-  | 1440 / 1920px | 35% / 33% | 63% / 60% |
+  | 1440 / 1920px       | 35% / 33%       | 63% / 60%       |
 
 - **6px larger, and it all goes on the left.** The band is `left: -6px;
-  width: calc(100% + 6px)`, so the right edge stays flush with the viewport
+width: calc(100% + 6px)`, so the right edge stays flush with the viewport
   and the whole frame — clasp included — shifts 6px toward the copy, covering
   "larger" and "slightly left" with one move. The panel's width clamp gains a
   flat 6px at every stop: `clamp(346px, 44vw - 124px, 906px)`.
@@ -1862,7 +2094,7 @@ is where "at the clasp" is sampled throughout.
 - **The band's scrim is three layers, keyed to two different things.** The band
   is sized in `vw`, so its clasp sits at a fixed ~31vw below the hero's top;
   the headline is `clamp()`-sized and starts at a near-fixed ~26–30% of the
-  hero's *height*. One gradient can only track one of them, and the shipped one
+  hero's _height_. One gradient can only track one of them, and the shipped one
   tracked the hero — which is why its light window drifted off the band and the
   clasp fell from 41% at 375px to 22% at 919px. Now: a `vw`-keyed light window
   over the band, a hero-%-keyed copy guard over the headline, and the
@@ -1913,7 +2145,7 @@ right-hand side — at every width.
 
 - **Above 920px the backdrop is a panel, not a bleed.** It is held against the
   right edge and centred on the hero: `width: clamp(340px, 44vw - 130px,
-  900px)`, `right: clamp(24px, 5.5vw, 130px)`, `top: 50%` with
+900px)`, `right: clamp(24px, 5.5vw, 130px)`, `top: 50%` with
   `margin-top: calc(var(--panel) / -3)` — half the derived height, so the
   centring costs no transform (`useParallax` owns that property). The width is
   not a plain `vw` because the container caps at 1280px: past that point every
@@ -1949,7 +2181,7 @@ right-hand side — at every width.
 - **`.bg` and `.scrim` are now mobile-first with a single `min-width: 920px`
   override**, rather than a `max-width: 919px` / `min-width: 920px` pair. A
   viewport at a fractional CSS width — emulation, fractional DPI, some zoom
-  levels — satisfies *neither* query, and neither element carries geometry
+  levels — satisfies _neither_ query, and neither element carries geometry
   outside them: `.bg` would have fallen back to its intrinsic 1920px box in the
   static position. Caught in verification at an emulated 919px viewport, where
   both `matchMedia` queries reported `false`.
@@ -2123,7 +2355,7 @@ the left, clearing completely toward the right.
   clasp with the near suit on the left and the far sleeve on the right.
 - **The scrim is now lopsided rather than broadly even.** Desktop's horizontal
   gradient goes `0.88 → 0.70 → 0.06` (over 0–76%) → `0.98 → 0.94 → 0.55 →
-  0.06 → 0` (over 0–100%): near-solid white across the whole left column, a
+0.06 → 0` (over 0–100%): near-solid white across the whole left column, a
   long ramp that only opens past 58%, and a clean zero at the right edge. Below
   920px the band's horizontal gradient stops being a faint lift and carries the
   same reveal (`0.34 → 0.06` becomes `0.8 → 0.55 → 0.1 → 0`), so the treatment
@@ -2314,7 +2546,7 @@ Both versions are self-hosted with a transparent background.
   the same file sits on white, `--bg-grey`, and ink. The footer draws the white
   variant on the dark panel.
 - **`logoIcon` still lives on Cloudinary** and is unchanged — it drives the
-  splash screen and the generated favicons. It is the *old* "D" monogram, so
+  splash screen and the generated favicons. It is the _old_ "D" monogram, so
   the splash and the favicon no longer match the new wordmark; regenerate them
   once the client supplies the new icon artwork.
 - **Responsive sizing, because the lockup is much wider.** At 6.49:1 it draws
@@ -2456,6 +2688,7 @@ lead-storage pipeline unchanged.
 ### 01 — Brand foundation & configuration
 
 **Changed**
+
 - `src/data/siteConfig.js` re-pointed to Dulcey: brand/legal name, tagline
   "Beyond Business Support" + `taglineSecondary`, phone `+91 70990 02522`,
   `dulceyleadservices@gmail.com`, `https://www.dulceyleadservices.com`,
@@ -2471,6 +2704,7 @@ lead-storage pipeline unchanged.
 ### 02 — Routing shell, header, mobile menu & footer
 
 **Added**
+
 - Five public routes — `/`, `/about`, `/expertise`, `/industries` (nav label
   "Who We Serve"), `/contact` — plus a branded `*` NotFound, all inside one
   `PublicLayout` so the shell mounts once. Home is eager; the rest are lazy.
@@ -2482,6 +2716,7 @@ lead-storage pipeline unchanged.
 ### 03 — Home page
 
 **Added**
+
 - Seven sections ported 1:1 from `mockup/index.html`: hero (parallax backdrop,
   staggered intro), the rotated marquee strip, Who We Are, the dark Belief band,
   the ten-row expertise index (deep-linking to `/expertise#e01`–`#e10`), the
@@ -2492,6 +2727,7 @@ lead-storage pipeline unchanged.
 ### 04 — About page
 
 **Added**
+
 - Six sections ported from `mockup/about.html`: type-only hero, the dark
   Intersection band, Perspective, Difference, Principles, and the Commitment
   CTA — verbatim copy and the mockup's exact motion.
@@ -2499,6 +2735,7 @@ lead-storage pipeline unchanged.
 ### 05 — Expertise page
 
 **Added**
+
 - Hero, the ten-area single-open accordion with working `#e01`–`#e10` deep
   links (matching-hash-wins on load, `ScrollTrigger.refresh()` on every toggle),
   and the grey "Start with a conversation" CTA.
@@ -2506,6 +2743,7 @@ lead-storage pipeline unchanged.
 ### 06 — Who We Serve & Contact pages
 
 **Added**
+
 - `/industries`: hero, the seven sector cards plus the red gradient CTA card,
   and the split CTA section.
 - `/contact`: the reply-time badge and headline, the phone/email cards, the
@@ -2514,6 +2752,7 @@ lead-storage pipeline unchanged.
 ### 07 — Unified lead form & enquiry modal
 
 **Changed**
+
 - `UnifiedLeadForm` rewritten as a 1:1 port of the mockup's `.lead-form` (plain
   inputs + CSS Modules, no MUI). Fields: name\*, email\*, phone, organization,
   "what do you need support with?"\*, message — options come from
@@ -2525,16 +2764,19 @@ lead-storage pipeline unchanged.
   `closeLeadModal`; scroll lock moved into the new component.
 
 **Added**
+
 - `LeadModal` — a centered modal (portal, backdrop/✕/Escape close, focus trap +
   restore, reduced-motion aware) replacing the side drawer.
 - `getOptionalMobileErrorMessage()` in `src/utils/validators.js`.
 
 **Removed**
+
 - The `/thank-you` route — the form now confirms in place.
 
 ### 08 — Admin panel
 
 **Changed**
+
 - Login, topbar, dashboard and the guideline gate read the logo and brand name
   from `siteConfig`; admin `.module.css` files swept onto the Dulcey tokens.
 - Lead surfaces reshaped around the Prompt 07 payload: an **Organization**
@@ -2548,6 +2790,7 @@ lead-storage pipeline unchanged.
 ### 09 — Animation & interaction parity
 
 **Fixed**
+
 - `scheduleRefresh()` coalesces a burst of `ScrollTrigger.refresh()` calls into
   one per frame (a Home commit was running 20 full re-measures).
 - Refresh on modal open/close (the scroll lock collapses the document) and once
@@ -2558,6 +2801,7 @@ lead-storage pipeline unchanged.
 ### 10 — SEO
 
 **Changed**
+
 - `src/config/seo.js` rebuilt around `siteConfig` / `expertiseData` /
   `industriesData` / `navigation`: per-route title, description, canonical,
   robots and derived keywords for the five pages, plus `noindex` admin and 404
@@ -2570,6 +2814,7 @@ lead-storage pipeline unchanged.
   the OG image from the Dulcey logo.
 
 **Removed**
+
 - `FAQPage`, `LocalBusiness`, `PostalAddress`, geo coordinates, opening hours
   and `areaServed` — the site has no visible FAQ and no public postal address,
   so emitting them would be fabricated.
@@ -2577,6 +2822,7 @@ lead-storage pipeline unchanged.
 ### 11 — Legacy purge & cleanup
 
 **Removed**
+
 - The previous site's section components, floating UI (mobile drawer, WhatsApp
   FAB, scroll progress, back-to-top), the retired `/thank-you` page and the
   `LeadFormDrawer`.
@@ -2588,6 +2834,7 @@ lead-storage pipeline unchanged.
 ### 12 — Assets, performance & accessibility
 
 **Changed**
+
 - Every Unsplash and icons8 hotlink replaced with a first-party asset:
   `npm run generate:images` emits WebP at 1920w/960w plus a JPEG fallback into
   `public/images/` (heaviest photo 229 KB).
@@ -2599,17 +2846,20 @@ lead-storage pipeline unchanged.
   neither ships in the public bundle.
 
 **Fixed**
+
 - WCAG 2.1 AA sweep: contrast, heading order and focus management. axe-core
   reports zero violations across all five routes, the open modal and the mobile
   menu; Lighthouse Accessibility 100 on every route.
 
 **Added**
+
 - A "Caching & compression" block in the admin Deployment guide (the `.htaccess`
   itself lands with Prompt 14).
 
 ### 13 — Documentation
 
 **Changed**
+
 - Rewrote `README.md`, `CLAUDE.md`, `CHANGELOG.md`, `CUSTOMIZATION_GUIDE.md` and
   `SEO_GUIDE.md` for the Dulcey codebase — routes, data layer, animation
   parameters, the lead-storage contract, the design tokens and the SEO system
@@ -2618,6 +2868,7 @@ lead-storage pipeline unchanged.
 ### 14 — Production readiness & final QA
 
 **Added**
+
 - `public/.htaccess` — the Apache configuration, copied into `build/` by
   `npm run build` so a normal upload installs it. Carries the SPA rewrite with
   an `^api/` exclusion (a blanket fallback would serve `index.html` to
@@ -2632,11 +2883,13 @@ lead-storage pipeline unchanged.
   sitemap.
 
 **Changed**
+
 - The Deployment guide no longer tells operators to hand-write `.htaccess`; it
   now documents the shipped file and warns that FTP clients routinely skip
   dotfiles. `README.md` gained the matching pointer.
 
 **Fixed**
+
 - **Cross-tab admin sync never actually converged.** Two bugs stacked on top of
   each other, both surfaced by the Prompt 14 QA pass:
   1. `onLeadsChanged` treated the same-tab event and the BroadcastChannel
@@ -2644,7 +2897,7 @@ lead-storage pipeline unchanged.
      per-JS-context, so a tab receiving a broadcast just re-read its own stale
      copy and rendered the same thing. The broadcast path now re-syncs from the
      server first, and is deliberately not visibility-gated.
-  2. `notifyLeadsChanged()` fired *before* `callLeadsApi()` sent the write, so
+  2. `notifyLeadsChanged()` fired _before_ `callLeadsApi()` sent the write, so
      even a correct listener fetched a server snapshot that predated the change
      — and, the broadcast already consumed, stayed stale until its next poll.
      Notification is now split: `notifyLeadsChanged()` for this tab (the cache
@@ -2655,8 +2908,9 @@ lead-storage pipeline unchanged.
   request, verified with both tabs hidden and never focused so neither the 15 s
   poll nor the focus sync could mask the result. No localStorage copy of leads
   was introduced; the server remains the single source of truth.
+
 - Ordering bug in the first draft of `public/.htaccess`: the `LONG_CACHE`
-  tagging rules sat *after* the "serve real files" rule, which ends in `[L]` and
+  tagging rules sat _after_ the "serve real files" rule, which ends in `[L]` and
   stops rewrite processing — so `/static/**` and `/images/**` would never have
   been tagged and the immutable `Cache-Control` header would never have applied.
   Caught by QA before merge; the tagging now runs first.

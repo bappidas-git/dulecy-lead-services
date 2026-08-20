@@ -200,9 +200,13 @@
    a visible photo edge over blown-out white, never to a missing or clipped
    backdrop.
 
-   No `useParallax` here, unlike the Expertise and Who We Serve heroes. Scrub
-   parallax would slide the subject out of the relationship with "impact" that
-   `--bg-right` exists to hold. The backdrop is static on purpose. */
+   No `useParallax` here — scrub parallax would slide the subject out of the
+   relationship with "impact" that `--bg-right` exists to hold. The backdrop is
+   static on purpose, and as of `[2.29.0]` so is every other hero's: Expertise
+   dropped the hook in `[2.28.0]` and Who We Serve in `[2.29.0]`, both because
+   scrub travel needs the photo drawn taller than its box and neither draws
+   anything but the whole frame any more. The hook itself is still live on
+   `About/IntersectionSection` and `Home/BeliefSection`. */
 .bg {
   position: absolute;
   top: var(--bg-top);
