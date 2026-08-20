@@ -41,16 +41,18 @@ export const siteConfig = {
   logoWhite: '/images/logo/dulcey-wordmark-white-1351.png',
   // The "D" mark. Its Cloudinary public_id still carries the old spelling —
   // that is the asset's immutable delivery path, not a brand string.
-  // Favicon / PWA-icon / splash lineage only — `scripts/generate-icons.js` and
-  // the `public/index.html` splash both hard-code this same URL.
+  // Splash lineage only — the `public/index.html` splash `<img>` hard-codes
+  // this same URL. The favicon/PWA set is cut from `logoMark` below.
   logoIcon: `${CLOUDINARY_BASE}/v1785484838/Dulecy-Logo-Icon_hylrpw.png`,
   // The "DLS" initialism mark, self-hosted alongside the wordmark and carrying
   // the same real alpha channel (peak 255 as supplied — the wordmark's
   // alpha-normalisation pass does not apply). Trimmed to the artwork's own
   // bounding box, so a CSS `width` maps straight onto the visible mark with no
-  // dead padding to compensate for. Drawn by the Home hero's floating
-  // watermark; the `-860` suffix is the width, and `/images/**` answers
-  // `immutable`, so re-cutting the artwork means a NEW filename.
+  // dead padding to compensate for. This is the favicon source:
+  // `scripts/generate-icons.js` reads the file straight off disk, so a re-cut
+  // needs `MARK_FILE` there updated and `npm run generate:icons` re-run.
+  // Nothing in `src/` draws it today. The `-860` suffix is the width, and
+  // `/images/**` answers `immutable`, so re-cutting means a NEW filename.
   logoMark: '/images/logo/dls-mark-860.png',
   social: {}, // fill when the client provides profiles; components must hide empty entries
   // Studio credit rendered in the footer's legal row. External site, so the
@@ -121,8 +123,8 @@ export const absoluteUrl = (pathOrUrl) =>
  *
  * **Currently has no caller.** Its one consumer was the Home hero watermark,
  * which now draws the self-hosted `logoMark` instead. Kept because `logoIcon`
- * is still live (the favicon/PWA pipeline and the `index.html` splash both
- * hard-code that same Cloudinary URL) and this is the only way to size it.
+ * is still live — the `index.html` splash `<img>` hard-codes that same
+ * Cloudinary URL — and this is the only way to size it.
  *
  * @example logoAt(siteConfig.logoIcon, { w: 760 })
  */
